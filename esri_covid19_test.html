@@ -147,7 +147,45 @@
 
         var layerlist = new LayerList({
           view: view,
+          listItemCreatedFunction: defineActions
         });
+
+        layerlist.on("trigger-action", function(event) {
+            // The layer visible in the view at the time of the trigger.
+            console.log(event);
+            let visibleLayer = event.item.layer;
+
+            // Capture the action id.
+            var id = event.action.id;
+
+            if (id === "full-extent") {
+              // if the full-extent action is triggered then navigate
+              // to the full extent of the visible layer
+              view.goTo(visibleLayer.fullExtent);
+            } else if (id === "information") {
+              // if the information action is triggered, then
+              // open the item details page of the service layer
+              window.open(visibleLayer.url);
+            } else if (id === "increase-opacity") {
+              // if the increase-opacity action is triggered, then
+              // increase the opacity of the GroupLayer by 0.25
+
+              if (visibleLayer.opacity < 1) {
+                visibleLayer.opacity += 0.25;
+              }
+            } else if (id === "decrease-opacity") {
+              // if the decrease-opacity action is triggered, then
+              // decrease the opacity of the GroupLayer by 0.25
+
+              if (visibleLayer.opacity > 0) {
+                visibleLayer.opacity -= 0.25;
+              }
+            }
+          });
+
+          layerlist.on("drag", function(event){
+            //pass
+          })
 
         var basemapGallery = new BasemapGallery({
           view: view,
@@ -218,10 +256,57 @@
         //  Methods
         //
         //--------------------------------------------------------------------------
+        
+        /**
+         * Define actions for LayerList
+         */
+        
 
+        function defineActions(event) {
+          // The event object contains an item property.
+          // is is a ListItem referencing the associated layer
+          // and other properties. You can control the visibility of the
+          // item, its title, and actions using this object.
+
+          var item = event.item;
+
+          if (item.title === "COVID_19" || item.title === "Test Layer 1" || item.title === "Test Layer 2") {
+            // An array of objects defining actions to place in the LayerList.
+            // By making this array two-dimensional, you can separate similar
+            // actions into separate groups with a breaking line.
+
+            item.actionsSections = [
+              [
+                {
+                  title: "Go to full extent",
+                  className: "esri-icon-zoom-out-fixed",
+                  id: "full-extent"
+                },
+                {
+                  title: "Layer information",
+                  className: "esri-icon-description",
+                  id: "information"
+                }
+              ],
+              [
+                {
+                  title: "Increase opacity",
+                  className: "esri-icon-up",
+                  id: "increase-opacity"
+                },
+                {
+                  title: "Decrease opacity",
+                  className: "esri-icon-down",
+                  id: "decrease-opacity"
+                }
+              ]
+            ];
+          }
+        }
         /**
          * Sets the current visualized construction year.
          */
+        
         function setDate(_date) {
           sliderValue.innerHTML = locale.format(_date, {datePattern: "MM/dd/yyyy", selector: "date"});
           var thumb_value = date.difference(dt_start, _date, "day");
