@@ -1,5 +1,15 @@
 <html>
   <head>
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-162446800-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-162446800-1');
+    </script>
+
     <meta charset="utf-8" />
     <meta
       name="viewport"
@@ -28,6 +38,9 @@
         "esri/widgets/Home",
         "esri/widgets/Slider",
         "esri/widgets/Fullscreen",
+        "esri/geometry/SpatialReference",
+        "esri/Basemap",
+        "esri/layers/MapImageLayer",
         "dojo/date",
         "dojo/date/locale",
         "dojox/data/CsvStore",
@@ -41,6 +54,9 @@
         Home,
         Slider,
         Fullscreen,
+         SpatialReference,
+         Basemap,
+         MapImageLayer,
          date,
          locale,
          CsvStore,
@@ -59,9 +75,23 @@
         //--------------------------------------------------------------------------
 
         //var layer = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/states_update/FeatureServer/0", outFields: ["*"]});
-        var layer = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data/FeatureServer/0", outFields: ["*"]});
+        //var layer = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data/FeatureServer/0", outFields: ["*"]});
+        var layer = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data/FeatureServer/0",
+            outFields: ["*"],
+        "title": ""});
+
+        // var basemap = new Basemap({
+        //                           baseLayers: [
+        //                             new MapImageLayer({
+        //                               url: "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer",
+        //                               title: "Basemap"
+        //                             })
+        //                           ],
+        //                           title: "basemap",
+        //                           id: "basemap"
+        //                         });
         var map = new Map({
-          basemap: {
+            basemap: {
             portalItem: {
               id: "4f2e99ba65e34bb8af49733d9778fb8e"
             }
@@ -72,6 +102,7 @@
         var view = new MapView({
           map: map,
           container: "viewDiv",
+            //spatialReference: new SpatialReference(wkid: 3857}),
           center: [-93.967569, 40.727724],
           zoom: 3,
           constraints: {
@@ -97,8 +128,9 @@
         var titleDiv = document.getElementById("titleDiv");
         var animation = null;
 
-        var dt_start = new Date(2020,0,21);
-        var dt_end = new Date(2020,2,28);
+        // Zero-based Month: 0==Jan
+        var dt_start = new Date(2020,0,14);
+        var dt_end = new Date(2020,2,30);
         var days = date.difference(dt_start, dt_end,"day");
         console.log(days);
 
@@ -116,12 +148,12 @@
         //  - stops the animation
         //  - set the visualized year to the slider one.
         function inputHandler(event) {
-          console.log("Drag");
+          //console.log("Drag");
           stopAnimation();
           var thumb_value = Math.floor(event.value);
-          console.log(thumb_value);
-          var dt_thumb = date.add(dt_start, "day", thumb_value)
-          console.log(dt_thumb);
+          //console.log(thumb_value);
+          var dt_thumb = date.add(dt_start, "day", thumb_value);
+          //console.log(dt_thumb);
           setDate(dt_thumb);
         }
         slider.on("thumb-drag", inputHandler);
@@ -163,7 +195,8 @@
 
         // Starts the application by visualizing year 1984
         // 2020/01/26
-        setDate(new Date(2020, 0, 21));
+        setDate(dt_start);
+        //setDate(new Date(2020,0,21));
 
         //--------------------------------------------------------------------------
         //
@@ -178,9 +211,7 @@
           sliderValue.innerHTML = locale.format(_date, {datePattern: "MM/dd/yyyy", selector: "date"});
           var thumb_value = date.difference(dt_start, _date, "day");
           slider.viewModel.setValue(0, thumb_value);
-          layer.renderer = createRenderer2(_date);
-
-          // date.getFullYear(), date.getMonth(),                                               date.getDate()
+          layer.renderer = createRenderer3(_date);
         }
 
         /**
@@ -246,58 +277,114 @@
           };
         }
 
-       // function createArcade(year, month, day)
-         function createArcade(date)
+       // function createArcade2(year, month, day)
+         function createArcade2(_date)
         {
-          //var date_key = locale.format(date, {datePattern: "yyyy-MM-dd", selector: "date"});
-          var obj_test = {a:1, b:{b1:123, b2:"2323"}};
-
           return `
+          // be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
+          var d_thumb = Date(${_date.getFullYear()},${_date.getMonth()},${_date.getDate()});
+          //Console(Text(d_thumb))
+          //Console($feature.dt_start);
+          var fea_dt_start = DefaultValue($feature.dt_start, -1);
+          if (fea_dt_start==-1)
+          {
+          return 0;
+          }
 
-          var d_thumb = Date(${date.getFullYear()},${date.getMonth()},${date.getDate()});
-          Console($feature.dt_start);
           var dt_start_array = Split($feature.dt_start, '-');
           var dt_start = Date(Number(dt_start_array[0]), Number(dt_start_array[1])-1, Number(dt_start_array[2]));
-
+          if (d_thumb < dt_start)
+          {
+          return 0;
+          }
           var days=DateDiff(d_thumb, dt_start, "days");
+
           var cases_ts_str = $feature.cases_ts;
           var ts_array = Split(cases_ts_str, ',');
           var index = Ceil(days);
           var v= ts_array[index];
-          Console("Day No." + index);
-          Console(v);
+          //Console("Day No." + index);
+          //Console(v);
           return IIf(v=="nan", 0, Number(v));
           //return 5000;
 
-          //var dd=${obj_test}.a;
-          //var d = Date(${date.getFullYear()},${date.getMonth()},${date.getDate()});
-          //var d = ${date};
-          //var key=Text(d, "Y-MM-DD")
-          //var data = ${all_data};
-          //var v = data[$feature.NAME][key];
-           //var v = data["Utah"][key];
-          //return v;
-          //return 5000;
 
           // start date; Month 0-based in Arcade Date class
-// var end_dt = Date(${date.getFullYear()},${date.getMonth()},${date.getDate()});
-// //var end_dt = Date(2020,2,26);
-// var start_dt = Date(2020,0,21);
-// var days=DateDiff(end_dt, start_dt, "days");
-// var sum=0;
-// for(var i=0; i<=days; i++) {
-// var d = DateAdd(start_dt, i, "days");
-// var key=Text(d, "FY_MM_DD");
-// // if attribute value is null, use 0
-// var day_value = IIf(IsEmpty($feature[key]), 0, $feature[key]);
-// sum += day_value;
-// }
-// return sum;
+          // be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
+        // var end_dt = Date(${_date.getFullYear()},${_date.getMonth()},${_date.getDate()});
+        // //var end_dt = Date(2020,2,26);
+        // var start_dt = Date(2020,0,21);
+        // var days=DateDiff(end_dt, start_dt, "days");
+        // var sum=0;
+        // for(var i=0; i<=days; i++) {
+        // var d = DateAdd(start_dt, i, "days");
+        // var key=Text(d, "FY_MM_DD");
+        // // if attribute value is null, use 0
+        // var day_value = IIf(IsEmpty($feature[key]), 0, $feature[key]);
+        // sum += day_value;
+        // }
+        // return sum;
 
           `;
         }
 
-        function createRenderer2(date) {
+         function createArcade3(_date)
+        {
+
+            //console.log(_date);
+          return `
+          // be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
+          var dt_thumb = Date(${_date.getFullYear()}, ${_date.getMonth()}, ${_date.getDate()});
+          var dt_first_case = DefaultValue($feature.dt_first_case, '2099-01-01-');
+          var dt_first_case_array = Split(dt_first_case, '-');
+          var dt_first_case = Date(Number(dt_first_case_array[0]), Number(dt_first_case_array[1])-1, Number(dt_first_case_array[2]));
+          var days=DateDiff(dt_thumb, dt_first_case, "days");
+
+          return days;
+
+          // var dt_start_array = Split($feature.dt_start, '-');
+          // var dt_start = Date(Number(dt_start_array[0]), Number(dt_start_array[1])-1, Number(dt_start_array[2]));
+          // // be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
+          // //var dt_start = Date(${dt_start.getFullYear()}, ${dt_start.getMonth()}, ${dt_start.getDate()})
+          //
+          // var dt_first_case_array = Split($feature.dt_first_case, '-');
+          // var dt_first_case = Date(Number(dt_first_case_array[0]), Number(dt_first_case_array[1])-1, Number(dt_first_case_array[2]));
+          //
+          // var days=DateDiff(dt_first_case, dt_start, "days");
+          //
+          // return days;
+
+          `;
+        }
+
+          function createArcade4(_date)
+        {
+
+            //console.log(_date);
+          return `
+          // be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
+          var dt_thumb = Date(${_date.getFullYear()}, ${_date.getMonth()}, ${_date.getDate()});
+          var dt_first_case = DefaultValue($feature.dt_first_case, '2099-01-01-');
+          var dt_first_case_array = Split(dt_first_case, '-');
+          var dt_first_case = Date(Number(dt_first_case_array[0]), Number(dt_first_case_array[1])-1, Number(dt_first_case_array[2]));
+          var days=DateDiff(dt_thumb, dt_first_case, "days");
+
+          //return days;
+          if (days==0)
+          { return 0; }
+          else
+          {
+            if (days>0)
+                {return 1:}
+            else
+                {return -1;}
+          }
+
+
+          `;
+        }
+
+        function createRenderer2(_date) {
           //var opacityStops = [
           //  {
           //    opacity: 1,
@@ -308,15 +395,15 @@
           //    value: year + 1
           //  }
           //];
-          console.log(date);
-          var testObj = {k1:1, k2:{k21:12, k22:5000}};
+          //console.log(_date);
 
           return {
             type: "simple",
             symbol: {
               type: "simple-fill",
               color: "rgb(0, 0, 0)",
-              outline: null
+              outline: {  // autocasts as new SimpleLineSymbol()
+                        color: [128, 128, 128, 0.5],}
             },
             visualVariables: [
               //{
@@ -330,31 +417,181 @@
               {
                 type: "color",
                 //field: 'F'+String(year).padStart(4, '0')+"_"+String(month).padStart(2, '0')+"_"+String(day).padStart(2, '0'),
-                valueExpression: createArcade(date),
+                valueExpression: createArcade2(_date),
                 //valueExpressionTitle: "Voter Turnout",
                 stops: [
                   {
-                    value: 5000,
+                    value: 300,
                     color: "#97262E",
                     label: "5000"
                   },
                   {
-                    value: 1000,
+                    value: 100,
                     color: "#97262E",
                     label: "3000"
                   },
                   {
-                    value: 100,
+                    value: 1,
                     color: "#4E3E41",
                     label: "100"
                   },
                   {
                     value: 0,
-                    color: "#065655",
+                    color: "#000000",
                     label: "0"
                   }
                 ]
               }
+            ]
+          };
+        }
+
+        function createRenderer3(_date) {
+
+            var days2start = date.difference(dt_start, _date, "day");
+          var opacityStops = [
+
+              {
+             opacity: 0.5,
+             value: 3
+           },
+              {
+             opacity: 1,
+             value: 0
+           },
+           {
+             opacity: 0,
+             value:  -1
+           },
+          ];
+          //console.log(_date);
+
+          return {
+            type: "simple",
+            symbol: {
+              type: "simple-fill",
+              color: "rgb(0, 0, 0)",
+              outline: {  // autocasts as new SimpleLineSymbol()
+                        color: [128, 128, 128, 0.5],}
+            },
+            visualVariables: [
+              // {
+              //  type: "opacity",
+              //  //field: date_str,
+              //     valueExpression: createArcade3(_date),
+              //  stops: opacityStops,
+              //  legendOptions: {
+              //    showLegend: false,}
+              // },
+              {
+                type: "color",
+                //field: 'F'+String(year).padStart(4, '0')+"_"+String(month).padStart(2, '0')+"_"+String(day).padStart(2, '0'),
+                  valueExpression: createArcade3(_date),
+                //valueExpressionTitle: "Voter Turnout",
+                stops: [
+                        {
+                    value: 1,
+                    color: "#FF0000",
+                    label: "Cases Reported"
+                  },
+                  {
+                    value: 0,
+                    color: "#0ff",
+                    label: "First Case"
+                  },
+                    {
+                    value: -1,
+                    color: "#000000",
+                    label: "No Case"
+                  },
+                ],
+                  // legendOptions: {
+                  // showLegend: true,
+                  // title: "Legend"}
+              }
+            ]
+          };
+        }
+
+         function createRenderer4(_date) {
+
+
+            var sym1 = {
+              type: "simple-fill",  // autocasts as new SimpleFillSymbol()
+              color: "red",
+              outline: {  // autocasts as new SimpleLineSymbol()
+                color: [128, 128, 128, 0.5],
+                width: "0.5px"
+              }
+            };
+            var sym0 = {
+              type: "simple-fill",  // autocasts as new SimpleFillSymbol()
+              color: "#0ff",
+              outline: {  // autocasts as new SimpleLineSymbol()
+                color: [128, 128, 128, 0.5],
+                width: "0.5px"
+              }
+            };
+            var sym_1 = {
+              type: "simple-fill",  // autocasts as new SimpleFillSymbol()
+              color: "rgb(0, 0, 0)",
+              outline: {  // autocasts as new SimpleLineSymbol()
+                color: [128, 128, 128, 0.5],
+                width: "0.5px"
+              }
+            };
+
+
+          return {
+            type: "unique-value",
+          //     legendOptions: {
+          //   title: "Freeway type"
+          // },
+          //defaultSymbol: otherSym,
+          //defaultLabel: "State Highway",
+              uniqueValueInfos: [
+                        {
+                    value: 1,
+                    symbol: sym1,
+                    label: "Cases Reported"
+                  },
+                  {
+                    value: 0,
+                    symbol: sym0,
+                    label: "First Case"
+                  },
+                    {
+                    value: -1,
+                    symbol: sym_1,
+                    label: "No Case"
+                  },
+                ],
+
+            visualVariables: [
+
+            {
+              type: "color",
+               valueExpression: createArcade4(_date),
+                //valueExpressionTitle: "Voter Turnout",
+                stops: [
+                        {
+                    value: 1,
+                    color: "#A41E02",
+                    label: "Cases Reported"
+                  },
+                  {
+                    value: 0,
+                    color: "#0ff",
+                    label: "First Case"
+                  },
+                    {
+                    value: -1,
+                    color: "#000000",
+                    label: "No Case"
+                  },
+                ]
+            }
+
             ]
           };
         }
@@ -401,10 +638,10 @@
                   var screenPoint = hit.screenPoint;
 
                   highlight = layerview.highlight(graphic);
-                  console.log(graphic);
+                  //console.log(graphic);
                   tooltip.show(
                     screenPoint,
-                    "Built in " + graphic.getAttribute("NAME")
+                     graphic.getAttribute("NAME") + ", " + graphic.getAttribute("state_name"),
                   );
                 } else {
                   tooltip.hide();
@@ -460,7 +697,7 @@
             // Update at 30fps
             setTimeout(function() {
               requestAnimationFrame(frame);
-            }, 1000 / 30);
+            }, 1000 / 10);
           };
 
           frame();
@@ -676,7 +913,7 @@
 
   <div id="applicationDiv">
       <div id="viewDiv">
-        <div id="titleDiv" class="esri-widget">New York Construction</div>
+        <div id="titleDiv" class="esri-widget">WhereCOVID-19 App</div>
       </div>
       <div id="sliderContainer" class="esri-widget">
         <span id="sliderValue"></span>
