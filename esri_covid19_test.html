@@ -32,6 +32,12 @@
         "dojo/date/locale",
         "dojox/data/CsvStore",
         "dojo/request",
+        "esri/layers/GroupLayer",
+        "esri/layers/MapImageLayer",
+        "esri/widgets/LayerList",
+        "esri/widgets/BasemapGallery",
+        "esri/widgets/Expand"
+
       ], function(
         Map,
         FeatureLayer,
@@ -41,10 +47,15 @@
         Home,
         Slider,
         Fullscreen,
-         date,
-         locale,
-         CsvStore,
+        date,
+        locale,
+        CsvStore,
         request,
+        GroupLayer,
+        MapImageLayer,
+        LayerList,
+        BasemapGallery,
+        Expand
       )
       {
         var all_data=null;
@@ -59,14 +70,37 @@
         //--------------------------------------------------------------------------
 
         //var layer = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/states_update/FeatureServer/0", outFields: ["*"]});
-        var layer = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data/FeatureServer/0", outFields: ["*"]});
+        var layer = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data/FeatureServer/0", outFields: ["*"], title: "COVID_19", visible: true});
+
+        var testlayer_1 = new MapImageLayer({
+          url:
+            "http://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer",
+          title: "Test Layer 1",
+          visible: false
+        });
+
+        var testlayer_2 = new MapImageLayer({
+          url:
+            "http://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer",
+          title: "Test Layer 2",
+          visible: false
+        });
+
+        var groupLayer = new GroupLayer({
+          title: "Test Group",
+          visible: true,
+          visibilityMode: "indenpedent",
+          layers: [testlayer_1, testlayer_2, layer]
+        })
+
+        //var layer = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data/FeatureServer/0", outFields: ["*"]});
         var map = new Map({
           basemap: {
             portalItem: {
               id: "4f2e99ba65e34bb8af49733d9778fb8e"
             }
           },
-          layers: [layer]
+          layers: [groupLayer]
         });
 
         var view = new MapView({
@@ -98,7 +132,7 @@
         var animation = null;
 
         var dt_start = new Date(2020,0,21);
-        var dt_end = new Date(2020,2,28);
+        var dt_end = new Date(2020,2,29);
         var days = date.difference(dt_start, dt_end,"day");
         console.log(days);
 
@@ -110,6 +144,14 @@
           step: 1,
           rangeLabelsVisible: true
         });
+
+        var layerlist = new LayerList({
+          view: view,
+        });
+
+        var basemapGallery = new BasemapGallery({
+          view: view,
+        })
 
 
         // When user drags the slider:
@@ -158,6 +200,12 @@
           "top-right"
         );
 
+        view.ui.add(layerlist, "top-right");
+        view.ui.add(new Expand({
+          view:view,
+          content: basemapGallery,
+        }), "top-right");
+
         // When the layerview is available, setup hovering interactivity
         view.whenLayerView(layer).then(setupHoverTooltip);
 
@@ -178,7 +226,7 @@
           sliderValue.innerHTML = locale.format(_date, {datePattern: "MM/dd/yyyy", selector: "date"});
           var thumb_value = date.difference(dt_start, _date, "day");
           slider.viewModel.setValue(0, thumb_value);
-          layer.renderer = createRenderer2(_date);
+          layer.renderer = createRenderer3(_date);
 
           // date.getFullYear(), date.getMonth(),                                               date.getDate()
         }
@@ -246,8 +294,8 @@
           };
         }
 
-       // function createArcade(year, month, day)
-         function createArcade(date)
+       // function createArcade2(year, month, day)
+         function createArcade2(date)
         {
           //var date_key = locale.format(date, {datePattern: "yyyy-MM-dd", selector: "date"});
           var obj_test = {a:1, b:{b1:123, b2:"2323"}};
@@ -297,6 +345,24 @@
           `;
         }
 
+         function createArcade3(_date)
+        {
+
+
+          return `
+
+          var dt_start_array = Split($feature.dt_start, '-');
+          var dt_start = Date(Number(dt_start_array[0]), Number(dt_start_array[1])-1, Number(dt_start_array[2]));
+          var dt_first_case_array = Split($feature.dt_first_case, '-');
+          var dt_first_case = Date(Number(dt_first_case_array[0]), Number(dt_first_case_array[1])-1, Number(dt_first_case_array[2]));
+
+          var days=DateDiff(dt_first_case, dt_start, "days");
+
+          return days;
+
+          `;
+        }
+
         function createRenderer2(date) {
           //var opacityStops = [
           //  {
@@ -330,21 +396,21 @@
               {
                 type: "color",
                 //field: 'F'+String(year).padStart(4, '0')+"_"+String(month).padStart(2, '0')+"_"+String(day).padStart(2, '0'),
-                valueExpression: createArcade(date),
+                valueExpression: createArcade2(date),
                 //valueExpressionTitle: "Voter Turnout",
                 stops: [
                   {
-                    value: 5000,
+                    value: 300,
                     color: "#97262E",
                     label: "5000"
                   },
                   {
-                    value: 1000,
+                    value: 100,
                     color: "#97262E",
                     label: "3000"
                   },
                   {
-                    value: 100,
+                    value: 1,
                     color: "#4E3E41",
                     label: "100"
                   },
@@ -353,6 +419,70 @@
                     color: "#065655",
                     label: "0"
                   }
+                ]
+              }
+            ]
+          };
+        }
+
+        function createRenderer3(_date) {
+
+            var days2start = date.difference(dt_start, _date, "day");
+          var opacityStops = [
+
+              {
+             opacity: 0.5,
+             value: days2start -3
+           },
+              {
+             opacity: 1,
+             value: days2start
+           },
+           {
+             opacity: 0,
+             value:  days2start+1
+           }
+          ];
+          console.log(_date);
+
+          return {
+            type: "simple",
+            symbol: {
+              type: "simple-fill",
+              color: "rgb(0, 0, 0)",
+              outline: null
+            },
+            visualVariables: [
+              {
+               type: "opacity",
+               //field: date_str,
+                  valueExpression: createArcade3(_date),
+               stops: opacityStops,
+               legendOptions: {
+                 showLegend: false
+                }
+              },
+              {
+                type: "color",
+                //field: 'F'+String(year).padStart(4, '0')+"_"+String(month).padStart(2, '0')+"_"+String(day).padStart(2, '0'),
+                  valueExpression: createArcade3(_date),
+                //valueExpressionTitle: "Voter Turnout",
+                stops: [
+                    {
+                    value: days2start,
+                    color: "#0ff",
+                    label: "in " + Math.floor(days2start)
+                  },
+                  {
+                    value: days2start - 1,
+                    color: "#FF0000",
+                    label: "in " + (Math.floor(days2start) - 20)
+                  },
+                  // {
+                  //   value: days2start - 7,
+                  //   color: "#404",
+                  //   label: "before " + (Math.floor(days2start) - 50)
+                  // }
                 ]
               }
             ]
@@ -460,7 +590,7 @@
             // Update at 30fps
             setTimeout(function() {
               requestAnimationFrame(frame);
-            }, 1000 / 30);
+            }, 1000 / 10);
           };
 
           frame();
@@ -676,7 +806,7 @@
 
   <div id="applicationDiv">
       <div id="viewDiv">
-        <div id="titleDiv" class="esri-widget">New York Construction</div>
+        <div id="titleDiv" class="esri-widget">CyberGIS WhereCOVID-10 Dashboard</div>
       </div>
       <div id="sliderContainer" class="esri-widget">
         <span id="sliderValue"></span>
