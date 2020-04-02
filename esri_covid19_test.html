@@ -100,7 +100,7 @@
               id: "4f2e99ba65e34bb8af49733d9778fb8e"
             }
           },
-          layers: [groupLayer]
+          layers: [testlayer_1, testlayer_2, layer]
         });
 
         var view = new MapView({
@@ -147,13 +147,15 @@
 
         var layerlist = new LayerList({
           view: view,
-          listItemCreatedFunction: defineActions
+          listItemCreatedFunction: defineActions,
+          selectionEnabled: true,
         });
 
         layerlist.on("trigger-action", function(event) {
             // The layer visible in the view at the time of the trigger.
             console.log(event);
             let visibleLayer = event.item.layer;
+            
 
             // Capture the action id.
             var id = event.action.id;
@@ -181,11 +183,10 @@
                 visibleLayer.opacity -= 0.25;
               }
             }
+            
           });
+        
 
-          layerlist.on("drag", function(event){
-            //pass
-          })
 
         var basemapGallery = new BasemapGallery({
           view: view,
