@@ -236,7 +236,7 @@
           sliderValue.innerHTML = locale.format(_date, {datePattern: "MM/dd/yyyy", selector: "date"});
           var thumb_value = date.difference(dt_start, _date, "day");
           slider.viewModel.setValue(0, thumb_value);
-          layer.renderer = dailyEventNumberRender(_date, _event_type="Case");
+          layer.renderer = firstEventRender(_date, _event_type="Case");
         }
 
         function getDailyEventNumberArcade(_date, _event_type="Case")
