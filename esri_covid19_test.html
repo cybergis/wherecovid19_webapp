@@ -20,7 +20,7 @@
   For more information about the visualization-vv-color-animate sample, read the original sample description at developers.arcgis.com.
   https://developers.arcgis.com/javascript/latest/sample-code/visualization-vv-color-animate/index.html
   -->
-<title>Animate color visual variable - 4.14</title>
+<title>WhereCOVID-19 App</title>
 
     <link
       rel="stylesheet"
@@ -50,6 +50,7 @@
         "dojo/date/locale",
         "dojox/data/CsvStore",
         "dojo/request",
+              "dojo/DeferredList",
       ], function(
         Map,
         FeatureLayer,
@@ -71,11 +72,14 @@
         locale,
         CsvStore,
         request,
+        DeferredList,
       )
       {
           //global variables contain data
-          var all_data=null;
-          var all_data_str=null;
+          var counties_data=null;
+          var counties_data_str=null;
+          var states_data=null;
+          var states_data_str=null;
 
         // main() is called after external json file is loaded
         function main()
@@ -110,8 +114,7 @@
             var covid19_layer = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data_dev/FeatureServer/0",
                 outFields: ["*"],
             "title": "Pandemic"});
-
-
+            
             var census2000_layer = new MapImageLayer({
           url:
             "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer",
@@ -158,7 +161,7 @@
 
         var layerlist = new LayerList({
           view: view,
-          //listItemCreatedFunction: defineActions,
+          listItemCreatedFunction: defineActions,
           selectionEnabled: true,
         });
 
@@ -242,7 +245,10 @@
               view: view,
             });
 
-         view.ui.add(layerlist, "top-right");
+         view.ui.add(new Expand({
+          view:view,
+          content: layerlist,
+        }), "top-right");
          view.ui.add(new Expand({
           view:view,
           content: basemapGallery,
@@ -262,7 +268,11 @@
 
         // Zero-based Month: 0==Jan
         var dt_start = new Date(2020,0,14);
-        var dt_end = new Date(2020,3,1);
+
+        var dt_str_array = counties_data["metadata"]["dates"];
+        var dr_end_str =  dt_str_array[dt_str_array.length-1];
+        var dt_end=locale.parse(dr_end_str, {datePattern: "yyyy-MM-dd", selector: "date"});
+
         var days = date.difference(dt_start, dt_end,"day");
         console.log(days);
 
@@ -776,19 +786,34 @@
         }
       }
 
+        var counties_request=request("/nyt_counties_data.json" , {handleAs :"json"});
+        var states_request=request("/nyt_states_data.json" , {handleAs :"json"});
 
-        request("/data.json" , {handleAs :"json"}).then(
-         function(result){
-           console.log("OK");
-
-           all_data = result;
-           all_data_str = JSON.stringify(all_data);
+      var dl = new DeferredList([counties_request, states_request]);
+      dl.then(function(res){
+          console.log("OK");
+          counties_data = res[0][1];
+           //counties_data_str = JSON.stringify(counties_data);
+            states_data = res[1][1];
+           //states_data_str = JSON.stringify(states_data);
            main();
-         } ,
-         function(err){console.log(err);});
+
+      },function(err){console.log(err);}
+      ); // dl.then()
+
+      // request("/counties_data.json" , {handleAs :"json"}).then(
+      //    function(result){
+      //      console.log("OK");
+      //
+      //      counties_data = result;
+      //      counties_data_str = JSON.stringify(counties_data);
+      //      main();
+      //    } ,
+      //    function(err){console.log(err);}
+      //    ); // request
+
+
       }
-
-
       );
     </script>
 
