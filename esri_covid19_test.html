@@ -42,6 +42,10 @@
         "esri/Basemap",
         "esri/layers/MapImageLayer",
         "esri/symbols/SimpleFillSymbol",
+        "esri/layers/GroupLayer",
+        "esri/widgets/LayerList",
+        "esri/widgets/BasemapGallery",
+        "esri/widgets/Expand",
         "dojo/date",
         "dojo/date/locale",
         "dojox/data/CsvStore",
@@ -55,13 +59,17 @@
         Home,
         Slider,
         Fullscreen,
-         SpatialReference,
-         Basemap,
-         MapImageLayer,
-         SimpleFillSymbol,
-         date,
-         locale,
-         CsvStore,
+        SpatialReference,
+        Basemap,
+        MapImageLayer,
+        SimpleFillSymbol,
+        GroupLayer,
+        LayerList,
+        BasemapGallery,
+        Expand,
+        date,
+        locale,
+        CsvStore,
         request,
       )
       {
@@ -99,9 +107,17 @@
             // "title": ""});
 
             //nyt counties dev
-            var layer = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data_dev/FeatureServer/0",
+            var covid19_layer = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data_dev/FeatureServer/0",
                 outFields: ["*"],
-            "title": ""});
+            "title": "Pandemic"});
+
+
+            var census2000_layer = new MapImageLayer({
+          url:
+            "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer",
+          title: "Census-2000",
+          visible: false
+        });
 
             //// A non-3857 basemap
             // var basemap = new Basemap({
@@ -120,7 +136,7 @@
               id: "4f2e99ba65e34bb8af49733d9778fb8e"
             }
           },
-          layers: [layer]
+          layers: [census2000_layer, covid19_layer]
         });
 
         var view = new MapView({
@@ -139,6 +155,98 @@
           // of the view's container
           resizeAlign: "top-left"
         });
+
+        var layerlist = new LayerList({
+          view: view,
+          //listItemCreatedFunction: defineActions,
+          selectionEnabled: true,
+        });
+
+        function defineActions(event) {
+          // The event object contains an item property.
+          // is is a ListItem referencing the associated layer
+          // and other properties. You can control the visibility of the
+          // item, its title, and actions using this object.
+
+          var item = event.item;
+
+          if (item.title === "Pandemic" || item.title === "Census-2000") {
+            // An array of objects defining actions to place in the LayerList.
+            // By making this array two-dimensional, you can separate similar
+            // actions into separate groups with a breaking line.
+
+            item.actionsSections = [
+              [
+                {
+                  title: "Go to full extent",
+                  className: "esri-icon-zoom-out-fixed",
+                  id: "full-extent"
+                },
+                {
+                  title: "Layer information",
+                  className: "esri-icon-description",
+                  id: "information"
+                }
+              ],
+              [
+                {
+                  title: "Increase opacity",
+                  className: "esri-icon-up",
+                  id: "increase-opacity"
+                },
+                {
+                  title: "Decrease opacity",
+                  className: "esri-icon-down",
+                  id: "decrease-opacity"
+                }
+              ]
+            ];
+          }
+        }
+
+        layerlist.on("trigger-action", function(event) {
+            // The layer visible in the view at the time of the trigger.
+            console.log(event);
+            let visibleLayer = event.item.layer;
+
+            // Capture the action id.
+            var id = event.action.id;
+
+            if (id === "full-extent") {
+              // if the full-extent action is triggered then navigate
+              // to the full extent of the visible layer
+              view.goTo(visibleLayer.fullExtent);
+            } else if (id === "information") {
+              // if the information action is triggered, then
+              // open the item details page of the service layer
+              window.open(visibleLayer.url);
+            } else if (id === "increase-opacity") {
+              // if the increase-opacity action is triggered, then
+              // increase the opacity of the GroupLayer by 0.25
+
+              if (visibleLayer.opacity < 1) {
+                visibleLayer.opacity += 0.25;
+              }
+            } else if (id === "decrease-opacity") {
+              // if the decrease-opacity action is triggered, then
+              // decrease the opacity of the GroupLayer by 0.25
+
+              if (visibleLayer.opacity > 0) {
+                visibleLayer.opacity -= 0.25;
+              }
+            }
+
+          });
+
+            var basemapGallery = new BasemapGallery({
+              view: view,
+            });
+
+         view.ui.add(layerlist, "top-right");
+         view.ui.add(new Expand({
+          view:view,
+          content: basemapGallery,
+        }), "top-right");
 
         //--------------------------------------------------------------------------
         //
@@ -216,7 +324,7 @@
         );
 
         // When the layerview is available, setup hovering interactivity
-        view.whenLayerView(layer).then(setupHoverTooltip);
+        view.whenLayerView(covid19_layer).then(setupHoverTooltip);
 
         // Starts the application by visualizing year 1984
         // 2020/01/26
@@ -236,7 +344,7 @@
           sliderValue.innerHTML = locale.format(_date, {datePattern: "MM/dd/yyyy", selector: "date"});
           var thumb_value = date.difference(dt_start, _date, "day");
           slider.viewModel.setValue(0, thumb_value);
-          layer.renderer = firstEventRender(_date, _event_type="Case");
+          covid19_layer.renderer = firstEventRender(_date, _event_type="Case");
         }
 
         function getDailyEventNumberArcade(_date, _event_type="Case")
@@ -505,7 +613,7 @@
           var hitTest = promiseUtils.debounce(function(event) {
             return view.hitTest(event).then(function(hit) {
               var results = hit.results.filter(function(result) {
-                return result.graphic.layer === layer;
+                return result.graphic.layer === covid19_layer;
               });
 
               if (!results.length) {
