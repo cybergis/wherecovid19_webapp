@@ -1116,8 +1116,13 @@
 
   <div id="applicationDiv">
       <div id="viewDiv">
-        <div id="titleDiv" class="esri-widget">WhereCOVID-19 App</div>
+        <div id="titleDiv" class="esri-widget" >
+          CyberGIS Center for Advanced Digital and Spatial Studies at University of Illinois at Urbana-Champaign
+          <!--<img src="https://cybergis.illinois.edu/wp-content/themes/cybergis-new/images/uoi.png" width="20" height="30" align="top"/>-->
+          <div id="subTitleDiv" class="esri-widget"> WhereCOVID-19 App </div>
+        </div>
       </div>
+      
       <div id="sliderContainer" class="esri-widget">
         <span id="sliderValue"></span>
         <div id="sliderInnerContainer">
@@ -1143,14 +1148,14 @@
           </div>
         </div>
       </div>
-      <div>
-          <select name="select" id="animation_dropdown" >
-    <option value="case">Cases</option>
-    <option value="death">Deaths</option>
-    <option value="death/case">Deaths/Cases</option>
-    <option value="first_case" selected="selected">First Case Report</option>
-    <option value="first_death">First Death Report</option>
-</select>
+      <div class ="btn btn-clear">
+        <select name="select" id="animation_dropdown" >
+          <option value="case">Cases</option>
+          <option value="death">Deaths</option>
+          <option value="death/case">Deaths/Cases</option>
+          <option value="first_case" selected="selected">First Case Report</option>
+          <option value="first_death">First Death Report</option>
+        </select>
       </div>
 
   </div>
