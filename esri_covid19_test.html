@@ -118,17 +118,35 @@
                 outFields: ["*"],
             "title": "US Counties Data (New York Times)"});
 
-            var census2000_layer = new MapImageLayer({
+            var illinois_counties = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/states_update/FeatureServer/0",
+                outFields: ["*"],
+            "title": "Illinois County"});
+            var illinois_zipcode = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_zipcode/FeatureServer/0",
+                outFields: ["*"],
+            "title": "Illinois Zip Code"});
+
+             var illinoisGroupLayer = new GroupLayer({
+          title: "Illinois Data",
+          visible: true,
+          visibilityMode: "exclusive",
+          layers: [illinois_counties, illinois_zipcode],
+          opacity: 0.75
+        });
+
+
+                var census2000_layer = new MapImageLayer({
               url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer",
               title: "Census-2000",
               visible: false
             });
 
+
+
             // order matters! last layer is at top
             var animation_layers = [covid19_layer_states, covid19_layer_counties];
 
             // order mattes! last layer is at top
-            var other_layers = [census2000_layer];
+            var other_layers = [census2000_layer, illinoisGroupLayer];
             var all_layers = new Array().concat(other_layers, animation_layers);
             var active_animation_layer = all_layers[all_layers.length-1];
 
