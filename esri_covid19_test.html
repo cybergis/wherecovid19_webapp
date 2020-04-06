@@ -107,22 +107,30 @@
             // var covid19_layer = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data/FeatureServer/0",
             // outFields: ["*"], "title": "Pandemic"});
 
-            // //nyt states dev
-            // var covid19_layer = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data_dev/FeatureServer/0",
-            //     outFields: ["*"],
-            // "title": "Pandemic"});
+            //nyt states dev
+            var covid19_layer_states = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data_dev/FeatureServer/0",
+                outFields: ["*"],
+            "title": "Pandemic (States)",
+                visible: false});
 
             //nyt counties dev
-            var covid19_layer = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data_dev/FeatureServer/0",
+            var covid19_layer_counties = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data_dev/FeatureServer/0",
                 outFields: ["*"],
-            "title": "Pandemic"});
-            
+            "title": "Pandemic (Counties)"});
+
             var census2000_layer = new MapImageLayer({
-          url:
-            "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer",
-          title: "Census-2000",
-          visible: false
-        });
+              url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer",
+              title: "Census-2000",
+              visible: false
+            });
+
+            // order matters! last layer is at top
+            var animation_layers = [covid19_layer_states, covid19_layer_counties];
+
+            // order mattes! last layer is at top
+            var other_layers = [census2000_layer];
+            var all_layers = new Array().concat(other_layers, animation_layers);
+            var active_animation_layer = all_layers[all_layers.length-1];
 
             //// A non-3857 basemap
             // var basemap = new Basemap({
@@ -138,10 +146,32 @@
         var map = new Map({
             basemap: {
             portalItem: {
-              id: "4f2e99ba65e34bb8af49733d9778fb8e"
+              id: "4f2e99ba65e34bb8af49733d9778fb8e",
             }
           },
-          layers: [census2000_layer, covid19_layer]
+          layers: all_layers,
+        });
+
+        function setActiveAnimationLayer()
+        {
+            for (let i=map.layers.items.length; i>0; i--)
+            {
+                let item = map.layers.items[i-1];
+                if (item.visible && animation_layers.includes(item))
+                {
+                    active_animation_layer = item;
+                    console.log("active_animation_layer: " + item.title);
+                    break;
+                }
+            }
+        }
+
+        // Listen for layer change: remove, add, reorder
+        //https://developers.arcgis.com/javascript/latest/api-reference/esri-Map.html#layers
+        map.allLayers.on("change", function(event) {
+         //this is the layer on the top
+         //console.log(map.layers.items[map.layers.items.length-1].title);
+         setActiveAnimationLayer();
         });
 
         var view = new MapView({
@@ -165,7 +195,16 @@
           view: view,
           listItemCreatedFunction: defineActions,
           selectionEnabled: true,
+            statusIndicatorsVisible: false,
         });
+
+        //https://developers.arcgis.com/javascript/latest/sample-code/sandbox/index.html?sample=animation-layer-visibility
+        map.allLayers.forEach(function(item) {
+            item.watch("visible", function(visible) {
+              //console.log(item, visible);
+              setActiveAnimationLayer();
+            });
+          });
 
         function defineActions(event) {
           // The event object contains an item property.
@@ -336,22 +375,23 @@
         );
 
         // When the layerview is available, setup hovering interactivity
-        view.whenLayerView(covid19_layer).then(setupHoverTooltip);
+        view.whenLayerView(active_animation_layer).then(setupHoverTooltip);
 
-        // Starts the application by visualizing year 1984
-        // 2020/01/26
-            var animation_type="case";
-        setDate(dt_start, animation_type=animation_type);
+        
+            var animation_dropdown = document.getElementById("animation_dropdown");
+            var animation_type=animation_dropdown.value;
+            setDate(dt_start, animation_type=animation_type);
 
-        var animation_dropdown = document.getElementById("animation_dropdown");
-        animation_dropdown.addEventListener("change", function(evt){
-            console.log(evt);
-            animation_type = evt.target.value;
-            let thumb_value=Math.ceil(slider.values[0]);
+            animation_dropdown.addEventListener("change", function(evt){
+                console.log(evt);
+                animation_type = evt.target.value;
+                let thumb_value=Math.ceil(slider.values[0]);
 
-            let current_date = date.add(dt_start, "day", thumb_value);
-            setDate(current_date, animation_type=animation_type);
-        });
+                let current_date = date.add(dt_start, "day", thumb_value);
+                setDate(current_date, animation_type=animation_type);
+            });
+
+
 
         //--------------------------------------------------------------------------
         //
@@ -369,11 +409,11 @@
 
           if (animation_type=="case")
           {
-              covid19_layer.renderer = dailyEventNumberRender(_date, _event_type="case", _scale="loge");
+              active_animation_layer.renderer = dailyEventNumberRender(_date, _event_type="case", _scale="loge");
           }
           else if (animation_type=="death" || animation_type=="death/case")
           {
-              covid19_layer.renderer = dailyEventNumberRender(_date, _event_type=animation_type, _scale="");
+              active_animation_layer.renderer = dailyEventNumberRender(_date, _event_type=animation_type, _scale="");
           }
           else
           {
@@ -383,7 +423,7 @@
                   event_type="Death"
               }
 
-              covid19_layer.renderer = firstEventRender(_date, _event_type=event_type);
+              active_animation_layer.renderer = firstEventRender(_date, _event_type=event_type);
           }
 
           //covid19_layer.renderer = dailyEventNumberRender(_date, _event_type="death/case", _scale="");
@@ -754,7 +794,7 @@
           var hitTest = promiseUtils.debounce(function(event) {
             return view.hitTest(event).then(function(hit) {
               var results = hit.results.filter(function(result) {
-                return result.graphic.layer === covid19_layer;
+                return result.graphic.layer === active_animation_layer;
               });
 
               if (!results.length) {
@@ -1103,10 +1143,10 @@
       </div>
       <div>
           <select name="select" id="animation_dropdown" >
-    <option value="case" selected="selected">Cases</option>
+    <option value="case">Cases</option>
     <option value="death">Deaths</option>
     <option value="death/case">Deaths/Cases</option>
-    <option value="first_case">First Case Report</option>
+    <option value="first_case" selected="selected">First Case Report</option>
     <option value="first_death">First Death Report</option>
 </select>
       </div>
