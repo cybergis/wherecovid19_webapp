@@ -110,13 +110,13 @@
             //nyt states dev
             var covid19_layer_states = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data_dev/FeatureServer/0",
                 outFields: ["*"],
-            "title": "Pandemic (States)",
+            "title": "US States Data (New York Times)",
                 visible: false});
 
             //nyt counties dev
             var covid19_layer_counties = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data_dev/FeatureServer/0",
                 outFields: ["*"],
-            "title": "Pandemic (Counties)"});
+            "title": "US Counties Data (New York Times)"});
 
             var census2000_layer = new MapImageLayer({
               url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer",
@@ -957,6 +957,8 @@
         }
       }
 
+        // proxy to CORS
+        //var states_request=request("https://cors-anywhere.herokuapp.com/https://raw.githubusercontent.com/zhiyuli/zhiyuli.github.io/master/test.json" , {handleAs :"json"});
         var counties_request=request("/nyt_counties_data.json" , {handleAs :"json"});
         var states_request=request("/nyt_states_data.json" , {handleAs :"json"});
 
