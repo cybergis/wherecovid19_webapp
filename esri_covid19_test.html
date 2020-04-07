@@ -129,11 +129,13 @@
 
             var illinois_counties = new FeatureLayer({url: illinios_county_url,
                 outFields: ["*"],
-                title: "County Level"});
+                title: "County Level",
+                renderer: illinoisZipCodeRender("CountyForecast", 7, 8200),
+            });
             var illinois_zipcode = new FeatureLayer({url: illinios_zipcode_url,
                 outFields: ["*"],
                 title: "Zip Code Level",
-                renderer: illinoisZipCodeRender(),
+                renderer: illinoisZipCodeRender("ZipCodeForecast", 0, 200),
                 }
             );
 
@@ -468,6 +470,42 @@
 
         illinois_zipcode.popupTemplate = ilZipTemplate;	
 
+        var ilCountyTemplate = {
+
+            title: "{NAME}",
+
+            content:[
+            {
+              type: "fields", // FieldsContentElement
+              fieldInfos: [
+
+                {
+                fieldName: "FIPS",
+                visible: true,
+                label: "FIPS"
+                },
+                {
+                fieldName: "County_Population",
+                visible: true,
+                label: "Population"
+                },
+                {
+                fieldName: "CountyForecast",
+                visible: true,
+                label: "Forecast New Cases (week Apr 5-11, 2020)"
+                },
+                  {
+                fieldName: "Number_Booths",
+                visible: true,
+                label: "Booths"
+                }
+
+              ]
+            }
+            ]
+        }
+
+        illinois_counties.popupTemplate = ilCountyTemplate;
 
         //--------------------------------------------------------------------------
         //
@@ -858,7 +896,7 @@
              };
          }
 
-         function illinoisZipCodeRender()
+         function illinoisZipCodeRender(field_name, min, max)
          {
              const defaultSym = {
               type: "simple-fill", // autocasts as new SimpleFillSymbol()
@@ -875,21 +913,21 @@
                       visualVariables: [
                         {
                           type: "color",
-                          field: "ZipCodeForecast",
+                          field: field_name, //"ZipCodeForecast",
                           //normalizationField: "TOTPOP_CY",
                           legendOptions: {
                             title: "1-Week Ahead Forecast"
                           },
                           stops: [
                             {
-                              value: 200,
+                              value: max,
                               color: "#FF0000",
-                              label: "200"
+                              label: max.toString()
                             },
                             {
-                              value: 0,
+                              value: min,
                               color: "#000000",
-                              label: "0"
+                              label: min.toString()
                             }
                           ]
                         }
