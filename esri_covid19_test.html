@@ -20,7 +20,7 @@
   For more information about the visualization-vv-color-animate sample, read the original sample description at developers.arcgis.com.
   https://developers.arcgis.com/javascript/latest/sample-code/visualization-vv-color-animate/index.html
   -->
-<title>Animate color visual variable - 4.14</title>
+<title>WhereCOVID-19 App</title>
 
     <link
       rel="stylesheet"
@@ -41,10 +41,17 @@
         "esri/geometry/SpatialReference",
         "esri/Basemap",
         "esri/layers/MapImageLayer",
+        "esri/symbols/SimpleFillSymbol",
+        "esri/layers/GroupLayer",
+        "esri/widgets/LayerList",
+        "esri/widgets/BasemapGallery",
+        "esri/widgets/Expand",
+        "dojo/dom",
         "dojo/date",
         "dojo/date/locale",
         "dojox/data/CsvStore",
         "dojo/request",
+              "dojo/DeferredList",
       ], function(
         Map,
         FeatureLayer,
@@ -54,19 +61,33 @@
         Home,
         Slider,
         Fullscreen,
-         SpatialReference,
-         Basemap,
-         MapImageLayer,
-         date,
-         locale,
-         CsvStore,
+        SpatialReference,
+        Basemap,
+        MapImageLayer,
+        SimpleFillSymbol,
+        GroupLayer,
+        LayerList,
+        BasemapGallery,
+        Expand,
+        dom,
+        date,
+        locale,
+        CsvStore,
         request,
+        DeferredList,
       )
       {
-        var all_data=null;
+          var production_mode=false; //true or false
+
+          //global variables contain data
+          var counties_data=null;
+          var counties_data_str=null;
+          var states_data=null;
+          var states_data_str=null;
+
+        // main() is called after external json file is loaded
         function main()
         {
-
 
         //--------------------------------------------------------------------------
         //
@@ -74,37 +95,121 @@
         //
         //--------------------------------------------------------------------------
 
-        //var layer = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/states_update/FeatureServer/0", outFields: ["*"]});
-        //var layer = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data/FeatureServer/0", outFields: ["*"]});
-        var layer = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data/FeatureServer/0",
-            outFields: ["*"],
-        "title": ""});
 
-        // var basemap = new Basemap({
-        //                           baseLayers: [
-        //                             new MapImageLayer({
-        //                               url: "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer",
-        //                               title: "Basemap"
-        //                             })
-        //                           ],
-        //                           title: "basemap",
-        //                           id: "basemap"
-        //                         });
+            // //state_updates testing
+            // var covid19_layer = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/states_update/FeatureServer/0",
+            //     outFields: ["*"],
+            // "title": "Pandemic"});
+
+            var covid19_layer_states_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data_dev/FeatureServer/0";
+            var covid19_layer_counties_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data_dev/FeatureServer/0";
+            var illinios_county_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_county_dev/FeatureServer/0";
+            var illinios_zipcode_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_zipcode_dev/FeatureServer/0";
+
+            if(production_mode)
+            {
+                covid19_layer_states_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data/FeatureServer/0";
+                covid19_layer_counties_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data/FeatureServer/0";
+                illinios_county_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_county/FeatureServer/0";
+                illinios_zipcode_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_zipcode/FeatureServer/0";
+            }
+
+
+            //nyt states
+            var covid19_layer_states = new FeatureLayer({url: covid19_layer_states_url,
+                outFields: ["*"],
+                title: "States Data (New York Times)",
+                visible: false});
+
+            //nyt counties
+            var covid19_layer_counties = new FeatureLayer({url: covid19_layer_counties_url,
+                outFields: ["*"],
+                title: "Counties Data (New York Times)",
+                visible: false});
+
+            var illinois_counties = new FeatureLayer({url: illinios_county_url,
+                outFields: ["*"],
+                title: "County Level",
+                renderer: illinoisZipCodeRender("CountyForecast", 7, 8200),
+            });
+            var illinois_zipcode = new FeatureLayer({url: illinios_zipcode_url,
+                outFields: ["*"],
+                title: "Zip Code Level",
+                renderer: illinoisZipCodeRender("ZipCodeForecast", 0, 200),
+                }
+            );
+
+            var illinoisGroupLayer = new GroupLayer({
+                 title: "Illinois Forecast",
+                 visible: true,
+                 visibilityMode: "exclusive",
+                 layers: [illinois_counties, illinois_zipcode],
+                 opacity: 0.75
+            });
+
+
+            //     var census2000_layer = new MapImageLayer({
+            //   url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer",
+            //   title: "Census-2000",
+            //   visible: false
+            // });
+
+            // order matters! last layer is at top
+            var animation_layers = [covid19_layer_states, covid19_layer_counties];
+
+            // order mattes! last layer is at top
+            var other_layers =  [illinoisGroupLayer];
+            var all_layers = new Array().concat(other_layers, animation_layers);
+            var active_animation_layer = all_layers[all_layers.length-1];
+
+            //// A non-3857 basemap
+            // var basemap = new Basemap({
+            //                           baseLayers: [
+            //                             new MapImageLayer({
+            //                               url: "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer",
+            //                               title: "Basemap"
+            //                             })
+            //                           ],
+            //                           title: "basemap",
+            //                           id: "basemap"
+            //                         });
         var map = new Map({
             basemap: {
             portalItem: {
-              id: "4f2e99ba65e34bb8af49733d9778fb8e"
+              id: "4f2e99ba65e34bb8af49733d9778fb8e",
             }
           },
-          layers: [layer]
+          layers: all_layers,
+        });
+
+        function setActiveAnimationLayer()
+        {
+            for (let i=map.layers.items.length; i>0; i--)
+            {
+                let item = map.layers.items[i-1];
+                if (item.visible && animation_layers.includes(item))
+                {
+                    active_animation_layer = item;
+                    console.log("active_animation_layer: " + item.title);
+                    break;
+                }
+            }
+        }
+
+        // Listen for layer change: remove, add, reorder
+        //https://developers.arcgis.com/javascript/latest/api-reference/esri-Map.html#layers
+        map.allLayers.on("change", function(event) {
+         //this is the layer on the top
+         //console.log(map.layers.items[map.layers.items.length-1].title);
+         setActiveAnimationLayer();
         });
 
         var view = new MapView({
           map: map,
           container: "viewDiv",
             //spatialReference: new SpatialReference(wkid: 3857}),
-          center: [-93.967569, 40.727724],
-          zoom: 3,
+            center: [-88.984300, 40.474679],
+          zoom: 6,
           constraints: {
             snapToZoom: false,
             //minScale: 72223.819286
@@ -115,6 +220,110 @@
           // of the view's container
           resizeAlign: "top-left"
         });
+
+        var layerlist = new LayerList({
+          view: view,
+          listItemCreatedFunction: defineActions,
+          selectionEnabled: true,
+            statusIndicatorsVisible: false,
+        });
+
+        //https://developers.arcgis.com/javascript/latest/sample-code/sandbox/index.html?sample=animation-layer-visibility
+        map.allLayers.forEach(function(item) {
+            item.watch("visible", function(visible) {
+              //console.log(item, visible);
+              setActiveAnimationLayer();
+            });
+          });
+
+        function defineActions(event) {
+          // The event object contains an item property.
+          // is is a ListItem referencing the associated layer
+          // and other properties. You can control the visibility of the
+          // item, its title, and actions using this object.
+
+          var item = event.item;
+
+          if (item.title === "Pandemic" || item.title === "Census-2000") {
+            // An array of objects defining actions to place in the LayerList.
+            // By making this array two-dimensional, you can separate similar
+            // actions into separate groups with a breaking line.
+
+            item.actionsSections = [
+              [
+                {
+                  title: "Go to full extent",
+                  className: "esri-icon-zoom-out-fixed",
+                  id: "full-extent"
+                },
+                {
+                  title: "Layer information",
+                  className: "esri-icon-description",
+                  id: "information"
+                }
+              ],
+              [
+                {
+                  title: "Increase opacity",
+                  className: "esri-icon-up",
+                  id: "increase-opacity"
+                },
+                {
+                  title: "Decrease opacity",
+                  className: "esri-icon-down",
+                  id: "decrease-opacity"
+                }
+              ]
+            ];
+          }
+        }
+
+        layerlist.on("trigger-action", function(event) {
+            // The layer visible in the view at the time of the trigger.
+            console.log(event);
+            let visibleLayer = event.item.layer;
+
+            // Capture the action id.
+            var id = event.action.id;
+
+            if (id === "full-extent") {
+              // if the full-extent action is triggered then navigate
+              // to the full extent of the visible layer
+              view.goTo(visibleLayer.fullExtent);
+            } else if (id === "information") {
+              // if the information action is triggered, then
+              // open the item details page of the service layer
+              window.open(visibleLayer.url);
+            } else if (id === "increase-opacity") {
+              // if the increase-opacity action is triggered, then
+              // increase the opacity of the GroupLayer by 0.25
+
+              if (visibleLayer.opacity < 1) {
+                visibleLayer.opacity += 0.25;
+              }
+            } else if (id === "decrease-opacity") {
+              // if the decrease-opacity action is triggered, then
+              // decrease the opacity of the GroupLayer by 0.25
+
+              if (visibleLayer.opacity > 0) {
+                visibleLayer.opacity -= 0.25;
+              }
+            }
+
+          });
+
+            var basemapGallery = new BasemapGallery({
+              view: view,
+            });
+
+         view.ui.add(new Expand({
+          view:view,
+          content: layerlist,
+        }), "top-right");
+         view.ui.add(new Expand({
+          view:view,
+          content: basemapGallery,
+        }), "top-right");
 
         //--------------------------------------------------------------------------
         //
@@ -130,7 +339,11 @@
 
         // Zero-based Month: 0==Jan
         var dt_start = new Date(2020,0,14);
-        var dt_end = new Date(2020,2,31);
+
+        var dt_str_array = counties_data["metadata"]["dates"];
+        var dr_end_str =  dt_str_array[dt_str_array.length-1];
+        var dt_end=locale.parse(dr_end_str, {datePattern: "yyyy-MM-dd", selector: "date"});
+
         var days = date.difference(dt_start, dt_end,"day");
         console.log(days);
 
@@ -140,7 +353,8 @@
           max: days,
           values: [0],
           step: 1,
-          rangeLabelsVisible: true
+          rangeLabelsVisible: true,
+            draggableSegmentsEnabled: false,
         });
 
 
@@ -154,7 +368,7 @@
           //console.log(thumb_value);
           var dt_thumb = date.add(dt_start, "day", thumb_value);
           //console.log(dt_thumb);
-          setDate(dt_thumb);
+          setDate(dt_thumb, animation_type=animation_type);
         }
         slider.on("thumb-drag", inputHandler);
 
@@ -191,12 +405,107 @@
         );
 
         // When the layerview is available, setup hovering interactivity
-        view.whenLayerView(layer).then(setupHoverTooltip);
+        view.whenLayerView(active_animation_layer).then(setupHoverTooltip);
 
-        // Starts the application by visualizing year 1984
-        // 2020/01/26
-        setDate(dt_start);
-        //setDate(new Date(2020,0,21));
+        
+            // var animation_dropdown = document.getElementById("animation_dropdown");
+            // var animation_type=animation_dropdown.value;
+            // setDate(dt_start, animation_type=animation_type);
+            setDate(dt_start, animation_type="first_case");
+
+            // animation_dropdown.addEventListener("change", function(evt){
+            //     console.log(evt);
+            //     animation_type = evt.target.value;
+            //     let thumb_value=Math.ceil(slider.values[0]);
+            //
+            //     let current_date = date.add(dt_start, "day", thumb_value);
+            //     setDate(current_date, animation_type=animation_type);
+            // });
+
+
+        var ilZipTemplate = {
+            expressionInfos: [
+                {
+                  name: "zipcode",
+                  title: "Zip Code",
+                  expression: "Text($feature.ZipCode)"
+                },
+            ],
+            
+            title: "{expression/zipcode}",
+            
+            content:[
+            {
+              type: "fields", // FieldsContentElement
+              fieldInfos: [
+                {
+                fieldName: "ZipCode",
+                visible: true,
+                label: "Zip Code"
+                },
+                {
+                fieldName: "MainCity",
+                visible: true,
+                label: "Main City"
+                },
+                {
+                fieldName: "FIPS",
+                visible: true,
+                label: "FIPS"
+                },
+                {
+                fieldName: "ZipPopulation",
+                visible: true,
+                label: "Population"
+                },
+                {
+                fieldName: "ZipCodeForecast",
+                visible: true,
+                label: "Forecast New Cases (week Apr 5-11, 2020)"
+                }
+              ]
+            }  
+            ]
+        }
+
+        illinois_zipcode.popupTemplate = ilZipTemplate;	
+
+        var ilCountyTemplate = {
+
+            title: "{NAME}",
+
+            content:[
+            {
+              type: "fields", // FieldsContentElement
+              fieldInfos: [
+
+                {
+                fieldName: "FIPS",
+                visible: true,
+                label: "FIPS"
+                },
+                {
+                fieldName: "County_Population",
+                visible: true,
+                label: "Population"
+                },
+                {
+                fieldName: "CountyForecast",
+                visible: true,
+                label: "Forecast New Cases (week Apr 5-11, 2020)"
+                },
+                  {
+                fieldName: "Number_Booths",
+                visible: true,
+                label: "Booths"
+                }
+
+              ]
+            }
+            ]
+        }
+
+        illinois_counties.popupTemplate = ilCountyTemplate;
 
         //--------------------------------------------------------------------------
         //
@@ -207,197 +516,211 @@
         /**
          * Sets the current visualized construction year.
          */
-        function setDate(_date) {
+        function setDate(_date, animation_type="case") {
           sliderValue.innerHTML = locale.format(_date, {datePattern: "MM/dd/yyyy", selector: "date"});
           var thumb_value = date.difference(dt_start, _date, "day");
           slider.viewModel.setValue(0, thumb_value);
-          layer.renderer = createRenderer3(_date);
-        }
 
-        /**
-         * Returns a renderer with a color visual variable driven by the input
-         * year. The selected year will always render buildings built in that year
-         * with a light blue color. Buildings built 20+ years before the indicated
-         * year are visualized with a pink color. Buildings built within that
-         * 20-year time frame are assigned a color interpolated between blue and pink.
-         */
-        function createRenderer(year) {
-          var opacityStops = [
-            {
-              opacity: 1,
-              value: year
-            },
-            {
-              opacity: 0,
-              value: year + 1
-            }
-          ];
-
-          return {
-            type: "simple",
-            symbol: {
-              type: "simple-fill",
-              color: "rgb(0, 0, 0)",
-              outline: null
-            },
-            visualVariables: [
+          if (animation_type=="case")
+          {
+              active_animation_layer.renderer = dailyEventNumberRender(_date, _event_type="case", _scale="loge");
+          }
+          else if (animation_type=="death" || animation_type=="death/case")
+          {
+              active_animation_layer.renderer = dailyEventNumberRender(_date, _event_type=animation_type, _scale="");
+          }
+          else
+          {
+              let event_type="Case";
+              if (animation_type=="first_death")
               {
-                type: "opacity",
-                field: "CNSTRCT_YR",
-                stops: opacityStops,
-                legendOptions: {
-                  showLegend: false
-                }
-              },
-              {
-                type: "color",
-                field: "CNSTRCT_YR",
-                legendOptions: {
-                  title: "Built:"
-                },
-                stops: [
-                  {
-                    value: year,
-                    color: "#0ff",
-                    label: "in " + Math.floor(year)
-                  },
-                  {
-                    value: year - 10,
-                    color: "#f0f",
-                    label: "in " + (Math.floor(year) - 20)
-                  },
-                  {
-                    value: year - 50,
-                    color: "#404",
-                    label: "before " + (Math.floor(year) - 50)
-                  }
-                ]
+                  event_type="Death"
               }
-            ]
-          };
+
+              active_animation_layer.renderer = firstEventRender(_date, _event_type=event_type);
+          }
+
+          //covid19_layer.renderer = dailyEventNumberRender(_date, _event_type="death/case", _scale="");
+          //covid19_layer.renderer = firstEventRender(_date, _event_type="Deaths");
         }
 
-       // function createArcade2(year, month, day)
-         function createArcade2(_date)
-        {
+        function getDailyEventNumberArcade(_date, _event_type="case", _scale="")
+        { // get accumulated Case Number
           return `
           // be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
           var d_thumb = Date(${_date.getFullYear()},${_date.getMonth()},${_date.getDate()});
-          //Console(Text(d_thumb))
-          //Console($feature.dt_start);
           var fea_dt_start = DefaultValue($feature.dt_start, -1);
-          if (fea_dt_start==-1)
+          var event_type = '${_event_type}';
+          event_type = Lower(event_type);
+          var scale = '${_scale}';
+
+          var population = DefaultValue($feature.population, 0);
+
+          var cases_num=0;
+          var deaths_num=0;
+          var final_return_value = 0;
+
+
+           if (fea_dt_start==-1)
           {
-          return 0;
+              cases_num = 0;
+              deaths_num = 0;
           }
-
-          var dt_start_array = Split($feature.dt_start, '-');
-          var dt_start = Date(Number(dt_start_array[0]), Number(dt_start_array[1])-1, Number(dt_start_array[2]));
-          if (d_thumb < dt_start)
-          {
-          return 0;
-          }
-          var days=DateDiff(d_thumb, dt_start, "days");
-
-          var cases_ts_str = $feature.cases_ts;
-          var ts_array = Split(cases_ts_str, ',');
-          var index = Ceil(days);
-          var v= ts_array[index];
-          //Console("Day No." + index);
-          //Console(v);
-          return IIf(v=="nan", 0, Number(v));
-          //return 5000;
-
-
-          // start date; Month 0-based in Arcade Date class
-          // be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
-        // var end_dt = Date(${_date.getFullYear()},${_date.getMonth()},${_date.getDate()});
-        // //var end_dt = Date(2020,2,26);
-        // var start_dt = Date(2020,0,21);
-        // var days=DateDiff(end_dt, start_dt, "days");
-        // var sum=0;
-        // for(var i=0; i<=days; i++) {
-        // var d = DateAdd(start_dt, i, "days");
-        // var key=Text(d, "FY_MM_DD");
-        // // if attribute value is null, use 0
-        // var day_value = IIf(IsEmpty($feature[key]), 0, $feature[key]);
-        // sum += day_value;
-        // }
-        // return sum;
-
-          `;
-        }
-
-         function createArcade3(_date)
-        {
-
-            //console.log(_date);
-          return `
-          // be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
-          var dt_thumb = Date(${_date.getFullYear()}, ${_date.getMonth()}, ${_date.getDate()});
-          var dt_first_case = DefaultValue($feature.dt_first_case, '2099-01-01-');
-          var dt_first_case_array = Split(dt_first_case, '-');
-          var dt_first_case = Date(Number(dt_first_case_array[0]), Number(dt_first_case_array[1])-1, Number(dt_first_case_array[2]));
-          var days=DateDiff(dt_thumb, dt_first_case, "days");
-
-          return days;
-
-          // var dt_start_array = Split($feature.dt_start, '-');
-          // var dt_start = Date(Number(dt_start_array[0]), Number(dt_start_array[1])-1, Number(dt_start_array[2]));
-          // // be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
-          // //var dt_start = Date(${dt_start.getFullYear()}, ${dt_start.getMonth()}, ${dt_start.getDate()})
-          //
-          // var dt_first_case_array = Split($feature.dt_first_case, '-');
-          // var dt_first_case = Date(Number(dt_first_case_array[0]), Number(dt_first_case_array[1])-1, Number(dt_first_case_array[2]));
-          //
-          // var days=DateDiff(dt_first_case, dt_start, "days");
-          //
-          // return days;
-
-          `;
-        }
-
-          function createArcade4(_date)
-        {
-
-            //console.log(_date);
-          return `
-          // be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
-          var dt_thumb = Date(${_date.getFullYear()}, ${_date.getMonth()}, ${_date.getDate()});
-          var dt_first_case = DefaultValue($feature.dt_first_case, '2099-01-01-');
-          var dt_first_case_array = Split(dt_first_case, '-');
-          var dt_first_case = Date(Number(dt_first_case_array[0]), Number(dt_first_case_array[1])-1, Number(dt_first_case_array[2]));
-          var days=DateDiff(dt_thumb, dt_first_case, "days");
-
-          //return days;
-          if (days==0)
-          { return 0; }
           else
           {
-            if (days>0)
-                {return 1:}
-            else
-                {return -1;}
+            var dt_start_array = Split($feature.dt_start, '-');
+            var dt_start = Date(Number(dt_start_array[0]), Number(dt_start_array[1])-1, Number(dt_start_array[2]));
+              if (d_thumb < dt_start)
+              {
+                 cases_num = 0;
+                 deaths_num = 0;
+              }
+              else
+              {
+                  var cases_ts_array = Dictionary($feature["cases_ts"]).values;
+                  var deaths_ts_array = Dictionary($feature["deaths_ts"]).values;
+                  var days=DateDiff(d_thumb, dt_start, "days");
+                  var index = Ceil(days);
+
+                  cases_num = cases_ts_array[index];
+                  deaths_num = deaths_ts_array[index];
+
+              } //if (d_thumb < dt_start)
+          } //if (fea_dt_start==-1)
+
+          if (event_type=="case")
+          {
+             final_return_value = cases_num;
+          }
+          else if (event_type=="death")
+          {
+             final_return_value = deaths_num;
+          }
+          else if (event_type=="death/case")
+          {
+             if (cases_num>0)
+             {
+                final_return_value = deaths_num/cases_num;
+             }
+             else
+             {
+                final_return_value=0;
+             }
+          }
+          else if(event_type=="case/population")
+          {
+             if (population >0 )
+             {
+             final_return_value = cases_num/population;
+             }
+             else
+             {
+             final_return_value=0;
+             }
+          }
+          else if(event_type=="death/population")
+          {
+             if(population >0 )
+             {
+             final_return_value = deaths_num/population;
+             }
+             else
+             {
+             final_return_value=0;
+             }
+          }
+          else
+          {
+             final_return_value = 0;
           }
 
+          // scaling
+          if (scale=="loge")
+            {
+            final_return_value = Log(final_return_value+1);
+            }
+
+            //Console(final_return_value);
+            return final_return_value;
 
           `;
         }
 
-        function createRenderer2(_date) {
-          //var opacityStops = [
-          //  {
-          //    opacity: 1,
-          //    value: year
-          //  },
-          //  {
-          //    opacity: 0,
-          //    value: year + 1
-          //  }
-          //];
-          //console.log(_date);
+        // Deprecated
+        function getDailyEventNumberArcade2(_date)
+        {
+            // get accumulated Case Number if daily increase is stored
+            return `
+        // start date; Month 0-based in Arcade Date class
+        // be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
+        var end_dt = Date(${_date.getFullYear()},${_date.getMonth()},${_date.getDate()});
+        //var end_dt = Date(2020,2,26);
+        var start_dt = Date(2020,0,21);
+        var days=DateDiff(end_dt, start_dt, "days");
+        var sum=0;
+        for(var i=0; i<=days; i++) {
+        var d = DateAdd(start_dt, i, "days");
+        var key=Text(d, "FY_MM_DD");
+        // if attribute value is null, use 0
+        var day_value = IIf(IsEmpty($feature[key]), 0, $feature[key]);
+        sum += day_value;
+        }
+        return sum;
 
-          return {
+            `;
+        }
+
+        function dailyEventNumberRender(_date, _event_type="case", _scale="") {
+
+            const colors = [ "#000000", "#fef0d9", "#fdcc8a", "#fc8d59", "#e34a33", "#b30000" ];
+            let stops = [0, 0.01, 0.05, 0.10, 0.15, 0.2];
+            let labels = ["0", "1%", "5%", "10%", "15%", "20%"];
+
+
+            let event_type = _event_type.toLowerCase();
+
+            if (event_type=="case")
+            {
+                let case_max = Math.max.apply(Math, counties_data.metadata.cases);
+
+                let interval=Math.ceil(case_max/20);
+                stops = [0, 1, interval, 2*interval, 3*interval, case_max];
+                labels = stops.map(x => x.toString());
+                stops = [0, 1, interval, 2*interval, 3*interval, case_max];
+                stops = stops.map(x => Math.log(x));
+
+            }
+            else if (event_type=="death")
+            {
+                let death_max = Math.max.apply(Math, counties_data.metadata.deaths);
+
+                let interval=Math.ceil(death_max/10);
+                stops = [0, 1, interval, 2*interval, 3*interval, death_max];
+                labels = stops.map(x => x.toString());
+
+            }
+            else if(event_type=="death/case")
+            {
+                stops = [0, 0.01, 0.05, 0.10, 0.15, 0.2];
+                labels = ["0", "1%", "5%", "10%", "15%", "20%"];
+            }
+            else if(event_type=="case/population")
+            {
+                counties_data.metadata.cases
+
+            }
+
+            let stops_array = [];
+            for (let i=0; i<colors.length; i++)
+            {
+                let stop_item = {value: stops[i],
+                    color: colors[i],
+                    label: labels[i].toString()};
+                stops_array.push(stop_item);
+            }
+
+
+            return {
             type: "simple",
             symbol: {
               type: "simple-fill",
@@ -406,65 +729,19 @@
                         color: [128, 128, 128, 0.5],}
             },
             visualVariables: [
-              //{
-               // type: "opacity",
-               // field: date_str,
-               // stops: opacityStops,
-               // legendOptions: {
-               //   showLegend: false
-                //}
-              //},
               {
                 type: "color",
-                //field: 'F'+String(year).padStart(4, '0')+"_"+String(month).padStart(2, '0')+"_"+String(day).padStart(2, '0'),
-                valueExpression: createArcade2(_date),
-                //valueExpressionTitle: "Voter Turnout",
-                stops: [
-                  {
-                    value: 300,
-                    color: "#97262E",
-                    label: "5000"
-                  },
-                  {
-                    value: 100,
-                    color: "#97262E",
-                    label: "3000"
-                  },
-                  {
-                    value: 1,
-                    color: "#4E3E41",
-                    label: "100"
-                  },
-                  {
-                    value: 0,
-                    color: "#000000",
-                    label: "0"
-                  }
-                ]
+                //field: 'F'+String(_date.getFullYear()).padStart(4, '0')+"_"+String(_date.getMonth()+1).padStart(2, '0')+"_"+String(_date.getDate()).padStart(2, '0'),
+                valueExpression: getDailyEventNumberArcade(_date, _event_type=_event_type, _scale=_scale),
+                //normalizationField: "population",
+                  valueExpressionTitle: _event_type,
+                stops: stops_array.reverse(),
               }
             ]
           };
         }
 
-        function createRenderer3(_date) {
-
-            var days2start = date.difference(dt_start, _date, "day");
-          var opacityStops = [
-
-              {
-             opacity: 0.5,
-             value: 3
-           },
-              {
-             opacity: 1,
-             value: 0
-           },
-           {
-             opacity: 0,
-             value:  -1
-           },
-          ];
-          //console.log(_date);
+        function firstEventRender(_date, _event_type="Case") {
 
           return {
             type: "simple",
@@ -475,126 +752,190 @@
                         color: [128, 128, 128, 0.5],}
             },
             visualVariables: [
-              // {
-              //  type: "opacity",
-              //  //field: date_str,
-              //     valueExpression: createArcade3(_date),
-              //  stops: opacityStops,
-              //  legendOptions: {
-              //    showLegend: false,}
-              // },
               {
                 type: "color",
-                //field: 'F'+String(year).padStart(4, '0')+"_"+String(month).padStart(2, '0')+"_"+String(day).padStart(2, '0'),
-                  valueExpression: createArcade3(_date),
+                  valueExpression: firstEventArcade(_date, _event_type=_event_type),
                 //valueExpressionTitle: "Voter Turnout",
                 stops: [
                         {
                     value: 1,
                     color: "#FF0000",
-                    label: "Cases Reported"
+                    label: _event_type + "(s) Reported"
                   },
                   {
                     value: 0,
                     color: "#0ff",
-                    label: "First Case"
+                    label: "First " + _event_type
                   },
                     {
                     value: -1,
                     color: "#000000",
-                    label: "No Case"
+                    label: "No " + _event_type
                   },
                 ],
-                  // legendOptions: {
-                  // showLegend: true,
-                  // title: "Legend"}
               }
             ]
           };
         }
 
-         function createRenderer4(_date) {
+        function firstEventArcade(_date, _event_type="Case")
+        {
+            // Drew: return must be followed by the open ` on the same line, and a semi-colon ";" is required after the close `!!!
+            return `
+          //be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
+          var dt_thumb = Date(${_date.getFullYear()}, ${_date.getMonth()}, ${_date.getDate()});
+          var event_type = Lower('${_event_type}');
+          var dt_first_event = null;
+          var dt_null_string = '2099-01-01-';
 
 
-            var sym1 = {
-              type: "simple-fill",  // autocasts as new SimpleFillSymbol()
-              color: "red",
-              outline: {  // autocasts as new SimpleLineSymbol()
-                color: [128, 128, 128, 0.5],
-                width: "0.5px"
-              }
-            };
-            var sym0 = {
-              type: "simple-fill",  // autocasts as new SimpleFillSymbol()
-              color: "#0ff",
-              outline: {  // autocasts as new SimpleLineSymbol()
-                color: [128, 128, 128, 0.5],
-                width: "0.5px"
-              }
-            };
-            var sym_1 = {
-              type: "simple-fill",  // autocasts as new SimpleFillSymbol()
-              color: "rgb(0, 0, 0)",
-              outline: {  // autocasts as new SimpleLineSymbol()
-                color: [128, 128, 128, 0.5],
-                width: "0.5px"
-              }
-            };
+           var field_name = "";
+           if (event_type=="case")
+           {field_name="dt_first_case";}
+           else
+           {field_name="dt_first_death";}
+          var dt_first_event = DefaultValue($feature[field_name], dt_null_string);
+          var dt_first_event_array = Split(dt_first_event, '-');
+          var dt_first_event = Date(Number(dt_first_event_array[0]),
+                                  Number(dt_first_event_array[1])-1,
+                                  Number(dt_first_event_array[2]));
 
+          var days=DateDiff(dt_thumb, dt_first_event, "days");
+          return days;
 
-          return {
-            type: "unique-value",
-          //     legendOptions: {
-          //   title: "Freeway type"
-          // },
-          //defaultSymbol: otherSym,
-          //defaultLabel: "State Highway",
-              uniqueValueInfos: [
-                        {
-                    value: 1,
-                    symbol: sym1,
-                    label: "Cases Reported"
-                  },
-                  {
-                    value: 0,
-                    symbol: sym0,
-                    label: "First Case"
-                  },
-                    {
-                    value: -1,
-                    symbol: sym_1,
-                    label: "No Case"
-                  },
-                ],
+          // // For UniqueValueRender or ClassBreakRender
+          // if (days==0)
+          // { return 0; }
+          // else
+          // {
+          //   if (days>0)
+          //       {return 1; }
+          //   else
+          //       {return -1;}
+          // }
 
-            visualVariables: [
-
-            {
-              type: "color",
-               valueExpression: createArcade4(_date),
-                //valueExpressionTitle: "Voter Turnout",
-                stops: [
-                        {
-                    value: 1,
-                    color: "#A41E02",
-                    label: "Cases Reported"
-                  },
-                  {
-                    value: 0,
-                    color: "#0ff",
-                    label: "First Case"
-                  },
-                    {
-                    value: -1,
-                    color: "#000000",
-                    label: "No Case"
-                  },
-                ]
-            }
-
-            ]
-          };
+          `;
         }
+
+        function firstEventRender2(_date, _event_type="Case") {
+             var sym1 = {
+                 type: "simple-fill",  // autocasts as new SimpleFillSymbol()
+                 color: "red",
+                 outline: {  // autocasts as new SimpleLineSymbol()
+                     color: [128, 128, 128, 0.5],
+                     width: "0.5px"
+                 }
+             };
+             var sym0 = {
+                 type: "simple-fill",  // autocasts as new SimpleFillSymbol()
+                 color: "#0ff",
+                 outline: {  // autocasts as new SimpleLineSymbol()
+                     color: [128, 128, 128, 0.5],
+                     width: "0.5px"
+                 }
+             };
+             var sym_1 = {
+                 type: "simple-fill",  // autocasts as new SimpleFillSymbol()
+                 color: "rgb(0, 0, 0)",
+                 outline: {  // autocasts as new SimpleLineSymbol()
+                     color: [128, 128, 128, 0.5],
+                     width: "0.5px"
+                 }
+             };
+
+
+             // return {
+             //   type: "unique-value",
+             //     //defaultSymbol: { type: "simple-fill",color: "yellow" },
+             //     valueExpression: firstEventArcade(_date, _event_type=_event_type),
+             //       //valueExpression: "return 0",
+             // valueExpressionTitle:
+             //   "First Event: " + _event_type,
+             //     uniqueValueInfos: [
+             //               {
+             //           value: 1,
+             //           symbol: sym1,
+             //           label: _event_type+"(s) Reported",
+             //         },
+             //         {
+             //           value: 0,
+             //           symbol: sym0,
+             //           label: "First " + _event_type,
+             //         },
+             //           {
+             //           value: -1,
+             //           symbol: sym_1,
+             //           label: "No " + _event_type,
+             //         },
+             //       ],
+             // };
+             return {
+                 type: "class-breaks", // autocasts as new ClassBreaksRenderer()
+
+                 valueExpression: firstEventArcade(_date, _event_type = _event_type),
+                 classBreakInfos: [
+                     {
+                         minValue: 0,
+                         maxValue: 0,
+                         symbol: sym0,
+                         label: "First Case" // label for symbol in legend
+                     },
+                     {
+                         minValue: 1,
+                         maxValue: 1,
+                         symbol: sym1,
+                         label: "Case(s) Reported" // label for symbol in legend
+                     },
+                     {
+                         minValue: -1,
+                         maxValue: -1,
+                         symbol: sym_1,
+                         label: "No Case" // label for symbol in legend
+                     },
+                 ]
+             };
+         }
+
+         function illinoisZipCodeRender(field_name, min, max)
+         {
+             const defaultSym = {
+              type: "simple-fill", // autocasts as new SimpleFillSymbol()
+              outline: {
+                // autocasts as new SimpleLineSymbol()
+                color: [128, 128, 128, 0.8],
+                width: "0.5px"
+              }
+            };
+            const renderer = {
+                      type: "simple", // autocasts as new SimpleRenderer()
+                      symbol: defaultSym,
+                      //label: "1-Week Ahead Forecast",
+                      visualVariables: [
+                        {
+                          type: "color",
+                          field: field_name, //"ZipCodeForecast",
+                          //normalizationField: "TOTPOP_CY",
+                          legendOptions: {
+                            title: "1-Week Ahead Forecast"
+                          },
+                          stops: [
+                            {
+                              value: max,
+                              color: "#FF0000",
+                              label: max.toString()
+                            },
+                            {
+                              value: min,
+                              color: "#000000",
+                              label: min.toString()
+                            }
+                          ]
+                        }
+                      ]
+                    };
+            return renderer;
+
+         }
 
         /**
          * Sets up a moving tooltip that displays
@@ -608,7 +949,8 @@
           var hitTest = promiseUtils.debounce(function(event) {
             return view.hitTest(event).then(function(hit) {
               var results = hit.results.filter(function(result) {
-                return result.graphic.layer === layer;
+                return result.graphic.layer === active_animation_layer;
+                //return result.graphic.layer === illinois_zipcode;
               });
 
               if (!results.length) {
@@ -638,7 +980,7 @@
                   var screenPoint = hit.screenPoint;
 
                   highlight = layerview.highlight(graphic);
-                  //console.log(graphic);
+                  console.log(graphic);
                   tooltip.show(
                     screenPoint,
                      graphic.getAttribute("NAME") + ", " + graphic.getAttribute("state_name"),
@@ -692,7 +1034,7 @@
               value = days;
             }
           var dt_thumb = date.add(dt_start, "day", Math.floor(value));
-          setDate(dt_thumb);
+          setDate(dt_thumb, animation_type=animation_type);
 
             // Update at 30fps
             setTimeout(function() {
@@ -770,25 +1112,50 @@
           };
         }
       }
+          
+        var counties_data_json_url="/nyt_counties_data.json";
+        var states_data_json_url="/nyt_states_data.json";
+
+        if(production_mode)
+        {
+            // proxy to CORS
+            let proxy_url = "https://cors-anywhere.herokuapp.com/";
+            counties_data_json_url=proxy_url+"https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/nyt_counties_data.json";
+            states_data_json_url=proxy_url+"https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/nyt_states_data.json";
+        }
+          var counties_request=request(counties_data_json_url, {handleAs :"json"});
+          var states_request=request(states_data_json_url, {handleAs :"json"});
+
+      var dl = new DeferredList([counties_request, states_request]);
+      dl.then(function(res){
+          console.log("OK");
+          counties_data = res[0][1];
+           //counties_data_str = JSON.stringify(counties_data);
+            states_data = res[1][1];
+           //states_data_str = JSON.stringify(states_data);
+              main();
+
+      },function(err){console.log(err);}
+      ); // dl.then()
+
+      // request("/counties_data.json" , {handleAs :"json"}).then(
+      //    function(result){
+      //      console.log("OK");
+      //
+      //      counties_data = result;
+      //      counties_data_str = JSON.stringify(counties_data);
+      //      main();
+      //    } ,
+      //    function(err){console.log(err);}
+      //    ); // request
 
 
-        // request("/states_update_0_0.json" , {handleAs :"json"}).then(
-        //  function(result){
-        //    console.log("OK");
-        //
-        //    all_data = result;
-        //    console.log(all_data);
-        //    main();
-        //  } ,
-        //  function(err){console.log(err);});
-          main();
       }
-
-
       );
     </script>
 
     <style>
+
       html,
       body {
         width: 100%;
@@ -913,8 +1280,13 @@
 
   <div id="applicationDiv">
       <div id="viewDiv">
-        <div id="titleDiv" class="esri-widget">WhereCOVID-19 App</div>
+        <div id="titleDiv" class="esri-widget" >
+          CyberGIS Center for Advanced Digital and Spatial Studies at University of Illinois at Urbana-Champaign
+          <!--<img src="https://cybergis.illinois.edu/wp-content/themes/cybergis-new/images/uoi.png" width="20" height="30" align="top"/>-->
+          <div id="subTitleDiv" class="esri-widget"> WhereCOVID-19 App </div>
+        </div>
       </div>
+      
       <div id="sliderContainer" class="esri-widget">
         <span id="sliderValue"></span>
         <div id="sliderInnerContainer">
@@ -940,6 +1312,15 @@
           </div>
         </div>
       </div>
+<!--      <div>-->
+<!--        <select name="select" id="animation_dropdown" >-->
+<!--          <option value="case">Cases</option>-->
+<!--          <option value="death">Deaths</option>-->
+<!--          <option value="death/case">Deaths/Cases</option>-->
+<!--          <option value="first_case" selected="selected">First Case Report</option>-->
+<!--          <option value="first_death">First Death Report</option>-->
+<!--        </select>-->
+<!--      </div>-->
 
   </div>
 
