@@ -77,6 +77,8 @@
         DeferredList,
       )
       {
+          var production_mode=false; //true or false
+
           //global variables contain data
           var counties_data=null;
           var counties_data_str=null;
@@ -99,30 +101,36 @@
             //     outFields: ["*"],
             // "title": "Pandemic"});
 
-            ////nyt states production
-            // var covid19_layer = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data/FeatureServer/0",
-            // outFields: ["*"], "title": "Pandemic"});
+            var covid19_layer_states_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data_dev/FeatureServer/0";
+            var covid19_layer_counties_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data_dev/FeatureServer/0";
+            var illinios_county_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_county_dev/FeatureServer/0";
+            var illinios_zipcode_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_zipcode_dev/FeatureServer/0";
 
-            ////nyt counties production
-            // var covid19_layer = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data/FeatureServer/0",
-            // outFields: ["*"], "title": "Pandemic"});
+            if(production_mode)
+            {
+                covid19_layer_states_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data/FeatureServer/0";
+                covid19_layer_counties_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data/FeatureServer/0";
+                illinios_county_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_county/FeatureServer/0";
+                illinios_zipcode_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_zipcode/FeatureServer/0";
+            }
 
-            //nyt states dev
-            var covid19_layer_states = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data_dev/FeatureServer/0",
+
+            //nyt states
+            var covid19_layer_states = new FeatureLayer({url: covid19_layer_states_url,
                 outFields: ["*"],
                 title: "States Data (New York Times)",
                 visible: false});
 
-            //nyt counties dev
-            var covid19_layer_counties = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data_dev/FeatureServer/0",
+            //nyt counties
+            var covid19_layer_counties = new FeatureLayer({url: covid19_layer_counties_url,
                 outFields: ["*"],
                 title: "Counties Data (New York Times)",
                 visible: false});
 
-            var illinois_counties = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/states_update/FeatureServer/0",
+            var illinois_counties = new FeatureLayer({url: illinios_county_url,
                 outFields: ["*"],
                 title: "County Level"});
-            var illinois_zipcode = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_zipcode/FeatureServer/0",
+            var illinois_zipcode = new FeatureLayer({url: illinios_zipcode_url,
                 outFields: ["*"],
                 title: "Zip Code Level",
                 renderer: illinoisZipCodeRender(),
@@ -1066,11 +1074,19 @@
           };
         }
       }
+          
+        var counties_data_json_url="/nyt_counties_data.json";
+        var states_data_json_url="/nyt_states_data.json";
 
-        // proxy to CORS
-        //var states_request=request("https://cors-anywhere.herokuapp.com/https://raw.githubusercontent.com/zhiyuli/zhiyuli.github.io/master/test.json" , {handleAs :"json"});
-        var counties_request=request("/nyt_counties_data.json" , {handleAs :"json"});
-        var states_request=request("/nyt_states_data.json" , {handleAs :"json"});
+        if(production_mode)
+        {
+            // proxy to CORS
+            let proxy_url = "https://cors-anywhere.herokuapp.com/";
+            counties_data_json_url=proxy_url+"https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/nyt_counties_data.json";
+            states_data_json_url=proxy_url+"https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/nyt_states_data.json";
+        }
+          var counties_request=request(counties_data_json_url, {handleAs :"json"});
+          var states_request=request(states_data_json_url, {handleAs :"json"});
 
       var dl = new DeferredList([counties_request, states_request]);
       dl.then(function(res){
