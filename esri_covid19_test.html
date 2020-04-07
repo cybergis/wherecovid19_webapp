@@ -410,6 +410,53 @@
             });
 
 
+        var ilZipTemplate = {
+            expressionInfos: [
+                {
+                  name: "zipcode",
+                  title: "Zip Code",
+                  expression: "Text($feature.ZCTA5CE10)"
+                },
+            ],
+            
+            title: "{expression/zipcode}",
+            
+            content:[
+            {
+              type: "fields", // FieldsContentElement
+              fieldInfos: [
+                {
+                fieldName: "ZCTA5CE10",
+                visible: true,
+                label: "Zip Code"
+                },
+                {
+                fieldName: "Main_City",
+                visible: true,
+                label: "Main City"
+                },
+                {
+                fieldName: "FIPS",
+                visible: true,
+                label: "FIPS"
+                },
+                {
+                fieldName: "ZipPopulation",
+                visible: true,
+                label: "Population"
+                },
+                {
+                fieldName: "ZipCode_Forecast_Week_Ahead_Tot",
+                visible: true,
+                label: "Case Forecast by the end of this week"
+                }
+              ]
+            }  
+            ]
+        }
+
+        illinois_zipcode.popupTemplate = ilZipTemplate;	
+
 
         //--------------------------------------------------------------------------
         //
