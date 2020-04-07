@@ -110,43 +110,45 @@
             //nyt states dev
             var covid19_layer_states = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data_dev/FeatureServer/0",
                 outFields: ["*"],
-            "title": "US States Data (New York Times)",
+                title: "States Data (New York Times)",
                 visible: false});
 
             //nyt counties dev
             var covid19_layer_counties = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data_dev/FeatureServer/0",
                 outFields: ["*"],
-            "title": "US Counties Data (New York Times)"});
+                title: "Counties Data (New York Times)",
+                visible: false});
 
             var illinois_counties = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/states_update/FeatureServer/0",
                 outFields: ["*"],
-            "title": "Illinois County"});
+                title: "County Level"});
             var illinois_zipcode = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_zipcode/FeatureServer/0",
                 outFields: ["*"],
-            "title": "Illinois Zip Code"});
+                title: "Zip Code Level",
+                renderer: illinoisZipCodeRender(),
+                }
+            );
 
-             var illinoisGroupLayer = new GroupLayer({
-          title: "Illinois Data",
-          visible: true,
-          visibilityMode: "exclusive",
-          layers: [illinois_counties, illinois_zipcode],
-          opacity: 0.75
-        });
-
-
-                var census2000_layer = new MapImageLayer({
-              url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer",
-              title: "Census-2000",
-              visible: false
+            var illinoisGroupLayer = new GroupLayer({
+                 title: "Illinois Forecast",
+                 visible: true,
+                 visibilityMode: "exclusive",
+                 layers: [illinois_counties, illinois_zipcode],
+                 opacity: 0.75
             });
 
 
+            //     var census2000_layer = new MapImageLayer({
+            //   url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer",
+            //   title: "Census-2000",
+            //   visible: false
+            // });
 
             // order matters! last layer is at top
             var animation_layers = [covid19_layer_states, covid19_layer_counties];
 
             // order mattes! last layer is at top
-            var other_layers = [census2000_layer, illinoisGroupLayer];
+            var other_layers =  [illinoisGroupLayer];
             var all_layers = new Array().concat(other_layers, animation_layers);
             var active_animation_layer = all_layers[all_layers.length-1];
 
@@ -196,8 +198,8 @@
           map: map,
           container: "viewDiv",
             //spatialReference: new SpatialReference(wkid: 3857}),
-          center: [-93.967569, 40.727724],
-          zoom: 3,
+            center: [-88.984300, 40.474679],
+          zoom: 6,
           constraints: {
             snapToZoom: false,
             //minScale: 72223.819286
@@ -396,18 +398,19 @@
         view.whenLayerView(active_animation_layer).then(setupHoverTooltip);
 
         
-            var animation_dropdown = document.getElementById("animation_dropdown");
-            var animation_type=animation_dropdown.value;
-            setDate(dt_start, animation_type=animation_type);
+            // var animation_dropdown = document.getElementById("animation_dropdown");
+            // var animation_type=animation_dropdown.value;
+            // setDate(dt_start, animation_type=animation_type);
+            setDate(dt_start, animation_type="first_case");
 
-            animation_dropdown.addEventListener("change", function(evt){
-                console.log(evt);
-                animation_type = evt.target.value;
-                let thumb_value=Math.ceil(slider.values[0]);
-
-                let current_date = date.add(dt_start, "day", thumb_value);
-                setDate(current_date, animation_type=animation_type);
-            });
+            // animation_dropdown.addEventListener("change", function(evt){
+            //     console.log(evt);
+            //     animation_type = evt.target.value;
+            //     let thumb_value=Math.ceil(slider.values[0]);
+            //
+            //     let current_date = date.add(dt_start, "day", thumb_value);
+            //     setDate(current_date, animation_type=animation_type);
+            // });
 
 
         var ilZipTemplate = {
@@ -415,7 +418,7 @@
                 {
                   name: "zipcode",
                   title: "Zip Code",
-                  expression: "Text($feature.ZCTA5CE10)"
+                  expression: "Text($feature.ZipCode)"
                 },
             ],
             
@@ -426,12 +429,12 @@
               type: "fields", // FieldsContentElement
               fieldInfos: [
                 {
-                fieldName: "ZCTA5CE10",
+                fieldName: "ZipCode",
                 visible: true,
                 label: "Zip Code"
                 },
                 {
-                fieldName: "Main_City",
+                fieldName: "MainCity",
                 visible: true,
                 label: "Main City"
                 },
@@ -446,9 +449,9 @@
                 label: "Population"
                 },
                 {
-                fieldName: "ZipCode_Forecast_Week_Ahead_Tot",
+                fieldName: "ZipCodeForecast",
                 visible: true,
-                label: "Case Forecast by the end of this week"
+                label: "Forecast New Cases (week Apr 5-11, 2020)"
                 }
               ]
             }  
@@ -847,6 +850,47 @@
              };
          }
 
+         function illinoisZipCodeRender()
+         {
+             const defaultSym = {
+              type: "simple-fill", // autocasts as new SimpleFillSymbol()
+              outline: {
+                // autocasts as new SimpleLineSymbol()
+                color: [128, 128, 128, 0.8],
+                width: "0.5px"
+              }
+            };
+            const renderer = {
+                      type: "simple", // autocasts as new SimpleRenderer()
+                      symbol: defaultSym,
+                      //label: "1-Week Ahead Forecast",
+                      visualVariables: [
+                        {
+                          type: "color",
+                          field: "ZipCodeForecast",
+                          //normalizationField: "TOTPOP_CY",
+                          legendOptions: {
+                            title: "1-Week Ahead Forecast"
+                          },
+                          stops: [
+                            {
+                              value: 200,
+                              color: "#FF0000",
+                              label: "200"
+                            },
+                            {
+                              value: 0,
+                              color: "#000000",
+                              label: "0"
+                            }
+                          ]
+                        }
+                      ]
+                    };
+            return renderer;
+
+         }
+
         /**
          * Sets up a moving tooltip that displays
          * the construction year of the hovered building.
@@ -860,6 +904,7 @@
             return view.hitTest(event).then(function(hit) {
               var results = hit.results.filter(function(result) {
                 return result.graphic.layer === active_animation_layer;
+                //return result.graphic.layer === illinois_zipcode;
               });
 
               if (!results.length) {
@@ -1213,15 +1258,15 @@
           </div>
         </div>
       </div>
-      <div class ="btn btn-clear">
-        <select name="select" id="animation_dropdown" >
-          <option value="case">Cases</option>
-          <option value="death">Deaths</option>
-          <option value="death/case">Deaths/Cases</option>
-          <option value="first_case" selected="selected">First Case Report</option>
-          <option value="first_death">First Death Report</option>
-        </select>
-      </div>
+<!--      <div>-->
+<!--        <select name="select" id="animation_dropdown" >-->
+<!--          <option value="case">Cases</option>-->
+<!--          <option value="death">Deaths</option>-->
+<!--          <option value="death/case">Deaths/Cases</option>-->
+<!--          <option value="first_case" selected="selected">First Case Report</option>-->
+<!--          <option value="first_death">First Death Report</option>-->
+<!--        </select>-->
+<!--      </div>-->
 
   </div>
 
