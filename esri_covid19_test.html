@@ -28,9 +28,9 @@
 
     <link
             rel="stylesheet"
-            href="https://js.arcgis.com/4.14/esri/themes/dark-blue/main.css"
+            href="https://js.arcgis.com/4.15/esri/themes/dark-blue/main.css"
     />
-    <script src="https://js.arcgis.com/4.14/"></script>
+    <script src="https://js.arcgis.com/4.15/"></script>
 
     <script>
         require([
@@ -276,9 +276,8 @@
                         view: view,
                         listItemCreatedFunction: defineActions,
                         selectionEnabled: true,
-                        statusIndicatorsVisible: false,
+                        visibleElements:{statusIndicators: false},
                     });
-
 
                     function defineActions(event) {
                         // The event object contains an item property.
@@ -397,7 +396,7 @@
                         max: days,
                         values: [0],
                         step: 1,
-                        rangeLabelsVisible: true,
+                        visibleElements: {rangeLabels: true},
                         draggableSegmentsEnabled: false,
                     });
 
