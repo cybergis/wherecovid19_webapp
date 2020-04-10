@@ -51,7 +51,7 @@
         "dojo/date/locale",
         "dojox/data/CsvStore",
         "dojo/request",
-              "dojo/DeferredList",
+        "dojo/DeferredList",
       ], function(
         Map,
         FeatureLayer,
@@ -101,31 +101,31 @@
             //     outFields: ["*"],
             // "title": "Pandemic"});
 
-            var covid19_layer_states_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data_dev/FeatureServer/0";
-            var covid19_layer_counties_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data_dev/FeatureServer/0";
+            var nyt_layer_states_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data_dev/FeatureServer/0";
+            var nyt_layer_counties_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data_dev/FeatureServer/0";
             var illinios_county_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_county_dev/FeatureServer/0";
             var illinios_zipcode_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_zipcode_dev/FeatureServer/0";
 
             if(production_mode)
             {
-                covid19_layer_states_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data/FeatureServer/0";
-                covid19_layer_counties_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data/FeatureServer/0";
+                nyt_layer_states_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data/FeatureServer/0";
+                nyt_layer_counties_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data/FeatureServer/0";
                 illinios_county_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_county/FeatureServer/0";
                 illinios_zipcode_url="https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_zipcode/FeatureServer/0";
             }
 
 
             //nyt states
-            var covid19_layer_states = new FeatureLayer({url: covid19_layer_states_url,
+            var nyt_layer_states = new FeatureLayer({url: nyt_layer_states_url,
                 outFields: ["*"],
                 title: "States Data (New York Times)",
                 visible: false});
 
             //nyt counties
-            var covid19_layer_counties = new FeatureLayer({url: covid19_layer_counties_url,
+            var nyt_layer_counties = new FeatureLayer({url: nyt_layer_counties_url,
                 outFields: ["*"],
                 title: "Counties Data (New York Times)",
-                visible: false});
+                visible: true});
 
             var illinois_counties = new FeatureLayer({url: illinios_county_url,
                 outFields: ["*"],
@@ -147,6 +147,14 @@
                  opacity: 0.75
             });
 
+            var nytGroupLayer = new GroupLayer({
+                 title: "New York Times",
+                 visible: true,
+                 visibilityMode: "exclusive",
+                 layers: [nyt_layer_states, nyt_layer_counties],
+                 opacity: 0.75
+            });
+
 
             //     var census2000_layer = new MapImageLayer({
             //   url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer",
@@ -155,12 +163,11 @@
             // });
 
             // order matters! last layer is at top
-            var animation_layers = [covid19_layer_states, covid19_layer_counties];
+            var animation_layers = [nyt_layer_states, nyt_layer_counties];
 
             // order mattes! last layer is at top
             var other_layers =  [illinoisGroupLayer];
-            var all_layers = new Array().concat(other_layers, animation_layers);
-            var active_animation_layer = all_layers[all_layers.length-1];
+            var all_layers = new Array().concat([nytGroupLayer], other_layers);
 
             //// A non-3857 basemap
             // var basemap = new Basemap({
@@ -182,26 +189,73 @@
           layers: all_layers,
         });
 
-        function setActiveAnimationLayer()
+        var active_animation_layer =  getTopVisibleLayer(map.layers, animation_layers);
+
+        // Find the top visible layer obj in array filter_array
+        function getTopVisibleLayer(layerCol, filter_array=[])
         {
-            for (let i=map.layers.items.length; i>0; i--)
+            // start from the end of the array (top)
+            for (let i=layerCol.items.length-1; i>=0; i--)
             {
-                let item = map.layers.items[i-1];
-                if (item.visible && animation_layers.includes(item))
+                let layer = layerCol.items[i];
+                if (layer.visible)
                 {
-                    active_animation_layer = item;
-                    console.log("active_animation_layer: " + item.title);
-                    break;
+                    if(layer.type=="group")
+                    {
+                        let l = getTopVisibleLayer(layer.layers, filter_array);
+                        if (l !=null)
+                        {return l;}
+                    }
+                    else
+                    {
+                        if (filter_array.length==0)
+                        {
+                            return layer;
+                        }
+                        else
+                        {
+                            if (filter_array.includes(layer))
+                            {
+                                return layer
+                            }
+                        }
+                    }
                 }
             }
+            return null;
+        }
+
+        function setActiveAnimationLayer(evt)
+        {
+            // layer order changed in layerlist control or layer visibility changed
+
+            // reset active_animation_layer
+            let topVisibleLayer = getTopVisibleLayer(map.layers, animation_layers);
+            active_animation_layer = topVisibleLayer;
+            console.log(active_animation_layer === null ? "null":active_animation_layer.title);
+
+            //reset Hover-over
+
+            //reset Popup
+
+            //reset Animation slider
+
+            //reset side panel
         }
 
         // Listen for layer change: remove, add, reorder
         //https://developers.arcgis.com/javascript/latest/api-reference/esri-Map.html#layers
         map.allLayers.on("change", function(event) {
-         //this is the layer on the top
-         //console.log(map.layers.items[map.layers.items.length-1].title);
-         setActiveAnimationLayer();
+         setActiveAnimationLayer(event);
+        });
+
+        // Listen for layer visibility change
+        //https://developers.arcgis.com/javascript/latest/sample-code/sandbox/index.html?sample=animation-layer-visibility
+        map.allLayers.forEach(function(item) {
+            item.watch("visible", function(visible) {
+              //console.log(item, visible);
+              setActiveAnimationLayer(item);
+            });
         });
 
         var view = new MapView({
@@ -228,13 +282,6 @@
             statusIndicatorsVisible: false,
         });
 
-        //https://developers.arcgis.com/javascript/latest/sample-code/sandbox/index.html?sample=animation-layer-visibility
-        map.allLayers.forEach(function(item) {
-            item.watch("visible", function(visible) {
-              //console.log(item, visible);
-              setActiveAnimationLayer();
-            });
-          });
 
         function defineActions(event) {
           // The event object contains an item property.
@@ -408,19 +455,19 @@
         view.whenLayerView(active_animation_layer).then(setupHoverTooltip);
 
         
-            // var animation_dropdown = document.getElementById("animation_dropdown");
-            // var animation_type=animation_dropdown.value;
-            // setDate(dt_start, animation_type=animation_type);
-            setDate(dt_start, animation_type="first_case");
+            var animation_dropdown = document.getElementById("animation_dropdown");
+            var animation_type=animation_dropdown.value;
+            setDate(dt_start, animation_type=animation_type);
+            //setDate(dt_start, animation_type="first_case");
 
-            // animation_dropdown.addEventListener("change", function(evt){
-            //     console.log(evt);
-            //     animation_type = evt.target.value;
-            //     let thumb_value=Math.ceil(slider.values[0]);
-            //
-            //     let current_date = date.add(dt_start, "day", thumb_value);
-            //     setDate(current_date, animation_type=animation_type);
-            // });
+            animation_dropdown.addEventListener("change", function(evt){
+                console.log(evt);
+                animation_type = evt.target.value;
+                let thumb_value=Math.ceil(slider.values[0]);
+
+                let current_date = date.add(dt_start, "day", thumb_value);
+                setDate(current_date, animation_type=animation_type);
+            });
 
 
         var ilZipTemplate = {
@@ -466,7 +513,7 @@
               ]
             }  
             ]
-        }
+        };
 
         illinois_zipcode.popupTemplate = ilZipTemplate;	
 
@@ -503,7 +550,7 @@
               ]
             }
             ]
-        }
+        };
 
         illinois_counties.popupTemplate = ilCountyTemplate;
 
@@ -1312,15 +1359,15 @@
           </div>
         </div>
       </div>
-<!--      <div>-->
-<!--        <select name="select" id="animation_dropdown" >-->
-<!--          <option value="case">Cases</option>-->
-<!--          <option value="death">Deaths</option>-->
-<!--          <option value="death/case">Deaths/Cases</option>-->
-<!--          <option value="first_case" selected="selected">First Case Report</option>-->
-<!--          <option value="first_death">First Death Report</option>-->
-<!--        </select>-->
-<!--      </div>-->
+      <div>
+        <select name="select" id="animation_dropdown" >
+          <option value="case">Cases</option>
+          <option value="death">Deaths</option>
+          <option value="death/case">Deaths/Cases</option>
+          <option value="first_case" selected="selected">First Case Report</option>
+          <option value="first_death">First Death Report</option>
+        </select>
+      </div>
 
   </div>
 
