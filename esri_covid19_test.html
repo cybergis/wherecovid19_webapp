@@ -109,12 +109,6 @@
                     active_animation_layer: null,
                 });
 
-                // // Watch changes on a property:
-                // mywatcher.watch("active_animation_layer", function (name, oldValue, value) {
-                //     console.log(name, oldValue, value);
-                //     // Do something based on the change
-                // });
-
                 var production_mode = false; //true or false
 
                 //global variables contain data
@@ -132,21 +126,12 @@
                     //
                     //--------------------------------------------------------------------------
 
-
-                    // //state_updates testing
-                    // var covid19_layer = new FeatureLayer({url: "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/states_update/FeatureServer/0",
-                    //     outFields: ["*"],
-                    // "title": "Pandemic"});
-
                     // var nyt_layer_states_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data_dev/FeatureServer/0";
                     // var nyt_layer_counties_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data_dev/FeatureServer/0";
                     var nyt_layer_states_url = "/preprocessing/nyt_states_data.geojson";
                     var nyt_layer_counties_url = "/preprocessing/nyt_counties_data.geojson";
-
-
                     var illinios_county_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_county_dev/FeatureServer/0";
                     //var illinios_county_url = "/preprocessing/illinois_forecast_county.geojson";
-
                     //var illinios_zipcode_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_zipcode_dev/FeatureServer/0";
                     var illinios_zipcode_url = "/preprocessing/illinois/illinois_forecast_zipcode.geojson";
 
@@ -172,7 +157,6 @@
                         }
                     };
 
-
                     //nyt states
                     //var nyt_layer_states = new FeatureLayer({
                     var nyt_layer_states = new GeoJSONLayer({
@@ -182,7 +166,6 @@
                         visible: false,
                         renderer: default_polygon_renderer,
                     });
-
 
                     //nyt counties
                     //var nyt_layer_counties = new FeatureLayer({
@@ -201,6 +184,7 @@
                         renderer: illinoisZipCodeRender("CountyForecast", 7, 8200),
                         visible: false,
                     });
+
                     var illinois_zipcode = new GeoJSONLayer({
                             url: illinios_zipcode_url,
                             outFields: ["*"],
@@ -285,12 +269,14 @@
                         resizeAlign: "top-left"
                     });
 
-                    function disableDivContent(divElem, disable=true)
-                    {
+                    function disableDivContent(divElem, disable = true) {
                         //https://stackoverflow.com/questions/639815/how-to-disable-all-div-content/25328170
                         //https://dojotoolkit.org/reference-guide/1.7/dojo/removeClass.html
-                        if (disable) {dojo.addClass(divElem, "disabledbutton");}
-                        else {dojo.removeClass(divElem, "disabledbutton");}
+                        if (disable) {
+                            dojo.addClass(divElem, "disabledbutton");
+                        } else {
+                            dojo.removeClass(divElem, "disabledbutton");
+                        }
                     }
 
                     // Find the top visible layer obj in array filter_array
@@ -329,8 +315,8 @@
                     // Use top animation layer to init slider UI at startup
                     // If top animation layer is not active upon,
                     // it will be set disabled then as map.layers.change will be triggered by default on init
-                    animation_layers[animation_layers.length-1].when(function(){
-                        onActiveAnimationLayerChange("", null, animation_layers[animation_layers.length-1]);
+                    animation_layers[animation_layers.length - 1].when(function () {
+                        onActiveAnimationLayerChange("", null, animation_layers[animation_layers.length - 1]);
                     });
 
                     // Set up callback function for active_animation_layer value change
@@ -473,7 +459,6 @@
                     var dt_interval_unit = "day";
 
 
-
                     function queryLayerDates(_layer) {
                         const list_query = _layer.createQuery();
                         //list_query.orderByFields = ['population DESC'];
@@ -531,11 +516,10 @@
 
                     function onActiveAnimationLayerChange(name, oldValue, value) {
                         //console.log(name, oldValue, value);
-                        if (value==null) {
+                        if (value == null) {
                             disableDivContent(sliderDiv);
-                        }
-                        else {
-                            if(value != oldValue) {
+                        } else {
+                            if (value != oldValue) {
                                 // enable slider div
                                 disableDivContent(sliderDiv, false);
                                 queryLayerDates(value).then(initSlider).then(function () {
@@ -723,7 +707,8 @@
 
                         if (animation_type == "case") {
                             _layer.renderer = dailyEventNumberRender(_date, _event_type = "case", _scale = "loge");
-                        } else if (animation_type == "death" || animation_type == "death/case" || animation_type == "new_case" || animation_type == "new_death") {
+                        } else if (animation_type == "death" || animation_type == "death/case" ||
+                                   animation_type == "new_case" || animation_type == "new_death") {
                             _layer.renderer = dailyEventNumberRender(_date, _event_type = animation_type, _scale = "");
                         } else {
                             let event_type = "Case";
@@ -1546,12 +1531,12 @@
     </div>
     <div>
         <select name="select" id="animation_dropdown">
-            <option value="case" selected="selected">Cases</option>
+            <option value="case">Cases</option>
             <option value="death">Deaths</option>
             <option value="death/case">Deaths/Cases</option>
             <option value="new_case">New Cases</option>
             <option value="new_death">New Deaths</option>
-            <option value="first_case">First Case Report</option>
+            <option value="first_case" selected="selected">First Case Report</option>
             <option value="first_death">First Death Report</option>
         </select>
     </div>
