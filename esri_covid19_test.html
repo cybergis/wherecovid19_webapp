@@ -60,6 +60,8 @@
                 "dojo/DeferredList",
                 "dojo/Stateful",
                 "dojo/_base/declare",
+                "dojo/query",
+                "dojo",
             ], function (
             Map,
             FeatureLayer,
@@ -87,26 +89,28 @@
             DeferredList,
             Stateful,
             declare,
+            query,
+            dojo,
             ) {
 
                 // Subclass dojo/Stateful:
                 const MyWatcher = declare([Stateful], {
-                    active_layer: null,
-                    _active_layerGetter: function () {
-                        return this.active_layer;
+                    active_animation_layer: null,
+                    _active_animation_layerGetter: function () {
+                        return this.active_animation_layer;
                     },
-                    _active_layerSetter: function (value) {
-                        this.active_layer = value;
+                    _active_animation_layerSetter: function (value) {
+                        this.active_animation_layer = value;
                     }
                 });
 
                 // Create an instance and initialize some property values:
                 const mywatcher = new MyWatcher({
-                    active_layer: null,
+                    active_animation_layer: null,
                 });
 
                 // // Watch changes on a property:
-                // mywatcher.watch("active_layer", function (name, oldValue, value) {
+                // mywatcher.watch("active_animation_layer", function (name, oldValue, value) {
                 //     console.log(name, oldValue, value);
                 //     // Do something based on the change
                 // });
@@ -139,6 +143,7 @@
                     var nyt_layer_states_url = "/preprocessing/nyt_states_data.geojson";
                     var nyt_layer_counties_url = "/preprocessing/nyt_counties_data.geojson";
 
+
                     var illinios_county_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_county_dev/FeatureServer/0";
                     //var illinios_county_url = "/preprocessing/illinois_forecast_county.geojson";
 
@@ -146,10 +151,14 @@
                     var illinios_zipcode_url = "/preprocessing/illinois/illinois_forecast_zipcode.geojson";
 
                     if (production_mode) {
-                        nyt_layer_states_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data/FeatureServer/0";
-                        nyt_layer_counties_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data/FeatureServer/0";
+                        // nyt_layer_states_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data/FeatureServer/0";
+                        // nyt_layer_counties_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data/FeatureServer/0";
+                        // illinios_county_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_county/FeatureServer/0";
+                        // illinios_zipcode_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_zipcode/FeatureServer/0";
+                        nyt_layer_states_url = "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/nyt_states_data.geojson";
+                        nyt_layer_counties_url = "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/nyt_counties_data.geojson";
                         illinios_county_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_county/FeatureServer/0";
-                        illinios_zipcode_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_zipcode/FeatureServer/0";
+                        illinios_zipcode_url = "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/illinois_forecast_zipcode.geojson";
                     }
 
                     const default_polygon_renderer = {
@@ -190,61 +199,54 @@
                         outFields: ["*"],
                         title: "Illinois Counties Forecast",
                         renderer: illinoisZipCodeRender("CountyForecast", 7, 8200),
+                        visible: false,
                     });
                     var illinois_zipcode = new GeoJSONLayer({
                             url: illinios_zipcode_url,
                             outFields: ["*"],
                             title: "Illinois ZipCode Forecast",
                             renderer: illinoisZipCodeRender("ZipCodeForecast", 0, 200),
+                            visible: true,
                         }
                     );
 
-                    // var illinoisGroupLayer = new GroupLayer({
-                    //     title: "Illinois Forecast",
+                    // order matters! last layer is at top
+                    var animation_layers = [nyt_layer_states, nyt_layer_counties];
+                    var static_layers = [illinois_counties, illinois_zipcode];
+
+                    // // new GroupLayer object may affect other GroupLayer objects
+                    // // Comment out unused GroupLayer objects to avoid strange bugs
+                    // // like group layer can not expand!!!!!
+                    // var animationGroupLayer = new GroupLayer({
+                    //     title: "Time-enabled Layers",
                     //     visible: true,
                     //     visibilityMode: "exclusive",
-                    //     layers: [illinois_counties, illinois_zipcode],
+                    //     layers: new Array().concat(animation_layers),
                     //     opacity: 0.75
                     // });
-                    //
-                    // var nytGroupLayer = new GroupLayer({
-                    //     title: "New York Times",
+                    // var staticGroupLayer = new GroupLayer({
+                    //     title: "Static Layers",
                     //     visible: true,
                     //     visibilityMode: "exclusive",
-                    //     layers: [nyt_layer_states, nyt_layer_counties],
+                    //     layers: new Array().concat(static_layers),
                     //     opacity: 0.75
                     // });
 
-                    var animationGroupLayer = new GroupLayer({
-                        title: "Time-enabled Layers",
+                    // new GroupLayer object may affect other GroupLayer objects
+                    // Comment out unused GroupLayer objects to avoid strange bugs
+                    // like group layer can not expand!!!!
+                    var allInOneGroupLayer = new GroupLayer({
+                        title: "Layers",
                         visible: true,
                         visibilityMode: "exclusive",
-                        layers: [nyt_layer_states, nyt_layer_counties, illinois_zipcode],
+                        layers: new Array().concat(animation_layers, static_layers),
                         opacity: 0.75
                     });
-
-                    var otherGroupLayer = new GroupLayer({
-                        title: "Static Layers",
-                        visible: false,
-                        visibilityMode: "independent",
-                        layers: [illinois_counties],
-                        opacity: 0.75
-                    });
-
-
-                    //     var census2000_layer = new MapImageLayer({
-                    //   url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer",
-                    //   title: "Census-2000",
-                    //   visible: false
-                    // });
-
-                    // order matters! last layer is at top
-                    var animation_layers = [nyt_layer_states, nyt_layer_counties, illinois_zipcode];
 
                     // order mattes! last layer is at top
-                    // var other_layers = [illinoisGroupLayer];
-                    // var all_layers = new Array().concat([nytGroupLayer], [illinoisGroupLayer]);
-                    var all_layers = [otherGroupLayer, animationGroupLayer];
+                    //var all_layers = [animationGroupLayer, staticGroupLayer];
+                    var all_layers = [allInOneGroupLayer];
+                    //var all_layers = new Array().concat(animation_layers, static_layers);
 
                     //// A non-3857 basemap
                     // var basemap = new Basemap({
@@ -283,6 +285,13 @@
                         resizeAlign: "top-left"
                     });
 
+                    function disableDivContent(divElem, disable=true)
+                    {
+                        //https://stackoverflow.com/questions/639815/how-to-disable-all-div-content/25328170
+                        //https://dojotoolkit.org/reference-guide/1.7/dojo/removeClass.html
+                        if (disable) {dojo.addClass(divElem, "disabledbutton");}
+                        else {dojo.removeClass(divElem, "disabledbutton");}
+                    }
 
                     // Find the top visible layer obj in array filter_array
                     function getTopVisibleLayer(layerCol, filter_array = []) {
@@ -309,36 +318,39 @@
                         return null;
                     }
 
+                    // called when layer order changed in layerlist control or layer visibility changed
                     function setActiveAnimationLayer(evt) {
-                        // layer order changed in layerlist control or layer visibility changed
-
                         stopAnimation();
-
                         // reset active_animation_layer
                         let topVisibleLayer = getTopVisibleLayer(map.layers, animation_layers);
-                        mywatcher.set("active_layer", topVisibleLayer);
-
-                        //reset Hover-over
-
-                        //reset Popup
-
-                        //reset Animation slider
-
-
-                        //reset side panel
+                        mywatcher.set("active_animation_layer", topVisibleLayer);
                     }
 
+                    // Use top animation layer to init slider UI at startup
+                    // If top animation layer is not active upon,
+                    // it will be set disabled then as map.layers.change will be triggered by default on init
+                    animation_layers[animation_layers.length-1].when(function(){
+                        onActiveAnimationLayerChange("", null, animation_layers[animation_layers.length-1]);
+                    });
+
+                    // Set up callback function for active_animation_layer value change
+                    setupActiveAnimationLayerChangeCallback();
+
+                    // This event will be triggered once at startup as maps adds layers for the fist time
                     // Listen for layer change: remove, add, reorder
-                    //https://developers.arcgis.com/javascript/latest/api-reference/esri-Map.html#layers
+                    // https://developers.arcgis.com/javascript/latest/api-reference/esri-Map.html#layers
                     map.allLayers.on("change", function (event) {
+                        // this function will change active_animation_layer value
                         setActiveAnimationLayer(event);
                     });
 
                     // Listen for layer visibility change
-                    //https://developers.arcgis.com/javascript/latest/sample-code/sandbox/index.html?sample=animation-layer-visibility
+                    // may get triggered more than once in if GroupLayer is in "exclusive" mode (radio button)
+                    // LayerA on->off and LayerB off->on
+                    // https://developers.arcgis.com/javascript/latest/sample-code/sandbox/index.html?sample=animation-layer-visibility
                     map.allLayers.forEach(function (item) {
                         item.watch("visible", function (visible) {
-                            //console.log(item, visible);
+                            // this function will change active_animation_layer value
                             setActiveAnimationLayer(item);
                         });
                     });
@@ -452,14 +464,15 @@
                     var titleDiv = document.getElementById("titleDiv");
                     var animation = null;
                     var slider = null;
+                    var sliderDiv = document.getElementById("sliderContainer");
                     //var days = 0;
 
                     // Zero-based Month: 0==Jan
-                    const dt_startConst = new Date(2020, 0, 14)
+                    const dt_startConst = new Date(2020, 0, 14);
                     var dt_start = dt_startConst;
                     var dt_interval_unit = "day";
 
-                    //nyt_layer_counties.when(queryStartEndDate).then(initSlider);
+
 
                     function queryLayerDates(_layer) {
                         const list_query = _layer.createQuery();
@@ -493,6 +506,7 @@
                         let _slider_max = date.difference(dt_start, _dt_end, dt_interval_unit);
                         console.log(_slider_max);
 
+
                         if (slider == null) {
                             slider = new Slider({
                                 container: "slider",
@@ -510,31 +524,32 @@
                         }
                     }
 
-                    function setupActiveLayerChange() {
+                    function setupActiveAnimationLayerChangeCallback() {
                         // Watch changes on a property:
-                        mywatcher.watch("active_layer", onActiveLayerChange);
+                        mywatcher.watch("active_animation_layer", onActiveAnimationLayerChange);
                     }
 
-                    function onActiveLayerChange(name, oldValue, value) {
-                        console.log(name, oldValue, value);
-                        if (oldValue != value && value != null) {
-                            queryLayerDates(value).then(initSlider).then(function () {
-                                let thumb_value = slider.values[0];
-                                if (thumb_value > slider.max || thumb_value < slider.min) {
-                                    thumb_value = slider.min;
-                                }
-                                let dt_thumb = date.add(dt_start, dt_interval_unit, thumb_value);
+                    function onActiveAnimationLayerChange(name, oldValue, value) {
+                        //console.log(name, oldValue, value);
+                        if (value==null) {
+                            disableDivContent(sliderDiv);
+                        }
+                        else {
+                            if(value != oldValue) {
+                                // enable slider div
+                                disableDivContent(sliderDiv, false);
+                                queryLayerDates(value).then(initSlider).then(function () {
+                                    let thumb_value = slider.values[0];
+                                    if (thumb_value > slider.max || thumb_value < slider.min) {
+                                        thumb_value = slider.min;
+                                    }
+                                    let dt_thumb = date.add(dt_start, dt_interval_unit, thumb_value);
 
-                                setDate(dt_thumb, animation_type = animation_type);
-                            });
+                                    setDate(dt_thumb, animation_type = animation_type);
+                                });
+                            }
                         }
                     }
-
-                    view.when(function () {
-                        return animationGroupLayer.layers.items[animationGroupLayer.layers.items.length - 1].when();
-                    }).then(queryLayerDates).then(initSlider).then(setupActiveLayerChange).then(function () {
-                        setDate(dt_start, animation_type = animation_type);
-                    });
 
 
                     // When user drags the slider:
@@ -566,13 +581,13 @@
                         new Home({
                             view: view
                         }),
-                        "top-left"
+                        "top-right"
                     );
                     view.ui.add(
                         new Legend({
                             view: view
                         }),
-                        "bottom-left"
+                        "bottom-right"
                     );
                     view.ui.add(
                         new Fullscreen({
@@ -631,7 +646,7 @@
                                         label: "FIPS"
                                     },
                                     {
-                                        fieldName: "ZipPopulation",
+                                        fieldName: "population",
                                         visible: true,
                                         label: "Population"
                                     },
@@ -704,7 +719,7 @@
 
                         var thumb_value = date.difference(dt_start, _date, dt_interval_unit);
                         slider.viewModel.setValue(0, thumb_value);
-                        let _layer = mywatcher.get("active_layer");
+                        let _layer = mywatcher.get("active_animation_layer");
 
                         if (animation_type == "case") {
                             _layer.renderer = dailyEventNumberRender(_date, _event_type = "case", _scale = "loge");
@@ -1484,6 +1499,11 @@
             border-radius: 4px;
             box-shadow: 0px 0px 4px rgba(255, 255, 255, 0.75);
             transform: translate3d(-50%, -125%, 0);
+        }
+
+        .disabledbutton {
+            pointer-events: none;
+            opacity: 0.4;
         }
     </style>
 </head>
