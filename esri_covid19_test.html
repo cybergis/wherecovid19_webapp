@@ -128,11 +128,11 @@
 
                     // var nyt_layer_states_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data_dev/FeatureServer/0";
                     // var nyt_layer_counties_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data_dev/FeatureServer/0";
+                    // var illinios_county_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_county_dev/FeatureServer/0";
+                    // var illinios_zipcode_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_zipcode_dev/FeatureServer/0";
                     var nyt_layer_states_url = "/preprocessing/nyt_states_data.geojson";
                     var nyt_layer_counties_url = "/preprocessing/nyt_counties_data.geojson";
-                    var illinios_county_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_county_dev/FeatureServer/0";
-                    //var illinios_county_url = "/preprocessing/illinois_forecast_county.geojson";
-                    //var illinios_zipcode_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_zipcode_dev/FeatureServer/0";
+                    var illinios_county_url = "/preprocessing/illinois/illinois_forecast_county.geojson";
                     var illinios_zipcode_url = "/preprocessing/illinois/illinois_forecast_zipcode.geojson";
 
                     if (production_mode) {
@@ -142,7 +142,7 @@
                         // illinios_zipcode_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_zipcode/FeatureServer/0";
                         nyt_layer_states_url = "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/nyt_states_data.geojson";
                         nyt_layer_counties_url = "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/nyt_counties_data.geojson";
-                        illinios_county_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_county/FeatureServer/0";
+                        illinios_county_url = "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/illinois_forecast_county.geojson";
                         illinios_zipcode_url = "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/illinois_forecast_zipcode.geojson";
                     }
 
@@ -177,7 +177,7 @@
                         renderer: default_polygon_renderer,
                     });
 
-                    var illinois_counties = new FeatureLayer({
+                    var illinois_counties = new GeoJSONLayer({
                         url: illinios_county_url,
                         outFields: ["*"],
                         title: "Illinois Counties Forecast",
@@ -196,7 +196,7 @@
 
                     // order matters! last layer is at top
                     var animation_layers = [nyt_layer_states, nyt_layer_counties];
-                    var static_layers = [illinois_counties, illinois_zipcode];
+                    var static_layers = [ illinois_counties, illinois_zipcode];
 
                     // // new GroupLayer object may affect other GroupLayer objects
                     // // Comment out unused GroupLayer objects to avoid strange bugs
@@ -312,11 +312,12 @@
                         mywatcher.set("active_animation_layer", topVisibleLayer);
                     }
 
-                    // Use top animation layer to init slider UI at startup
-                    // If top animation layer is not active upon,
-                    // it will be set disabled then as map.layers.change will be triggered by default on init
-                    animation_layers[animation_layers.length - 1].when(function () {
-                        onActiveAnimationLayerChange("", null, animation_layers[animation_layers.length - 1]);
+                    // Manually use default top animation layer to init slider UI at startup
+                    // If default top animation layer is actually invisible,
+                    // it will be set disabled then as map.layers.change will be triggered at startup
+                    let default_top_animation_layer = animation_layers[animation_layers.length - 1];
+                    default_top_animation_layer.when(function () {
+                        onActiveAnimationLayerChange("", null, default_top_animation_layer);
                     });
 
                     // Set up callback function for active_animation_layer value change
@@ -341,89 +342,88 @@
                         });
                     });
 
-
                     var layerlist = new LayerList({
                         view: view,
-                        listItemCreatedFunction: defineActions,
+                        //listItemCreatedFunction: defineActions,
                         selectionEnabled: true,
                         visibleElements: {statusIndicators: false},
                     });
 
-                    function defineActions(event) {
-                        // The event object contains an item property.
-                        // is is a ListItem referencing the associated layer
-                        // and other properties. You can control the visibility of the
-                        // item, its title, and actions using this object.
-
-                        var item = event.item;
-
-                        if (item.title === "Pandemic" || item.title === "Census-2000") {
-                            // An array of objects defining actions to place in the LayerList.
-                            // By making this array two-dimensional, you can separate similar
-                            // actions into separate groups with a breaking line.
-
-                            item.actionsSections = [
-                                [
-                                    {
-                                        title: "Go to full extent",
-                                        className: "esri-icon-zoom-out-fixed",
-                                        id: "full-extent"
-                                    },
-                                    {
-                                        title: "Layer information",
-                                        className: "esri-icon-description",
-                                        id: "information"
-                                    }
-                                ],
-                                [
-                                    {
-                                        title: "Increase opacity",
-                                        className: "esri-icon-up",
-                                        id: "increase-opacity"
-                                    },
-                                    {
-                                        title: "Decrease opacity",
-                                        className: "esri-icon-down",
-                                        id: "decrease-opacity"
-                                    }
-                                ]
-                            ];
-                        }
-                    }
-
-                    layerlist.on("trigger-action", function (event) {
-                        // The layer visible in the view at the time of the trigger.
-                        console.log(event);
-                        let visibleLayer = event.item.layer;
-
-                        // Capture the action id.
-                        var id = event.action.id;
-
-                        if (id === "full-extent") {
-                            // if the full-extent action is triggered then navigate
-                            // to the full extent of the visible layer
-                            view.goTo(visibleLayer.fullExtent);
-                        } else if (id === "information") {
-                            // if the information action is triggered, then
-                            // open the item details page of the service layer
-                            window.open(visibleLayer.url);
-                        } else if (id === "increase-opacity") {
-                            // if the increase-opacity action is triggered, then
-                            // increase the opacity of the GroupLayer by 0.25
-
-                            if (visibleLayer.opacity < 1) {
-                                visibleLayer.opacity += 0.25;
-                            }
-                        } else if (id === "decrease-opacity") {
-                            // if the decrease-opacity action is triggered, then
-                            // decrease the opacity of the GroupLayer by 0.25
-
-                            if (visibleLayer.opacity > 0) {
-                                visibleLayer.opacity -= 0.25;
-                            }
-                        }
-
-                    });
+                    // function defineActions(event) {
+                    //     // The event object contains an item property.
+                    //     // is is a ListItem referencing the associated layer
+                    //     // and other properties. You can control the visibility of the
+                    //     // item, its title, and actions using this object.
+                    //
+                    //     var item = event.item;
+                    //
+                    //     if (item.title === "Pandemic" || item.title === "Census-2000") {
+                    //         // An array of objects defining actions to place in the LayerList.
+                    //         // By making this array two-dimensional, you can separate similar
+                    //         // actions into separate groups with a breaking line.
+                    //
+                    //         item.actionsSections = [
+                    //             [
+                    //                 {
+                    //                     title: "Go to full extent",
+                    //                     className: "esri-icon-zoom-out-fixed",
+                    //                     id: "full-extent"
+                    //                 },
+                    //                 {
+                    //                     title: "Layer information",
+                    //                     className: "esri-icon-description",
+                    //                     id: "information"
+                    //                 }
+                    //             ],
+                    //             [
+                    //                 {
+                    //                     title: "Increase opacity",
+                    //                     className: "esri-icon-up",
+                    //                     id: "increase-opacity"
+                    //                 },
+                    //                 {
+                    //                     title: "Decrease opacity",
+                    //                     className: "esri-icon-down",
+                    //                     id: "decrease-opacity"
+                    //                 }
+                    //             ]
+                    //         ];
+                    //     }
+                    // }
+                    //
+                    // layerlist.on("trigger-action", function (event) {
+                    //     // The layer visible in the view at the time of the trigger.
+                    //     console.log(event);
+                    //     let visibleLayer = event.item.layer;
+                    //
+                    //     // Capture the action id.
+                    //     var id = event.action.id;
+                    //
+                    //     if (id === "full-extent") {
+                    //         // if the full-extent action is triggered then navigate
+                    //         // to the full extent of the visible layer
+                    //         view.goTo(visibleLayer.fullExtent);
+                    //     } else if (id === "information") {
+                    //         // if the information action is triggered, then
+                    //         // open the item details page of the service layer
+                    //         window.open(visibleLayer.url);
+                    //     } else if (id === "increase-opacity") {
+                    //         // if the increase-opacity action is triggered, then
+                    //         // increase the opacity of the GroupLayer by 0.25
+                    //
+                    //         if (visibleLayer.opacity < 1) {
+                    //             visibleLayer.opacity += 0.25;
+                    //         }
+                    //     } else if (id === "decrease-opacity") {
+                    //         // if the decrease-opacity action is triggered, then
+                    //         // decrease the opacity of the GroupLayer by 0.25
+                    //
+                    //         if (visibleLayer.opacity > 0) {
+                    //             visibleLayer.opacity -= 0.25;
+                    //         }
+                    //     }
+                    //
+                    // });
 
                     var basemapGallery = new BasemapGallery({
                         view: view,
@@ -451,7 +451,6 @@
                     var animation = null;
                     var slider = null;
                     var sliderDiv = document.getElementById("sliderContainer");
-                    //var days = 0;
 
                     // Zero-based Month: 0==Jan
                     const dt_startConst = new Date(2020, 0, 14);
@@ -590,7 +589,7 @@
                     //setDate(dt_start, animation_type="first_case");
 
                     animation_dropdown.addEventListener("change", function (evt) {
-                        console.log(evt);
+                        //console.log(evt);
                         animation_type = evt.target.value;
                         let thumb_value = Math.ceil(slider.values[0]);
 
@@ -661,7 +660,7 @@
                                         label: "FIPS"
                                     },
                                     {
-                                        fieldName: "County_Population",
+                                        fieldName: "population",
                                         visible: true,
                                         label: "Population"
                                     },
@@ -704,6 +703,9 @@
                         var thumb_value = date.difference(dt_start, _date, dt_interval_unit);
                         slider.viewModel.setValue(0, thumb_value);
                         let _layer = mywatcher.get("active_animation_layer");
+
+                        if (_layer == null)
+                        {return ;}
 
                         if (animation_type == "case") {
                             _layer.renderer = dailyEventNumberRender(_date, _event_type = "case", _scale = "loge");
@@ -884,12 +886,11 @@
             `;
                     }
 
-                    function dailyEventNumberRender(_date, _event_type = "case", _scale = "") {
+                    function dailyEventNumberRender(_date, _event_type="case", _scale="") {
 
                         const colors = ["#000000", "#fef0d9", "#fdcc8a", "#fc8d59", "#e34a33", "#b30000"];
                         let stops = [0, 0.01, 0.05, 0.10, 0.15, 0.2];
                         let labels = ["0", "1%", "5%", "10%", "15%", "20%"];
-
 
                         let event_type = _event_type.toLowerCase();
 
@@ -904,7 +905,8 @@
                             stops = stops.map(x => Math.log(x));
 
                         } else if (event_type == "death") {
-                            let death_max = Math.max.apply(Math, counties_data.metadata.deaths);
+                            //let death_max = Math.max.apply(Math, counties_data.metadata.deaths);
+                            let death_max = 200;
 
                             let interval = Math.ceil(death_max / 10);
                             stops = [0, 1, interval, 2 * interval, 3 * interval, death_max];
@@ -1326,15 +1328,17 @@
 
 
                 function pre_main() {
-                    let counties_data_json_url = "/nyt_counties_data.json";
-                    let states_data_json_url = "/nyt_states_data.json";
+                    // let counties_data_json_url = "/nyt_counties_data.json";
+                    // let states_data_json_url = "/nyt_states_data.json";
+                    let counties_data_json_url = "";
+                    let states_data_json_url = "";
 
-                    if (production_mode) {
-                        // proxy to CORS
-                        let proxy_url = "https://cors-anywhere.herokuapp.com/";
-                        counties_data_json_url = proxy_url + "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/nyt_counties_data.json";
-                        states_data_json_url = proxy_url + "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/nyt_states_data.json";
-                    }
+                    // if (production_mode) {
+                    //     // proxy to CORS
+                    //     let proxy_url = "https://cors-anywhere.herokuapp.com/";
+                    //     counties_data_json_url = proxy_url + "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/nyt_counties_data.json";
+                    //     states_data_json_url = proxy_url + "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/nyt_states_data.json";
+                    // }
                     let counties_request = request(counties_data_json_url, {handleAs: "json"});
                     let states_request = request(states_data_json_url, {handleAs: "json"});
 
@@ -1343,7 +1347,6 @@
                 }
 
                 function setGlobal_JSON(res) {
-                    console.log("OK");
                     counties_data = res[0][1];
                     //counties_data_str = JSON.stringify(counties_data);
                     states_data = res[1][1];
@@ -1352,12 +1355,13 @@
                     let promise = new Promise(function (resolve, reject) {
                         // the function is executed automatically when the promise is constructed
 
-                        // after 1 second signal that the job is done with the result "done"
-                        setTimeout(() => resolve("done"), 1);
+                        // after 1 millisecond signal that the job is done with the result "done"
+                        setTimeout(() => resolve("Load JSON Done"), 1);
                     });
                     return promise;
                 }
 
+                //pre_main().then(main);
                 pre_main().then(main);
 
             }
@@ -1486,6 +1490,7 @@
             transform: translate3d(-50%, -125%, 0);
         }
 
+        /* Enable/Disable Div and its contents*/
         .disabledbutton {
             pointer-events: none;
             opacity: 0.4;
@@ -1530,7 +1535,7 @@
         </div>
     </div>
     <div>
-        <select name="select" id="animation_dropdown">
+        <select name="select" id="animation_dropdown" style="display: none">
             <option value="case">Cases</option>
             <option value="death">Deaths</option>
             <option value="death/case">Deaths/Cases</option>
