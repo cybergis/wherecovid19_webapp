@@ -1,5 +1,12 @@
 <html>
 <head>
+    <!-- include loader styles -->
+    <link href="css/loader.css" rel="stylesheet" type="text/css">
+
+    <!-- include our loader overlay script -->
+    <script type="text/javascript" src="js/loader.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-162446800-1"></script>
     <script>
@@ -30,7 +37,15 @@
             rel="stylesheet"
             href="https://js.arcgis.com/4.15/esri/themes/dark-blue/main.css"
     />
+    <link rel="stylesheet" href="css/style.css" />
     <script src="https://js.arcgis.com/4.15/"></script>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/83341c3e60.js" crossorigin="anonymous"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@700&display=swap" rel="stylesheet">
+    <script src="js/ui.js"></script>
 
     <script>
         require([
@@ -130,10 +145,10 @@
                     // var nyt_layer_counties_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data_dev/FeatureServer/0";
                     // var illinios_county_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_county_dev/FeatureServer/0";
                     // var illinios_zipcode_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_zipcode_dev/FeatureServer/0";
-                    var nyt_layer_states_url = "/wherecovid19_webapp/preprocessing/nyt_states_data.geojson";
-                    var nyt_layer_counties_url = "/wherecovid19_webapp/preprocessing/nyt_counties_data.geojson";
-                    var illinios_county_url = "/wherecovid19_webapp/preprocessing/illinois/illinois_forecast_county.geojson";
-                    var illinios_zipcode_url = "/wherecovid19_webapp/preprocessing/illinois/illinois_forecast_zipcode.geojson";
+                    var nyt_layer_states_url = "preprocessing/nyt_states_data.geojson";
+                    var nyt_layer_counties_url = "preprocessing/nyt_counties_data.geojson";
+                    var illinios_county_url = "preprocessing/illinois/illinois_forecast_county.geojson";
+                    var illinios_zipcode_url = "preprocessing/illinois/illinois_forecast_zipcode.geojson";
 
                     if (production_mode) {
                         // nyt_layer_states_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data/FeatureServer/0";
@@ -335,12 +350,29 @@
                     // may get triggered more than once in if GroupLayer is in "exclusive" mode (radio button)
                     // LayerA on->off and LayerB off->on
                     // https://developers.arcgis.com/javascript/latest/sample-code/sandbox/index.html?sample=animation-layer-visibility
-                    map.allLayers.forEach(function (item) {
-                        item.watch("visible", function (visible) {
-                            // this function will change active_animation_layer value
-                            setActiveAnimationLayer(item);
-                        });
+                    map.allLayers.forEach(function(item) {
+                    item.watch("visible", function(visible) {
+                        console.log(item, visible);
+                        setActiveAnimationLayer(item);
+                        if(visible === true){
+                            if(item.title === nyt_layer_counties.title || item.title === nyt_layer_states.title ){
+                                view.goTo({
+                                    center:[-96.984300, 40.474679],
+                                    zoom: 4
+                                })
+                            }
+                            if(item.title === illinois_counties.title || item.title === illinois_zipcode.title ){
+                                view.goTo({
+                                    center:[-88.984300, 40.474679],
+                                    zoom: 6
+                                })
+                            }
+
+                        }
+                        
+                        
                     });
+                });
 
                     var layerlist = new LayerList({
                         view: view,
@@ -451,6 +483,63 @@
                     var animation = null;
                     var slider = null;
                     var sliderDiv = document.getElementById("sliderContainer");
+
+                    // Query total numbers for left slide bar
+                    var confirmDiv = document.getElementById("total_confirm_div");
+                    var deathDiv = document.getElementById("total_death_div");
+                    var recoverDiv = document.getElementById("total_recover_div");
+
+                    function numberWithCommas(x) {
+                        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    }
+                    setTotalDiv();
+                    function setTotalDiv(){
+                        const query = nyt_layer_counties.createQuery();
+                        const totalConfrimStat = {
+                            onStatisticField: "today_case",
+                            outStatisticFieldName: "Total_Cases",
+                            statisticType: "sum"
+                        }
+                        const totalDeathStat = {
+                            onStatisticField: "today_death",
+                            outStatisticFieldName: "Total_Deaths",
+                            statisticType: "sum"
+                        }
+                        query.outStatistics = [totalConfrimStat, totalDeathStat];
+                        nyt_layer_counties.queryFeatures(query)
+                            .then(function(response){
+                                console.log(response);
+                                var stats = response.features[0].attributes;
+                                confirmDiv.getElementsByTagName('h3')[0].innerHTML = numberWithCommas(stats.Total_Cases);
+                                deathDiv.getElementsByTagName('h3')[0].innerHTML = numberWithCommas(stats.Total_Deaths);
+                            })
+                        
+                        const list_query = nyt_layer_counties.createQuery();
+                        list_query.orderByFields = ['today_case DESC'];
+                        nyt_layer_counties.queryFeatures(list_query)
+                            .then(function(response){
+                                console.log(response);
+                                var listDiv = document.getElementsByClassName('case-list')[0];
+                                var template = document.getElementsByTagName('template')[0];
+                                var result_list = response.features.map(function(value){
+                                    return {
+                                        county:value.attributes.NAME,
+                                        state:value.attributes.state_name,
+                                        cases:value.attributes.today_case,
+                                    };
+                                    //return value.NAME;
+                                })
+                                result_list = result_list.slice(0,11);
+                                result_list.forEach(function(value){
+                                    var instance = template.content.cloneNode(true);
+                                    instance.querySelector('strong').textContent = numberWithCommas(value.cases);
+                                    instance.querySelectorAll('span')[2].textContent = value.county + "," + value.state;
+                                    listDiv.appendChild(instance);
+                                }
+                                );
+                            });
+                        
+                    }
 
                     // Zero-based Month: 0==Jan
                     const dt_startConst = new Date(2020, 0, 14);
@@ -1367,186 +1456,119 @@
             }
         );
     </script>
-
-    <style>
-
-        html,
-        body {
-            width: 100%;
-            height: 100%;
-            padding: 0;
-            margin: 0;
-        }
-
-        #applicationDiv {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        #viewDiv {
-            width: 100%;
-            height: 100%;
-            flex: 1 1 auto;
-            order: 1;
-        }
-
-        #titleDiv {
-            font-weight: 400;
-            font-style: normal;
-            font-size: 1.2019rem;
-            padding: 10px;
-        }
-
-        #sliderContainer {
-            flex: 0 0 80px;
-            order: 2;
-
-            display: flex;
-            flex-flow: row;
-
-            padding: 0 12px;
-        }
-
-        #sliderValue {
-            flex: 0 0 100px;
-            order: 1;
-
-            display: flex;
-            justify-content: center;
-            flex-direction: column;
-            text-align: center;
-
-            font-size: 300%;
-        }
-
-        #sliderInnerContainer {
-            flex: 1 1 auto;
-            order: 2;
-
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 0 20px;
-        }
-
-        #slider {
-            width: 100%;
-        }
-
-        /**
-      * Play/Stop toggle button
-      */
-
-        #playButton {
-            flex: 0 0 100px;
-            order: 3;
-
-            margin: 20px 0;
-        }
-
-        .toggle-button {
-            display: flex;
-        }
-
-        .toggle-button.toggled .toggle-button-icon {
-            color: #cc1b1b;
-        }
-
-        .toggle-button .toggle-button-icon {
-            color: #1bcc1b;
-        }
-
-        .toggle-button > :nth-child(2) {
-            display: none;
-        }
-
-        .toggle-button.toggled > :nth-child(1) {
-            display: none;
-        }
-
-        .toggle-button.toggled > :nth-child(2) {
-            display: block;
-        }
-
-        /**
-        * Hover tooltip
-        */
-
-        .tooltip {
-            position: absolute;
-            pointer-events: none;
-            transition: opacity 200ms;
-        }
-
-        .tooltip > div {
-            margin: 0 auto;
-            padding: 12px;
-            border-radius: 4px;
-            box-shadow: 0px 0px 4px rgba(255, 255, 255, 0.75);
-            transform: translate3d(-50%, -125%, 0);
-        }
-
-        /* Enable/Disable Div and its contents*/
-        .disabledbutton {
-            pointer-events: none;
-            opacity: 0.4;
-        }
-    </style>
 </head>
 
 <body>
-
-<div id="applicationDiv">
-    <div id="viewDiv">
-        <div id="titleDiv" class="esri-widget">
-            CyberGIS Center for Advanced Digital and Spatial Studies at University of Illinois at Urbana-Champaign
-            <!--<img src="https://cybergis.illinois.edu/wp-content/themes/cybergis-new/images/uoi.png" width="20" height="30" align="top"/>-->
-            <div id="subTitleDiv" class="esri-widget"> WhereCOVID-19 App</div>
-        </div>
+    <div class="loading-overlay"></div>
+    <div class="loading-overlay-image-container">
+        <div class="loader"></div>
     </div>
 
-    <div id="sliderContainer" class="esri-widget">
-        <span id="sliderValue"></span>
-        <div id="sliderInnerContainer">
-            <div id="slider"></div>
-        </div>
-        <div
-                id="playButton"
-                class="esri-widget esri-widget--button toggle-button"
-        >
-            <div>
-            <span
-                    class="toggle-button-icon esri-icon-play"
-                    aria-label="play icon"
-            ></span>
-                Play
+    <nav class="container-fluid py-3 d-flex justify-content-center">
+        <div class="col-12 col-lg-10 d-flex flex-column flex-md-row justify-content-between">
+            <div class="topic-brand d-flex">
+                <a href="https://cybergisxhub.cigi.illinois.edu/wherecovid-19">
+                    <img class="topic-logo" style="    display: inline-block;
+                    width: 50px;" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxISEhUSEhIWFRUXFhcYGBUVFhcVGBceGBUWGBYXFRgYHSggGBolHhcXITEhJikrLi4uFx8zODMtNygtLisBCgoKDg0OGxAQGy0mICUrLy0tLy0tLS0tNS8tLS0tLy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLf/AABEIAOEA4QMBEQACEQEDEQH/xAAbAAEAAwEBAQEAAAAAAAAAAAAABQYHBAEDAv/EAD4QAAEDAgIGBwUHBAIDAQAAAAEAAgMEESExBQYSQVFxBxMiYYGRoTJCcrHBFCNSYoKSojOywtFDY9Lh8HP/xAAbAQEAAwEBAQEAAAAAAAAAAAAABAUGAwIBB//EADMRAAICAQIFAwMDAwQDAQAAAAABAgMEBRESEyExQVFhcSIygZGhsRQjwRUzQlJD4fAk/9oADAMBAAIRAxEAPwDcUAQBAEAQBAEAQBAEAQBAcGkNM08H9WZjDwLhteDRiUB0UNYyZjZIztMcLg5X80B90AQBAEAQBAEAQBAEAQBAEAQBAEAQBAEAQBAEB4UB451hclFufG0luz5w1LH32HtdbPZINvJenFx7o8xsjP7WmfZeT2Z50m11VE9gZK5sL2nBvZ7QPaBcMciML8UBnZO9Aaf0WaQ2oXwE4xu2h8L75cnA+aAvCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgPLoDg0xpeKmZtyutwaMXOPAD65LrVTKx7RRGycqvHjxTf4KoyCq0mdp5MFNuaM3f+XM4cLqwcqsRbL6pfwVCjkag95fTD+TjfRfYa+FkEhcHloc052cbEOtmLYjkuvM/qceUrF27Mjun+jy4Rqe+/dGjKlNQVjpE0f11G5w9qI9YOQBD/AA2ST4BAZhozQdTUf0YXOH4vZb+51ggL9qXqlUUs3XSSMALS10bbuJviMcALEDigLygPLoBdNwEB6gCAIAgCAIAgCAIAgCAIAgCAIAgCA8K+MFP160CZB9pjvtsHabndoxuBxHqFZYOSof25dmUurYbsXOh3Rxx63zzRshp4vvyLOcB2W7tpo3cccB3rs8GFc3Kx/SRo6rbbBV0x+rz6HxGq9fC8TxyMfJmTe7rnMdsWPC916/rMaceW00jx/puXVLmwacu/uTur2ka+R+xPA1rRm83YfAYhx5WCh5NWPFb1y3LHDvzJy4bYpL1LI5oIIIuDmDjdQi1PWgDAZcEByVulIIf6srGdxIv5ZrpCqc/tRwsyaq/vkkfWjq2SsEkbtprsjiN9t68zg4Phl3OldkbIqUXumcGsOmfsjBIYy8F2ybEC1wSL35LrjUO6XCn1I2Zlf00ONrcgG9IUW+GTwLT9Qpv+l2f9kVv+u1f9WdtPrzSOz22fE3/xJXKWnXR9yRXrWPLvuvkm6HSsE39OVju4EX8s1EnTOH3InVZNNv2STOy65kg9QBAEAQBAEAQBAEAQBAEAQBAcmkq5kEbpZDZrR58AO85L3XXKySjHycb7o0wc5dkV7VGoqJnS1Mry2JxOxGcsN4JyAAtfebqZlwrrUa4Ld+St0+y61yuse0X2RZ4pWuAc0hzTiCCCD3gqA1s+pbRkprdPoUTT+jpKGobVU47DnWcwA2BcRdlh7rt3A+Ct6Lo5FXKs7rszPZlE8S9X1dm+q/8AvUvVLLtsa4tLbgHZdgRcZHvVTJbNo0FcuKKk1sfRfEeg03yKDfcpHSDW1ETowyRzY3tI7OBuLXu4Y5Eb+KtdNqqnvxLdoodZuvrcVB7RZQicbnE/NXaXTYzTk292aF0bV+1HJCTix20OTs/UHzVFqdW01NeTT6HdvW6n46/gsWsFD19PLHvLSW/EMW+oChY9nLsjL3LPMp51Eoe3QxsharffqYR9OgQAL41ufU9uxO6L1rqYcNvrG/hkx8nZhQ7sGqfbo/YscfVL6uje69y8aD1rgqLNv1cn4HEY/Ccj81UZGFZV17o0OJqdV/TtL3LAFDLI9QBAEAQBAEAQBAEAQBAEBnWntJNq6ttO+TqoGOsS67dojPPLgL953q5x6nRQ7Ut5PsZrLyFk5Kqk9oI79aa4uLNH0gF3AB2zk1tsG8rC57ua44tainkW/gkZ13E44mP577ehIVlRHoykDW4uyaD7zjiXHgN/ouMISy7t32/wSbJw0/GUV38fJIauSTvgY6ottnHKxt7pcNx3rjkKEbGq+xJw5WzpTu7knJIGgkkAAXJOQ7yuCW/QkyaS3Znus2uTpCYqYlrMjIMHO+H8I78z3K6xdPS+qzv6Gaz9Wc/7dXRevqSnRzX7UT4ScWOuOTsfnfzUfU6eGakuzJmi5HHW4SfVf5JDXig62leQO1H2x4e1/G644FvBct/PQk6rRzMd+q6mVLSJGMJvU6v6mqjJNmu7Dv1ZetlDzquZS35XUsdMv5WQm+z6GslZs2ZkWtdB1NVI0CwJ228nY+huPBaXCt5lK9UYrUqOTkSXh9SIUvfyQD6dS7Z29k7N7bVja+dicgV5c4cXDue1XJx4tnsfNejwE6eT6ty36s64ujtHUEuZkH5ub8X4h6qqytOUt5V9y8wNWcGoXdvU0SKQOAc0ggi4IxBHcVSNNPZ9zTRkpLdH7Q9BAEAQBAEAQBAEAQHl0BC6f1chqhdw2ZN0jRjyd+IKTj5U6X06r0IGXp9WQuvSXqU6jMui5yZog9ruz1gxJF/cO4/lPBWk+DMr+h7NeCjq5mnW72R3T8kjoendpCpNVKPuYzaNhyNsQO/ie+w3KPfJYtXKh9z7slY1cs6/nz+xdkXk8VVGg32M01x1lM7jDEfumnEj/kI3/CN3nwV7g4fAuZPuZTU9RdsuXW/p/kqys/cpid1Kruqq2Xyf92f1W2f5AeahZ9XHS9vHUstKu5eQt+z6GrSMDgQcQQQRzwKzqe3U2MoqSaZiuk6QwzSRH3HEDlfsnystVTPjrUvUweTU6rZQ9GcwPDA8QujW5xT2e6Nn0JXCeCOX8TRfmMHDzBWVvr5djgbzFtVtMZryirdJdBdsc490ljuTsW+oPmrDSrNpODKjXKd4xsXwygq79jM7lv6OqwCWSB1i17doA5Xbnh3g/wAVVanBuKsXdF7olq45VS7MmtO6lRS3dBaJ/AewfD3fDyUTH1CdfSXVE/L0euxcVXR/sZ/pChkgeY5Wlrh694O8K7qtjZHih1Rmb6J0y4ZrZnMupxLRqXrA+F4hcHPjccgC4sJOYAx2eI8VWZ+LGS41smXWlZs65ct9U/2NNBVEavc9QBAEAQBAEAQBAeFAUTSL56+qkhhkMcUOFwSATlc7OZvcDuF1bVKvGqU5x3bM7e7s3Iddctox8nLo7TtczbpY29dIxzhtG7rAGxF8L47zyXSzGx5bWyfCn4OVOblx3oiuJryTmr2mvtnWU9TE0PaO022BF7G7TkQVEycfkNTrfR9ixwsx5XFVbFbruWOjpWRMbGwbLWiwH/2agyk5PdllXXGuKjFbIqXSBpzYb9mjPaeO2Ruafd8flzVlp2NxPmS7LsU2sZvBHlQ7vv8ABnqvTL/ATcHrHEEEGxBuDwtkvjW62PUZcL3Xg2jRFYJoY5R7zQeR3jzusndDlzcfQ3mNaraozXlFF6SKHZmZMBg9tjzb/sH+KuNLs3g4ehndcp4bFYvJUFalEaB0a192SQE4tO23k7P1+apNUr2mp+pp9Dv3hKt+OpZtPUPX08kW9zTbmMW+oCr6LOCxSLbLqVtMoexjJFs1qk9+phGtt0zq0VWGGaOUe44E8snDyuud9fMrcTtjXcq2M/Rm0scCARiDiFlGupvU01ujh01oeOpjLJB8Lh7TTxBXam+dUuKJGysWvIhwz/UhdH6jU7LGQulPedlvkMfMqTZqNsu3Qg06LRDrLd/wWOlo44haNjWDg0AfJQpWSk95MtK6a61tBJH1LwLC+eXevPU97+D9ofQgCAIAgCAIAgI/TteIIJJd7W4czg31sutFfMsUSPl3KmmUys6pzMp6GWfaa552nkXBNxgxp4En+5TstSsvUNunYqdPnGnElbv16s6dQqTYgfUP9qVxcSeDScfPaPivGfPexVx8dDtpVfBS7pd5dT4akAzT1NWcnOLW+Jv8gz1XvO+iuFXoc9LTstsv9X0LZXVTYo3SOya0k+G5V1cHOSS8lxbYqoOb8GMV1U6WR0j/AGnkk/QeAsPBaqqCrioowd1srbHOXk+LWkmwFycAF7bS6s5RTb2RL6f0E6lbCXYl7Lu/K4HFo8CPIqJjZSu4/bsT8zBeOoN+V+5DqYyAaH0bV+1E+E5sO0OTs/UHzVFqdW01P1NRod/FW634JTXag62kfYdplnj9Ptfxuo+Dby7l79CZqlHNx5eq6mULSmLJjVKu6mqjccnHYdycQPnY+CiZtXMpa9Ov6E/Tb+VkRfr0/U11Zo2xket9B1NVIBk47beTrk+u0tJg28dK9uhidTo5WQ14fX9SGsphANW1Ir+tpWXPaZdh8PZ/iQs1nV8Fz28mz0u7m4637roTFXWxxC8kjWDi5wHzUaFcpdIonWXQrW82kVzSGvVOy4jDpT3DZb5n6BTqtOsn1fQq7taoh9vUrOkNdqqTBhbEPyi7v3O+gCsK9Nqj36lTdrN8+kehCM0hKJWzF7nPa4OBcSct2O5SnRBwcEtkV8cmxWKbfVPc2HRlYJomStyc0HlxHMHBZi2t1ycX4NxRara4zXlHWvB2CAIAgCAIAUBx6RoI52mOVu03O1yORwxXuqyVb4o9zjdTC6PBPsVLSOoAxMEpH5X4jltD6gqyr1N7/Wtymu0Rf+KW3s+xHVkukqeF0D2bURYWBzW7WyMsHNxGHELtBYts1NPZ9yLN51FTqlHdbbdP/RdNWNH9RTRsI7Vtp3xOxP8ArwVXlW8y1y/QvcGjk0Rj+WQnSPX7MLIQcZHXPwt/9keSl6ZVxWOT8Ffrd/DWq15M6V6ZYs2oOjBLUdY4XbEA7m432fKxPgFX6jdwV8K7st9Hx+Zdxvsv5Ldr1QdbSuIHajIePDB3oT5KswLeC5b+ehd6rTzMdtd11MrWkMYTeptf1NWwk4P+7P6sv5WUPPq46X6rqWWl38rIW/Z9DWXNBBByIWbXQ2bW62MW0tRdTNJF+FxA5ZtPkQtVRZzK4zMFlVOm2UPRnJddu/Q477Pc2XQFd19PHLvLceYwd6grK318uxxN3h3c6mM/YrXSTQXjjmGbTsu5Oy9R6qdplvDJwfkqtcp3rVi8Gfq88mZ8nbQaVmha5sUhYH2va18OB3Ljbj12STmiRVlW0xcYS23OWWVzjtOcXHi4knzK6RhGP2pHGc5Sf1Pf5PwvR4CHwIfTQujavvHJCfcIc3k7MDxH8lR6nXtNTXk0+h3cUJVvwXRVZfBAEAQBAEB4V8YKnrgKmKRlVBi1jSHt7ib9ob2/LNWOHypp1Wd32ZT6lz65Rvq7LoyX0BpyOqZtMwcPaYc2/wCx3qNkY8qZbSJmHmQyYbruu6JVcCYEBl/SDUbVXs7mMa3zu4/MLQabHarf1ZkNas4sjb0RWlYFSaf0f0mxSh9sZHF3gDsj0F/FZ3ULOK7b0Nfo9XBjKXqyySsDgWkXBFj45qCnt1LWSUk0zPaXUCUuO3I1rATa3acRfA2wAwV09UiorZbszMdDscnxSSX7li0dqbSxWJaZHDG7zceDRYKDbn22dN9kWlGk49T323fuWJQyy9jO+kmg2ZY5hk9uyebcR5g+iutLt3i4PwZnXKeGasXkpytihL90aV12yQHcQ9vI4O9QPNUuqVbSU156Gl0O/eMqn46otWmqETwSRH3mkDuIxafMBVtM+CakXGVSrapQflGMEEYHA7xwWrTTW6MHJbPZni+nw+9HRSSm0Ubnn8ov5nILnO2EF9T2O1dFlr2gtyyaP1EqH2MrmxDh7bvIYeqgWanXH7VuWlOiXS+/ZfudunNTooKV8jHPc9tjdxwtcbQAHcuNGoTsuSfYkZek1048pxbbRR1cozpYtQqnYrGt3Pa5vptD+31UDUYcVL9mWmj2cOSl69DVFnjYhAEAQBAEB4UBz1tXHEwvkcGtGZPy7z3L1XCU3wxW7OVtsK4uU3sjM4mvmqnSaOjfGBvwAHG98AD+E3/1fPhrpUch7mUSnbkceImix6MOlRKwS2Me0No2jy35KDZ/ScD4e/gtaHqCsSn28lxVaXZj+tUm1Vzn89vIAfRafDW1ETD6k98mb9yKUkhGy6vxbNNCP+pnq0ErKZD3sl8m8xI8NEF7IkLLkSSOr9OU8H9SVoP4Qbu/aMV2rx7bPtiRbcyir7pIrWkOkBguIYi780nZHOwuT6KfXpcn972Km7XIr/bjv8nbqXrA+qMjZbbTSCNkWGycMORHquWdixp2cezJOmZ08jiVndHbrlQddSvAF3M7bf05+lx4rjh2cu1P8HfU6ObjyS7rqjJlpjFEtqrXdTVRvJsCdh3J2HzsfBRcyrmVNfknadfyciMvHY14rMo25Sa7UZ0tRI/rGsjc7aAAJdji7gBjdWleo8Fajtu0UF2jOy6UuLZfuS2j9TqSKxLDIRvkN/45eij2Z11nnb4JtOlY9Xjd+5PRxhos0ADgBYKG22+pYRjGPRI/YQ9HHpmHbp5W8Y3j+JXSp7TT9zhkQUqpL2Ziy1jMCSWrb9mqhP8A2N9cPqo+Wt6ZfBLwJbZEH7myLLm6CAIAgCAIDwoGVPSmrclVVF0ry2Btg1oOJwF7DJouc81Pqyo01bQX1epT5Gnzyb+Kx/QvBZKOjjiYGRtDWjID68T3qFOyU5cUnuy0qqhVHhitkj7heDoer6DHNZm2q5//ANHeuK0+J/sx+DDagtsmfyRikkM2rQzr08J4xM/tCyd3+5L5ZvsZ70w+EZ1rbpKqbUSRPmdsA9kN7A2TiL7Nr4G2Ku8Kmp1KSXUzGpZORG5wcnt+hW1YpFQ3uEBM6oV/U1UZJs1x2HcnYD+VlEzquOl7eOpYaZfysiPo+hrZF1mkbRpPoYvpmi6ieSLc12HI4t9CFqsezmVqRg8unlXSh7nGur7EdPY2PVyu6+mik3loDvibg71Cy+TXy7XE3eFdzaIy9jqraxkLDJI7ZaMyfRcoQlN8KXU7WWxrjxS6Iq2kNfom4QxukPF3Ybz4+gVjVpk5dZvYprtcqj0rW589Vtapaip6uXZDXNOyGi1iMc8zhfyX3LwY1VcUT5p+qTvu4J7dexdQqsvjn0k60MhO5jv7Svda3kvk5XvauT9mYkFrWfn5IaAbephH/Yz5hcMp/wBqXwSsFf8A6IfJsyyxuwgCAIAgCA8KAhNatOfZItoAF7jZoOWVy49w+oUnEx+dPbx5IGfmLGr3Xd9jro9uamb1oLXvjs7cQXNsThkuc9oWfT1SZ3r4raFx9G0VGGrq9HTMZUPMsLzbaJLrcSCcWkXBtwyVlKFOVW5VraSKSNuRg2qNr3g/JfWm+KqNjRJ7rcynXmDYrJPzBrvNoH+JWi0+fFQvYxur18OS/fqQKnFYazqXU7dHFxaCw/pJHyssznQ4b5fqbbTLOPGi/wAFe6S6GxjnG/7t3hdzf8lN0u7beD+Ss1yjrG1fDKzo/QVTNbq4nEfiPZbzu7PwVhblU19JMqKMC+37Y/qctfSOhkdE/wBppsfIHDzXWqyNkVKPY4XVSqm4S7o5wV0ZzT2e6Nm0FXdfBHLvc0X5jBw8wVlL6+XY4+5vMS5W0xn6opvSVQ2fHOMnAsdzGLfS/krXS7ejh+Sj1yjaUbF56FLVt7GfL50aV+EsB3We3xwd8h5ql1SvrGz8Gk0K/pKr8otulqMTQyRH3mkDuO4+BsVW1TcJqXoXWRUrapQfkxdzSCQRYjAjgRmtXFqSRg5LZ8L8H30fVGKVkgzY4O52OI8RcLnbBWQaflHuizl2RmvDNqglDmhwODgCORFwsq1s9mb6MlJJryROuFSGUcxv7Tdgfr7P1UjEhxXRRD1KzgxpP2MjWnMQTWpkBfWRcAXOPg029bKHny2oZY6XXxZMf1NcWbNoEAQBAEAQHhQFL6QhsuppXC7Gv7Xm13yafJWen9VOK7tFFrC2lXN9k+pc2OBFxkclWPo+peRaa6FY6RQ37Jjntt2fr6XU/Tt+b09Cp1rh/p+vfdE1oJ5NNAXZmKMn9gUW9JWy29WT8Rt0Qb9F/BUOkyjxim5xn1c3/JWWl2d4FJrtP22L4KOrn2M6Xfo20hZ0kBOfbbzGDh/b6qn1SrfaxfDNDoeR1dT+UXuSIOGIB34i/iqdNrsaKUVLoz9WXw9Gd9JFBsysmAwe3Zdzbl5g/wAVeaXbvBwfgy+uUbWKxeSnq1KIv3RpX3bJAT7J228jg4DxF/1Kk1SraSmvg02h3bxdT8dSd1voOupZBa7mjbbzbjYcxceKh4dvLuT8FjqNHNx5Lz3X4MkWnMQSmrFd1NTG8mwvsu5OwN+VwfBRsurmUtEzT7uTkRl47fqbAsubkynXWh6qrfb2X2ePH2v5A+a0eBbx1JeV0MbqtPKyG12fUgVOKw1LUOv6yla05xks8Bi30NvBZzPq5dz9zY6TfzMdLyuhDdJWkP6dOD/2O9Q0epPkpWl1dXN/BB12/wC2pfJRlcmcLr0a0d3yzHJoDBzJu70A81UapZslD8mg0KneUrH8GghUxpQgCAIAgCA8KAj9O6KbUwuidhfFrvwkZH/7iu2Pc6pqSI2XjLIrcGU2mqdJ0Y6nqTK0YNIY6QDkW425qzcMS/699vUo4WZ+N/b4eJfqfSHQlZXSNfV9iNpvs4A94a0ZX4nFeZX0Y8XGrq/U9QxMrLsUr+kV4L7G0AADAAWAVQ3v1ZoopJbIjdZNHfaKd8Y9q12/E3Ef68V3xreVYpEXNo51MofoY6QtQnujDNbPZnRo+sdDIyVntNNx37iDzBI8V4tqVsHF+TrRbKqasj4Nj0bWsmjbKw3a4X5cQe8ZLLW1yrk4vujdUXRugpx7M6gvB1IPXSg66kfYYs7Y/Tn6XUvCt5dy9+hX6nTzcd+q6mTLSmKJfVSu6mqjdfsk7DuTsPnY+Ci5tXMqkvTqT9Nu5WRFvs+jNdIWZNq1v0Ma07Q9RUSRbg425HFvoQtTjW8ypSMJm0um6UDgXf2IyNh1Zr+vpo5Cbu2bO+JuB+V/FZbJq5dribrBu5tEZexB9JFBtQsmAxjdY8nf+wPNTNMs2scH5/wV+t08VasXj/JnSvTKlj1J0y2mkk6w2Y5hPizEW7yCR5Kvz8d2xXD3LbSstUSlxdmv4IXSVa6eV8r83G9uAyAHIWCl01KqCgivyL3dY5y8nMF0eyXU4pdehr2q2jvs9MxhHaI2nc3YkeGA8Fmcu7m2uXg3GBj8ihRffuyYUYmhAEAQBAEAQBAeWQBAVzTWulLTu2NrrH3AcGYhuOJccrjhmgLCx4cAQbggEEZEHIoDNdfNC9VL1zR93IceDXbx45+avtOyeOPA+6Mnq+HyrOZHs/2KsrEpixaoawmlfsPxhecfyn8Q+qg5uJzY8Ue6LXTM/wDp5cMvtf7GoxSBwDmkEHEEYg8ln2mnszXxkpLdHrhcWK+b7BrdbGL6ZojDPJEfdcQOWbfQhamizmVqRhMql1XSh6M413Iyexsmr9f19PHJvLbO+IYO9QVlcirl2SgbvDu51MZ+xUekqgs+OcDMFjuYxb/l5Ky0u3dOH5KTXaNnG1fDKSrgz5eejSvxkgJ/7G+jXf4qm1SrtP8ABo9Cu+6p/JcdK0gmhkiPvtI5EjA+BVXVZwTUvcvMipW1OD8oxeSMtJacCCQR3g2K1cXuk/BgpRcW0/B+V6PIQFm1G0L183WuH3cRB+J2bR4Znw4qu1DI5ceFd2XGkYfNs45fav5NPsqA1p6gCAIAgCAIAgCAIDMukbStWybqdvYhcLt2LtLx7web3Njuyy4oCioDS+jXWDbZ9kkPaYLxk72728x8uSAuOkaFk8bo5Bdrh4jgR3he67JQkpI5XUxtg4S8mR6a0XJTSmN472u3OG4j/S02Perobr8mIysaWPY4y/BwLv5IxYNWtaH0p2HXfF+He3vZf5KBl4Ubfqj0ZaYOpTx3wy6x/j4NK0bpKKdm3E8OG/iO4jMFUNlUq3tJGroyK7o8UH0KR0k0OzJHMBg8FrubcR6E/tVvpdm6cPQz+u0bSjavPQpitjPl96NK+4kgJy7beRwd6281S6pX9Sn+DS6Hf9Mq346lh1soOupZGgXcBtN5txw54jxULEs5dqZaahTzseUfPdGQgrTLsYcktXK/qKmOS9htWdydgfnfwUfLr5lTRLwbuVfGXg2O6zBuTKteKHqqpxAs2SzxzODvUX8VodPs46kvQx+r0cvIbXZ9SvqeVZ26I0Y+olEUeZzduaN7iuF98ao8TJGLjTvsUY/k13RdAyCNsUYwb5k7ye8rNW2ytk5yNvRRGmChHwdi5nYIAgCAIAgCAIAgCAgtcNBCrgLR/Ub2oz3728jl5cEBiz2FpLXAggkEHMEGxB70B+6ed0bmvYS1zSCCMwRkUBsmqWsbayLGwlaO2z/Jv5T6ZIDt03oiOpjLHjHNrhm08Qu1F0qZbxI2ViwyIcMjLNM6HlpX7Mgw9149l3Lv7loqMmF0encxuVhzxpcM+3qRykEU+1JVvidtxvLHcWm3nxHcudlanHaS3OlVs65cUXsTOkdZ5KiAwzNaTcFsjcCCDvGRuLjC2ai14UarOOD/AAT7tSlfU67F18MgFOKsldV67qaqN+4nZdydgfLA+CjZlfMpa/P6E7T7+VkRfr0/U19Zg25jmsND1NRJHuDiW/C7FvobeC1GLbzKlIw2dQ6b5R9yOUgiGv6rV/X0sbz7Vtl3NuB87X8Vl8qrl2yibjAv51EZMh+kah24GyjON2PwvsD67KlaZbw2OPqQdbo4qVP0/wAlH0PomWpfsRj4nH2WjiT9Fb35EKVvIz+LiWZEuGK/Pg1TQeho6WPYYLk4ucc3Hv7u5Zy/IldLeRscTEhjQ4Y9/UklxJR6gCAIAgCAIAgCAIAgCAoHSHqsXXq4W9oD71gGLgPfA4jf3C+5AZugOjR9dJBI2WJ2y9uR+YI3g8EBruqutUVW3ZNmTAdqMnPvZxHqEBNVlGyVhZI0OacwfpwPevUJyg+KL6nOyqNkeGa3RQdOajyMJfTnrG/gPtjkcnfPmrmjUoy6WdPczeXo0o9aeq9CoyxlpLXAtIzBBBHMFWcZKS3TKScJQe0lsz8r0eAgCH3sbFq3X9fTRyb9mzvibgfUeqy2TXy7XE3WFdzqIzKr0lUOMc4GfYd82/5Kx0u3vD8lPrlHWNi+GUdXBnS79GtfZ0kBOYEjRywd/iqfVKu0/wAGi0K77qn8ou9bStljdG8Xa4EHx4KpjJxakvBoLK42RcZdmfmgoY4WBkbQ1o3D5k7z3r7Ocpy4pM800wpiowXQ6l4OoQBAEAQBAEAQBAEAQBAEAQGa676mFu1UUzbtzfEB7PFzBw7t3LIChID9RSOaQ5pLXA3BBsQeIIyQF/1b6QbWjqx3CZo/vaPmPJAaBS1TJGh8b2vacnNNx6ID4aR0VDOLSxtd3kYjk4YhdK7p1/a9jhdjVWr64plXr9QIzjDK5nc4bY88D81YV6pNfetyou0OuXWt7fJC1Oo1W32dh47nWPk4fVS4anU+/QgT0W+L+nZnE/VStH/AfBzD8nLqs6h/8iO9Lyl/w/ct+odJUQtkjmjcxtw5pJGZwcMD3A+aq9QnVZJSgy80iq+qMoWrZeCa1g0Z9pgdFcAmxaTuINx/rxUXHu5VikT8zH/qKnArtD0fxjGaVz+5g2B5m5+SnWapN9IrYq6dCgutkt/joWbRuioIBaKNre+13Hm44lV9l1lj3k9y2oxaqV9EdjvXMkBAEAQBAEAQBAEAQBAEAQBAEAQBAUjWzUZsxdLTWZJmWZNfy/C70PqgM0qqd8biyRpa4ZtcLEID5IDr0dpOandtQyOYd9jgfiGR8UBc9FdJLxhURB3548D4tOB8wgLTQ650UtrTBh4SAs9Th6oCagqWPF2Pa4flId8kB9k2B5ZAfKedjBd72tHFxDfmmwIWu1xoos5w48IwX+ow9UBV9K9JLjcU8Ib+eXE+DW/7QFv1R0qamljlcbvxa/d2mmx8xY+KAmUAQBAEAQBAEAQBAEAQBAEAQBAEAQEbprQUFU3ZmZcjJwwc3kfpkgM407qDUQ3dD98zgMJBzb73h5ICpSMLSWuBBGYIsRzBQHiAIAOKA6GV8zcpZBye4fVAH18xzmkPN7j9UBznHE58UAQBAX7op0jZ8tOT7QD2jvbg/wBC3yKA0lAEAQBAEAQBAEAQBAEAQBAEAQBAEAQBAcGk9DU9QLTRNf3nBw5OGI80BUtI9G0TsYJnM/K8bY88CPVAVPT2qNRSM6yQscy4G01285dkgFAQCAIAgCAn9CaoVNUwSM2Awk9pzuBscACUBatHdGrBjPM535WDZHmbk+iAtuitB09MPuYmtP4s3Hm44oCRQBAEAQBAEAQBAEAQBAEAQBAEAQBAEBX9btZBRMYdkPe91gwm2A9o3tyHigOXRevtJLYPcYXHc8YfuGHnZAWWnqWSDaY9rhxaQ4eiAoXSxW4Qwg5l0h8Oy35uQGdIAgCAIDTOimsvFLCT7Dw4cnix9W+qAu887WDae4NA3uIA8ygK3pTXujiuGuMrhujGH7z2fK6AktWtNCrgEwbsnac0tvfZIOV7cCD4oCWQBAEAQBAEAQBAEAQBAEAQBAEAQHhKAxPXDTH2qpe8HsN7DPhBOPibnxCAhUB+4J3MO0xzmni0lp8wgPpWVskxDpXue4DZBcbmwuQLnmfNAfBAEAQBAdNDpCWEkxSOjLhYlpsSL3tdAfKoqHyG73ueeLiXH1QHzQF76KtIWklpycHgPbzbg70I/agNMQBAEAQBAEAQBAEAQBAEAQBAEAQH5kYHAgi4IsQciDmCgKnpXo/pZbmPahd+XFv7Tl4EICpaR6PquO5j2JR+U7LvFrvoSgK7WaNmi/qxPZ8TSB52sgOS6A9QBAEAQHl0B00lBLLhFE9/wNLvUBAWLR2oNZJYvDYh+c3d4Nbf1IQFz1d1IhpXtlL3vkbex9louCDZozwJzJQFqQBAEAQBAEAQBAEAQBAEAQBAEAQBAEAQHhF0BH1OgqWT26eInjsNv5hARs2o9A7/AILfC+Qem1ZAcj+jyjOXWD9d/mgPGdHdGM+sP67fJAdcOo1A3/h2vikkPptWQElTaApY/Yp4h37AJ8ygJFrbYBAeoAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgCAIAgP/9k="></a>
+                <a href="https://cybergisxhub.cigi.illinois.edu/wherecovid-19" style="text-decoration:none; color:black; padding-left: 10px;">
+                    <h3 class="topic-name" style="position:relative;">WhereCOVID-19<br><span style="position:absolute;top:95%;right:0;font-size:11px;">by CyberGISX</span></h3>
+                </a>
             </div>
-            <div>
-            <span
-                    class="toggle-button-icon esri-icon-pause"
-                    aria-label="pause icon"
-            ></span>
-                Pause
+            <div class="nav-link">
+                <a href="https://cybergisxhub.cigi.illinois.edu" class="btn btn-light" style="font-weight:bold">Go Back to CyberGISX</a>
+                <a target="_blank" href="https://cybergisxhub.cigi.illinois.edu/registration" class="btn btn-warning" style="font-weight:bold">Sign Up for CyberGISX</a>
             </div>
         </div>
-    </div>
-    <div>
-        <select name="select" id="animation_dropdown" style="display: none">
-            <option value="case">Cases</option>
-            <option value="death">Deaths</option>
-            <option value="death/case">Deaths/Cases</option>
-            <option value="new_case">New Cases</option>
-            <option value="new_death">New Deaths</option>
-            <option value="first_case" selected="selected">First Case Report</option>
-            <option value="first_death">First Death Report</option>
-        </select>
-    </div>
+    </nav>
+    <div id="applicationDiv">
+        <div class="sidebar-left">
 
-</div>
+            <div class="bordered-box total d-flex flex-column p-1" id="total_confirm_div">
+                <i class="far fa-times-circle"></i>
+                <h2 class="text-center">Total Confirmed</h2>
+                <h3 class="text-center confirmed"></h3>
+            </div>
+
+            <div class="bordered-box total d-flex flex-column p-1" id="total_death_div">
+                <i class="far fa-times-circle"></i>
+                <h2 class="text-center">Total Deaths</h2>
+                <h3 class="text-center deaths"></h3>
+            </div>
+            <!--recover div-->
+            <!--
+            <div class="bordered-box total d-flex flex-column p-1" id="total_recover_div">
+                <i class="far fa-times-circle"></i>
+                <h2 class="text-center">Total Recovered</h2>
+                <h3 class="text-center recovered"></h3>
+            </div>
+            -->
+
+            <div class="bordered-box cases d-flex flex-column">
+                <i class="far fa-times-circle"></i>
+                <div class="title p-3">
+                    <p class="text-center">Confirmed Cases by Location</p>
+                </div>
+                <ul class="case-list">
+                    <template>
+                        <li class="case text-center">
+                            <p>
+                                <span style="color:#e60000">
+                                        <strong>65,883</strong>
+                                    </span>
+                                <span style="color:#ffffff">&nbsp;</span>
+                                <span style="color:#d6d6d6">United Kingdom</span>
+                            </p>
+                        </li>
+                    </template>
+                </ul>
+            </div>
+        </div>
+        <div id="viewDiv">
+            <div id="titleDiv" class="esri-widget">
+                CyberGIS Center for Advanced Digital and Spatial Studies at University of Illinois at Urbana-Champaign
+                <!--<img src="https://cybergis.illinois.edu/wp-content/themes/cybergis-new/images/uoi.png" width="20" height="30" align="top"/>-->
+                <div id="subTitleDiv" class="esri-widget"> WhereCOVID-19 App</div>
+            </div>
+        </div>
+
+        <div id="sliderContainer" class="esri-widget">
+            <span id="sliderValue"></span>
+            <div id="sliderInnerContainer">
+                <div id="slider"></div>
+            </div>
+            <div
+                    id="playButton"
+                    class="esri-widget esri-widget--button toggle-button"
+            >
+                <div>
+                <span
+                        class="toggle-button-icon esri-icon-play"
+                        aria-label="play icon"
+                ></span>
+                    Play
+                </div>
+                <div>
+                <span
+                        class="toggle-button-icon esri-icon-pause"
+                        aria-label="pause icon"
+                ></span>
+                    Pause
+                </div>
+            </div>
+        </div>
+        <div>
+            <select name="select" id="animation_dropdown" style="display: none">
+                <option value="case">Cases</option>
+                <option value="death">Deaths</option>
+                <option value="death/case">Deaths/Cases</option>
+                <option value="new_case">New Cases</option>
+                <option value="new_death">New Deaths</option>
+                <option value="first_case" selected="selected">First Case Report</option>
+                <option value="first_death">First Death Report</option>
+            </select>
+        </div>
+
+    </div>
 
 </body>
 </html>
