@@ -60,6 +60,11 @@ body {
     width: 100%;
 }
 
+.disabledbutton {
+    pointer-events: none;
+    opacity: 0.4;
+    }
+
 
 /**
   * Play/Stop toggle button
