@@ -529,8 +529,9 @@
                                     };
                                     //return value.NAME;
                                 })
-                                result_list = result_list.slice(0,11);
-                                result_list.forEach(function(value){
+                                console.log(result_list)
+                                result = result_list.slice(0,11);
+                                result.forEach(function(value){
                                     var instance = template.content.cloneNode(true);
                                     instance.querySelector('strong').textContent = numberWithCommas(value.cases);
                                     instance.querySelectorAll('span')[2].textContent = value.county + "," + value.state;
