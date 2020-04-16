@@ -165,7 +165,7 @@
                         type: "simple",
                         symbol: {
                             type: "simple-fill",
-                            color: "#000000",
+                            color: [0, 0, 0, 0.1],
                             outline: {  // autocasts as new SimpleLineSymbol()
                                 color: [128, 128, 128, 0.5],
                             }
@@ -529,8 +529,9 @@
                                     };
                                     //return value.NAME;
                                 })
-                                result_list = result_list.slice(0,11);
-                                result_list.forEach(function(value){
+                                console.log(result_list)
+                                result = result_list.slice(0,11);
+                                result.forEach(function(value){
                                     var instance = template.content.cloneNode(true);
                                     instance.querySelector('strong').textContent = numberWithCommas(value.cases);
                                     instance.querySelectorAll('span')[2].textContent = value.county + "," + value.state;
@@ -1025,7 +1026,7 @@
                             type: "simple",
                             symbol: {
                                 type: "simple-fill",
-                                color: "rgb(0, 0, 0)",
+                                color: [0, 0, 0, 0],
                                 outline: {  // autocasts as new SimpleLineSymbol()
                                     color: [128, 128, 128, 0.5],
                                 }
@@ -1049,7 +1050,7 @@
                             type: "simple",
                             symbol: {
                                 type: "simple-fill",
-                                color: "rgb(0, 0, 0)",
+                                color: [0, 0, 0, 0],
                                 outline: {  // autocasts as new SimpleLineSymbol()
                                     color: [128, 128, 128, 0.5],
                                 }
@@ -1062,17 +1063,18 @@
                                     stops: [
                                         {
                                             value: 1,
-                                            color: "#f18a62",
+                                            color: [241, 138, 98, 1],
                                             label: _event_type + "(s) Reported"
                                         },
                                         {
                                             value: 0,
-                                            color: "#0ff",
+                                            color: [0, 255, 255, 1],
                                             label: "First " + _event_type
                                         },
                                         {
                                             value: -1,
-                                            color: "#000000",
+                                            //color: "#000000",
+                                            color: [0, 0, 0, 0],
                                             label: "No " + _event_type
                                         },
                                     ],
@@ -1484,13 +1486,13 @@
         <div class="sidebar-left">
 
             <div class="bordered-box total d-flex flex-column p-1" id="total_confirm_div">
-                <i class="far fa-times-circle"></i>
+               
                 <h2 class="text-center">Total Confirmed</h2>
                 <h3 class="text-center confirmed"></h3>
             </div>
 
             <div class="bordered-box total d-flex flex-column p-1" id="total_death_div">
-                <i class="far fa-times-circle"></i>
+                
                 <h2 class="text-center">Total Deaths</h2>
                 <h3 class="text-center deaths"></h3>
             </div>
@@ -1504,9 +1506,9 @@
             -->
 
             <div class="bordered-box cases d-flex flex-column">
-                <i class="far fa-times-circle"></i>
+                
                 <div class="title p-3">
-                    <p class="text-center">Confirmed Cases by Location</p>
+                    <p class="text-center">Top Confirmed Cases by County</p>
                 </div>
                 <ul class="case-list">
                     <template>
