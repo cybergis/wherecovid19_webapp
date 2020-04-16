@@ -63,8 +63,11 @@ body {
 .disabledbutton {
     pointer-events: none;
     opacity: 0.4;
-    }
+}
 
+.hideDiv {
+    display: none !important;
+}
 
 /**
   * Play/Stop toggle button
@@ -248,4 +251,27 @@ body {
 ::-webkit-scrollbar-thumb {
     background: #9d9d9d;
     border-radius: 0px
+}
+
+#sliderContainer {
+    flex: 0 0 30px !important;
+}
+
+#sliderValue {
+    flex: 0 0 40px;
+    order: 1;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    font-size: 170%;
+    padding: 0 20px;
+    margin: 10px;
+    height: 30px;
+}
+
+#playButton {
+    flex: 0 0 100px;
+    order: 3;
+    margin: 10px 0;
 }
