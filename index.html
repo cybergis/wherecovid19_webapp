@@ -165,7 +165,7 @@
                         type: "simple",
                         symbol: {
                             type: "simple-fill",
-                            color: "#000000",
+                            color: [0, 0, 0, 0.1],
                             outline: {  // autocasts as new SimpleLineSymbol()
                                 color: [128, 128, 128, 0.5],
                             }
@@ -1026,7 +1026,7 @@
                             type: "simple",
                             symbol: {
                                 type: "simple-fill",
-                                color: "rgb(0, 0, 0)",
+                                color: [0, 0, 0, 0],
                                 outline: {  // autocasts as new SimpleLineSymbol()
                                     color: [128, 128, 128, 0.5],
                                 }
@@ -1050,7 +1050,7 @@
                             type: "simple",
                             symbol: {
                                 type: "simple-fill",
-                                color: "rgb(0, 0, 0)",
+                                color: [0, 0, 0, 0],
                                 outline: {  // autocasts as new SimpleLineSymbol()
                                     color: [128, 128, 128, 0.5],
                                 }
@@ -1063,17 +1063,18 @@
                                     stops: [
                                         {
                                             value: 1,
-                                            color: "#f18a62",
+                                            color: [241, 138, 98, 1],
                                             label: _event_type + "(s) Reported"
                                         },
                                         {
                                             value: 0,
-                                            color: "#0ff",
+                                            color: [0, 255, 255, 1],
                                             label: "First " + _event_type
                                         },
                                         {
                                             value: -1,
-                                            color: "#000000",
+                                            //color: "#000000",
+                                            color: [0, 0, 0, 0],
                                             label: "No " + _event_type
                                         },
                                     ],
