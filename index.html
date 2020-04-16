@@ -67,6 +67,7 @@
                 "esri/widgets/Expand",
                 "esri/layers/GeoJSONLayer",
                 "esri/tasks/support/Query",
+                "esri/layers/support/LabelClass",
                 "dojo/dom",
                 "dojo/date",
                 "dojo/date/locale",
@@ -96,6 +97,7 @@
             Expand,
             GeoJSONLayer,
             Query,
+            LabelClass,
             dom,
             date,
             locale,
@@ -149,6 +151,8 @@
                     var nyt_layer_counties_url = "preprocessing/nyt_counties_data.geojson";
                     var illinios_county_url = "preprocessing/illinois/illinois_forecast_county.geojson";
                     var illinios_zipcode_url = "preprocessing/illinois/illinois_forecast_zipcode.geojson";
+                    var illinois_hospitals_url = "preprocessing/illinois_Hospitals_valid.geojson";
+                    var illinois_testing_url = "preprocessing/illinois_Testing.geojson";
 
                     if (production_mode) {
                         // nyt_layer_states_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data/FeatureServer/0";
@@ -188,7 +192,7 @@
                         url: nyt_layer_counties_url,
                         outFields: ["*"],
                         title: "US Counties (New York Times)",
-                        visible: true,
+                        visible: false,
                         renderer: default_polygon_renderer,
                     });
 
@@ -208,10 +212,57 @@
                             visible: true,
                         }
                     );
+                    
+                    var illinois_hospitals = new GeoJSONLayer({
+                        url: illinois_hospitals_url,
+                        outFields: ["*"],
+                        title: "Illinois Hospital Locations",
+                        renderer:{
+                            type:"simple",
+                            symbol:{
+                                type: "picture-marker",  // autocasts as new PictureMarkerSymbol()
+                                url: "img/hospital.png",
+                                width: "32px",
+                                height: "32px"
+                            }
+                        },
+                        visible: false,
+                    })
+
+                    var illinois_testing = new GeoJSONLayer({
+                        url: illinois_testing_url,
+                        outFields: ["*"],
+                        title: "Illinois Testing Cases",
+                        renderer:{
+                            type:"unique-value",
+                            field:"Test_Result",
+                            uniqueValueInfos:[
+                                {
+                                    value:"Positive",
+                                    symbol:{
+                                        type:"simple-marker",
+                                        size:12,
+                                        color:"red",
+                                    }
+                                },
+                                {
+                                    value:"Negative",
+                                    symbol:{
+                                        type:"simple-marker",
+                                        size:12,
+                                        color:"blue",
+                                    }
+                                }
+                            ]
+                        },
+                        visible: false,
+                    })
+                    
+                    
 
                     // order matters! last layer is at top
                     var animation_layers = [nyt_layer_states, nyt_layer_counties];
-                    var static_layers = [ illinois_counties, illinois_zipcode];
+                    var static_layers = [ illinois_hospitals, illinois_testing, illinois_counties, illinois_zipcode];
 
                     // // new GroupLayer object may affect other GroupLayer objects
                     // // Comment out unused GroupLayer objects to avoid strange bugs
@@ -238,13 +289,13 @@
                         title: "Layers",
                         visible: true,
                         visibilityMode: "exclusive",
-                        layers: new Array().concat(animation_layers, static_layers),
+                        layers: new Array().concat( animation_layers, static_layers),
                         opacity: 0.75
                     });
 
                     // order mattes! last layer is at top
                     //var all_layers = [animationGroupLayer, staticGroupLayer];
-                    var all_layers = [allInOneGroupLayer];
+                    var all_layers = allInOneGroupLayer.layers;
                     //var all_layers = new Array().concat(animation_layers, static_layers);
 
                     //// A non-3857 basemap
@@ -272,7 +323,7 @@
                         container: "viewDiv",
                         //spatialReference: new SpatialReference(wkid: 3857}),
                         center: [-88.984300, 40.474679],
-                        zoom: 6,
+                        zoom: 5.5,
                         constraints: {
                             snapToZoom: false,
                             //minScale: 72223.819286
@@ -352,16 +403,22 @@
                     // https://developers.arcgis.com/javascript/latest/sample-code/sandbox/index.html?sample=animation-layer-visibility
                     map.allLayers.forEach(function(item) {
                     item.watch("visible", function(visible) {
-                        console.log(item, visible);
+                        //console.log(item, visible);
                         setActiveAnimationLayer(item);
                         if(visible === true){
-                            if(item.title === nyt_layer_counties.title || item.title === nyt_layer_states.title ){
+                            map.layers.forEach(function(i){
+                                if(i.title !== item.title){
+                                    i.visible = false;
+                                }
+                            })
+                            if(item.title === nyt_layer_counties.title || item.title === nyt_layer_states.title){
                                 view.goTo({
                                     center:[-96.984300, 40.474679],
-                                    zoom: 4
+                                    zoom: 3
                                 })
                             }
-                            if(item.title === illinois_counties.title || item.title === illinois_zipcode.title ){
+                            if(item.title === illinois_counties.title || item.title === illinois_zipcode.title ||
+                                item.title === illinois_hospitals.title || item.title === illinois_testing.title ){
                                 view.goTo({
                                     center:[-88.984300, 40.474679],
                                     zoom: 6
@@ -461,10 +518,7 @@
                         view: view,
                     });
 
-                    view.ui.add(new Expand({
-                        view: view,
-                        content: layerlist,
-                    }), "top-right");
+                    
                     view.ui.add(new Expand({
                         view: view,
                         content: basemapGallery,
@@ -492,7 +546,7 @@
                     function numberWithCommas(x) {
                         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                     }
-                    setTotalDiv();
+                    //setTotalDiv();
                     function setTotalDiv(){
                         const query = nyt_layer_counties.createQuery();
                         const totalConfrimStat = {
@@ -508,7 +562,7 @@
                         query.outStatistics = [totalConfrimStat, totalDeathStat];
                         nyt_layer_counties.queryFeatures(query)
                             .then(function(response){
-                                console.log(response);
+                                //console.log(response);
                                 var stats = response.features[0].attributes;
                                 confirmDiv.getElementsByTagName('h3')[0].innerHTML = numberWithCommas(stats.Total_Cases);
                                 deathDiv.getElementsByTagName('h3')[0].innerHTML = numberWithCommas(stats.Total_Deaths);
@@ -518,7 +572,7 @@
                         list_query.orderByFields = ['today_case DESC'];
                         nyt_layer_counties.queryFeatures(list_query)
                             .then(function(response){
-                                console.log(response);
+                                //console.log(response);
                                 var listDiv = document.getElementsByClassName('case-list')[0];
                                 var template = document.getElementsByTagName('template')[0];
                                 var result_list = response.features.map(function(value){
@@ -529,7 +583,7 @@
                                     };
                                     //return value.NAME;
                                 })
-                                console.log(result_list)
+                                //console.log(result_list)
                                 result = result_list.slice(0,11);
                                 result.forEach(function(value){
                                     var instance = template.content.cloneNode(true);
@@ -578,7 +632,7 @@
                         }
 
                         let _slider_max = date.difference(dt_start, _dt_end, dt_interval_unit);
-                        console.log(_slider_max);
+                        //console.log(_slider_max);
 
 
                         if (slider == null) {
@@ -649,7 +703,8 @@
                     });
 
                     view.ui.empty("top-left");
-                    view.ui.add(titleDiv, "top-left");
+                    view.ui.add(layerlist, "top-left");
+                    //view.ui.add(titleDiv, "top-left");
                     view.ui.add(
                         new Home({
                             view: view
@@ -771,6 +826,139 @@
                     };
 
                     illinois_counties.popupTemplate = ilCountyTemplate;
+
+                    var ilHospitalTemplate = {
+
+                        title: "{Hospital}",
+
+                        content: [
+                            {
+                                type: "fields", // FieldsContentElement
+                                fieldInfos: [
+
+                                    {
+                                        fieldName: "StreetAddress",
+                                        visible: true,
+                                        label: "Address"
+                                    },
+                                    {
+                                        fieldName: "City",
+                                        visible: true,
+                                        label: "City"
+                                    },
+                                    {
+                                        fieldName: "ZIP_Code",
+                                        visible: true,
+                                        label: "Zip Code"
+                                    },
+                                    {
+                                        fieldName: "Total_Bed",
+                                        visible: true,
+                                        label: "Total Beds"
+                                    },
+                                    {
+                                        fieldName: "AvailableBed",
+                                        visible: true,
+                                        label: "Available Beds"
+                                    },
+                                    {
+                                        fieldName: "Bed_in_Use",
+                                        visible: true,
+                                        label: "Bed in use"
+                                    },
+                                    {
+                                        fieldName: "Adult_ICU_Bed",
+                                        visible: true,
+                                        label: "Adult ICU Beds"
+                                    },
+                                    {
+                                        fieldName: "Total_Vent",
+                                        visible: true,
+                                        label: "Total Vents"
+                                    },
+                                    {
+                                        fieldName: "Available_Vent",
+                                        visible: true,
+                                        label: "Available Vents"
+                                    },
+                                    {
+                                        fieldName: "Vent_in_Use",
+                                        visible: true,
+                                        label: "Vent in Use"
+                                    },
+                                    {
+                                        fieldName: "CovidConfirmedPatient",
+                                        visible: true,
+                                        label: "Confirmed COVID-19 Patients"
+                                    },
+                                    {
+                                        fieldName: "CovidPatient_in_ICU",
+                                        visible: true,
+                                        label: "COVID-19 Patients in ICU"
+                                    },
+                                    {
+                                        fieldName: "CovidPatientVent",
+                                        visible: true,
+                                        label: "COVID-19 Patients Vent"
+                                    },
+
+                                ]
+                            }
+                        ]
+                    };
+                    illinois_hospitals.popupTemplate = ilHospitalTemplate;
+                    
+                    var ilTestingTemplate = {
+
+                        title: "Test Cases",
+
+                        content: [
+                            {
+                                type: "fields", // FieldsContentElement
+                                fieldInfos: [
+
+                                    {
+                                        fieldName: "Test_Result",
+                                        visible: true,
+                                        label: "Test Result"
+                                    },
+                                    {
+                                        fieldName: "Lab_Report_Date",
+                                        visible: true,
+                                        label: "Lab Report Date"
+                                    },
+                                    {
+                                        fieldName: "age",
+                                        visible: true,
+                                        label: "Age"
+                                    },
+                                    {
+                                        fieldName: "Sex",
+                                        visible: true,
+                                        label: "Gender"
+                                    },
+                                    {
+                                        fieldName: "Race",
+                                        visible: true,
+                                        label: "Race"
+                                    },
+                                    {
+                                        fieldName: "Ethnicity",
+                                        visible: true,
+                                        label: "Ethnicity"
+                                    },
+                                    {
+                                        fieldName: "Deceased",
+                                        visible: true,
+                                        label: "Deceased"
+                                    }
+
+                                ]
+                            }
+                        ]
+                    };
+
+                    illinois_testing.popupTemplate = ilTestingTemplate;
 
                     //--------------------------------------------------------------------------
                     //
@@ -1283,7 +1471,7 @@
                                         var screenPoint = hit.screenPoint;
 
                                         highlight = layerview.highlight(graphic);
-                                        console.log(graphic);
+                                        //console.log(graphic);
                                         tooltip.show(
                                             screenPoint,
                                             graphic.getAttribute("NAME") + ", " + graphic.getAttribute("state_name"),
@@ -1483,6 +1671,7 @@
         </div>
     </nav>
     <div id="applicationDiv">
+        <!--Temporarily Disabled
         <div class="sidebar-left">
 
             <div class="bordered-box total d-flex flex-column p-1" id="total_confirm_div">
@@ -1503,7 +1692,7 @@
                 <h2 class="text-center">Total Recovered</h2>
                 <h3 class="text-center recovered"></h3>
             </div>
-            -->
+            
 
             <div class="bordered-box cases d-flex flex-column">
                 
@@ -1525,12 +1714,15 @@
                 </ul>
             </div>
         </div>
+        -->
         <div id="viewDiv">
+            <!--
             <div id="titleDiv" class="esri-widget">
                 CyberGIS Center for Advanced Digital and Spatial Studies at University of Illinois at Urbana-Champaign
-                <!--<img src="https://cybergis.illinois.edu/wp-content/themes/cybergis-new/images/uoi.png" width="20" height="30" align="top"/>-->
                 <div id="subTitleDiv" class="esri-widget"> WhereCOVID-19 App</div>
             </div>
+            -->
+            
         </div>
 
         <div id="sliderContainer" class="esri-widget">
