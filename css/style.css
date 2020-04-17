@@ -31,7 +31,7 @@ body {
 
 #sliderContainer {
     flex: 0 0 80px;
-    order: 2;
+    order: 0;
     display: flex;
     flex-flow: row;
     padding: 0 12px;

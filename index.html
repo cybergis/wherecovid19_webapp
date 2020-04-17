@@ -69,6 +69,7 @@
             "esri/layers/GeoJSONLayer",
             "esri/tasks/support/Query",
             "esri/layers/support/LabelClass",
+            "esri/widgets/Zoom",
             "dojo/dom",
             "dojo/date",
             "dojo/date/locale",
@@ -99,6 +100,7 @@
             GeoJSONLayer,
             Query,
             LabelClass,
+            Zoom,
             dom,
             date,
             locale,
@@ -219,7 +221,7 @@
                 var illinois_counties = new GeoJSONLayer({
                     url: illinios_county_url,
                     outFields: ["*"],
-                    title: "Illinois Counties Forecast",
+                    title: "Illinois County-level Info",
                     renderer: illinoisZipCodeRender("CountyForecast", 7, 8200),
                     visible: false,
                 });
@@ -227,7 +229,7 @@
                 var illinois_zipcode = new GeoJSONLayer({
                         url: illinios_zipcode_url,
                         outFields: ["*"],
-                        title: "Illinois ZipCode Forecast",
+                        title: "Illinois Zipcode-level Info",
                         renderer: illinoisZipCodeRender("ZipCodeForecast", 0, 200),
                         visible: true,
                     }
@@ -359,7 +361,8 @@
                     zoom: 5.5,
                     constraints: {
                         snapToZoom: false,
-                        //minScale: 72223.819286
+                        //minScale: 72223.819286,
+                        rotationEnabled: false
                     },
                     // This ensures that when going fullscreen
                     // The top left corner of the view extent
@@ -533,15 +536,15 @@
                 //
                 // });
 
-                var basemapGallery = new BasemapGallery({
-                    view: view,
-                });
-
-
-                view.ui.add(new Expand({
-                    view: view,
-                    content: basemapGallery,
-                }), "top-right");
+                // var basemapGallery = new BasemapGallery({
+                //     view: view,
+                // });
+                //
+                //
+                // view.ui.add(new Expand({
+                //     view: view,
+                //     content: basemapGallery,
+                // }), "top-right");
 
 
                 function numberWithCommas(x) {
@@ -708,6 +711,13 @@
                 view.ui.empty("top-left");
                 view.ui.add(layerlist, "top-left");
                 //view.ui.add(titleDiv, "top-left");
+
+                view.ui.add(
+                    new Zoom({
+                        view: view
+                    }),
+                    "top-right"
+                );
                 view.ui.add(
                     new Home({
                         view: view
@@ -926,9 +936,7 @@
                                     label: "Test Result"
                                 },
                                 {
-                                    fieldName: "Lab_Report_Date",
-                                    visible: true,
-                                    label: "Lab Report Date"
+                                    fieldName: "expression/lab_date",
                                 },
                                 {
                                     fieldName: "age",
@@ -941,16 +949,6 @@
                                     label: "Gender"
                                 },
                                 {
-                                    fieldName: "Race",
-                                    visible: true,
-                                    label: "Race"
-                                },
-                                {
-                                    fieldName: "Ethnicity",
-                                    visible: true,
-                                    label: "Ethnicity"
-                                },
-                                {
                                     fieldName: "Deceased",
                                     visible: true,
                                     label: "Deceased"
@@ -958,7 +956,15 @@
 
                             ]
                         }
-                    ]
+                    ],
+                    expressionInfos: [
+                        {
+                            // Wed, 18 Mar 2020 00:00:00 GMT --> Wed, 18 Mar 2020
+                            name: "lab_date",
+                            title: "Lab Report Date",
+                            expression: "Replace($feature.Lab_Report_Date, ' 00:00:00 GMT', '')"
+                        },
+                    ],
                 };
 
                 illinois_testing.popupTemplate = ilTestingTemplate;
@@ -1720,16 +1726,6 @@
         </div>
     </div>
     -->
-    <div id="viewDiv">
-        <!--
-        <div id="titleDiv" class="esri-widget">
-            CyberGIS Center for Advanced Digital and Spatial Studies at University of Illinois at Urbana-Champaign
-           <img src="https://cybergis.illinois.edu/wp-content/themes/cybergis-new/images/uoi.png" width="20" height="30" align="top"/>
-            <div id="subTitleDiv" class="esri-widget"> WhereCOVID-19 App</div>
-        </div>
-        -->
-    </div>
-
     <div id="sliderContainer" class="esri-widget">
         <span id="sliderValue"></span>
         <div id="sliderInnerContainer">
@@ -1755,6 +1751,17 @@
             </div>
         </div>
     </div>
+    <div id="viewDiv">
+        <!--
+        <div id="titleDiv" class="esri-widget">
+            CyberGIS Center for Advanced Digital and Spatial Studies at University of Illinois at Urbana-Champaign
+           <img src="https://cybergis.illinois.edu/wp-content/themes/cybergis-new/images/uoi.png" width="20" height="30" align="top"/>
+            <div id="subTitleDiv" class="esri-widget"> WhereCOVID-19 App</div>
+        </div>
+        -->
+    </div>
+
+
     <div>
         <select name="select" id="animation_dropdown" style="display: none">
             <option value="case">Cases</option>
