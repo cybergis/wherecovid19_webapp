@@ -173,7 +173,7 @@
                 var nyt_layer_counties_url = "preprocessing/nyt_counties_data.geojson";
                 var illinios_county_url = "preprocessing/illinois/illinois_forecast_county.geojson";
                 var illinios_zipcode_url = "preprocessing/illinois/illinois_forecast_zipcode.geojson";
-                var illinois_hospitals_url = "preprocessing/illinois/illinois_hospitals_valid.geojson";
+                var illinois_hospitals_url = "preprocessing/illinois/illinois_hospitals.geojson";
                 var illinois_testing_url = "preprocessing/illinois/illinois_testing.geojson";
 
                 if (production_mode) {
@@ -964,7 +964,7 @@
                             // Wed, 18 Mar 2020 00:00:00 GMT --> Wed, 18 Mar 2020
                             name: "lab_date",
                             title: "Lab Report Date",
-                            expression: "Replace($feature.Lab_Report_Date, ' 00:00:00 GMT', '')"
+                            expression: "Replace($feature.Lab_Report_Date, ' 0:00', '')"
                         },
                     ],
                 };
