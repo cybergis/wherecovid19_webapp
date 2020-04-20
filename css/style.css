@@ -155,6 +155,27 @@ body {
     /* background-color: #242424; */
 }
 
+.sidebar-lowerleft {
+    z-index: 1000;
+    display: block;
+    position: absolute;
+    left: 10px;
+    top: 350px;
+    height: 200px;
+    width: 15%;
+    min-width: 300px;
+    /* background-color: #242424; */
+}
+
+.myChart {
+    position:absolute;
+    right:0;
+    top:30%;
+    width: 300px !important;
+    height: 200px !important;
+    /* background:black; */
+    /* position: fixed; */
+  }
 
 /* .sidebar-right {
     z-index: 1000;
