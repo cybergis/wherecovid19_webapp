@@ -424,6 +424,8 @@
                     // reset active_animation_layer
                     let topVisibleLayer = getTopVisibleLayer(map.layers, animation_layers);
                     mywatcher.set("active_animation_layer", topVisibleLayer);
+                    //Setup hover effects
+                    view.whenLayerView(topVisibleLayer).then(setupHoverTooltip);
                 }
 
                 // Listen for layer visibility change
@@ -1121,279 +1123,176 @@
 
 
                 // Create tooltip
-                // function createTooltip() {
+                function createTooltip() {
 
-                // var tooltip = document.createElement("div");
-                // var style = tooltip.style;
+                var tooltip = document.createElement("div");
+                var style = tooltip.style;
 
-                // tooltip.setAttribute("role", "tooltip");
-                // tooltip.classList.add("tooltip");
+                tooltip.setAttribute("role", "tooltip");
+                tooltip.classList.add("tooltip");
 
-                // var textElement = document.createElement("div");
-                // textElement.classList.add("esri-widget");
-                // tooltip.appendChild(textElement);
+                var textElement = document.createElement("div");
+                textElement.classList.add("esri-widget");
+                tooltip.appendChild(textElement);
 
-                // view.container.appendChild(tooltip);
+                view.container.appendChild(tooltip);
 
-                // var x = 0;
-                // var y = 0;
-                // var targetX = 0;
-                // var targetY = 0;
-                // var visible = false;
+                var x = 0;
+                var y = 0;
+                var targetX = 0;
+                var targetY = 0;
+                var visible = false;
 
-                // // move the tooltip progressively
-                // function move() {
-                //     x += (targetX - x) * 0.1;
-                //     y += (targetY - y) * 0.1;
+                // move the tooltip progressively
+                function move() {
+                    x += (targetX - x) * 0.1;
+                    y += (targetY - y) * 0.1;
 
-                //     if (Math.abs(targetX - x) < 1 && Math.abs(targetY - y) < 1) {
-                //     x = targetX;
-                //     y = targetY;
-                //     } else {
-                //     requestAnimationFrame(move);
-                //     }
+                    if (Math.abs(targetX - x) < 1 && Math.abs(targetY - y) < 1) {
+                    x = targetX;
+                    y = targetY;
+                    } else {
+                    requestAnimationFrame(move);
+                    }
 
-                //     style.transform =
-                //     "translate3d(" + Math.round(x) + "px," + Math.round(y) + "px, 0)";
-                // }
+                    style.transform =
+                    "translate3d(" + Math.round(x) + "px," + Math.round(y) + "px, 0)";
+                }
 
-                // return {
-                //     show: function(point, text) {
-                //     if (!visible) {
-                //         x = point.x;
-                //         y = point.y;
-                //     }
+                return {
+                    show: function(point, text) {
+                    if (!visible) {
+                        x = point.x;
+                        y = point.y;
+                    }
 
-                //     targetX = point.x;
-                //     targetY = point.y;
-                //     style.opacity = 1;
-                //     visible = true;
-                //     textElement.innerHTML = text;
+                    targetX = point.x;
+                    targetY = point.y;
+                    style.opacity = 1;
+                    visible = true;
+                    textElement.innerHTML = text;
 
-                //     move();
-                //     },
+                    move();
+                    },
 
-                //     hide: function() {
-                //     style.opacity = 0;
-                //     visible = false;
-                //     }
-                // };
-                // }
+                    hide: function() {
+                    style.opacity = 0;
+                    visible = false;
+                    }
+                };
+                }
 
+                // When the layerview is available, setup hovering interactivity
 
-                // //Set up hover effects
-                // function setupCountiesHoverTooltip(layerview) {
+                function setupHoverTooltip(layerview) {
 
-                // console.log("123");
+                var highlight;
 
-                // var highlight;
+                var tooltip = createTooltip();
 
-                // var tooltip = createTooltip();
+                var hitTest = promiseUtils.debounce(function(event) {
+                    return view.hitTest(event).then(function(hit) {
+                    var results = hit.results.filter(function(result) {
+                        return result.graphic.layer === layerview.layer;
+                    });
 
-                // var hitTest = promiseUtils.debounce(function(event) {
-                //     return view.hitTest(event).then(function(hit) {
-                //     var results = hit.results.filter(function(result) {
-                //         return result.graphic.layer === nyt_layer_counties;
-                //     });
+                    if (!results.length) {
+                        return null;
+                    }
 
-                //     if (!results.length) {
-                //         return null;
-                //     }
+                    return {
+                        graphic: results[0].graphic,
+                        screenPoint: hit.screenPoint
+                    };
+                    });
+                });
 
-                //     return {
-                //         graphic: results[0].graphic,
-                //         screenPoint: hit.screenPoint
-                //     };
-                //     });
-                // });
+                view.on("pointer-move", function(event) {
+                    return hitTest(event).then(
+                    function(hit) {
+                        // remove current highlighted feature
+                        if (highlight) {
+                        highlight.remove();
+                        highlight = null;
+                        }
 
-                // view.on("pointer-move", function(event) {
-                //     return hitTest(event).then(
-                //     function(hit) {
-                //         // remove current highlighted feature
-                //         if (highlight) {
-                //         highlight.remove();
-                //         highlight = null;
-                //         }
+                        // highlight the hovered feature
+                        // or hide the tooltip
 
-                //         // highlight the hovered feature
-                //         // or hide the tooltip
+                        if (hit) {
+                        //console.log("123");
+                        var graphic = hit.graphic;
+                        var screenPoint = hit.screenPoint;
+                        var mychart = document.getElementById('myChart').getContext('2d');
+                        var infoWindow = document.getElementById('infoWindow');
 
-                //         if (hit) {
-                //         var graphic = hit.graphic;
-                //         var screenPoint = hit.screenPoint;
-                //         var mychart = document.getElementById('myChart').getContext('2d');
-
-                //         Chart.defaults.global.defaultFontSize = 15;
-                //         Chart.defaults.global.defaultFontColor = '#777';
+                        Chart.defaults.global.defaultFontSize = 15;
+                        Chart.defaults.global.defaultFontColor = '#777';
                         
-                //         var CasesArray = (graphic.getAttribute("cases_ts")).split(",");
-                //         var DeathsArray = (graphic.getAttribute("deaths_ts")).split(",");
-                //         var LabelDates = [];
-                //         for (i=0;i<CasesArray.length;i++){
-                //             LabelDates.push("Day"+i)
-                //         };				  
+                        var CasesArray = (graphic.getAttribute("cases_ts")).split(",");
+                        var DeathsArray = (graphic.getAttribute("deaths_ts")).split(",");
+                        var LabelDates = [];
+                        for (i=0;i<CasesArray.length;i++){
+                            LabelDates.push("Day"+i)
+                        };				  
                         
-                //         console.log(CasesArray);
-                //         console.log(DeathsArray);
-                //         let barChart = new Chart(myChart, {
-                //             type: 'line',
-                //             data: {
-                //             labels: LabelDates,
-                //             datasets: [{
-                //             data: CasesArray,
-                //             label: "Confirmed cases",
-                //             borderColor: "#3e95cd",
-                //             fill: false
-                //         },{
-                //             data: DeathsArray,
-                //             label: "Deaths",
-                //             borderColor: "#8e5ea2",
-                //             fill: false
-                //         }
-                //         ]
-                //             },
-                //             options:{
-                //             title: {
-                //                 display: true,
-                //                 text: 'COVID19 Time Series',
-                //                 fontSize: 40
-                //             },
-                //             legend: {
-                //                 position: 'right',
-                //                 labels: {
-                //                     fontSize: 20
-                //                 }
-                //             }
-                //             }
-                //         });
-                //         highlight = layerview.highlight(graphic);
-                //         console.log(graphic);
-                //         console.log(screenPoint);
-                //         tooltip.show(
-                //             screenPoint,
-                //             "Cases in " + graphic.getAttribute("NAME")
-                //         );
-                //         } else {
-                //         tooltip.hide();
-                //         }
-                //     },
-                //     function() {}
-                //     );
-                // });
-                // }
+                        var ExtendedCasesArray = CasesArray.slice(0)
+                        var ExtendedDeathsArray = DeathsArray.slice(0)
+                        ExtendedCasesArray.unshift(0,0,0,0,0,0,0)
+                        ExtendedDeathsArray.unshift(0,0,0,0,0,0,0)
 
-                // // When the layerview is available, setup hovering interactivity
-
-                // view.whenLayerView(nyt_layer_counties).then(setupCountiesHoverTooltip);
+                        infoWindow.innerHTML="Current Cases: "+Math.round(ExtendedCasesArray[slider.values[0]])+"<br>"
+                        +"Current Deaths: "+Math.round(ExtendedDeathsArray[slider.values[0]]);
 
 
-                // function setupStatesHoverTooltip(layerview) {
-
-                // console.log("123");
-
-                // var highlight;
-
-                // var tooltip = createTooltip();
-
-                // var hitTest = promiseUtils.debounce(function(event) {
-                //     return view.hitTest(event).then(function(hit) {
-                //     var results = hit.results.filter(function(result) {
-                //         return result.graphic.layer === nyt_layer_states;
-                //     });
-
-                //     if (!results.length) {
-                //         return null;
-                //     }
-
-                //     return {
-                //         graphic: results[0].graphic,
-                //         screenPoint: hit.screenPoint
-                //     };
-                //     });
-                // });
-
-                // view.on("pointer-move", function(event) {
-                //     return hitTest(event).then(
-                //     function(hit) {
-                //         // remove current highlighted feature
-                //         if (highlight) {
-                //         highlight.remove();
-                //         highlight = null;
-                //         }
-
-                //         // highlight the hovered feature
-                //         // or hide the tooltip
-
-                //         if (hit) {
-                //         var graphic = hit.graphic;
-                //         var screenPoint = hit.screenPoint;
-                //         var mychart = document.getElementById('myChart').getContext('2d');
-
-                //         Chart.defaults.global.defaultFontSize = 15;
-                //         Chart.defaults.global.defaultFontColor = '#777';
-                        
-                //         var CasesArray = (graphic.getAttribute("cases_ts")).split(",");
-                //         var DeathsArray = (graphic.getAttribute("deaths_ts")).split(",");
-                //         var LabelDates = [];
-                //         for (i=0;i<CasesArray.length;i++){
-                //             LabelDates.push("Day"+i)
-                //         };				  
-                        
-                //         console.log(CasesArray);
-                //         console.log(DeathsArray);
-                //         let barChart = new Chart(myChart, {
-                //             type: 'line',
-                //             data: {
-                //             labels: LabelDates,
-                //             datasets: [{
-                //             data: CasesArray,
-                //             label: "Confirmed cases",
-                //             borderColor: "#3e95cd",
-                //             fill: false
-                //         },{
-                //             data: DeathsArray,
-                //             label: "Deaths",
-                //             borderColor: "#8e5ea2",
-                //             fill: false
-                //         }
-                //         ]
-                //             },
-                //             options:{
-                //             title: {
-                //                 display: true,
-                //                 text: 'COVID19 Time Series',
-                //                 fontSize: 40
-                //             },
-                //             legend: {
-                //                 position: 'right',
-                //                 labels: {
-                //                     fontSize: 20
-                //                 }
-                //             },
-                //             //responsive: true,
-                //             //maintainAspectRatio: false
-                //             }
-                //         });
-                //         highlight = layerview.highlight(graphic);
-                //         console.log(graphic);
-                //         console.log(screenPoint);
-                //         tooltip.show(
-                //             screenPoint,
-                //             "Cases in " + graphic.getAttribute("NAME")
-                //         );
-                //         } else {
-                //         tooltip.hide();
-                //         }
-                //     },
-                //     function() {}
-                //     );
-                // });
-                // }
-
-                // // When the layerview is available, setup hovering interactivity
-
-                // view.whenLayerView(nyt_layer_states).then(setupStatesHoverTooltip);
+                        let barChart = new Chart(myChart, {
+                            type: 'line',
+                            data: {
+                            labels: LabelDates,
+                            datasets: [{
+                            data: CasesArray,
+                            label: "Confirmed cases",
+                            borderColor: "#3e95cd",
+                            fill: false
+                        },{
+                            data: DeathsArray,
+                            label: "Deaths",
+                            borderColor: "#8e5ea2",
+                            fill: false
+                        }
+                        ]
+                            },
+                            options:{
+                            title: {
+                                display: true,
+                                text: 'COVID19 Time Series',
+                                fontSize: 40
+                            },
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    fontSize: 20
+                                }
+                            }
+                            //responsive: true,
+                            //maintainAspectRatio: false
+                            }
+                        });
+                        highlight = layerview.highlight(graphic);
+                        console.log(graphic);
+                        console.log(screenPoint);
+                        tooltip.show(
+                            screenPoint,
+                            "Cases in " + graphic.getAttribute("NAME")
+                        );
+                        } else {
+                        tooltip.hide();
+                        }
+                    },
+                    function() {}
+                    );
+                });
+                }
 
                 //--------------------------------------------------------------------------
                 //
@@ -1965,19 +1864,32 @@
         });
     </script>
 </head>
-<!-- <style>
+<style>
+#infoWindow {
+        z-index: 1000;
+        display: block;
+		position:absolute;
+		left: 15px;
+		top: 450px; /* or 60% */
+		width: 300px !important;
+        height: 50px !important;
+        text-align:center;
+		background:#242424;
+        /* position: fixed; */
+}
+
 #myChart {
         z-index: 1000;
         display: block;
 		position:absolute;
-		left: 10px;
-		top: 70%;
+		left: 15px;
+		top: 500px; /* or 70% */
 		width: 300px !important;
         height: 200px !important;
 		background:#242424;
         /* position: fixed; */
 }
-</style> -->
+</style>
 <body>
 <div class="loading-overlay"></div>
 <div class="loading-overlay-image-container">
@@ -2003,9 +1915,13 @@
     </div>
 </nav>
 
-    <!-- <div class="container">
+    <div class="container">
+        <div id="infoWindow" style="color:#F00"></div>
+    </div>
+
+    <div class="container">
         <canvas id="myChart"></canvas>
-    </div> -->
+    </div>
 
     <!--
     <div class="sidebar-left">
