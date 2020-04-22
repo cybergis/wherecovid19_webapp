@@ -1344,6 +1344,12 @@
                                         color: "#fef0d9",
                                         label: _class[0]
                                     },
+                                    {
+                                        value: -1,
+                                        //color: "#000000",
+                                        color: [100,94,85,10],
+                                        label: 0
+                                    },
                                 ],
                             }
                         ]
@@ -1374,7 +1380,11 @@
                         }
                         
                         for(var x = 0; x < Count(bins); x ++){
-                            if(val/population <= Number(bins[x])){
+                            if(val <= 0){
+                                class = -1;
+                                break;
+                            }
+                            if(val <= Number(bins[x])){
                                 class = x;
                                 break;
                             }
