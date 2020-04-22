@@ -980,66 +980,66 @@
 
                 var usStateTemplate = {
 
-                title: "{NAME}",
+                    title: "{NAME}",
 
-                expressionInfos: [
-                {
-                    name: "total_cases",
-                    title: "Total Confirmed Cases",
-                    expression: "Round(Split($feature.cases_ts, ',')[-1])"
-                    },
-                {
-                    name: "total_deaths",
-                    title: "Total Deaths",
-                    expression: "Round(Split($feature.deaths_ts, ',')[-1])"
-                    },
-                {
-                    name: "death_rate",
-                    title: "Death Rate (%)",
-                    expression: "Round((Split($feature.deaths_ts, ',')[-1]/Split($feature.cases_ts, ',')[-1])*100,2)"
-                    }
+                    expressionInfos: [
+                        {
+                            name: "total_cases",
+                            title: "Total Confirmed Cases",
+                            expression: "Round(Split($feature.cases_ts, ',')[-1])"
+                        },
+                        {
+                            name: "total_deaths",
+                            title: "Total Deaths",
+                            expression: "Round(Split($feature.deaths_ts, ',')[-1])"
+                        },
+                        {
+                            name: "death_rate",
+                            title: "Death Rate (%)",
+                            expression: "Round((Split($feature.deaths_ts, ',')[-1]/Split($feature.cases_ts, ',')[-1])*100,2)"
+                        }
 
-                ],
+                    ],
 
-                content: [
-                    {
-                        type: "fields", // FieldsContentElement
-                        fieldInfos: [
+                    content: [
+                        {
+                            type: "fields", // FieldsContentElement
+                            fieldInfos: [
 
-                            {
-                                fieldName: "expression/total_cases",
-                                visible: true,
-                                label: "Confirmed Cases"
-                            },
-                            {
-                                fieldName: "expression/total_deaths",
-                                visible: true,
-                                label: "Deaths"
-                            },
-                            {
-                                fieldName: "expression/death_rate",
-                                visible: true,
-                                label: "Death Rate"
-                            },
-                            {
-                                fieldName: "dt_first_case",
-                                visible: true,
-                                label: "First Date of Confirmed Cases"
-                            },
-                            {
-                                fieldName: "dt_first_death",
-                                visible: true,
-                                label: "First Date of Deaths"
-                            },
-                            {
-                                fieldName: "population",
-                                visible: true,
-                                label: "Population"
-                            }
+                                {
+                                    fieldName: "expression/total_cases",
+                                    visible: true,
+                                    label: "Confirmed Cases"
+                                },
+                                {
+                                    fieldName: "expression/total_deaths",
+                                    visible: true,
+                                    label: "Deaths"
+                                },
+                                {
+                                    fieldName: "expression/death_rate",
+                                    visible: true,
+                                    label: "Death Rate"
+                                },
+                                {
+                                    fieldName: "dt_first_case",
+                                    visible: true,
+                                    label: "First Date of Confirmed Cases"
+                                },
+                                {
+                                    fieldName: "dt_first_death",
+                                    visible: true,
+                                    label: "First Date of Deaths"
+                                },
+                                {
+                                    fieldName: "population",
+                                    visible: true,
+                                    label: "Population"
+                                }
 
-                        ]
-                    }
-                ]
+                            ]
+                        }
+                    ]
                 };
 
                 nyt_layer_states.popupTemplate = usStateTemplate;
@@ -1047,76 +1047,76 @@
 
                 var usCountyTemplate = {
 
-                title: "{NAME}",
+                    title: "{NAME}",
 
-                expressionInfos: [
-                {
-                    name: "total_cases",
-                    title: "Total Confirmed Cases",
-                    expression: "Round(Split($feature.cases_ts, ',')[-1])"
-                    },
-                {
-                    name: "total_deaths",
-                    title: "Total Deaths",
-                    expression: "Round(Split($feature.deaths_ts, ',')[-1])"
-                    },
-                {
-                    name: "death_rate",
-                    title: "Death Rate (%)",
-                    expression: "Round((Split($feature.deaths_ts, ',')[-1]/Split($feature.cases_ts, ',')[-1])*100,2)"
-                    }
+                    expressionInfos: [
+                        {
+                            name: "total_cases",
+                            title: "Total Confirmed Cases",
+                            expression: "Round(Split($feature.cases_ts, ',')[-1])"
+                        },
+                        {
+                            name: "total_deaths",
+                            title: "Total Deaths",
+                            expression: "Round(Split($feature.deaths_ts, ',')[-1])"
+                        },
+                        {
+                            name: "death_rate",
+                            title: "Death Rate (%)",
+                            expression: "Round((Split($feature.deaths_ts, ',')[-1]/Split($feature.cases_ts, ',')[-1])*100,2)"
+                        }
 
-                ],
+                    ],
 
-                content: [
-                    {
-                        type: "fields", // FieldsContentElement
-                        fieldInfos: [
+                    content: [
+                        {
+                            type: "fields", // FieldsContentElement
+                            fieldInfos: [
 
-                            {
-                                fieldName: "fips",
-                                visible: true,
-                                label: "FIPS"
-                            },
-                            {
-                                fieldName: "state_name",
-                                visible: true,
-                                label: "State"
-                            },
-                            {
-                                fieldName: "expression/total_cases",
-                                visible: true,
-                                label: "Confirmed Cases"
-                            },
-                            {
-                                fieldName: "expression/total_deaths",
-                                visible: true,
-                                label: "Deaths"
-                            },
-                            {
-                                fieldName: "expression/death_rate",
-                                visible: true,
-                                label: "Death Rate"
-                            },
-                            {
-                                fieldName: "dt_first_case",
-                                visible: true,
-                                label: "First Date of Confirmed Cases"
-                            },
-                            {
-                                fieldName: "dt_first_death",
-                                visible: true,
-                                label: "First Date of Deaths"
-                            },
-                            {
-                                fieldName: "population",
-                                visible: true,
-                                label: "Population"
-                            }
+                                {
+                                    fieldName: "fips",
+                                    visible: true,
+                                    label: "FIPS"
+                                },
+                                {
+                                    fieldName: "state_name",
+                                    visible: true,
+                                    label: "State"
+                                },
+                                {
+                                    fieldName: "expression/total_cases",
+                                    visible: true,
+                                    label: "Confirmed Cases"
+                                },
+                                {
+                                    fieldName: "expression/total_deaths",
+                                    visible: true,
+                                    label: "Deaths"
+                                },
+                                {
+                                    fieldName: "expression/death_rate",
+                                    visible: true,
+                                    label: "Death Rate"
+                                },
+                                {
+                                    fieldName: "dt_first_case",
+                                    visible: true,
+                                    label: "First Date of Confirmed Cases"
+                                },
+                                {
+                                    fieldName: "dt_first_death",
+                                    visible: true,
+                                    label: "First Date of Deaths"
+                                },
+                                {
+                                    fieldName: "population",
+                                    visible: true,
+                                    label: "Population"
+                                }
 
-                        ]
-                    }
-                ]
+                            ]
+                        }
+                    ]
                 };
 
                 nyt_layer_counties.popupTemplate = usCountyTemplate;
@@ -1125,173 +1125,187 @@
                 // Create tooltip
                 function createTooltip() {
 
-                var tooltip = document.createElement("div");
-                var style = tooltip.style;
+                    var tooltip = document.createElement("div");
+                    var style = tooltip.style;
 
-                tooltip.setAttribute("role", "tooltip");
-                tooltip.classList.add("tooltip");
+                    tooltip.setAttribute("role", "tooltip");
+                    tooltip.classList.add("tooltip");
 
-                var textElement = document.createElement("div");
-                textElement.classList.add("esri-widget");
-                tooltip.appendChild(textElement);
+                    var textElement = document.createElement("div");
+                    textElement.classList.add("esri-widget");
+                    tooltip.appendChild(textElement);
 
-                view.container.appendChild(tooltip);
+                    view.container.appendChild(tooltip);
 
-                var x = 0;
-                var y = 0;
-                var targetX = 0;
-                var targetY = 0;
-                var visible = false;
+                    var x = 0;
+                    var y = 0;
+                    var targetX = 0;
+                    var targetY = 0;
+                    var visible = false;
 
-                // move the tooltip progressively
-                function move() {
-                    x += (targetX - x) * 0.1;
-                    y += (targetY - y) * 0.1;
+                    // move the tooltip progressively
+                    function move() {
+                        x += (targetX - x) * 0.1;
+                        y += (targetY - y) * 0.1;
 
-                    if (Math.abs(targetX - x) < 1 && Math.abs(targetY - y) < 1) {
-                    x = targetX;
-                    y = targetY;
-                    } else {
-                    requestAnimationFrame(move);
-                    }
+                        if (Math.abs(targetX - x) < 1 && Math.abs(targetY - y) < 1) {
+                            x = targetX;
+                            y = targetY;
+                        } else {
+                            requestAnimationFrame(move);
+                        }
 
-                    style.transform =
-                    "translate3d(" + Math.round(x) + "px," + Math.round(y) + "px, 0)";
-                }
-
-                return {
-                    show: function(point, text) {
-                    if (!visible) {
-                        x = point.x;
-                        y = point.y;
-                    }
-
-                    targetX = point.x;
-                    targetY = point.y;
-                    style.opacity = 1;
-                    visible = true;
-                    textElement.innerHTML = text;
-
-                    move();
-                    },
-
-                    hide: function() {
-                    style.opacity = 0;
-                    visible = false;
-                    }
-                };
-                }
-
-                // When the layerview is available, setup hovering interactivity
-
-                function setupHoverTooltip(layerview) {
-
-                var highlight;
-
-                var tooltip = createTooltip();
-
-                var hitTest = promiseUtils.debounce(function(event) {
-                    return view.hitTest(event).then(function(hit) {
-                    var results = hit.results.filter(function(result) {
-                        return result.graphic.layer === layerview.layer;
-                    });
-
-                    if (!results.length) {
-                        return null;
+                        style.transform =
+                            "translate3d(" + Math.round(x) + "px," + Math.round(y) + "px, 0)";
                     }
 
                     return {
-                        graphic: results[0].graphic,
-                        screenPoint: hit.screenPoint
+                        show: function (point, text) {
+                            if (!visible) {
+                                x = point.x;
+                                y = point.y;
+                            }
+
+                            targetX = point.x;
+                            targetY = point.y;
+                            style.opacity = 1;
+                            visible = true;
+                            textElement.innerHTML = text;
+
+                            move();
+                        },
+
+                        hide: function () {
+                            style.opacity = 0;
+                            visible = false;
+                        }
                     };
-                    });
-                });
+                }
 
-                view.on("pointer-move", function(event) {
-                    return hitTest(event).then(
-                    function(hit) {
-                        // remove current highlighted feature
-                        if (highlight) {
-                        highlight.remove();
-                        highlight = null;
-                        }
+                // When the layerview is available, setup hovering interactivity
+                var tooltip = null;
+                var hitTest = null;
+                var hoverover_callback = null;
+                var activeAnimationLayerView = null;
 
-                        // highlight the hovered feature
-                        // or hide the tooltip
+                function setupHoverTooltip(layerview) {
 
-                        if (hit) {
-                        //console.log("123");
-                        var graphic = hit.graphic;
-                        var screenPoint = hit.screenPoint;
-                        var mychart = document.getElementById('myChart').getContext('2d');
-                        var infoWindow = document.getElementById('infoWindow');
+                    var highlight;
+                    activeAnimationLayerView = layerview;
 
-                        Chart.defaults.global.defaultFontSize = 15;
-                        Chart.defaults.global.defaultFontColor = '#777';
-                        
-                        var CasesArray = (graphic.getAttribute("cases_ts")).split(",");
-                        var DeathsArray = (graphic.getAttribute("deaths_ts")).split(",");
-                        var LabelDates = [];
-                        for (i=0;i<CasesArray.length;i++){
-                            LabelDates.push("Day"+i)
-                        };				  
-                        
-                        var ExtendedCasesArray = CasesArray.slice(0)
-                        var ExtendedDeathsArray = DeathsArray.slice(0)
-                        ExtendedCasesArray.unshift(0,0,0,0,0,0,0)
-                        ExtendedDeathsArray.unshift(0,0,0,0,0,0,0)
+                    if (tooltip == null) {
+                        tooltip = createTooltip();
+                    }
 
-                        infoWindow.innerHTML="Current Cases: "+Math.round(ExtendedCasesArray[slider.values[0]])+"<br>"
-                        +"Current Deaths: "+Math.round(ExtendedDeathsArray[slider.values[0]]);
+                    if (hitTest == null) {
+                        hitTest = promiseUtils.debounce(function (event) {
+                            return view.hitTest(event).then(function (hit) {
+                                var results = hit.results.filter(function (result) {
+                                    return result.graphic.layer === activeAnimationLayerView.layer;
+                                });
 
-
-                        let barChart = new Chart(myChart, {
-                            type: 'line',
-                            data: {
-                            labels: LabelDates,
-                            datasets: [{
-                            data: CasesArray,
-                            label: "Confirmed cases",
-                            borderColor: "#3e95cd",
-                            fill: false
-                        },{
-                            data: DeathsArray,
-                            label: "Deaths",
-                            borderColor: "#8e5ea2",
-                            fill: false
-                        }
-                        ]
-                            },
-                            options:{
-                            title: {
-                                display: true,
-                                text: 'COVID19 Time Series',
-                                fontSize: 40
-                            },
-                            legend: {
-                                position: 'right',
-                                labels: {
-                                    fontSize: 20
+                                if (!results.length) {
+                                    return null;
                                 }
-                            }
-                            //responsive: true,
-                            //maintainAspectRatio: false
-                            }
+
+                                return {
+                                    graphic: results[0].graphic,
+                                    screenPoint: hit.screenPoint
+                                };
+                            });
                         });
-                        highlight = layerview.highlight(graphic);
-                        console.log(graphic);
-                        console.log(screenPoint);
-                        tooltip.show(
-                            screenPoint,
-                            "Cases in " + graphic.getAttribute("NAME")
-                        );
-                        } else {
-                        tooltip.hide();
-                        }
-                    },
-                    function() {}
-                    );
-                });
+                    }
+                    if (hoverover_callback == null) {
+                        view.on("pointer-move", function (event) {
+                            return hitTest(event).then(
+                                function (hit) {
+                                    // remove current highlighted feature
+                                    if (highlight) {
+                                        highlight.remove();
+                                        highlight = null;
+                                    }
+
+                                    // highlight the hovered feature
+                                    // or hide the tooltip
+
+                                    if (hit) {
+                                        console.log("123");
+                                        var graphic = hit.graphic;
+                                        var screenPoint = hit.screenPoint;
+                                        var mychart = document.getElementById('myChart').getContext('2d');
+                                        var infoWindow = document.getElementById('infoWindow');
+
+                                        Chart.defaults.global.defaultFontSize = 15;
+                                        Chart.defaults.global.defaultFontColor = '#777';
+
+                                        var CasesArray = (graphic.getAttribute("cases_ts")).split(",");
+                                        var DeathsArray = (graphic.getAttribute("deaths_ts")).split(",");
+                                        var LabelDates = [];
+                                        for (i = 0; i < CasesArray.length; i++) {
+                                            LabelDates.push("Day" + i)
+                                        }
+                                        ;
+
+                                        var ExtendedCasesArray = CasesArray.slice(0)
+                                        var ExtendedDeathsArray = DeathsArray.slice(0)
+                                        ExtendedCasesArray.unshift(0, 0, 0, 0, 0, 0, 0)
+                                        ExtendedDeathsArray.unshift(0, 0, 0, 0, 0, 0, 0)
+
+                                        infoWindow.innerHTML = "Current Cases: " + Math.round(ExtendedCasesArray[slider.values[0]]) + "<br>"
+                                            + "Current Deaths: " + Math.round(ExtendedDeathsArray[slider.values[0]]);
+
+
+                                        let barChart = new Chart(myChart, {
+                                            type: 'line',
+                                            data: {
+                                                labels: LabelDates,
+                                                datasets: [{
+                                                    data: CasesArray,
+                                                    label: "Confirmed cases",
+                                                    borderColor: "#3e95cd",
+                                                    fill: false
+                                                }, {
+                                                    data: DeathsArray,
+                                                    label: "Deaths",
+                                                    borderColor: "#8e5ea2",
+                                                    fill: false
+                                                }
+                                                ]
+                                            },
+                                            options: {
+                                                title: {
+                                                    display: true,
+                                                    text: 'COVID19 Time Series',
+                                                    fontSize: 40
+                                                },
+                                                legend: {
+                                                    position: 'right',
+                                                    labels: {
+                                                        fontSize: 20
+                                                    }
+                                                }
+                                                //responsive: true,
+                                                //maintainAspectRatio: false
+                                            }
+                                        });
+                                        highlight = activeAnimationLayerView.highlight(graphic);
+                                        console.log(graphic);
+                                        console.log(screenPoint);
+                                        tooltip.show(
+                                            screenPoint,
+                                            "Cases in " + graphic.getAttribute("NAME")
+                                        );
+                                    } else {
+                                        tooltip.hide();
+                                    }
+                                },
+                                function () {
+                                }
+                            );
+                        });
+                        hoverover_callback = true;
+                    }
+
                 }
 
                 //--------------------------------------------------------------------------
@@ -1865,30 +1879,30 @@
     </script>
 </head>
 <style>
-#infoWindow {
+    #infoWindow {
         z-index: 1000;
         display: block;
-		position:absolute;
-		left: 15px;
-		top: 450px; /* or 60% */
-		width: 300px !important;
+        position: absolute;
+        left: 15px;
+        top: 450px; /* or 60% */
+        width: 300px !important;
         height: 50px !important;
-        text-align:center;
-		background:#242424;
+        text-align: center;
+        background: #242424;
         /* position: fixed; */
-}
+    }
 
-#myChart {
+    #myChart {
         z-index: 1000;
         display: block;
-		position:absolute;
-		left: 15px;
-		top: 500px; /* or 70% */
-		width: 300px !important;
+        position: absolute;
+        left: 15px;
+        top: 500px; /* or 70% */
+        width: 300px !important;
         height: 200px !important;
-		background:#242424;
+        background: #242424;
         /* position: fixed; */
-}
+    }
 </style>
 <body>
 <div class="loading-overlay"></div>
@@ -1910,107 +1924,108 @@
             </a>
         </div>
         <div class="nav-link" style="padding: 0;">
-            <a href="https://cybergisxhub.cigi.illinois.edu" class="btn btn-light" style="font-weight:bold">Go to CyberGISX</a>
+            <a href="https://cybergisxhub.cigi.illinois.edu" class="btn btn-light" style="font-weight:bold">Go to
+                CyberGISX</a>
         </div>
     </div>
 </nav>
 
-    <div class="container">
-        <div id="infoWindow" style="color:#F00"></div>
+<div class="container">
+    <div id="infoWindow" style="color:#F00"></div>
+</div>
+
+<div class="container">
+    <canvas id="myChart"></canvas>
+</div>
+
+<!--
+<div class="sidebar-left">
+
+    <div class="bordered-box total d-flex flex-column p-1" id="total_confirm_div">
+
+        <h2 class="text-center">Total Confirmed</h2>
+        <h3 class="text-center confirmed"></h3>
     </div>
 
-    <div class="container">
-        <canvas id="myChart"></canvas>
+    <div class="bordered-box total d-flex flex-column p-1" id="total_death_div">
+
+        <h2 class="text-center">Total Deaths</h2>
+        <h3 class="text-center deaths"></h3>
     </div>
-
-    <!--
-    <div class="sidebar-left">
-
-        <div class="bordered-box total d-flex flex-column p-1" id="total_confirm_div">
-
-            <h2 class="text-center">Total Confirmed</h2>
-            <h3 class="text-center confirmed"></h3>
-        </div>
-
-        <div class="bordered-box total d-flex flex-column p-1" id="total_death_div">
-
-            <h2 class="text-center">Total Deaths</h2>
-            <h3 class="text-center deaths"></h3>
-        </div>
-        <recover div>
-        <div class="bordered-box total d-flex flex-column p-1" id="total_recover_div">
-            <i class="far fa-times-circle"></i>
-            <h2 class="text-center">Total Recovered</h2>
-            <h3 class="text-center recovered"></h3>
-        </div>
-        <div class="bordered-box cases d-flex flex-column">
-
-            <div class="title p-3">
-                <p class="text-center">Top Confirmed Cases by County</p>
-            </div>
-            <ul class="case-list">
-                <template>
-                    <li class="case text-center">
-                        <p>
-                                <span style="color:#e60000">
-                                        <strong>65,883</strong>
-                                    </span>
-                            <span style="color:#ffffff">&nbsp;</span>
-                            <span style="color:#d6d6d6">United Kingdom</span>
-                        </p>
-                    </li>
-                </template>
-            </ul>
-        </div>
+    <recover div>
+    <div class="bordered-box total d-flex flex-column p-1" id="total_recover_div">
+        <i class="far fa-times-circle"></i>
+        <h2 class="text-center">Total Recovered</h2>
+        <h3 class="text-center recovered"></h3>
     </div>
-    -->
-    <div id="sliderContainer" class="esri-widget">
-        <span id="sliderValue"></span>
-        <div id="sliderInnerContainer">
-            <div id="slider"></div>
+    <div class="bordered-box cases d-flex flex-column">
+
+        <div class="title p-3">
+            <p class="text-center">Top Confirmed Cases by County</p>
         </div>
-        <div
-                id="playButton"
-                class="esri-widget esri-widget--button toggle-button"
-        >
-            <div>
+        <ul class="case-list">
+            <template>
+                <li class="case text-center">
+                    <p>
+                            <span style="color:#e60000">
+                                    <strong>65,883</strong>
+                                </span>
+                        <span style="color:#ffffff">&nbsp;</span>
+                        <span style="color:#d6d6d6">United Kingdom</span>
+                    </p>
+                </li>
+            </template>
+        </ul>
+    </div>
+</div>
+-->
+<div id="sliderContainer" class="esri-widget">
+    <span id="sliderValue"></span>
+    <div id="sliderInnerContainer">
+        <div id="slider"></div>
+    </div>
+    <div
+            id="playButton"
+            class="esri-widget esri-widget--button toggle-button"
+    >
+        <div>
                 <span
                         class="toggle-button-icon esri-icon-play"
                         aria-label="play icon"
                 ></span>
-                Play
-            </div>
-            <div>
+            Play
+        </div>
+        <div>
                 <span
                         class="toggle-button-icon esri-icon-pause"
                         aria-label="pause icon"
                 ></span>
-                Pause
-            </div>
+            Pause
         </div>
     </div>
-    <div id="viewDiv">
-        <!--
-        <div id="titleDiv" class="esri-widget">
-            CyberGIS Center for Advanced Digital and Spatial Studies at University of Illinois at Urbana-Champaign
-           <img src="https://cybergis.illinois.edu/wp-content/themes/cybergis-new/images/uoi.png" width="20" height="30" align="top"/>
-            <div id="subTitleDiv" class="esri-widget"> WhereCOVID-19 App</div>
-        </div>
-        -->
+</div>
+<div id="viewDiv">
+    <!--
+    <div id="titleDiv" class="esri-widget">
+        CyberGIS Center for Advanced Digital and Spatial Studies at University of Illinois at Urbana-Champaign
+       <img src="https://cybergis.illinois.edu/wp-content/themes/cybergis-new/images/uoi.png" width="20" height="30" align="top"/>
+        <div id="subTitleDiv" class="esri-widget"> WhereCOVID-19 App</div>
     </div>
+    -->
+</div>
 
 
-    <div>
-        <select name="select" id="animation_dropdown" style="display: none">
-            <option value="case">Cases</option>
-            <option value="death">Deaths</option>
-            <option value="death/case">Deaths/Cases</option>
-            <option value="new_case">New Cases</option>
-            <option value="new_death">New Deaths</option>
-            <option value="first_case" selected="selected">First Case Report</option>
-            <option value="first_death">First Death Report</option>
-        </select>
-    </div>
+<div>
+    <select name="select" id="animation_dropdown" style="display: none">
+        <option value="case">Cases</option>
+        <option value="death">Deaths</option>
+        <option value="death/case">Deaths/Cases</option>
+        <option value="new_case">New Cases</option>
+        <option value="new_death">New Deaths</option>
+        <option value="first_case" selected="selected">First Case Report</option>
+        <option value="first_death">First Death Report</option>
+    </select>
+</div>
 
 </div>
 
