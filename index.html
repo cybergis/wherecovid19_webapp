@@ -136,6 +136,7 @@
             var counties_data_str = null;
             var states_data = null;
             var states_data_str = null;
+            var classes_data = null;
 
             // main() is called after external json file is loaded
             function main(arg1) {
@@ -1008,7 +1009,7 @@
                             event_type = "Death"
                         }
 
-                        _layer.renderer = firstEventRender(_date, _event_type = event_type);
+                        _layer.renderer = classRender(_date, _event_type = event_type);
                     }
 
                     //covid19_layer.renderer = dailyEventNumberRender(_date, _event_type="death/case", _scale="");
@@ -1281,6 +1282,106 @@
                             }
                         ]
                     };
+                }
+
+                function classRender(_date, _event_type = "Case") {
+                    console.log(classes_data);
+                    var quantiles = classes_data.county.case.Quantiles.bins.split(",");
+                    var fisherjenks = classes_data.county.case.FisherJenks.bins.split(",");
+                    var naturalbreaks = classes_data.county.case.NaturalBreaks.bins.split(",");
+                    var standardDev = classes_data.county.case.StandardDev.bins.split(",");
+                    var quantiles_per_capita = classes_data.county.case.QuantilesPer100kCapita.bins.split(",");
+                    var fisherjenks_per_capita = classes_data.county.case.FisherJenksPer100kCapita.bins.split(",");
+                    var naturalbreaks_per_capita = classes_data.county.case.NaturalBreaksPer100kCapita.bins.split(",");
+                    var _class = quantiles;
+
+                    return {
+                        type: "simple",
+                        symbol: {
+                            type: "simple-fill",
+                            color: [0, 0, 0, 0],
+                            outline: {  // autocasts as new SimpleLineSymbol()
+                                color: [128, 128, 128, 0],
+                            }
+                        },
+                        visualVariables: [
+                            {
+                                type: "color",
+                                valueExpression: classArcade(_date, _class, _event_type = _event_type),
+                                //valueExpressionTitle: "Voter Turnout",
+                                stops: [
+                                    {
+                                        value: 5,
+                                        color: "#b30000",
+                                        label: _class[5]
+                                    },
+                                    {
+                                        value: 4,
+                                        color: "#e34a33",
+                                        label: _class[4]
+                                    },
+                                    {
+                                        value: 3,
+                                        //color: "#000000",
+                                        color: "#fc8d59",
+                                        label: _class[3]
+                                    },
+                                    {
+                                        value: 2,
+                                        //color: "#000000",
+                                        color: "#fdbb84",
+                                        label: _class[2]
+                                    },
+                                    {
+                                        value: 1,
+                                        //color: "#000000",
+                                        color: "#fdd49e", 
+                                        label: _class[1]
+                                    },
+                                    {
+                                        value: 0,
+                                        //color: "#000000",
+                                        color: "#fef0d9",
+                                        label: _class[0]
+                                    },
+                                ],
+                            }
+                        ]
+                    };
+                }
+
+                function classArcade(_date, _class, _event_type = "Case") {
+
+                    // Drew: return must be followed by the open ` on the same line, and a semi-colon ";" is required after the close `!!!
+                    return `
+                        //be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
+
+                        var dt_thumb = Date(${_date.getFullYear()}, ${_date.getMonth()}, ${_date.getDate()});
+                        var event_type = Lower('${_event_type}');
+                        var val = 0;
+                        var class = 0
+                        var bins = [${_class}];
+                        var population = Number($feature['population'])/100000;
+                        var case_ts = Split($feature['cases_ts'],',');
+                        var dt_start_array = Split($feature.dt_start, '-');
+                        var dt_start = Date(Number(dt_start_array[0]), Number(dt_start_array[1])-1, Number(dt_start_array[2]));
+                        if(dt_thumb < dt_start){
+                            val = 0;
+                        }else{
+                            var days=DateDiff(dt_thumb, dt_start, "days");
+                            var index = Ceil(days);
+                            val = case_ts[index];
+                        }
+                        
+                        for(var x = 0; x < Count(bins); x ++){
+                            if(val/population <= Number(bins[x])){
+                                class = x;
+                                break;
+                            }
+                        }
+                        return class;
+
+                    `;
                 }
 
                 function firstEventArcade(_date, _event_type = "Case") {
@@ -1623,6 +1724,7 @@
                 // let states_data_json_url = "/nyt_states_data.json";
                 let counties_data_json_url = "";
                 let states_data_json_url = "";
+                let classes_json_url = "preprocessing/classes.json"
 
                 // if (production_mode) {
                 //     // proxy to CORS
@@ -1632,8 +1734,9 @@
                 // }
                 let counties_request = request(counties_data_json_url, {handleAs: "json"});
                 let states_request = request(states_data_json_url, {handleAs: "json"});
+                let classes_request = request(classes_json_url, {handleAs: "json"})
 
-                let dl = new DeferredList([counties_request, states_request]);
+                let dl = new DeferredList([counties_request, states_request,classes_request]);
                 return dl.then(setGlobal_JSON);
             }
 
@@ -1642,6 +1745,7 @@
                 //counties_data_str = JSON.stringify(counties_data);
                 states_data = res[1][1];
                 //states_data_str = JSON.stringify(states_data);
+                classes_data = res[2][1];
 
                 let promise = new Promise(function (resolve, reject) {
                     // the function is executed automatically when the promise is constructed
