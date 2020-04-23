@@ -1010,7 +1010,7 @@
                             event_type = "death"
                         }
 
-                        _layer.renderer = classRender(_date, _event_type = "case");
+                        _layer.renderer = classRender(_date, _event_type = "death_case_ratio");
                     }
 
                     //covid19_layer.renderer = dailyEventNumberRender(_date, _event_type="death/case", _scale="");
@@ -1291,7 +1291,7 @@
                     let constant_class = classes_data;
                     let dynamic_class = dynamic_classes_data;
                     //Now set default method as Quantiles
-                    let method = "Quantiles";
+                    let method = "NaturalBreaks";
                     let source = null;
                     // 5 Common type: Constant Classes
                     if(_event_type == "case" || _event_type == "death" || _event_type == "case_per_100k_capita"
@@ -1341,6 +1341,7 @@
                     else if(_event_type == "new_case" || _event_type == "new_death"){
                         console.log(dynamic_class)
                         source = dynamic_class[_level][_event_type];
+                        
                         return {
                             type: "simple",
                             symbol: {
