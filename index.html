@@ -1193,9 +1193,9 @@
                     var highlight;
                     activeAnimationLayerView = layerview;
 
-                    if (tooltip == null) {
-                        tooltip = createTooltip();
-                    }
+                    // if (tooltip == null) {
+                    //     tooltip = createTooltip();
+                    // }
 
                     if (hitTest == null) {
                         hitTest = promiseUtils.debounce(function (event) {
@@ -1216,7 +1216,8 @@
                         });
                     }
                     if (hoverover_callback == null) {
-                        view.on("pointer-move", function (event) {
+                        view.on("click", function (event) {
+                        //view.on("pointer-move", function (event) {
                             return hitTest(event).then(
                                 function (hit) {
                                     // remove current highlighted feature
@@ -1246,13 +1247,29 @@
                                         }
                                         ;
 
+                                        var IncreasedCases = [];
+                                        for (i=1;i<CasesArray.length;i++){
+                                            IncreasedCases.push(CasesArray[i]-CasesArray[i-1])
+                                        };
+                                        IncreasedCases.unshift(0);
+
+                                        var IncreasedDeaths = [];
+                                        for (i=1;i<DeathsArray.length;i++){
+                                            IncreasedDeaths.push(DeathsArray[i]-DeathsArray[i-1])
+                                        };
+                                        IncreasedDeaths.unshift(0);
+
                                         var ExtendedCasesArray = CasesArray.slice(0)
                                         var ExtendedDeathsArray = DeathsArray.slice(0)
                                         ExtendedCasesArray.unshift(0, 0, 0, 0, 0, 0, 0)
                                         ExtendedDeathsArray.unshift(0, 0, 0, 0, 0, 0, 0)
 
-                                        infoWindow.innerHTML = "Current Cases: " + Math.round(ExtendedCasesArray[slider.values[0]]) + "<br>"
-                                            + "Current Deaths: " + Math.round(ExtendedDeathsArray[slider.values[0]]);
+                                        var InfoWindowDate = new Date(2020,0,14); 
+                                        InfoWindowDate.setDate(InfoWindowDate.getDate()+slider.values[0]);
+                                        var InfoWindowDateStr = InfoWindowDate.toString().replace(" 00:00:00 GMT-0600 (Central Standard Time)","");
+
+                                        infoWindow.innerHTML="Cases on "+InfoWindowDateStr+": "+Math.round(ExtendedCasesArray[slider.values[0]])+"<br>"
+                                        +"Deaths on "+InfoWindowDateStr+": "+Math.round(ExtendedDeathsArray[slider.values[0]]);
 
 
                                         let barChart = new Chart(myChart, {
@@ -1267,6 +1284,16 @@
                                                 }, {
                                                     data: DeathsArray,
                                                     label: "Deaths",
+                                                    borderColor: "#8e5ea2",
+                                                    fill: false
+                                                },{
+                                                    data: IncreasedCases,
+                                                    label: "Increased Cases",
+                                                    borderColor: "#3e95cd",
+                                                    fill: false
+                                                },{
+                                                    data: IncreasedDeaths,
+                                                    label: "Increased Deaths",
                                                     borderColor: "#8e5ea2",
                                                     fill: false
                                                 }
@@ -1291,12 +1318,12 @@
                                         highlight = activeAnimationLayerView.highlight(graphic);
                                         console.log(graphic);
                                         console.log(screenPoint);
-                                        tooltip.show(
-                                            screenPoint,
-                                            "Cases in " + graphic.getAttribute("NAME")
-                                        );
+                                        // tooltip.show(
+                                        //     screenPoint,
+                                        //     "Cases in " + graphic.getAttribute("NAME")
+                                        // );
                                     } else {
-                                        tooltip.hide();
+                                        // tooltip.hide();
                                     }
                                 },
                                 function () {
