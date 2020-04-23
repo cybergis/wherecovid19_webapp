@@ -139,6 +139,8 @@
             var counties_data_str = null;
             var states_data = null;
             var states_data_str = null;
+            var classes_data = null;
+            var dynamic_classes_data = null;
 
             // main() is called after external json file is loaded
             function main(arg1) {
@@ -176,7 +178,7 @@
                 var nyt_layer_counties_url = "preprocessing/nyt_counties_data.geojson";
                 var illinios_county_url = "preprocessing/illinois/illinois_forecast_county.geojson";
                 var illinios_zipcode_url = "preprocessing/illinois/illinois_forecast_zipcode.geojson";
-                var illinois_hospitals_url = "preprocessing/illinois/illinois_hospitals_valid.geojson";
+                var illinois_hospitals_url = "preprocessing/illinois/illinois_hospitals.geojson";
                 var illinois_testing_url = "preprocessing/illinois/illinois_testing.geojson";
 
                 if (production_mode) {
@@ -969,7 +971,7 @@
                             // Wed, 18 Mar 2020 00:00:00 GMT --> Wed, 18 Mar 2020
                             name: "lab_date",
                             title: "Lab Report Date",
-                            expression: "Replace($feature.Lab_Report_Date, ' 00:00:00 GMT', '')"
+                            expression: "Replace($feature.Lab_Report_Date, ' 0:00', '')"
                         },
                     ],
                 };
@@ -1427,12 +1429,12 @@
                         animation_type == "new_case" || animation_type == "new_death") {
                         _layer.renderer = dailyEventNumberRender(_date, _event_type = animation_type, _scale = "");
                     } else {
-                        let event_type = "Case";
+                        let event_type = "case";
                         if (animation_type == "first_death") {
-                            event_type = "Death"
+                            event_type = "death"
                         }
 
-                        _layer.renderer = firstEventRender(_date, _event_type = event_type);
+                        _layer.renderer = classRender(_date, _event_type = "case");
                     }
 
                     //covid19_layer.renderer = dailyEventNumberRender(_date, _event_type="death/case", _scale="");
@@ -1707,6 +1709,276 @@
                     };
                 }
 
+                function classRender(_date, _event_type = "case", _level = "county") {
+                    const colors = ["#fef0d9", "#fdd49e","#fdbb84", "#fc8d59", "#e34a33", "#b30000"];
+                    const background_color = [0,0,0];
+                    let constant_class = classes_data;
+                    let dynamic_class = dynamic_classes_data;
+                    //Now set default method as Quantiles
+                    let method = "Quantiles";
+                    let source = null;
+                    // 5 Common type: Constant Classes
+                    if(_event_type == "case" || _event_type == "death" || _event_type == "case_per_100k_capita"
+                    || _event_type == "death_per_100k_capita" || _event_type == "death_case_ratio"){
+                        source = constant_class[_level][_event_type][method];
+                        let bins = source.bins.split(",")
+                        let stop_array = [{
+                            value:-1,
+                            color:background_color,
+                            label:0
+                        }];
+                        // bins.length <= colors.length
+                        // e.g. if only 2 classes, get [4,5] colors
+                        for (let i = 0; i < bins.length; i ++){
+                            var label = bins[i];
+                            if(parseFloat(label) < 0){
+                                label = parseFloat(label);
+                            }else{
+                                label = parseInt(label);
+                            }
+                            stop_array.push({
+                                value: i,
+                                color: colors[i],
+                                label: label,
+                            })
+                        }
+                        return {
+                            type: "simple",
+                            symbol: {
+                                type: "simple-fill",
+                                outline: {  // autocasts as new SimpleLineSymbol()
+                                    color: [128, 128, 128, 50],
+                                }
+                            },
+                            visualVariables: [
+                                {
+                                    type: "color",
+                                    valueExpression: classArcade(_date, _class = bins, _event_type = _event_type),
+                                    //valueExpressionTitle: "Voter Turnout",
+                                    stops: stop_array.reverse(),
+                                }
+                            ]
+                        };
+                        
+                    }
+                    // Two Situation: Dynamic Classes
+                    else if(_event_type == "new_case" || _event_type == "new_death"){
+                        console.log(dynamic_class)
+                        source = dynamic_class[_level][_event_type];
+                        
+                        return {
+                            type: "simple",
+                            symbol: {
+                                type: "simple-fill",
+                                outline: {  // autocasts as new SimpleLineSymbol()
+                                    color: [128, 128, 128, 0],
+                                }
+                            },
+                            visualVariables: [
+                                {
+                                    type: "color",
+                                    valueExpression: dynamicClassArcade(_date, _class = bins, _event_type = _event_type),
+                                    //valueExpressionTitle: "Voter Turnout",
+                                    stops: stop_array.reverse(),
+                                }
+                            ]
+                        };
+                    }
+
+                    
+                }
+
+                function classArcade(_date, _class, _event_type = "case") {
+
+                    // Drew: return must be followed by the open ` on the same line, and a semi-colon ";" is required after the close `!!!
+                    return `
+                        //be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
+
+                        var dt_thumb = Date(${_date.getFullYear()}, ${_date.getMonth()}, ${_date.getDate()});
+                        var event_type = Lower('${_event_type}');
+                        var val = 0;
+                        var class = 0;
+                        var bins = [${_class}];
+                        var population = Number($feature['population'])/100000;
+                        var dt_start_array = Split($feature.dt_start, '-');
+                        var dt_start = Date(Number(dt_start_array[0]), Number(dt_start_array[1])-1, Number(dt_start_array[2]));
+                        if(dt_thumb < dt_start){
+                            class = -1;
+                            return class;
+                        }
+                        var days=DateDiff(dt_thumb, dt_start, "days");
+                        var index = Ceil(days);
+
+                            
+                        if(event_type == "case" || event_type == "case_per_100k_capita"){
+                            var case_ts = Split($feature['cases_ts'],',');
+                            val = case_ts[index];
+                            if(event_type == "case_per_100k_capita"){
+                                val = val/population;
+                            }
+                        }
+                        else if(event_type == "death" || event_type == "death_per_100k_capita"){
+                            var death_ts = Split($feature['deaths_ts'],',');
+                            val = death_ts[index];
+                            if(event_type == "death_per_100k_capita"){
+                                val = val/population;
+                            }
+                        }
+                        else if(event_type == "death_case_ratio"){
+                            var case_ts = Split($feature['cases_ts'],',');
+                            var death_ts = Split($feature['deaths_ts'],',');
+                            val = death_ts[index]/case_ts[index];
+                        }
+                        for(var x = 0; x < Count(bins); x ++){
+                            if(val <= 0){
+                                class = -1;
+                                break;
+                            }
+                            if(val <= Number(bins[x])){
+                                class = x;
+                                break;
+                            }
+                        }
+                        return class;
+                    `;
+                }
+                function dynamicClassArcade(_date, _class, _event_type = "case") {
+
+                    // Drew: return must be followed by the open ` on the same line, and a semi-colon ";" is required after the close `!!!
+                    return `
+                        //be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
+
+                        var dt_thumb = Date(${_date.getFullYear()}, ${_date.getMonth()}, ${_date.getDate()});
+                        var event_type = Lower('${_event_type}');
+                        var val = 0;
+                        var class = 0;
+                        var population = Number($feature['population'])/100000;
+                        var dt_start_array = Split($feature.dt_start, '-');
+                        var dt_start = Date(Number(dt_start_array[0]), Number(dt_start_array[1])-1, Number(dt_start_array[2]));
+                        if(dt_thumb < dt_start){
+                            class = -1;
+                            return class;
+                        }
+                        var days=DateDiff(dt_thumb, dt_start, "days");
+                        var index = Ceil(days);
+                        // New Case & New Death: Dynamic Classes
+                        if(event_type == "new_case" || event_type == "new_death"){
+                            var yesterday = index - 1;
+                            var bins = Dictionary(${_class})[index]
+                            if(yesterday < 0){
+                                return 0;
+                            }else{
+                                if(event_type == "new_case"){
+                                    var case_ts = Split($feature['cases_ts'],',');
+                                    val = Number(case_ts[index]) - Number(case_ts[yesterday]);
+                                }
+                                if(event_type == "new_death"){
+                                    var death_ts = Split($feature['deaths_ts'],',');
+                                    val = Number(death_ts[index]) - Number(death_ts[yesterday]);
+                                }
+                            }
+
+                        }
+                        // Other 5 situations: Constant Classes
+                        else{
+                            var bins = [${_class}];
+                            if(event_type == "case" || event_type == "case_per_100k_capita"){
+                                var case_ts = Split($feature['cases_ts'],',');
+                                val = case_ts[index];
+                                if(event_type == "case_per_100k_capita"){
+                                    val = val/population;
+                                }
+                            }
+                            else if(event_type == "death" || event_type == "death_per_100k_capita"){
+                                var death_ts = Split($feature['deaths_ts'],',');
+                                val = death_ts[index];
+                                if(event_type == "death_per_100k_capita"){
+                                    val = val/population;
+                                }
+                            }
+                            else if(event_type == "death_case_ratio"){
+                                var case_ts = Split($feature['cases_ts'],',');
+                                var death_ts = Split($feature['deaths_ts'],',');
+                                val = death_ts[index]/case_ts[index];
+                            }
+                            
+                        }
+                        // Find Class from bins
+                        if(Count(bins) == 1){
+                            return -1;
+                        }
+                        for(var x = 0; x < Count(bins); x ++){
+                            if(val <= 0){
+                                class = -1;
+                                break;
+                            }
+                            if(val <= Number(bins[x])){
+                                class = x;
+                                break;
+                            }
+                        }
+                        return class;
+                        
+
+                    `;
+                }
+                function dynamicClassArcade(_date, _class, _event_type = "case") {
+
+                    // Drew: return must be followed by the open ` on the same line, and a semi-colon ";" is required after the close `!!!
+                    return `
+                        //be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
+
+                        var dt_thumb = Date(${_date.getFullYear()}, ${_date.getMonth()}, ${_date.getDate()});
+                        var event_type = Lower('${_event_type}');
+                        var val = 0;
+                        var class = 0;
+                        var case_ts = null;
+                        var death_ts = null;
+                        var population = Number($feature['population'])/100000;
+                        var bins = [${_class}];
+                        var dt_start_array = Split($feature.dt_start, '-');
+                        var dt_start = Date(Number(dt_start_array[0]), Number(dt_start_array[1])-1, Number(dt_start_array[2]));
+                        if(dt_thumb < dt_start){
+                            class = -1;
+                            return class;
+                        }
+                        var days=DateDiff(dt_thumb, dt_start, "days");
+                        var index = Ceil(days);
+
+                        if(event_type == "case" || event_type == "case_per_100k_capita"){
+                            case_ts = Split($feature['cases_ts'],',');
+                            val = case_ts[index];
+                            if(event_type == "case_per_100k_capita"){
+                                val = val/population;
+                            }
+                        }
+                        else if(event_type == "death" || event_type == "death_per_100k_capita"){
+                            death_ts = Split($feature['deaths_ts'],',');
+                            val = death_ts[index];
+                            if(event_type == "death_per_100k_capita"){
+                                val = val/population;
+                            }
+                        }
+                        else if(event_type == "death_case_ratio"){
+                            case_ts = Split($feature['cases_ts'],',');
+                            death_ts = Split($feature['deaths_ts'],',');
+                            val = death_ts[index]/case_ts[index];
+                        }
+                        for(var x = 0; x < Count(bins); x ++){
+                            if(val <= 0){
+                                class = -1;
+                                break;
+                            }
+                            if(val <= Number(bins[x])){
+                                class = x;
+                                break;
+                            }
+                        }
+                        return class;
+
+                    `;
+                }
+
                 function firstEventArcade(_date, _event_type = "Case") {
                     // Drew: return must be followed by the open ` on the same line, and a semi-colon ";" is required after the close `!!!
                     return `
@@ -1930,6 +2202,8 @@
                 // let states_data_json_url = "/nyt_states_data.json";
                 let counties_data_json_url = "";
                 let states_data_json_url = "";
+                let classes_json_url = "preprocessing/classes.json"
+                let dynamic_classes_json_url = "preprocessing/dynamic_classes.json"
 
                 // if (production_mode) {
                 //     // proxy to CORS
@@ -1939,8 +2213,10 @@
                 // }
                 let counties_request = request(counties_data_json_url, {handleAs: "json"});
                 let states_request = request(states_data_json_url, {handleAs: "json"});
+                let classes_request = request(classes_json_url, {handleAs: "json"})
+                let dynamic_classes_request = request(dynamic_classes_json_url, {handleAs: "json"})
 
-                let dl = new DeferredList([counties_request, states_request]);
+                let dl = new DeferredList([counties_request, states_request,classes_request,dynamic_classes_request]);
                 return dl.then(setGlobal_JSON);
             }
 
@@ -1949,6 +2225,8 @@
                 //counties_data_str = JSON.stringify(counties_data);
                 states_data = res[1][1];
                 //states_data_str = JSON.stringify(states_data);
+                classes_data = res[2][1];
+                dynamic_classes_data = res[3][1];
 
                 let promise = new Promise(function (resolve, reject) {
                     // the function is executed automatically when the promise is constructed
