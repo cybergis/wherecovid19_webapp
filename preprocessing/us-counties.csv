@@ -63072,6 +63072,7 @@ date,county,state,fips,cases,deaths
 2020-04-16,Berkshire,Massachusetts,25003,382,26
 2020-04-16,Bristol,Massachusetts,25005,1605,63
 2020-04-16,Dukes,Massachusetts,25007,12,0
+<<<<<<< HEAD
 2020-04-16,Essex,Massachusetts,25009,4245,160
 2020-04-16,Franklin,Massachusetts,25011,170,25
 2020-04-16,Hampden,Massachusetts,25013,1985,163
@@ -63083,6 +63084,19 @@ date,county,state,fips,cases,deaths
 2020-04-16,Suffolk,Massachusetts,25025,6820,166
 2020-04-16,Unknown,Massachusetts,,638,9
 2020-04-16,Worcester,Massachusetts,25027,2503,84
+=======
+2020-04-16,Essex,Massachusetts,25009,4245,159
+2020-04-16,Franklin,Massachusetts,25011,170,25
+2020-04-16,Hampden,Massachusetts,25013,1985,164
+2020-04-16,Hampshire,Massachusetts,25015,248,5
+2020-04-16,Middlesex,Massachusetts,25017,7206,258
+2020-04-16,Nantucket,Massachusetts,25019,9,0
+2020-04-16,Norfolk,Massachusetts,25021,3342,173
+2020-04-16,Plymouth,Massachusetts,25023,2466,99
+2020-04-16,Suffolk,Massachusetts,25025,6820,132
+2020-04-16,Unknown,Massachusetts,,638,13
+2020-04-16,Worcester,Massachusetts,25027,2503,110
+>>>>>>> dev
 2020-04-16,Alcona,Michigan,26001,1,0
 2020-04-16,Allegan,Michigan,26005,25,0
 2020-04-16,Alpena,Michigan,26007,2,0
@@ -64221,7 +64235,11 @@ date,county,state,fips,cases,deaths
 2020-04-16,Deaf Smith,Texas,48117,11,0
 2020-04-16,Delta,Texas,48119,1,0
 2020-04-16,Denton,Texas,48121,564,15
+<<<<<<< HEAD
 2020-04-16,Dickens,Texas,48125,1,0
+=======
+2020-04-16,Dickens,Texas,48125,2,0
+>>>>>>> dev
 2020-04-16,Dimmit,Texas,48127,1,0
 2020-04-16,Donley,Texas,48129,23,0
 2020-04-16,Duval,Texas,48131,1,0
@@ -64270,7 +64288,11 @@ date,county,state,fips,cases,deaths
 2020-04-16,Jasper,Texas,48241,7,1
 2020-04-16,Jefferson,Texas,48245,143,6
 2020-04-16,Jim Wells,Texas,48249,2,0
+<<<<<<< HEAD
 2020-04-16,Johnson,Texas,48251,44,1
+=======
+2020-04-16,Johnson,Texas,48251,42,1
+>>>>>>> dev
 2020-04-16,Jones,Texas,48253,3,0
 2020-04-16,Karnes,Texas,48255,3,0
 2020-04-16,Kaufman,Texas,48257,33,0
@@ -64353,6 +64375,10 @@ date,county,state,fips,cases,deaths
 2020-04-16,Victoria,Texas,48469,89,1
 2020-04-16,Walker,Texas,48471,58,0
 2020-04-16,Waller,Texas,48473,22,0
+<<<<<<< HEAD
+=======
+2020-04-16,Ward,Texas,48475,0,3
+>>>>>>> dev
 2020-04-16,Washington,Texas,48477,46,3
 2020-04-16,Webb,Texas,48479,245,11
 2020-04-16,Wharton,Texas,48481,32,0
@@ -64704,6 +64730,7 @@ date,county,state,fips,cases,deaths
 2020-04-16,Sweetwater,Wyoming,56037,10,0
 2020-04-16,Teton,Wyoming,56039,59,0
 2020-04-16,Uinta,Wyoming,56041,4,0
+<<<<<<< HEAD
 2020-04-16,Washakie,Wyoming,56043,4,0
 2020-04-17,Autauga,Alabama,01001,26,2
 2020-04-17,Baldwin,Alabama,01003,103,2
@@ -78547,3 +78574,6 @@ date,county,state,fips,cases,deaths
 2020-04-21,Teton,Wyoming,56039,62,0
 2020-04-21,Uinta,Wyoming,56041,6,0
 2020-04-21,Washakie,Wyoming,56043,4,0
+=======
+2020-04-16,Washakie,Wyoming,56043,4,0
+>>>>>>> dev

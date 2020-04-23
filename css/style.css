@@ -30,22 +30,25 @@ body {
 }
 
 #sliderContainer {
-    flex: 0 0 80px;
     order: 0;
     display: flex;
     flex-flow: row;
     padding: 0 12px;
+    height: 50px;
+    flex: 0 0 50px !important;
 }
 
 #sliderValue {
-    flex: 0 0 100px;
+    flex: 0 0 40px;
     order: 1;
     display: flex;
     justify-content: center;
     flex-direction: column;
     text-align: center;
-    font-size: 300%;
+    font-size: 170%;
     padding: 0 20px;
+    margin: 10px;
+    height: 30px;
 }
 
 #sliderInnerContainer {
@@ -54,6 +57,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    height: 50px;
 }
 
 #slider {
@@ -76,7 +80,7 @@ body {
 #playButton {
     flex: 0 0 100px;
     order: 3;
-    margin: 20px 0;
+    margin: 10px 0;
 }
 
 .toggle-button {
@@ -151,6 +155,27 @@ body {
     /* background-color: #242424; */
 }
 
+.sidebar-lowerleft {
+    z-index: 1000;
+    display: block;
+    position: absolute;
+    left: 10px;
+    top: 350px;
+    height: 200px;
+    width: 15%;
+    min-width: 300px;
+    /* background-color: #242424; */
+}
+
+.myChart {
+    position:absolute;
+    right:0;
+    top:30%;
+    width: 300px !important;
+    height: 200px !important;
+    /* background:black; */
+    /* position: fixed; */
+  }
 
 /* .sidebar-right {
     z-index: 1000;
@@ -251,27 +276,4 @@ body {
 ::-webkit-scrollbar-thumb {
     background: #9d9d9d;
     border-radius: 0px
-}
-
-#sliderContainer {
-    flex: 0 0 30px !important;
-}
-
-#sliderValue {
-    flex: 0 0 40px;
-    order: 1;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    text-align: center;
-    font-size: 170%;
-    padding: 0 20px;
-    margin: 10px;
-    height: 30px;
-}
-
-#playButton {
-    flex: 0 0 100px;
-    order: 3;
-    margin: 10px 0;
 }
