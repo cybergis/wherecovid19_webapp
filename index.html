@@ -1434,7 +1434,7 @@
                             event_type = "death"
                         }
 
-                        _layer.renderer = classRender(_date, _event_type = "death_case_ratio");
+                        _layer.renderer = classRender(_date, _event_type = "case");
                     }
 
                     //covid19_layer.renderer = dailyEventNumberRender(_date, _event_type="death/case", _scale="");
@@ -1711,11 +1711,11 @@
 
                 function classRender(_date, _event_type = "case", _level = "county") {
                     const colors = ["#fef0d9", "#fdd49e","#fdbb84", "#fc8d59", "#e34a33", "#b30000"];
-                    const background_color = [100,94,85,10];
+                    const background_color = [0,0,0];
                     let constant_class = classes_data;
                     let dynamic_class = dynamic_classes_data;
                     //Now set default method as Quantiles
-                    let method = "NaturalBreaks";
+                    let method = "Quantiles";
                     let source = null;
                     // 5 Common type: Constant Classes
                     if(_event_type == "case" || _event_type == "death" || _event_type == "case_per_100k_capita"
@@ -1724,7 +1724,7 @@
                         let bins = source.bins.split(",")
                         let stop_array = [{
                             value:-1,
-                            color:[100,94,85,1],
+                            color:background_color,
                             label:0
                         }];
                         // bins.length <= colors.length
@@ -1747,7 +1747,7 @@
                             symbol: {
                                 type: "simple-fill",
                                 outline: {  // autocasts as new SimpleLineSymbol()
-                                    color: [128, 128, 128, 0],
+                                    color: [128, 128, 128, 50],
                                 }
                             },
                             visualVariables: [
