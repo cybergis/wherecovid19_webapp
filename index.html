@@ -229,7 +229,7 @@
                 var illinois_counties = new GeoJSONLayer({
                     url: illinios_county_url,
                     outFields: ["*"],
-                    title: "Illinois County-level Info",
+                    title: "County-level Info",
                     renderer: illinoisZipCodeRender("CountyForecast", 7, 8200),
                     visible: false,
                 });
@@ -237,24 +237,24 @@
                 var illinois_zipcode = new GeoJSONLayer({
                         url: illinios_zipcode_url,
                         outFields: ["*"],
-                        title: "Illinois Zipcode-level Info",
+                        title: "Zipcode-level Info",
                         renderer: illinoisZipCodeRender("ZipCodeForecast", 0, 200),
-                        visible: true,
+                        visible: false,
                     }
                 );
 
                 var illinois_report = new GeoJSONLayer({
                     url: illinois_report_url,
                     outFields: ["*"],
-                    title: "Illinois Reports",
+                    title: "Cases (New York Times)",
                     renderer: default_polygon_renderer,
-                    visible: false,
+                    visible: true,
                 })
 
                 var illinois_hospitals = new GeoJSONLayer({
                     url: illinois_hospitals_url,
                     outFields: ["*"],
-                    title: "Illinois Hospital Locations",
+                    title: "Hospital Locations",
                     renderer: {
                         type: "simple",
                         symbol: {
@@ -270,7 +270,7 @@
                 var illinois_testing = new GeoJSONLayer({
                     url: illinois_testing_url,
                     outFields: ["*"],
-                    title: "Illinois Testing Cases",
+                    title: "Testing Cases",
                     renderer: {
                         type: "unique-value",
                         field: "Test_Result",
@@ -323,18 +323,18 @@
                 // new GroupLayer object may affect other GroupLayer objects
                 // Comment out unused GroupLayer objects to avoid strange bugs
                 // like group layer can not expand!!!!
-                var allInOneGroupLayer = new GroupLayer({
-                    title: "Layers",
-                    visible: true,
-                    visibilityMode: "exclusive",
-                    layers: new Array().concat(animation_layers, static_layers),
-                    opacity: 0.75
-                });
+                // var allInOneGroupLayer = new GroupLayer({
+                //     title: "Layers",
+                //     visible: true,
+                //     visibilityMode: "exclusive",
+                //     layers: new Array().concat(animation_layers, static_layers),
+                //     opacity: 0.75
+                // });
 
                 var us_group = new GroupLayer({
                     title:"US",
                     visible:false,
-                    visibilityMode:"exclusive",
+                    visibilityMode:"independent",
                     layers:[nyt_layer_states, nyt_layer_counties],
                     opacity:0.75
                 })
@@ -342,15 +342,15 @@
                 var illinois_group = new GroupLayer({
                     title:"Illinois",
                     visible:true,
-                    visibilityMode:"exclusive",
+                    visibilityMode:"independent",
                     layers:[illinois_hospitals, illinois_testing, illinois_counties, illinois_zipcode, illinois_report],
                     opacity:0.75
                 })
 
                 // order mattes! last layer is at top
                 //var all_layers = [animationGroupLayer, staticGroupLayer];
-                var all_layers = allInOneGroupLayer.layers;
-                //var all_layers = new Array().concat(animation_layers, static_layers);
+                //var all_layers = allInOneGroupLayer.layers;
+                var all_layers = new Array().concat(animation_layers, static_layers);
 
                 // A non-3857 basemap
                 var basemap = new Basemap({
@@ -460,20 +460,29 @@
                 // https://developers.arcgis.com/javascript/latest/sample-code/sandbox/index.html?sample=animation-layer-visibility
                 map.allLayers.forEach(function (item) {
                     item.watch("visible", function (visible) {
-                        if (visible === true) {
+                        console.log(item.title, visible)
+                        if (visible === true && item.type !== "group") {
                             map.layers.forEach(function (value){
-                                // value is a group layer
-                                //if item is a child layer
-                                if(value.title == item.parent.title){
+
+                                if(value.title === item.parent.title){
                                     value.visible = true;
-                                }
-                                //if item is a group layer
-                                else if(value.title == item.title){
-                                    value.visible = true;
+                                    value.layers.forEach(function (val){
+                                        if(val.title === item.title){
+                                            val.visible = true;
+                                        }
+                                        else{
+                                            val.visible = false;
+                                        }
+                                    })
                                 }
                                 else{
                                     value.visible = false;
+                                    value.layers.forEach(function (val){
+                                        val.visible = false;
+
+                                    })
                                 }
+
                             })
                             if (item.parent.title === us_group.title || item.title === us_group.title) {
                                 view.goTo({
@@ -1440,6 +1449,22 @@
                  * Sets the current visualized construction year.
                  */
                 function setDate(_date, animation_type = "case") {
+                    let level = null;
+                    animation_layers.forEach(function (value){
+                        if(value.visible == true && value.parent.visible == true){
+                            console.log(value.title);
+                            if(value.title == illinois_report.title){
+                                level = "illinois"
+                            }
+                            else if(value.title == nyt_layer_counties.title){
+                                level = "county";
+                            }
+                            else if(value.title == nyt_layer_states.title){
+                                level = "state";
+                            }
+                        }
+                    })
+                    console.log(level);
                     if (dt_interval_unit == "week") {
                         dt_week_end = date.add(_date, "week", 1);
                         sliderValue.innerHTML = locale.format(_date, {datePattern: "MM/dd", selector: "date"}) +
@@ -1467,7 +1492,7 @@
                             event_type = "death"
                         }
 
-                        _layer.renderer = classRender(_date, _event_type = "case", _level = "case");
+                        _layer.renderer = classRender(_date, _event_type = "case", _level = level);
                     }
 
                     //covid19_layer.renderer = dailyEventNumberRender(_date, _event_type="death/case", _scale="");
@@ -1749,6 +1774,12 @@
                     let dynamic_class = dynamic_classes_data;
                     //Now set default method as Quantiles
                     let method = "Quantiles";
+                    if(_level == "illinois"){
+                        method = "NaturalBreaks";
+                    }
+                    if(_level == "state"){
+                        method = "NaturalBreaks";
+                    }
                     let source = null;
                     // 5 Common type: Constant Classes
                     if(_event_type == "case" || _event_type == "death" || _event_type == "case_per_100k_capita"
@@ -2313,6 +2344,7 @@
         </div>
     </div>
 </nav>
+<div id="applicationDiv">
 
     <!-- <div class="container">
         <canvas id="myChart"></canvas>
@@ -2359,6 +2391,7 @@
         </div>
     </div>
     -->
+    
     <div id="sliderContainer" class="esri-widget">
         <span id="sliderValue"></span>
         <div id="sliderInnerContainer">
