@@ -9,7 +9,7 @@ body {
 #applicationDiv {
     position: relative;
     width: 100%;
-    height: calc(100% - 86px);
+    height: calc(100% - 46px);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -64,6 +64,21 @@ body {
     width: 100%;
 }
 
+.chart-wrap {
+    width: 100%;
+    order: 3;
+}
+
+#myChart {
+    display: none;
+    z-index: 1000;
+    left: 15px;
+    top: 500px;
+    width: 100% !important;
+    height: 200px !important;
+    background: #242424;
+}
+
 .disabledbutton {
     pointer-events: none;
     opacity: 0.4;
@@ -72,6 +87,7 @@ body {
 .hideDiv {
     display: none !important;
 }
+
 
 /**
   * Play/Stop toggle button
@@ -168,14 +184,15 @@ body {
 }
 
 .myChart {
-    position:absolute;
-    right:0;
-    top:30%;
+    position: absolute;
+    right: 0;
+    top: 30%;
     width: 300px !important;
     height: 200px !important;
     /* background:black; */
     /* position: fixed; */
-  }
+}
+
 
 /* .sidebar-right {
     z-index: 1000;

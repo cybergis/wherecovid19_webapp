@@ -1,4 +1,5 @@
 <html>
+
 <head>
     <!-- include loader styles -->
     <link href="css/loader.css" rel="stylesheet" type="text/css">
@@ -25,10 +26,7 @@
     </script>
 
     <meta charset="utf-8"/>
-    <meta
-            name="viewport"
-            content="initial-scale=1,maximum-scale=1,user-scalable=no"
-    />
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no"/>
     <!--
   ArcGIS API for JavaScript, https://js.arcgis.com
   For more information about the visualization-vv-color-animate sample, read the original sample description at developers.arcgis.com.
@@ -36,10 +34,7 @@
   -->
     <title>WhereCOVID-19 App</title>
 
-    <link
-            rel="stylesheet"
-            href="https://js.arcgis.com/4.15/esri/themes/dark-blue/main.css"
-    />
+    <link rel="stylesheet" href="https://js.arcgis.com/4.15/esri/themes/dark-blue/main.css"/>
     <link rel="stylesheet" href="css/style.css"/>
     <script src="https://js.arcgis.com/4.15/"></script>
 
@@ -200,7 +195,7 @@
                     symbol: {
                         type: "simple-fill",
                         color: [0, 0, 0, 0.1],
-                        outline: {  // autocasts as new SimpleLineSymbol()
+                        outline: { // autocasts as new SimpleLineSymbol()
                             color: [128, 128, 128, 0.5],
                         }
                     }
@@ -249,7 +244,7 @@
                     title: "Cases (New York Times)",
                     renderer: default_polygon_renderer,
                     visible: true,
-                })
+                });
 
                 var illinois_hospitals = new GeoJSONLayer({
                     url: illinois_hospitals_url,
@@ -258,7 +253,7 @@
                     renderer: {
                         type: "simple",
                         symbol: {
-                            type: "picture-marker",  // autocasts as new PictureMarkerSymbol()
+                            type: "picture-marker", // autocasts as new PictureMarkerSymbol()
                             url: "img/hospital.png",
                             width: "32px",
                             height: "32px"
@@ -274,24 +269,21 @@
                     renderer: {
                         type: "unique-value",
                         field: "Test_Result",
-                        uniqueValueInfos: [
-                            {
-                                value: "Positive",
-                                symbol: {
-                                    type: "simple-marker",
-                                    size: 12,
-                                    color: "red",
-                                }
-                            },
-                            {
-                                value: "Negative",
-                                symbol: {
-                                    type: "simple-marker",
-                                    size: 12,
-                                    color: "blue",
-                                }
+                        uniqueValueInfos: [{
+                            value: "Positive",
+                            symbol: {
+                                type: "simple-marker",
+                                size: 12,
+                                color: "red",
                             }
-                        ]
+                        }, {
+                            value: "Negative",
+                            symbol: {
+                                type: "simple-marker",
+                                size: 12,
+                                color: "blue",
+                            }
+                        }]
                     },
                     visible: false,
                 });
@@ -344,7 +336,7 @@
                     visibilityMode: "independent",
                     layers: [illinois_hospitals, illinois_testing, illinois_counties, illinois_zipcode, illinois_report],
                     opacity: 0.75
-                })
+                });
 
                 // order mattes! last layer is at top
                 //var all_layers = [animationGroupLayer, staticGroupLayer];
@@ -451,6 +443,8 @@
                     // reset active_animation_layer
                     let topVisibleLayer = getTopVisibleLayer(map.layers, animation_layers);
                     mywatcher.set("active_animation_layer", topVisibleLayer);
+                    //Setup hover effects
+                    view.whenLayerView(topVisibleLayer).then(setupHoverTooltip);
                 }
 
                 // Listen for layer visibility change
@@ -476,11 +470,9 @@
                                     value.visible = false;
                                     value.layers.forEach(function (val) {
                                         val.visible = false;
-
                                     })
                                 }
-
-                            })
+                            });
                             if (item.parent.title === us_group.title || item.title === us_group.title) {
                                 view.goTo({
                                     center: [-96.984300, 40.474679],
@@ -495,7 +487,6 @@
                             }
                         } // if(visible === true){
                         setActiveAnimationLayer(item);
-
                     });
                 });
 
@@ -503,7 +494,9 @@
                     view: view,
                     //listItemCreatedFunction: defineActions,
                     selectionEnabled: true,
-                    visibleElements: {statusIndicators: false},
+                    visibleElements: {
+                        statusIndicators: false
+                    },
                 });
 
                 // function defineActions(event) {
@@ -638,12 +631,11 @@
                             //console.log(result_list)
                             result = result_list.slice(0, 11);
                             result.forEach(function (value) {
-                                    var instance = template.content.cloneNode(true);
-                                    instance.querySelector('strong').textContent = numberWithCommas(value.cases);
-                                    instance.querySelectorAll('span')[2].textContent = value.county + "," + value.state;
-                                    listDiv.appendChild(instance);
-                                }
-                            );
+                                var instance = template.content.cloneNode(true);
+                                instance.querySelector('strong').textContent = numberWithCommas(value.cases);
+                                instance.querySelectorAll('span')[2].textContent = value.county + "," + value.state;
+                                listDiv.appendChild(instance);
+                            });
                         });
 
                 }
@@ -675,8 +667,14 @@
                     }
 
                     //dt_interval_unit = "day";
-                    let _dt_end = locale.parse(_dt_end_str, {datePattern: "yyyy-MM-dd", selector: "date"});
-                    let _dt_start = locale.parse(_dt_start_str, {datePattern: "yyyy-MM-dd", selector: "date"});
+                    let _dt_end = locale.parse(_dt_end_str, {
+                        datePattern: "yyyy-MM-dd",
+                        selector: "date"
+                    });
+                    let _dt_start = locale.parse(_dt_start_str, {
+                        datePattern: "yyyy-MM-dd",
+                        selector: "date"
+                    });
                     dt_start = _dt_start;
 
                     if (dt_interval_unit == "day") {
@@ -694,7 +692,9 @@
                             max: _slider_max,
                             values: [0],
                             step: 1,
-                            visibleElements: {rangeLabels: true},
+                            visibleElements: {
+                                rangeLabels: true
+                            },
                             draggableSegmentsEnabled: false,
                         });
                         slider.on("thumb-drag", inputHandler);
@@ -713,6 +713,10 @@
                     //console.log(name, oldValue, value);
                     if (value == null) {
                         addClass2Elem(sliderDiv, true, "hideDiv");
+
+                        //Hide the chart
+                        document.getElementById('myChart').classList.add("d-none");
+                        document.getElementById('myChart').classList.remove("d-block");
                     } else {
                         if (value != oldValue) {
                             // enable slider div
@@ -805,48 +809,38 @@
 
 
                 var ilZipTemplate = {
-                    expressionInfos: [
-                        {
-                            name: "zipcode",
-                            title: "Zip Code",
-                            expression: "Text($feature.ZipCode)"
-                        },
-                    ],
+                    expressionInfos: [{
+                        name: "zipcode",
+                        title: "Zip Code",
+                        expression: "Text($feature.ZipCode)"
+                    },],
 
                     title: "{expression/zipcode}",
 
-                    content: [
-                        {
-                            type: "fields", // FieldsContentElement
-                            fieldInfos: [
-                                {
-                                    fieldName: "ZipCode",
-                                    visible: true,
-                                    label: "Zip Code"
-                                },
-                                {
-                                    fieldName: "MainCity",
-                                    visible: true,
-                                    label: "Main City"
-                                },
-                                {
-                                    fieldName: "FIPS",
-                                    visible: true,
-                                    label: "FIPS"
-                                },
-                                {
-                                    fieldName: "population",
-                                    visible: true,
-                                    label: "Population"
-                                },
-                                {
-                                    fieldName: "ZipCodeForecast",
-                                    visible: true,
-                                    label: "Forecast New Cases (week Apr 5-11, 2020)"
-                                }
-                            ]
-                        }
-                    ]
+                    content: [{
+                        type: "fields", // FieldsContentElement
+                        fieldInfos: [{
+                            fieldName: "ZipCode",
+                            visible: true,
+                            label: "Zip Code"
+                        }, {
+                            fieldName: "MainCity",
+                            visible: true,
+                            label: "Main City"
+                        }, {
+                            fieldName: "FIPS",
+                            visible: true,
+                            label: "FIPS"
+                        }, {
+                            fieldName: "population",
+                            visible: true,
+                            label: "Population"
+                        }, {
+                            fieldName: "ZipCodeForecast",
+                            visible: true,
+                            label: "Forecast New Cases (week Apr 5-11, 2020)"
+                        }]
+                    }]
                 };
 
                 illinois_zipcode.popupTemplate = ilZipTemplate;
@@ -855,35 +849,30 @@
 
                     title: "{NAME}",
 
-                    content: [
-                        {
-                            type: "fields", // FieldsContentElement
-                            fieldInfos: [
+                    content: [{
+                        type: "fields", // FieldsContentElement
+                        fieldInfos: [
 
-                                {
-                                    fieldName: "FIPS",
-                                    visible: true,
-                                    label: "FIPS"
-                                },
-                                {
-                                    fieldName: "population",
-                                    visible: true,
-                                    label: "Population"
-                                },
-                                {
-                                    fieldName: "CountyForecast",
-                                    visible: true,
-                                    label: "Forecast New Cases (week Apr 5-11, 2020)"
-                                },
-                                {
-                                    fieldName: "Number_Booths",
-                                    visible: true,
-                                    label: "Booths"
-                                }
+                            {
+                                fieldName: "FIPS",
+                                visible: true,
+                                label: "FIPS"
+                            }, {
+                                fieldName: "population",
+                                visible: true,
+                                label: "Population"
+                            }, {
+                                fieldName: "CountyForecast",
+                                visible: true,
+                                label: "Forecast New Cases (week Apr 5-11, 2020)"
+                            }, {
+                                fieldName: "Number_Booths",
+                                visible: true,
+                                label: "Booths"
+                            }
 
-                            ]
-                        }
-                    ]
+                        ]
+                    }]
                 };
 
                 illinois_counties.popupTemplate = ilCountyTemplate;
@@ -892,80 +881,66 @@
 
                     title: "{Hospital}",
 
-                    content: [
-                        {
-                            type: "fields", // FieldsContentElement
-                            fieldInfos: [
+                    content: [{
+                        type: "fields", // FieldsContentElement
+                        fieldInfos: [
 
-                                {
-                                    fieldName: "StreetAddress",
-                                    visible: true,
-                                    label: "Address"
-                                },
-                                {
-                                    fieldName: "City",
-                                    visible: true,
-                                    label: "City"
-                                },
-                                {
-                                    fieldName: "ZIP_Code",
-                                    visible: true,
-                                    label: "Zip Code"
-                                },
-                                {
-                                    fieldName: "Total_Bed",
-                                    visible: true,
-                                    label: "Total Beds"
-                                },
-                                {
-                                    fieldName: "AvailableBed",
-                                    visible: true,
-                                    label: "Available Beds"
-                                },
-                                {
-                                    fieldName: "Bed_in_Use",
-                                    visible: true,
-                                    label: "Bed in use"
-                                },
-                                {
-                                    fieldName: "Adult_ICU_Bed",
-                                    visible: true,
-                                    label: "Adult ICU Beds"
-                                },
-                                {
-                                    fieldName: "Total_Vent",
-                                    visible: true,
-                                    label: "Total Vents"
-                                },
-                                {
-                                    fieldName: "Available_Vent",
-                                    visible: true,
-                                    label: "Available Vents"
-                                },
-                                {
-                                    fieldName: "Vent_in_Use",
-                                    visible: true,
-                                    label: "Vent in Use"
-                                },
-                                {
-                                    fieldName: "CovidConfirmedPatient",
-                                    visible: true,
-                                    label: "Confirmed COVID-19 Patients"
-                                },
-                                {
-                                    fieldName: "CovidPatient_in_ICU",
-                                    visible: true,
-                                    label: "COVID-19 Patients in ICU"
-                                },
-                                {
-                                    fieldName: "CovidPatientVent",
-                                    visible: true,
-                                    label: "COVID-19 Patients Vent"
-                                },
+                            {
+                                fieldName: "StreetAddress",
+                                visible: true,
+                                label: "Address"
+                            }, {
+                                fieldName: "City",
+                                visible: true,
+                                label: "City"
+                            }, {
+                                fieldName: "ZIP_Code",
+                                visible: true,
+                                label: "Zip Code"
+                            }, {
+                                fieldName: "Total_Bed",
+                                visible: true,
+                                label: "Total Beds"
+                            }, {
+                                fieldName: "AvailableBed",
+                                visible: true,
+                                label: "Available Beds"
+                            }, {
+                                fieldName: "Bed_in_Use",
+                                visible: true,
+                                label: "Bed in use"
+                            }, {
+                                fieldName: "Adult_ICU_Bed",
+                                visible: true,
+                                label: "Adult ICU Beds"
+                            }, {
+                                fieldName: "Total_Vent",
+                                visible: true,
+                                label: "Total Vents"
+                            }, {
+                                fieldName: "Available_Vent",
+                                visible: true,
+                                label: "Available Vents"
+                            }, {
+                                fieldName: "Vent_in_Use",
+                                visible: true,
+                                label: "Vent in Use"
+                            }, {
+                                fieldName: "CovidConfirmedPatient",
+                                visible: true,
+                                label: "Confirmed COVID-19 Patients"
+                            }, {
+                                fieldName: "CovidPatient_in_ICU",
+                                visible: true,
+                                label: "COVID-19 Patients in ICU"
+                            }, {
+                                fieldName: "CovidPatientVent",
+                                visible: true,
+                                label: "COVID-19 Patients Vent"
+                            },
 
-                            ]
-                        }
-                    ]
+                        ]
+                    }]
                 };
                 illinois_hospitals.popupTemplate = ilHospitalTemplate;
 
@@ -973,37 +948,31 @@
 
                     title: "Test Cases",
 
-                    content: [
-                        {
-                            type: "fields", // FieldsContentElement
-                            fieldInfos: [
+                    content: [{
+                        type: "fields", // FieldsContentElement
+                        fieldInfos: [
 
-                                {
-                                    fieldName: "Test_Result",
-                                    visible: true,
-                                    label: "Test Result"
-                                },
-                                {
-                                    fieldName: "expression/lab_date",
-                                },
-                                {
-                                    fieldName: "age",
-                                    visible: true,
-                                    label: "Age"
-                                },
-                                {
-                                    fieldName: "Sex",
-                                    visible: true,
-                                    label: "Gender"
-                                },
-                                {
-                                    fieldName: "Deceased",
-                                    visible: true,
-                                    label: "Deceased"
-                                }
-
-                            ]
-                        }
+                            {
+                                fieldName: "Test_Result",
+                                visible: true,
+                                label: "Test Result"
+                            }, {
+                                fieldName: "expression/lab_date",
+                            }, {
+                                fieldName: "age",
+                                visible: true,
+                                label: "Age"
+                            }, {
+                                fieldName: "Sex",
+                                visible: true,
+                                label: "Gender"
+                            }, {
+                                fieldName: "Deceased",
+                                visible: true,
+                                label: "Deceased"
+                            }
+                        ]
+                    }
                     ],
                     expressionInfos: [
                         {
@@ -1020,7 +989,6 @@
                 var usStateTemplate = {
 
                     title: "{NAME}",
-
                     expressionInfos: [
                         {
                             name: "total_cases",
@@ -1039,7 +1007,6 @@
                         }
 
                     ],
-
                     content: [
                         {
                             type: "fields", // FieldsContentElement
@@ -1106,7 +1073,6 @@
                         }
 
                     ],
-
                     content: [
                         {
                             type: "fields", // FieldsContentElement
@@ -1162,279 +1128,223 @@
 
 
                 // Create tooltip
-                // function createTooltip() {
+                function createTooltip() {
 
-                // var tooltip = document.createElement("div");
-                // var style = tooltip.style;
+                    var tooltip = document.createElement("div");
+                    var style = tooltip.style;
 
-                // tooltip.setAttribute("role", "tooltip");
-                // tooltip.classList.add("tooltip");
+                    tooltip.setAttribute("role", "tooltip");
+                    tooltip.classList.add("tooltip");
 
-                // var textElement = document.createElement("div");
-                // textElement.classList.add("esri-widget");
-                // tooltip.appendChild(textElement);
+                    var textElement = document.createElement("div");
+                    textElement.classList.add("esri-widget");
+                    tooltip.appendChild(textElement);
 
-                // view.container.appendChild(tooltip);
+                    view.container.appendChild(tooltip);
 
-                // var x = 0;
-                // var y = 0;
-                // var targetX = 0;
-                // var targetY = 0;
-                // var visible = false;
+                    var x = 0;
+                    var y = 0;
+                    var targetX = 0;
+                    var targetY = 0;
+                    var visible = false;
 
-                // // move the tooltip progressively
-                // function move() {
-                //     x += (targetX - x) * 0.1;
-                //     y += (targetY - y) * 0.1;
+                    // move the tooltip progressively
+                    function move() {
+                        x += (targetX - x) * 0.1;
+                        y += (targetY - y) * 0.1;
 
-                //     if (Math.abs(targetX - x) < 1 && Math.abs(targetY - y) < 1) {
-                //     x = targetX;
-                //     y = targetY;
-                //     } else {
-                //     requestAnimationFrame(move);
-                //     }
+                        if (Math.abs(targetX - x) < 1 && Math.abs(targetY - y) < 1) {
+                            x = targetX;
+                            y = targetY;
+                        } else {
+                            requestAnimationFrame(move);
+                        }
+                        style.transform =
+                            "translate3d(" + Math.round(x) + "px," + Math.round(y) + "px, 0)";
+                    }
 
-                //     style.transform =
-                //     "translate3d(" + Math.round(x) + "px," + Math.round(y) + "px, 0)";
-                // }
+                    return {
+                        show: function (point, text) {
+                            if (!visible) {
+                                x = point.x;
+                                y = point.y;
+                            }
 
-                // return {
-                //     show: function(point, text) {
-                //     if (!visible) {
-                //         x = point.x;
-                //         y = point.y;
-                //     }
+                            targetX = point.x;
+                            targetY = point.y;
+                            style.opacity = 1;
+                            visible = true;
+                            textElement.innerHTML = text;
 
-                //     targetX = point.x;
-                //     targetY = point.y;
-                //     style.opacity = 1;
-                //     visible = true;
-                //     textElement.innerHTML = text;
+                            move();
+                        },
 
-                //     move();
-                //     },
+                        hide: function () {
+                            style.opacity = 0;
+                            visible = false;
+                        }
+                    };
+                }
 
-                //     hide: function() {
-                //     style.opacity = 0;
-                //     visible = false;
-                //     }
-                // };
-                // }
+                // When the layerview is available, setup hovering interactivity
+                var tooltip = null;
+                var hitTest = null;
+                var hoverover_callback = null;
+                var activeAnimationLayerView = null;
 
+                function setupHoverTooltip(layerview) {
 
-                // //Set up hover effects
-                // function setupCountiesHoverTooltip(layerview) {
+                    var highlight;
+                    activeAnimationLayerView = layerview;
 
-                // console.log("123");
+                    // if (tooltip == null) {
+                    //     tooltip = createTooltip();
+                    // }
 
-                // var highlight;
+                    if (hitTest == null) {
+                        hitTest = promiseUtils.debounce(function (event) {
+                            return view.hitTest(event).then(function (hit) {
+                                var results = hit.results.filter(function (result) {
+                                    return result.graphic.layer === activeAnimationLayerView.layer;
+                                });
 
-                // var tooltip = createTooltip();
+                                if (!results.length) {
+                                    return null;
+                                }
 
-                // var hitTest = promiseUtils.debounce(function(event) {
-                //     return view.hitTest(event).then(function(hit) {
-                //     var results = hit.results.filter(function(result) {
-                //         return result.graphic.layer === nyt_layer_counties;
-                //     });
+                                return {
+                                    graphic: results[0].graphic,
+                                    screenPoint: hit.screenPoint
+                                };
+                            });
+                        });
+                    }
+                    if (hoverover_callback == null) {
+                        view.on("click", function (event) {
+                            //view.on("pointer-move", function (event) {
+                            return hitTest(event).then(
+                                function (hit) {
+                                    // remove current highlighted feature
+                                    if (highlight) {
+                                        highlight.remove();
+                                        highlight = null;
+                                    }
 
-                //     if (!results.length) {
-                //         return null;
-                //     }
+                                    // highlight the hovered feature
+                                    // or hide the tooltip
 
-                //     return {
-                //         graphic: results[0].graphic,
-                //         screenPoint: hit.screenPoint
-                //     };
-                //     });
-                // });
+                                    if (hit) {
+                                        // Add d-block class and remove d-none to display the chart
+                                        document.getElementById('myChart').classList.add("d-block");
+                                        document.getElementById('myChart').classList.remove("d-none");
 
-                // view.on("pointer-move", function(event) {
-                //     return hitTest(event).then(
-                //     function(hit) {
-                //         // remove current highlighted feature
-                //         if (highlight) {
-                //         highlight.remove();
-                //         highlight = null;
-                //         }
+                                        console.log("123");
+                                        var graphic = hit.graphic;
+                                        var screenPoint = hit.screenPoint;
+                                        var mychart = document.getElementById('myChart').getContext('2d');
+                                        var infoWindow = document.getElementById('infoWindow');
 
-                //         // highlight the hovered feature
-                //         // or hide the tooltip
+                                        Chart.defaults.global.defaultFontSize = 15;
+                                        Chart.defaults.global.defaultFontColor = '#777';
 
-                //         if (hit) {
-                //         var graphic = hit.graphic;
-                //         var screenPoint = hit.screenPoint;
-                //         var mychart = document.getElementById('myChart').getContext('2d');
+                                        var CasesArray = (graphic.getAttribute("cases_ts")).split(",");
+                                        var DeathsArray = (graphic.getAttribute("deaths_ts")).split(",");
+                                        var LabelDates = [];
+                                        for (i = 0; i < CasesArray.length; i++) {
+                                            LabelDates.push("Day" + i)
+                                        }
+                                        ;
 
-                //         Chart.defaults.global.defaultFontSize = 15;
-                //         Chart.defaults.global.defaultFontColor = '#777';
+                                        var IncreasedCases = [];
+                                        for (i = 1; i < CasesArray.length; i++) {
+                                            IncreasedCases.push(CasesArray[i] - CasesArray[i - 1])
+                                        }
+                                        ;
+                                        IncreasedCases.unshift(0);
 
-                //         var CasesArray = (graphic.getAttribute("cases_ts")).split(",");
-                //         var DeathsArray = (graphic.getAttribute("deaths_ts")).split(",");
-                //         var LabelDates = [];
-                //         for (i=0;i<CasesArray.length;i++){
-                //             LabelDates.push("Day"+i)
-                //         };				  
+                                        var IncreasedDeaths = [];
+                                        for (i = 1; i < DeathsArray.length; i++) {
+                                            IncreasedDeaths.push(DeathsArray[i] - DeathsArray[i - 1])
+                                        }
+                                        ;
+                                        IncreasedDeaths.unshift(0);
 
-                //         console.log(CasesArray);
-                //         console.log(DeathsArray);
-                //         let barChart = new Chart(myChart, {
-                //             type: 'line',
-                //             data: {
-                //             labels: LabelDates,
-                //             datasets: [{
-                //             data: CasesArray,
-                //             label: "Confirmed cases",
-                //             borderColor: "#3e95cd",
-                //             fill: false
-                //         },{
-                //             data: DeathsArray,
-                //             label: "Deaths",
-                //             borderColor: "#8e5ea2",
-                //             fill: false
-                //         }
-                //         ]
-                //             },
-                //             options:{
-                //             title: {
-                //                 display: true,
-                //                 text: 'COVID19 Time Series',
-                //                 fontSize: 40
-                //             },
-                //             legend: {
-                //                 position: 'right',
-                //                 labels: {
-                //                     fontSize: 20
-                //                 }
-                //             }
-                //             }
-                //         });
-                //         highlight = layerview.highlight(graphic);
-                //         console.log(graphic);
-                //         console.log(screenPoint);
-                //         tooltip.show(
-                //             screenPoint,
-                //             "Cases in " + graphic.getAttribute("NAME")
-                //         );
-                //         } else {
-                //         tooltip.hide();
-                //         }
-                //     },
-                //     function() {}
-                //     );
-                // });
-                // }
+                                        var ExtendedCasesArray = CasesArray.slice(0)
+                                        var ExtendedDeathsArray = DeathsArray.slice(0)
+                                        ExtendedCasesArray.unshift(0, 0, 0, 0, 0, 0, 0)
+                                        ExtendedDeathsArray.unshift(0, 0, 0, 0, 0, 0, 0)
 
-                // // When the layerview is available, setup hovering interactivity
+                                        var InfoWindowDate = new Date(2020, 0, 14);
+                                        InfoWindowDate.setDate(InfoWindowDate.getDate() + slider.values[0]);
+                                        var InfoWindowDateStr = InfoWindowDate.toString().replace(" 00:00:00 GMT-0600 (Central Standard Time)", "");
 
-                // view.whenLayerView(nyt_layer_counties).then(setupCountiesHoverTooltip);
+                                        // infoWindow.innerHTML = "Cases on " + InfoWindowDateStr + ": " + Math.round(ExtendedCasesArray[slider.values[0]]) + "<br>" +
+                                        //     "Deaths on " + InfoWindowDateStr + ": " + Math.round(ExtendedDeathsArray[slider.values[0]]);
 
 
-                // function setupStatesHoverTooltip(layerview) {
+                                        let barChart = new Chart(myChart, {
+                                            type: 'line',
+                                            data: {
+                                                labels: LabelDates,
+                                                datasets: [{
+                                                    data: CasesArray,
+                                                    label: "Confirmed cases",
+                                                    borderColor: "#6610f2",
+                                                    fill: false
+                                                }, {
+                                                    data: IncreasedCases,
+                                                    label: "Increased Cases",
+                                                    borderColor: "#6f42c1",
+                                                    fill: false
+                                                }, {
+                                                    data: DeathsArray,
+                                                    label: "Deaths",
+                                                    borderColor: "#dc3545",
+                                                    fill: false
+                                                }, {
+                                                    data: IncreasedDeaths,
+                                                    label: "Increased Deaths",
+                                                    borderColor: "#fd7e14",
+                                                    fill: false
+                                                }]
+                                            },
+                                            options: {
+                                                title: {
+                                                    display: false,
+                                                    text: 'COVID19 Time Series',
+                                                    fontSize: 15
+                                                },
+                                                legend: {
+                                                    position: 'top',
+                                                    fullWidth: true,
+                                                    labels: {
+                                                        fontSize: 12
+                                                    }
+                                                },
+                                                fontSize: 12,
+                                                responsive: true,
+                                                maintainAspectRatio: false
+                                            }
+                                        });
+                                        highlight = activeAnimationLayerView.highlight(graphic);
+                                        console.log(graphic);
+                                        console.log(screenPoint);
+                                        // tooltip.show(
+                                        //     screenPoint,
+                                        //     "Cases in " + graphic.getAttribute("NAME")
+                                        // );
+                                    } else {
+                                        // tooltip.hide();
+                                    }
+                                },
+                                function () {
+                                }
+                            );
+                        });
+                        hoverover_callback = true;
+                    }
 
-                // console.log("123");
-
-                // var highlight;
-
-                // var tooltip = createTooltip();
-
-                // var hitTest = promiseUtils.debounce(function(event) {
-                //     return view.hitTest(event).then(function(hit) {
-                //     var results = hit.results.filter(function(result) {
-                //         return result.graphic.layer === nyt_layer_states;
-                //     });
-
-                //     if (!results.length) {
-                //         return null;
-                //     }
-
-                //     return {
-                //         graphic: results[0].graphic,
-                //         screenPoint: hit.screenPoint
-                //     };
-                //     });
-                // });
-
-                // view.on("pointer-move", function(event) {
-                //     return hitTest(event).then(
-                //     function(hit) {
-                //         // remove current highlighted feature
-                //         if (highlight) {
-                //         highlight.remove();
-                //         highlight = null;
-                //         }
-
-                //         // highlight the hovered feature
-                //         // or hide the tooltip
-
-                //         if (hit) {
-                //         var graphic = hit.graphic;
-                //         var screenPoint = hit.screenPoint;
-                //         var mychart = document.getElementById('myChart').getContext('2d');
-
-                //         Chart.defaults.global.defaultFontSize = 15;
-                //         Chart.defaults.global.defaultFontColor = '#777';
-
-                //         var CasesArray = (graphic.getAttribute("cases_ts")).split(",");
-                //         var DeathsArray = (graphic.getAttribute("deaths_ts")).split(",");
-                //         var LabelDates = [];
-                //         for (i=0;i<CasesArray.length;i++){
-                //             LabelDates.push("Day"+i)
-                //         };				  
-
-                //         console.log(CasesArray);
-                //         console.log(DeathsArray);
-                //         let barChart = new Chart(myChart, {
-                //             type: 'line',
-                //             data: {
-                //             labels: LabelDates,
-                //             datasets: [{
-                //             data: CasesArray,
-                //             label: "Confirmed cases",
-                //             borderColor: "#3e95cd",
-                //             fill: false
-                //         },{
-                //             data: DeathsArray,
-                //             label: "Deaths",
-                //             borderColor: "#8e5ea2",
-                //             fill: false
-                //         }
-                //         ]
-                //             },
-                //             options:{
-                //             title: {
-                //                 display: true,
-                //                 text: 'COVID19 Time Series',
-                //                 fontSize: 40
-                //             },
-                //             legend: {
-                //                 position: 'right',
-                //                 labels: {
-                //                     fontSize: 20
-                //                 }
-                //             },
-                //             //responsive: true,
-                //             //maintainAspectRatio: false
-                //             }
-                //         });
-                //         highlight = layerview.highlight(graphic);
-                //         console.log(graphic);
-                //         console.log(screenPoint);
-                //         tooltip.show(
-                //             screenPoint,
-                //             "Cases in " + graphic.getAttribute("NAME")
-                //         );
-                //         } else {
-                //         tooltip.hide();
-                //         }
-                //     },
-                //     function() {}
-                //     );
-                // });
-                // }
-
-                // // When the layerview is available, setup hovering interactivity
-
-                // view.whenLayerView(nyt_layer_states).then(setupStatesHoverTooltip);
+                }
 
                 //--------------------------------------------------------------------------
                 //
@@ -1462,10 +1372,19 @@
                     console.log(level);
                     if (dt_interval_unit == "week") {
                         dt_week_end = date.add(_date, "week", 1);
-                        sliderValue.innerHTML = locale.format(_date, {datePattern: "MM/dd", selector: "date"}) +
-                            "-" + locale.format(dt_week_end, {datePattern: "MM/dd/yyyy", selector: "date"});
+                        sliderValue.innerHTML = locale.format(_date, {
+                                datePattern: "MM/dd",
+                                selector: "date"
+                            }) +
+                            "-" + locale.format(dt_week_end, {
+                                datePattern: "MM/dd/yyyy",
+                                selector: "date"
+                            });
                     } else {
-                        sliderValue.innerHTML = locale.format(_date, {datePattern: "MM/dd/yyyy", selector: "date"});
+                        sliderValue.innerHTML = locale.format(_date, {
+                            datePattern: "MM/dd/yyyy",
+                            selector: "date"
+                        });
                     }
 
                     var thumb_value = date.difference(dt_start, _date, dt_interval_unit);
@@ -1706,20 +1625,18 @@
                         symbol: {
                             type: "simple-fill",
                             color: [0, 0, 0, 0],
-                            outline: {  // autocasts as new SimpleLineSymbol()
+                            outline: { // autocasts as new SimpleLineSymbol()
                                 color: [128, 128, 128, 0.5],
                             }
                         },
-                        visualVariables: [
-                            {
-                                type: "color",
-                                //field: 'F'+String(_date.getFullYear()).padStart(4, '0')+"_"+String(_date.getMonth()+1).padStart(2, '0')+"_"+String(_date.getDate()).padStart(2, '0'),
-                                valueExpression: getDailyEventNumberArcade(_date, _event_type = _event_type, _scale = _scale),
-                                //normalizationField: "population",
-                                valueExpressionTitle: _event_type,
-                                stops: stops_array.reverse(),
-                            }
-                        ]
+                        visualVariables: [{
+                            type: "color",
+                            //field: 'F'+String(_date.getFullYear()).padStart(4, '0')+"_"+String(_date.getMonth()+1).padStart(2, '0')+"_"+String(_date.getDate()).padStart(2, '0'),
+                            valueExpression: getDailyEventNumberArcade(_date, _event_type = _event_type, _scale = _scale),
+                            //normalizationField: "population",
+                            valueExpressionTitle: _event_type,
+                            stops: stops_array.reverse(),
+                        }]
                     };
                 }
 
@@ -1730,35 +1647,29 @@
                         symbol: {
                             type: "simple-fill",
                             color: [0, 0, 0, 0],
-                            outline: {  // autocasts as new SimpleLineSymbol()
+                            outline: { // autocasts as new SimpleLineSymbol()
                                 color: [128, 128, 128, 0.5],
                             }
                         },
-                        visualVariables: [
-                            {
-                                type: "color",
-                                valueExpression: firstEventArcade(_date, _event_type = _event_type),
-                                //valueExpressionTitle: "Voter Turnout",
-                                stops: [
-                                    {
-                                        value: 1,
-                                        color: [241, 138, 98, 1],
-                                        label: _event_type + "(s) Reported"
-                                    },
-                                    {
-                                        value: 0,
-                                        color: [0, 255, 255, 1],
-                                        label: "First " + _event_type
-                                    },
-                                    {
-                                        value: -1,
-                                        //color: "#000000",
-                                        color: [0, 0, 0, 0],
-                                        label: "No " + _event_type
-                                    },
-                                ],
-                            }
-                        ]
+                        visualVariables: [{
+                            type: "color",
+                            valueExpression: firstEventArcade(_date, _event_type = _event_type),
+                            //valueExpressionTitle: "Voter Turnout",
+                            stops: [{
+                                value: 1,
+                                color: [241, 138, 98, 1],
+                                label: _event_type + "(s) Reported"
+                            }, {
+                                value: 0,
+                                color: [0, 255, 255, 1],
+                                label: "First " + _event_type
+                            }, {
+                                value: -1,
+                                //color: "#000000",
+                                color: [0, 0, 0, 0],
+                                label: "No " + _event_type
+                            },],
+                        }]
                     };
                 }
 
@@ -2080,25 +1991,25 @@
 
                 function firstEventRender2(_date, _event_type = "Case") {
                     var sym1 = {
-                        type: "simple-fill",  // autocasts as new SimpleFillSymbol()
+                        type: "simple-fill", // autocasts as new SimpleFillSymbol()
                         color: "red",
-                        outline: {  // autocasts as new SimpleLineSymbol()
+                        outline: { // autocasts as new SimpleLineSymbol()
                             color: [128, 128, 128, 0.5],
                             width: "0.5px"
                         }
                     };
                     var sym0 = {
-                        type: "simple-fill",  // autocasts as new SimpleFillSymbol()
+                        type: "simple-fill", // autocasts as new SimpleFillSymbol()
                         color: "#0ff",
-                        outline: {  // autocasts as new SimpleLineSymbol()
+                        outline: { // autocasts as new SimpleLineSymbol()
                             color: [128, 128, 128, 0.5],
                             width: "0.5px"
                         }
                     };
                     var sym_1 = {
-                        type: "simple-fill",  // autocasts as new SimpleFillSymbol()
+                        type: "simple-fill", // autocasts as new SimpleFillSymbol()
                         color: "rgb(0, 0, 0)",
-                        outline: {  // autocasts as new SimpleLineSymbol()
+                        outline: { // autocasts as new SimpleLineSymbol()
                             color: [128, 128, 128, 0.5],
                             width: "0.5px"
                         }
@@ -2134,26 +2045,22 @@
                         type: "class-breaks", // autocasts as new ClassBreaksRenderer()
 
                         valueExpression: firstEventArcade(_date, _event_type = _event_type),
-                        classBreakInfos: [
-                            {
-                                minValue: 0,
-                                maxValue: 0,
-                                symbol: sym0,
-                                label: "First Case" // label for symbol in legend
-                            },
-                            {
-                                minValue: 1,
-                                maxValue: 1,
-                                symbol: sym1,
-                                label: "Case(s) Reported" // label for symbol in legend
-                            },
-                            {
-                                minValue: -1,
-                                maxValue: -1,
-                                symbol: sym_1,
-                                label: "No Case" // label for symbol in legend
-                            },
-                        ]
+                        classBreakInfos: [{
+                            minValue: 0,
+                            maxValue: 0,
+                            symbol: sym0,
+                            label: "First Case" // label for symbol in legend
+                        }, {
+                            minValue: 1,
+                            maxValue: 1,
+                            symbol: sym1,
+                            label: "Case(s) Reported" // label for symbol in legend
+                        }, {
+                            minValue: -1,
+                            maxValue: -1,
+                            symbol: sym_1,
+                            label: "No Case" // label for symbol in legend
+                        },]
                     };
                 }
 
@@ -2170,28 +2077,23 @@
                         type: "simple", // autocasts as new SimpleRenderer()
                         symbol: defaultSym,
                         //label: "1-Week Ahead Forecast",
-                        visualVariables: [
-                            {
-                                type: "color",
-                                field: field_name, //"ZipCodeForecast",
-                                //normalizationField: "TOTPOP_CY",
-                                legendOptions: {
-                                    title: "Number of Cases"
-                                },
-                                stops: [
-                                    {
-                                        value: max,
-                                        color: "#FF0000",
-                                        label: max.toString()
-                                    },
-                                    {
-                                        value: min,
-                                        color: "#000000",
-                                        label: min.toString()
-                                    }
-                                ]
-                            }
-                        ]
+                        visualVariables: [{
+                            type: "color",
+                            field: field_name, //"ZipCodeForecast",
+                            //normalizationField: "TOTPOP_CY",
+                            legendOptions: {
+                                title: "Number of Cases"
+                            },
+                            stops: [{
+                                value: max,
+                                color: "#FF0000",
+                                label: max.toString()
+                            }, {
+                                value: min,
+                                color: "#000000",
+                                label: min.toString()
+                            }]
+                        }]
                     };
                     return renderer;
 
@@ -2263,8 +2165,8 @@
                 // let states_data_json_url = "/nyt_states_data.json";
                 let counties_data_json_url = "";
                 let states_data_json_url = "";
-                let classes_json_url = "preprocessing/classes.json"
-                let dynamic_classes_json_url = "preprocessing/dynamic_classes.json"
+                let classes_json_url = "preprocessing/classes.json";
+                let dynamic_classes_json_url = "preprocessing/dynamic_classes.json";
 
                 // if (production_mode) {
                 //     // proxy to CORS
@@ -2272,10 +2174,11 @@
                 //     counties_data_json_url = proxy_url + "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/nyt_counties_data.json";
                 //     states_data_json_url = proxy_url + "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/nyt_states_data.json";
                 // }
+
                 let counties_request = request(counties_data_json_url, {handleAs: "json"});
                 let states_request = request(states_data_json_url, {handleAs: "json"});
-                let classes_request = request(classes_json_url, {handleAs: "json"})
-                let dynamic_classes_request = request(dynamic_classes_json_url, {handleAs: "json"})
+                let classes_request = request(classes_json_url, {handleAs: "json"});
+                let dynamic_classes_request = request(dynamic_classes_json_url, {handleAs: "json"});
 
                 let dl = new DeferredList([counties_request, states_request, classes_request, dynamic_classes_request]);
                 return dl.then(setGlobal_JSON);
@@ -2304,26 +2207,14 @@
         });
     </script>
 </head>
-<!-- <style>
-#myChart {
-        z-index: 1000;
-        display: block;
-		position:absolute;
-		left: 10px;
-		top: 70%;
-		width: 300px !important;
-        height: 200px !important;
-		background:#242424;
-        /* position: fixed; */
-}
-</style> -->
+
 <body>
 <div class="loading-overlay"></div>
 <div class="loading-overlay-image-container">
     <div class="loader"></div>
 </div>
 
-<nav class="container-fluid py-3 d-flex justify-content-center">
+<nav class="container-fluid py-1 d-flex justify-content-center">
     <div class="col-12 col-lg-10 d-flex flex-column flex-md-row justify-content-between">
         <div class="topic-brand d-flex">
             <a href="https://cybergisxhub.cigi.illinois.edu/wherecovid-19">
@@ -2342,90 +2233,71 @@
         </div>
     </div>
 </nav>
+
 <div id="applicationDiv">
 
-    <!-- <div class="container">
-        <canvas id="myChart"></canvas>
-    </div> -->
-
     <!--
-    <div class="sidebar-left">
+        <div class="sidebar-left">
 
-        <div class="bordered-box total d-flex flex-column p-1" id="total_confirm_div">
+            <div class="bordered-box total d-flex flex-column p-1" id="total_confirm_div">
 
-            <h2 class="text-center">Total Confirmed</h2>
-            <h3 class="text-center confirmed"></h3>
-        </div>
-
-        <div class="bordered-box total d-flex flex-column p-1" id="total_death_div">
-
-            <h2 class="text-center">Total Deaths</h2>
-            <h3 class="text-center deaths"></h3>
-        </div>
-        <recover div>
-        <div class="bordered-box total d-flex flex-column p-1" id="total_recover_div">
-            <i class="far fa-times-circle"></i>
-            <h2 class="text-center">Total Recovered</h2>
-            <h3 class="text-center recovered"></h3>
-        </div>
-        <div class="bordered-box cases d-flex flex-column">
-
-            <div class="title p-3">
-                <p class="text-center">Top Confirmed Cases by County</p>
+                <h2 class="text-center">Total Confirmed</h2>
+                <h3 class="text-center confirmed"></h3>
             </div>
-            <ul class="case-list">
-                <template>
-                    <li class="case text-center">
-                        <p>
-                                <span style="color:#e60000">
-                                        <strong>65,883</strong>
-                                    </span>
-                            <span style="color:#ffffff">&nbsp;</span>
-                            <span style="color:#d6d6d6">United Kingdom</span>
-                        </p>
-                    </li>
-                </template>
-            </ul>
-        </div>
-    </div>
-    -->
 
+            <div class="bordered-box total d-flex flex-column p-1" id="total_death_div">
+
+                <h2 class="text-center">Total Deaths</h2>
+                <h3 class="text-center deaths"></h3>
+            </div>
+            <recover div>
+            <div class="bordered-box total d-flex flex-column p-1" id="total_recover_div">
+                <i class="far fa-times-circle"></i>
+                <h2 class="text-center">Total Recovered</h2>
+                <h3 class="text-center recovered"></h3>
+            </div>
+            <div class="bordered-box cases d-flex flex-column">
+
+                <div class="title p-3">
+                    <p class="text-center">Top Confirmed Cases by County</p>
+                </div>
+                <ul class="case-list">
+                    <template>
+                        <li class="case text-center">
+                            <p>
+                                    <span style="color:#e60000">
+                                            <strong>65,883</strong>
+                                        </span>
+                                <span style="color:#ffffff">&nbsp;</span>
+                                <span style="color:#d6d6d6">United Kingdom</span>
+                            </p>
+                        </li>
+                    </template>
+                </ul>
+            </div>
+        </div>
+    -->
     <div id="sliderContainer" class="esri-widget">
         <span id="sliderValue"></span>
         <div id="sliderInnerContainer">
             <div id="slider"></div>
         </div>
-        <div
-                id="playButton"
-                class="esri-widget esri-widget--button toggle-button"
-        >
+        <div id="playButton" class="esri-widget esri-widget--button toggle-button">
             <div>
-                <span
-                        class="toggle-button-icon esri-icon-play"
-                        aria-label="play icon"
-                ></span>
-                Play
+                <span class="toggle-button-icon esri-icon-play" aria-label="play icon"></span> Play
             </div>
             <div>
-                <span
-                        class="toggle-button-icon esri-icon-pause"
-                        aria-label="pause icon"
-                ></span>
-                Pause
+                <span class="toggle-button-icon esri-icon-pause" aria-label="pause icon"></span> Pause
             </div>
         </div>
     </div>
+
     <div id="viewDiv">
-        <!--
-        <div id="titleDiv" class="esri-widget">
-            CyberGIS Center for Advanced Digital and Spatial Studies at University of Illinois at Urbana-Champaign
-           <img src="https://cybergis.illinois.edu/wp-content/themes/cybergis-new/images/uoi.png" width="20" height="30" align="top"/>
-            <div id="subTitleDiv" class="esri-widget"> WhereCOVID-19 App</div>
-        </div>
-        -->
     </div>
 
-
+    <div class="chart-wrap">
+        <canvas id="myChart"></canvas>
+    </div>
     <div>
         <select name="select" id="animation_dropdown" style="display: none">
             <option value="case">Cases</option>
@@ -2441,4 +2313,5 @@
 </div>
 
 </body>
+
 </html>
