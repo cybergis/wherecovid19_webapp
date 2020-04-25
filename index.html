@@ -1273,7 +1273,7 @@
                                         ExtendedIncreasedDeaths.unshift(0, 0, 0, 0, 0, 0, 0)
 
                                         var LabelDates = [];
-                                        var LabelDate = new Date(2020, 0, 14);
+                                        var LabelDate = new Date(2020, 0, 13);
                                         for (i = 0; i < ExtendedCasesArray.length; i++) {
                                             LabelDate.setDate(LabelDate.getDate() + 1);
                                             LabelDates.push(LabelDate.toLocaleDateString());
@@ -1342,7 +1342,7 @@
                                                 }, {
                                                     data: ExtendedIncreasedDeaths,
                                                     label: "Increased Deaths",
-                                                    borderColor: "#700b3c",
+                                                    borderColor: "#6a28c7",
                                                     fill: false
                                                 }]
                                             },
@@ -1362,8 +1362,8 @@
                                                 fontSize: 12,
                                                 responsive: true,
                                                 maintainAspectRatio: false
-                                            },
-                                            lineAtIndex: [slider.values[0]]
+                                            }
+                                            //lineAtIndex: [slider.values[0]]
                                         });
                                         highlight = activeAnimationLayerView.highlight(graphic);
                                         console.log(graphic);
@@ -2184,9 +2184,6 @@
                         // Update at 30fps
                         setTimeout(function () {
                             requestAnimationFrame(frame);
-                            let topVisibleLayer = getTopVisibleLayer(map.layers, animation_layers);
-                            view.whenLayerView(topVisibleLayer).then(setupHoverTooltip);
-                            
                         }, 1000 / 10);
                     };
 
