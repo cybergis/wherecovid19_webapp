@@ -180,6 +180,7 @@
                 var illinios_zipcode_url = "preprocessing/illinois/illinois_forecast_zipcode.geojson";
                 var illinois_hospitals_url = "preprocessing/illinois/illinois_hospitals.geojson";
                 var illinois_testing_url = "preprocessing/illinois/illinois_testing.geojson";
+                var illinois_report_url = "preprocessing/illinois/nyt_illinois_counties_data.geojson";
 
                 if (production_mode) {
                     // nyt_layer_states_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data/FeatureServer/0";
@@ -228,7 +229,7 @@
                 var illinois_counties = new GeoJSONLayer({
                     url: illinios_county_url,
                     outFields: ["*"],
-                    title: "Illinois County-level Info",
+                    title: "County-level Info",
                     renderer: illinoisZipCodeRender("CountyForecast", 7, 8200),
                     visible: false,
                 });
@@ -236,16 +237,24 @@
                 var illinois_zipcode = new GeoJSONLayer({
                         url: illinios_zipcode_url,
                         outFields: ["*"],
-                        title: "Illinois Zipcode-level Info",
+                        title: "Zipcode-level Info",
                         renderer: illinoisZipCodeRender("ZipCodeForecast", 0, 200),
-                        visible: true,
+                        visible: false,
                     }
                 );
+
+                var illinois_report = new GeoJSONLayer({
+                    url: illinois_report_url,
+                    outFields: ["*"],
+                    title: "Cases (New York Times)",
+                    renderer: default_polygon_renderer,
+                    visible: true,
+                })
 
                 var illinois_hospitals = new GeoJSONLayer({
                     url: illinois_hospitals_url,
                     outFields: ["*"],
-                    title: "Illinois Hospital Locations",
+                    title: "Hospital Locations",
                     renderer: {
                         type: "simple",
                         symbol: {
@@ -261,7 +270,7 @@
                 var illinois_testing = new GeoJSONLayer({
                     url: illinois_testing_url,
                     outFields: ["*"],
-                    title: "Illinois Testing Cases",
+                    title: "Testing Cases",
                     renderer: {
                         type: "unique-value",
                         field: "Test_Result",
@@ -289,7 +298,7 @@
 
 
                 // order matters! last layer is at top
-                var animation_layers = [nyt_layer_states, nyt_layer_counties];
+                var animation_layers = [nyt_layer_states, nyt_layer_counties, illinois_report];
                 var static_layers = [illinois_hospitals, illinois_testing, illinois_counties, illinois_zipcode];
 
                 // // new GroupLayer object may affect other GroupLayer objects
@@ -313,18 +322,34 @@
                 // new GroupLayer object may affect other GroupLayer objects
                 // Comment out unused GroupLayer objects to avoid strange bugs
                 // like group layer can not expand!!!!
-                var allInOneGroupLayer = new GroupLayer({
-                    title: "Layers",
-                    visible: true,
-                    visibilityMode: "exclusive",
-                    layers: new Array().concat(animation_layers, static_layers),
+                // var allInOneGroupLayer = new GroupLayer({
+                //     title: "Layers",
+                //     visible: true,
+                //     visibilityMode: "exclusive",
+                //     layers: new Array().concat(animation_layers, static_layers),
+                //     opacity: 0.75
+                // });
+
+                var us_group = new GroupLayer({
+                    title: "US",
+                    visible: false,
+                    visibilityMode: "independent",
+                    layers: [nyt_layer_states, nyt_layer_counties],
                     opacity: 0.75
-                });
+                })
+
+                var illinois_group = new GroupLayer({
+                    title: "Illinois",
+                    visible: true,
+                    visibilityMode: "independent",
+                    layers: [illinois_hospitals, illinois_testing, illinois_counties, illinois_zipcode, illinois_report],
+                    opacity: 0.75
+                })
 
                 // order mattes! last layer is at top
                 //var all_layers = [animationGroupLayer, staticGroupLayer];
-                var all_layers = allInOneGroupLayer.layers;
-                //var all_layers = new Array().concat(animation_layers, static_layers);
+                //var all_layers = allInOneGroupLayer.layers;
+                var all_layers = new Array().concat(animation_layers, static_layers);
 
                 // A non-3857 basemap
                 var basemap = new Basemap({
@@ -346,7 +371,7 @@
                             id: "4f2e99ba65e34bb8af49733d9778fb8e",
                         }
                     },
-                    layers: all_layers,
+                    layers: [us_group, illinois_group],
                 });
 
                 // Set up callback function for active_animation_layer value change before any map things
@@ -434,21 +459,35 @@
                 // https://developers.arcgis.com/javascript/latest/sample-code/sandbox/index.html?sample=animation-layer-visibility
                 map.allLayers.forEach(function (item) {
                     item.watch("visible", function (visible) {
-                        //console.log(item, visible);
-                        if (visible === true) {
-                            map.layers.forEach(function (i) {
-                                if (i.title !== item.title) {
-                                    i.visible = false;
+                        console.log(item.title, visible)
+                        if (visible === true && item.type !== "group") {
+                            map.layers.forEach(function (value) {
+
+                                if (value.title === item.parent.title) {
+                                    value.visible = true;
+                                    value.layers.forEach(function (val) {
+                                        if (val.title === item.title) {
+                                            val.visible = true;
+                                        } else {
+                                            val.visible = false;
+                                        }
+                                    })
+                                } else {
+                                    value.visible = false;
+                                    value.layers.forEach(function (val) {
+                                        val.visible = false;
+
+                                    })
                                 }
-                            });
-                            if (item.title === nyt_layer_counties.title || item.title === nyt_layer_states.title) {
+
+                            })
+                            if (item.parent.title === us_group.title || item.title === us_group.title) {
                                 view.goTo({
                                     center: [-96.984300, 40.474679],
                                     zoom: 3
                                 })
                             }
-                            if (item.title === illinois_counties.title || item.title === illinois_zipcode.title ||
-                                item.title === illinois_hospitals.title || item.title === illinois_testing.title) {
+                            if (item.parent.title === illinois_group.title || item.title === illinois_group.title) {
                                 view.goTo({
                                     center: [-88.984300, 40.474679],
                                     zoom: 6
@@ -980,66 +1019,66 @@
 
                 var usStateTemplate = {
 
-                title: "{NAME}",
+                    title: "{NAME}",
 
-                expressionInfos: [
-                {
-                    name: "total_cases",
-                    title: "Total Confirmed Cases",
-                    expression: "Round(Split($feature.cases_ts, ',')[-1])"
-                    },
-                {
-                    name: "total_deaths",
-                    title: "Total Deaths",
-                    expression: "Round(Split($feature.deaths_ts, ',')[-1])"
-                    },
-                {
-                    name: "death_rate",
-                    title: "Death Rate (%)",
-                    expression: "Round((Split($feature.deaths_ts, ',')[-1]/Split($feature.cases_ts, ',')[-1])*100,2)"
-                    }
+                    expressionInfos: [
+                        {
+                            name: "total_cases",
+                            title: "Total Confirmed Cases",
+                            expression: "Round(Split($feature.cases_ts, ',')[-1])"
+                        },
+                        {
+                            name: "total_deaths",
+                            title: "Total Deaths",
+                            expression: "Round(Split($feature.deaths_ts, ',')[-1])"
+                        },
+                        {
+                            name: "death_rate",
+                            title: "Death Rate (%)",
+                            expression: "Round((Split($feature.deaths_ts, ',')[-1]/Split($feature.cases_ts, ',')[-1])*100,2)"
+                        }
 
-                ],
+                    ],
 
-                content: [
-                    {
-                        type: "fields", // FieldsContentElement
-                        fieldInfos: [
+                    content: [
+                        {
+                            type: "fields", // FieldsContentElement
+                            fieldInfos: [
 
-                            {
-                                fieldName: "expression/total_cases",
-                                visible: true,
-                                label: "Confirmed Cases"
-                            },
-                            {
-                                fieldName: "expression/total_deaths",
-                                visible: true,
-                                label: "Deaths"
-                            },
-                            {
-                                fieldName: "expression/death_rate",
-                                visible: true,
-                                label: "Death Rate"
-                            },
-                            {
-                                fieldName: "dt_first_case",
-                                visible: true,
-                                label: "First Date of Confirmed Cases"
-                            },
-                            {
-                                fieldName: "dt_first_death",
-                                visible: true,
-                                label: "First Date of Deaths"
-                            },
-                            {
-                                fieldName: "population",
-                                visible: true,
-                                label: "Population"
-                            }
+                                {
+                                    fieldName: "expression/total_cases",
+                                    visible: true,
+                                    label: "Confirmed Cases"
+                                },
+                                {
+                                    fieldName: "expression/total_deaths",
+                                    visible: true,
+                                    label: "Deaths"
+                                },
+                                {
+                                    fieldName: "expression/death_rate",
+                                    visible: true,
+                                    label: "Death Rate"
+                                },
+                                {
+                                    fieldName: "dt_first_case",
+                                    visible: true,
+                                    label: "First Date of Confirmed Cases"
+                                },
+                                {
+                                    fieldName: "dt_first_death",
+                                    visible: true,
+                                    label: "First Date of Deaths"
+                                },
+                                {
+                                    fieldName: "population",
+                                    visible: true,
+                                    label: "Population"
+                                }
 
-                        ]
-                    }
-                ]
+                            ]
+                        }
+                    ]
                 };
 
                 nyt_layer_states.popupTemplate = usStateTemplate;
@@ -1047,76 +1086,76 @@
 
                 var usCountyTemplate = {
 
-                title: "{NAME}",
+                    title: "{NAME}",
 
-                expressionInfos: [
-                {
-                    name: "total_cases",
-                    title: "Total Confirmed Cases",
-                    expression: "Round(Split($feature.cases_ts, ',')[-1])"
-                    },
-                {
-                    name: "total_deaths",
-                    title: "Total Deaths",
-                    expression: "Round(Split($feature.deaths_ts, ',')[-1])"
-                    },
-                {
-                    name: "death_rate",
-                    title: "Death Rate (%)",
-                    expression: "Round((Split($feature.deaths_ts, ',')[-1]/Split($feature.cases_ts, ',')[-1])*100,2)"
-                    }
+                    expressionInfos: [
+                        {
+                            name: "total_cases",
+                            title: "Total Confirmed Cases",
+                            expression: "Round(Split($feature.cases_ts, ',')[-1])"
+                        },
+                        {
+                            name: "total_deaths",
+                            title: "Total Deaths",
+                            expression: "Round(Split($feature.deaths_ts, ',')[-1])"
+                        },
+                        {
+                            name: "death_rate",
+                            title: "Death Rate (%)",
+                            expression: "Round((Split($feature.deaths_ts, ',')[-1]/Split($feature.cases_ts, ',')[-1])*100,2)"
+                        }
 
-                ],
+                    ],
 
-                content: [
-                    {
-                        type: "fields", // FieldsContentElement
-                        fieldInfos: [
+                    content: [
+                        {
+                            type: "fields", // FieldsContentElement
+                            fieldInfos: [
 
-                            {
-                                fieldName: "fips",
-                                visible: true,
-                                label: "FIPS"
-                            },
-                            {
-                                fieldName: "state_name",
-                                visible: true,
-                                label: "State"
-                            },
-                            {
-                                fieldName: "expression/total_cases",
-                                visible: true,
-                                label: "Confirmed Cases"
-                            },
-                            {
-                                fieldName: "expression/total_deaths",
-                                visible: true,
-                                label: "Deaths"
-                            },
-                            {
-                                fieldName: "expression/death_rate",
-                                visible: true,
-                                label: "Death Rate"
-                            },
-                            {
-                                fieldName: "dt_first_case",
-                                visible: true,
-                                label: "First Date of Confirmed Cases"
-                            },
-                            {
-                                fieldName: "dt_first_death",
-                                visible: true,
-                                label: "First Date of Deaths"
-                            },
-                            {
-                                fieldName: "population",
-                                visible: true,
-                                label: "Population"
-                            }
+                                {
+                                    fieldName: "fips",
+                                    visible: true,
+                                    label: "FIPS"
+                                },
+                                {
+                                    fieldName: "state_name",
+                                    visible: true,
+                                    label: "State"
+                                },
+                                {
+                                    fieldName: "expression/total_cases",
+                                    visible: true,
+                                    label: "Confirmed Cases"
+                                },
+                                {
+                                    fieldName: "expression/total_deaths",
+                                    visible: true,
+                                    label: "Deaths"
+                                },
+                                {
+                                    fieldName: "expression/death_rate",
+                                    visible: true,
+                                    label: "Death Rate"
+                                },
+                                {
+                                    fieldName: "dt_first_case",
+                                    visible: true,
+                                    label: "First Date of Confirmed Cases"
+                                },
+                                {
+                                    fieldName: "dt_first_death",
+                                    visible: true,
+                                    label: "First Date of Deaths"
+                                },
+                                {
+                                    fieldName: "population",
+                                    visible: true,
+                                    label: "Population"
+                                }
 
-                        ]
-                    }
-                ]
+                            ]
+                        }
+                    ]
                 };
 
                 nyt_layer_counties.popupTemplate = usCountyTemplate;
@@ -1228,14 +1267,14 @@
 
                 //         Chart.defaults.global.defaultFontSize = 15;
                 //         Chart.defaults.global.defaultFontColor = '#777';
-                        
+
                 //         var CasesArray = (graphic.getAttribute("cases_ts")).split(",");
                 //         var DeathsArray = (graphic.getAttribute("deaths_ts")).split(",");
                 //         var LabelDates = [];
                 //         for (i=0;i<CasesArray.length;i++){
                 //             LabelDates.push("Day"+i)
                 //         };				  
-                        
+
                 //         console.log(CasesArray);
                 //         console.log(DeathsArray);
                 //         let barChart = new Chart(myChart, {
@@ -1334,14 +1373,14 @@
 
                 //         Chart.defaults.global.defaultFontSize = 15;
                 //         Chart.defaults.global.defaultFontColor = '#777';
-                        
+
                 //         var CasesArray = (graphic.getAttribute("cases_ts")).split(",");
                 //         var DeathsArray = (graphic.getAttribute("deaths_ts")).split(",");
                 //         var LabelDates = [];
                 //         for (i=0;i<CasesArray.length;i++){
                 //             LabelDates.push("Day"+i)
                 //         };				  
-                        
+
                 //         console.log(CasesArray);
                 //         console.log(DeathsArray);
                 //         let barChart = new Chart(myChart, {
@@ -1407,6 +1446,20 @@
                  * Sets the current visualized construction year.
                  */
                 function setDate(_date, animation_type = "case") {
+                    let level = null;
+                    animation_layers.forEach(function (value) {
+                        if (value.visible == true && value.parent.visible == true) {
+                            console.log(value.title);
+                            if (value.title == illinois_report.title) {
+                                level = "illinois"
+                            } else if (value.title == nyt_layer_counties.title) {
+                                level = "county";
+                            } else if (value.title == nyt_layer_states.title) {
+                                level = "state";
+                            }
+                        }
+                    })
+                    console.log(level);
                     if (dt_interval_unit == "week") {
                         dt_week_end = date.add(_date, "week", 1);
                         sliderValue.innerHTML = locale.format(_date, {datePattern: "MM/dd", selector: "date"}) +
@@ -1434,7 +1487,7 @@
                             event_type = "death"
                         }
 
-                        _layer.renderer = classRender(_date, _event_type = "case");
+                        _layer.renderer = classRender(_date, _event_type = "case", _level = level);
                     }
 
                     //covid19_layer.renderer = dailyEventNumberRender(_date, _event_type="death/case", _scale="");
@@ -1710,30 +1763,36 @@
                 }
 
                 function classRender(_date, _event_type = "case", _level = "county") {
-                    const colors = ["#fef0d9", "#fdd49e","#fdbb84", "#fc8d59", "#e34a33", "#b30000"];
-                    const background_color = [0,0,0];
+                    const colors = ["#fef0d9", "#fdd49e", "#fdbb84", "#fc8d59", "#e34a33", "#b30000"];
+                    const background_color = [0, 0, 0];
                     let constant_class = classes_data;
                     let dynamic_class = dynamic_classes_data;
                     //Now set default method as Quantiles
                     let method = "Quantiles";
+                    if (_level == "illinois") {
+                        method = "NaturalBreaks";
+                    }
+                    if (_level == "state") {
+                        method = "NaturalBreaks";
+                    }
                     let source = null;
                     // 5 Common type: Constant Classes
-                    if(_event_type == "case" || _event_type == "death" || _event_type == "case_per_100k_capita"
-                    || _event_type == "death_per_100k_capita" || _event_type == "death_case_ratio"){
+                    if (_event_type == "case" || _event_type == "death" || _event_type == "case_per_100k_capita"
+                        || _event_type == "death_per_100k_capita" || _event_type == "death_case_ratio") {
                         source = constant_class[_level][_event_type][method];
                         let bins = source.bins.split(",")
                         let stop_array = [{
-                            value:-1,
-                            color:background_color,
-                            label:0
+                            value: -1,
+                            color: background_color,
+                            label: 0
                         }];
                         // bins.length <= colors.length
                         // e.g. if only 2 classes, get [4,5] colors
-                        for (let i = 0; i < bins.length; i ++){
+                        for (let i = 0; i < bins.length; i++) {
                             var label = bins[i];
-                            if(parseFloat(label) < 0){
+                            if (parseFloat(label) < 0) {
                                 label = parseFloat(label);
-                            }else{
+                            } else {
                                 label = parseInt(label);
                             }
                             stop_array.push({
@@ -1759,13 +1818,13 @@
                                 }
                             ]
                         };
-                        
+
                     }
                     // Two Situation: Dynamic Classes
-                    else if(_event_type == "new_case" || _event_type == "new_death"){
+                    else if (_event_type == "new_case" || _event_type == "new_death") {
                         console.log(dynamic_class)
                         source = dynamic_class[_level][_event_type];
-                        
+
                         return {
                             type: "simple",
                             symbol: {
@@ -1785,7 +1844,7 @@
                         };
                     }
 
-                    
+
                 }
 
                 function classArcade(_date, _class, _event_type = "case") {
@@ -1842,6 +1901,7 @@
                         return class;
                     `;
                 }
+
                 function dynamicClassArcade(_date, _class, _event_type = "case") {
 
                     // Drew: return must be followed by the open ` on the same line, and a semi-colon ";" is required after the close `!!!
@@ -1922,6 +1982,7 @@
 
                     `;
                 }
+
                 function dynamicClassArcade(_date, _class, _event_type = "case") {
 
                     // Drew: return must be followed by the open ` on the same line, and a semi-colon ";" is required after the close `!!!
@@ -2216,7 +2277,7 @@
                 let classes_request = request(classes_json_url, {handleAs: "json"})
                 let dynamic_classes_request = request(dynamic_classes_json_url, {handleAs: "json"})
 
-                let dl = new DeferredList([counties_request, states_request,classes_request,dynamic_classes_request]);
+                let dl = new DeferredList([counties_request, states_request, classes_request, dynamic_classes_request]);
                 return dl.then(setGlobal_JSON);
             }
 
@@ -2276,10 +2337,12 @@
             </a>
         </div>
         <div class="nav-link" style="padding: 0;">
-            <a href="https://cybergisxhub.cigi.illinois.edu" class="btn btn-light" style="font-weight:bold">Go to CyberGISX</a>
+            <a href="https://cybergisxhub.cigi.illinois.edu" class="btn btn-light" style="font-weight:bold">Go to
+                CyberGISX</a>
         </div>
     </div>
 </nav>
+<div id="applicationDiv">
 
     <!-- <div class="container">
         <canvas id="myChart"></canvas>
@@ -2326,6 +2389,7 @@
         </div>
     </div>
     -->
+
     <div id="sliderContainer" class="esri-widget">
         <span id="sliderValue"></span>
         <div id="sliderInnerContainer">
