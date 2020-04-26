@@ -153,7 +153,7 @@
                 var animation = null;
                 var slider = null;
                 var sliderDiv = document.getElementById("sliderContainer");
-                var mychart = document.getElementById('myChart').getContext('2d');
+                var myChart = document.getElementById('myChart').getContext('2d');
 
                 // Query total numbers for left slide bar
                 var confirmDiv = document.getElementById("total_confirm_div");
@@ -1235,13 +1235,17 @@
                                     // or hide the tooltip
 
                                     if (hit) {
+                                        if(window.bar != undefined){
+                                            window.bar.destroy();
+                                        }
+
                                         // Add d-block class and remove d-none to display the chart
                                         document.getElementById('myChart').classList.add("d-block");
                                         document.getElementById('myChart').classList.remove("d-none");
 
                                         var graphic = hit.graphic;
                                         var screenPoint = hit.screenPoint;
-                                        //var mychart = document.getElementById('myChart').getContext('2d');
+                                        //var myChart = document.getElementById('myChart').getContext('2d');
                                         //var infoWindow = document.getElementById('infoWindow');
 
                                         Chart.defaults.global.defaultFontSize = 15;
@@ -1320,7 +1324,7 @@
 
                                         Chart.plugins.register(verticalLinePlugin);
 
-                                        let barChart = new Chart(myChart, {
+                                        window.bar = new Chart(myChart, {
                                             type: 'line',
                                             data: {
                                                 labels: LabelDates,
@@ -1365,6 +1369,7 @@
                                             }
                                             //lineAtIndex: [slider.values[0]]
                                         });
+
                                         highlight = activeAnimationLayerView.highlight(graphic);
                                         console.log(graphic);
                                         console.log(screenPoint);
