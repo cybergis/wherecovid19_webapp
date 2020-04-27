@@ -191,16 +191,6 @@
                     illinois_testing_url = "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/preprocessing/illinois/illinois_testing.geojson";
                 }
 
-                // Some Layer Types can NOT be published on ArcGIS Online
-                // https://developers.arcgis.com/documentation/core-concepts/layers/
-                // references an ArcGIS Online item pointing to a Map Service Layer
-                var illinois_access_layer = new MapImageLayer({
-                    url:
-                        "https://dev.rmms.illinois.edu/iepa/rest/services/drew/Jeon_acc/MapServer",
-                    title: "Accessibility Index (state-wide)",
-                    visible: false,
-                });
-
                 const default_polygon_renderer = {
                     type: "simple",
                     symbol: {
@@ -299,6 +289,25 @@
                     visible: false,
                 });
 
+                // Some Layer Types can NOT be published on ArcGIS Online
+                // https://developers.arcgis.com/documentation/core-concepts/layers/
+                // references an ArcGIS Online item pointing to a Map Service Layer
+                var illinois_access_layer = new MapImageLayer({
+                    url:
+                        "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/acc_il/MapServer",
+                    title: "Accessibility Index (State-wide)",
+                    visible: false,
+                    listMode: "hide-children",
+                });
+
+
+                var chicago_access_layer = new MapImageLayer({
+                    url:
+                        "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/acc_chicago/MapServer",
+                    title: "Accessibility Index (Chicago)",
+                    visible: false,
+                    listMode: "hide-children",
+                });
 
                 // order matters! last layer is at top
                 var animation_layers = [nyt_layer_states, nyt_layer_counties, illinois_report];
@@ -345,7 +354,8 @@
                     title: "Illinois",
                     visible: true,
                     visibilityMode: "independent",
-                    layers: [illinois_hospitals, illinois_testing, illinois_counties, illinois_zipcode, illinois_access_layer, illinois_report],
+                    layers: [illinois_hospitals, illinois_testing, illinois_counties, illinois_zipcode,
+                        illinois_access_layer, chicago_access_layer, illinois_report],
                     opacity: 0.75
                 });
 
@@ -484,13 +494,18 @@
                                     })
                                 }
                             });
-                            if (item.parent.title === us_group.title || item.title === us_group.title) {
+
+                            if (item.title === chicago_access_layer.title) {
+                                view.goTo({
+                                    center: [-87.631721, 41.868428],
+                                    zoom: 10,
+                                })
+                            } else if (item.parent.title === us_group.title || item.title === us_group.title) {
                                 view.goTo({
                                     center: [-96.984300, 40.474679],
                                     zoom: 3
                                 })
-                            }
-                            if (item.parent.title === illinois_group.title || item.title === illinois_group.title) {
+                            } else if (item.parent.title === illinois_group.title || item.title === illinois_group.title) {
                                 view.goTo({
                                     center: [-88.984300, 40.474679],
                                     zoom: 6
