@@ -191,6 +191,16 @@
                     illinois_testing_url = "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/preprocessing/illinois/illinois_testing.geojson";
                 }
 
+                // Some Layer Types can NOT be published on ArcGIS Online
+                // https://developers.arcgis.com/documentation/core-concepts/layers/
+                // references an ArcGIS Online item pointing to a Map Service Layer
+                var illinois_access_layer = new MapImageLayer({
+                    url:
+                        "https://dev.rmms.illinois.edu/iepa/rest/services/drew/Jeon_acc/MapServer",
+                    title: "Accessibility Index (state-wide)",
+                    visible: false,
+                });
+
                 const default_polygon_renderer = {
                     type: "simple",
                     symbol: {
@@ -335,7 +345,7 @@
                     title: "Illinois",
                     visible: true,
                     visibilityMode: "independent",
-                    layers: [illinois_hospitals, illinois_testing, illinois_counties, illinois_zipcode, illinois_report],
+                    layers: [illinois_hospitals, illinois_testing, illinois_counties, illinois_zipcode, illinois_access_layer, illinois_report],
                     opacity: 0.75
                 });
 
@@ -1235,7 +1245,7 @@
                                     // or hide the tooltip
 
                                     if (hit) {
-                                        if(window.bar != undefined){
+                                        if (window.bar != undefined) {
                                             window.bar.destroy();
                                         }
 
@@ -1257,13 +1267,15 @@
                                         var IncreasedCases = [];
                                         for (i = 1; i < CasesArray.length; i++) {
                                             IncreasedCases.push(CasesArray[i] - CasesArray[i - 1])
-                                        };
+                                        }
+                                        ;
                                         IncreasedCases.unshift(0);
 
                                         var IncreasedDeaths = [];
                                         for (i = 1; i < DeathsArray.length; i++) {
                                             IncreasedDeaths.push(DeathsArray[i] - DeathsArray[i - 1])
-                                        };
+                                        }
+                                        ;
                                         IncreasedDeaths.unshift(0);
 
                                         var ExtendedCasesArray = CasesArray.slice(0)
@@ -1281,7 +1293,8 @@
                                         for (i = 0; i < ExtendedCasesArray.length; i++) {
                                             LabelDate.setDate(LabelDate.getDate() + 1);
                                             LabelDates.push(LabelDate.toLocaleDateString());
-                                        };
+                                        }
+                                        ;
 
                                         // var InfoWindowDate = new Date(2020, 0, 14);
                                         // InfoWindowDate.setDate(InfoWindowDate.getDate() + slider.values[0]);
@@ -1289,7 +1302,7 @@
 
                                         // infoWindow.innerHTML = "Cases on " + InfoWindowDateStr + ": " + Math.round(ExtendedCasesArray[slider.values[0]]) + "<br>" +
                                         //     "Deaths on " + InfoWindowDateStr + ": " + Math.round(ExtendedDeathsArray[slider.values[0]]);
-                                        
+
                                         const verticalLinePlugin = {
                                             getLinePosition: function (chart, pointIndex) {
                                                 const meta = chart.getDatasetMeta(0); // first dataset is used to discover X coordinate of a point
