@@ -9,7 +9,7 @@ body {
 #applicationDiv {
     position: relative;
     width: 100%;
-    height: calc(100% - 86px);
+    height: calc(100% - 46px);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -40,7 +40,7 @@ body {
 
 #sliderValue {
     flex: 0 0 40px;
-    order: 1;
+    order: 3;
     display: flex;
     justify-content: center;
     flex-direction: column;
@@ -64,6 +64,21 @@ body {
     width: 100%;
 }
 
+.chart-wrap {
+    width: 100%;
+    order: 3;
+}
+
+#myChart {
+    display: none;
+    z-index: 1000;
+    left: 15px;
+    top: 500px;
+    width: 100% !important;
+    height: 200px !important;
+    background: #242424;
+}
+
 .disabledbutton {
     pointer-events: none;
     opacity: 0.4;
@@ -73,13 +88,14 @@ body {
     display: none !important;
 }
 
+
 /**
   * Play/Stop toggle button
   */
 
 #playButton {
     flex: 0 0 100px;
-    order: 3;
+    order: 1;
     margin: 10px 0;
 }
 
@@ -153,6 +169,28 @@ body {
     width: 15%;
     min-width: 300px;
     /* background-color: #242424; */
+}
+
+.sidebar-lowerleft {
+    z-index: 1000;
+    display: block;
+    position: absolute;
+    left: 10px;
+    top: 350px;
+    height: 200px;
+    width: 15%;
+    min-width: 300px;
+    /* background-color: #242424; */
+}
+
+.myChart {
+    position: absolute;
+    right: 0;
+    top: 30%;
+    width: 300px !important;
+    height: 200px !important;
+    /* background:black; */
+    /* position: fixed; */
 }
 
 
