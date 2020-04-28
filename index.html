@@ -716,7 +716,7 @@
                             container: "slider",
                             min: 0,
                             max: _slider_max,
-                            values: [0],
+                            values: [_slider_max],
                             step: 1,
                             visibleElements: {
                                 rangeLabels: true
@@ -2350,18 +2350,19 @@
         </div>
     -->
     <div id="sliderContainer" class="esri-widget">
-        <span id="sliderValue"></span>
-        <div id="sliderInnerContainer">
-            <div id="slider"></div>
-        </div>
         <div id="playButton" class="esri-widget esri-widget--button toggle-button">
             <div>
-                <span class="toggle-button-icon esri-icon-play" aria-label="play icon"></span> Play
+                <span class="toggle-button-icon esri-icon-play" aria-label="play icon"></span> Time
             </div>
             <div>
                 <span class="toggle-button-icon esri-icon-pause" aria-label="pause icon"></span> Pause
             </div>
         </div>
+        <div id="sliderInnerContainer">
+            <div id="slider"></div>
+        </div>
+        <span id="sliderValue"></span>
+        
     </div>
 
     <div id="viewDiv">

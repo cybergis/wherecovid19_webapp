@@ -40,7 +40,7 @@ body {
 
 #sliderValue {
     flex: 0 0 40px;
-    order: 1;
+    order: 3;
     display: flex;
     justify-content: center;
     flex-direction: column;
@@ -95,7 +95,7 @@ body {
 
 #playButton {
     flex: 0 0 100px;
-    order: 3;
+    order: 1;
     margin: 10px 0;
 }
 
