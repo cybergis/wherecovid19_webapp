@@ -1462,9 +1462,13 @@
                     slider.viewModel.setValue(0, thumb_value);
                     let _layer = mywatcher.get("active_animation_layer");
 
-                    let event_type = document.querySelector('input[name="dataOptions"]:checked').value;
-                    let if_log = document.querySelector('input[name="logOptions"]:checked').value;
-                    let method = document.querySelector('input[name="renderOptions"]:checked').value;
+                    // let event_type = document.querySelector('input[name="dataOptions"]:checked').value;
+                    // let if_log = document.querySelector('input[name="logOptions"]:checked').value;
+                    // let method = document.querySelector('input[name="renderOptions"]:checked').value;
+                    let event_type = "case"
+                    let if_log = "nolog"
+                    let method = "NaturalBreaks"
+
                     if (_layer == null) {
                         return;
                     }
@@ -1754,7 +1758,9 @@
                     let constant_class = classes_data;
                     let dynamic_class = dynamic_classes_data;
                     //Now set default method as Quantiles
-                    console.log(_event_type, _if_log, _method);
+                    if(_level == "county"){
+                        _method = "Quantiles";
+                    }
                     let source = null;
                     // 5 Common type: Constant Classes
                     if (_event_type == "case" || _event_type == "death" || _event_type == "case_per_100k_capita"
@@ -2355,7 +2361,7 @@
     -->
     
     <div id="sliderContainer" class="esri-widget">
-        <div id = "parametersDiv">
+        <!-- <div id = "parametersDiv">
             <div id = "logDiv">
                 <div class="form-check form-check-inline 1">
                     <input type="radio" name="logOptions" id="nologRadio" value="nolog" checked>
@@ -2398,8 +2404,7 @@
                     <label class="form-check-label" for="Death_per_100k_capitaRatio">Death per 100k capita</label>
                 </div>
             </div>
-            
-        </div>
+        </div> -->
         <div id="playButton" class="esri-widget esri-widget--button toggle-button">
             <div>
                 <span class="toggle-button-icon esri-icon-play" aria-label="play icon"></span> Time
