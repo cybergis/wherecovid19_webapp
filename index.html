@@ -1441,7 +1441,6 @@
                             }
                         }
                     })
-                    console.log(level);
                     if (dt_interval_unit == "week") {
                         dt_week_end = date.add(_date, "week", 1);
                         sliderValue.innerHTML = locale.format(_date, {
@@ -1463,23 +1462,31 @@
                     slider.viewModel.setValue(0, thumb_value);
                     let _layer = mywatcher.get("active_animation_layer");
 
+                    // let event_type = document.querySelector('input[name="dataOptions"]:checked').value;
+                    // let if_log = document.querySelector('input[name="logOptions"]:checked').value;
+                    // let method = document.querySelector('input[name="renderOptions"]:checked').value;
+                    let event_type = "case"
+                    let if_log = "nolog"
+                    let method = "NaturalBreaks"
+
                     if (_layer == null) {
                         return;
                     }
+                    _layer.renderer = classRender(_date, _event_type = event_type, _if_log = if_log, _method = method, _level = level);
 
-                    if (animation_type == "case") {
-                        _layer.renderer = dailyEventNumberRender(_date, _event_type = "case", _scale = "loge");
-                    } else if (animation_type == "death" || animation_type == "death/case" ||
-                        animation_type == "new_case" || animation_type == "new_death") {
-                        _layer.renderer = dailyEventNumberRender(_date, _event_type = animation_type, _scale = "");
-                    } else {
-                        let event_type = "case";
-                        if (animation_type == "first_death") {
-                            event_type = "death"
-                        }
+                    // if (animation_type == "case") {
+                    //     _layer.renderer = dailyEventNumberRender(_date, _event_type = "case", _scale = "loge");
+                    // } else if (animation_type == "death" || animation_type == "death/case" ||
+                    //     animation_type == "new_case" || animation_type == "new_death") {
+                    //     _layer.renderer = dailyEventNumberRender(_date, _event_type = animation_type, _scale = "");
+                    // } else {
+                    //     let event_type = "case";
+                    //     if (animation_type == "first_death") {
+                    //         event_type = "death"
+                    //     }
 
-                        _layer.renderer = classRender(_date, _event_type = "case", _level = level);
-                    }
+                    //     _layer.renderer = classRender(_date, _event_type = event_type, _if_log = if_log, _method = method, _level = level);
+                    // }
 
                     //covid19_layer.renderer = dailyEventNumberRender(_date, _event_type="death/case", _scale="");
                     //covid19_layer.renderer = firstEventRender(_date, _event_type="Deaths");
@@ -1745,24 +1752,20 @@
                     };
                 }
 
-                function classRender(_date, _event_type = "case", _level = "county") {
+                function classRender(_date, _event_type = "case", _if_log = "nolog", _method = "Quantiles", _level = "county") {
                     const colors = ["#fef0d9", "#fdd49e", "#fdbb84", "#fc8d59", "#e34a33", "#b30000"];
                     const background_color = [0, 0, 0];
                     let constant_class = classes_data;
                     let dynamic_class = dynamic_classes_data;
                     //Now set default method as Quantiles
-                    let method = "Quantiles";
-                    if (_level == "illinois") {
-                        method = "NaturalBreaks";
-                    }
-                    if (_level == "state") {
-                        method = "NaturalBreaks";
+                    if(_level == "county"){
+                        _method = "Quantiles";
                     }
                     let source = null;
                     // 5 Common type: Constant Classes
                     if (_event_type == "case" || _event_type == "death" || _event_type == "case_per_100k_capita"
                         || _event_type == "death_per_100k_capita" || _event_type == "death_case_ratio") {
-                        source = constant_class[_level][_event_type][method];
+                        source = constant_class[_level][_event_type][_if_log][_method];
                         let bins = source.bins.split(",")
                         let stop_array = [{
                             value: -1,
@@ -1795,7 +1798,7 @@
                             visualVariables: [
                                 {
                                     type: "color",
-                                    valueExpression: classArcade(_date, _class = bins, _event_type = _event_type),
+                                    valueExpression: classArcade(_date, _class = bins, _event_type = _event_type, _if_log = _if_log),
                                     //valueExpressionTitle: "Voter Turnout",
                                     stops: stop_array.reverse(),
                                 }
@@ -1830,7 +1833,7 @@
 
                 }
 
-                function classArcade(_date, _class, _event_type = "case") {
+                function classArcade(_date, _class, _event_type = "case", _if_log = "nolog") {
 
                     // Drew: return must be followed by the open ` on the same line, and a semi-colon ";" is required after the close `!!!
                     return `
@@ -1838,6 +1841,7 @@
 
                         var dt_thumb = Date(${_date.getFullYear()}, ${_date.getMonth()}, ${_date.getDate()});
                         var event_type = Lower('${_event_type}');
+                        var if_log = Lower('${_if_log}');
                         var val = 0;
                         var class = 0;
                         var bins = [${_class}];
@@ -1855,6 +1859,9 @@
                         if(event_type == "case" || event_type == "case_per_100k_capita"){
                             var case_ts = Split($feature['cases_ts'],',');
                             val = case_ts[index];
+                            if(if_log == "log"){
+                                val = Log(val + 1);
+                            }
                             if(event_type == "case_per_100k_capita"){
                                 val = val/population;
                             }
@@ -1862,15 +1869,18 @@
                         else if(event_type == "death" || event_type == "death_per_100k_capita"){
                             var death_ts = Split($feature['deaths_ts'],',');
                             val = death_ts[index];
+                            if(if_log == "log"){
+                                val = Log(val + 1);
+                            }
                             if(event_type == "death_per_100k_capita"){
                                 val = val/population;
                             }
                         }
-                        else if(event_type == "death_case_ratio"){
-                            var case_ts = Split($feature['cases_ts'],',');
-                            var death_ts = Split($feature['deaths_ts'],',');
-                            val = death_ts[index]/case_ts[index];
-                        }
+                        // else if(event_type == "death_case_ratio"){
+                        //     var case_ts = Split($feature['cases_ts'],',');
+                        //     var death_ts = Split($feature['deaths_ts'],',');
+                        //     val = death_ts[index]/case_ts[index];
+                        // }
                         for(var x = 0; x < Count(bins); x ++){
                             if(val <= 0){
                                 class = -1;
@@ -2349,7 +2359,52 @@
             </div>
         </div>
     -->
+    
     <div id="sliderContainer" class="esri-widget">
+        <!-- <div id = "parametersDiv">
+            <div id = "logDiv">
+                <div class="form-check form-check-inline 1">
+                    <input type="radio" name="logOptions" id="nologRadio" value="nolog" checked>
+                    <label class="form-check-label" for="nologRadio">Origin Value</label>
+                </div>
+                <div class="form-check form-check-inline 1">
+                    <input class="form-check-input 1" type="radio" name="logOptions" id="logRadio" value="log">
+                    <label class="form-check-label" for="logRadio">Log Value</label>
+                </div>
+            </div>
+            <div id = "renderDiv">
+                <div class="form-check form-check-inline 2">
+                    <input class="form-check-input" type="radio" name="renderOptions" id="QuantilesRatio" value="Quantiles" checked>
+                    <label class="form-check-label" for="QuantilesRatio">Quantiles</label>
+                </div>
+                <div class="form-check form-check-inline 2">
+                    <input class="form-check-input" type="radio" name="renderOptions" id="NaturalBreaksRatio" value="NaturalBreaks">
+                    <label class="form-check-label" for="NaturalBreaksRatio">Natural Breaks</label>
+                </div>
+                <div class="form-check form-check-inline 2">
+                    <input class="form-check-input" type="radio" name="renderOptions" id="FisherJenksRatio" value="FisherJenks">
+                    <label class="form-check-label" for="FisherJenksRatio">Fisher Jenks</label>
+                </div>
+            </div>
+            <div id = "dataDiv">
+                <div class="form-check form-check-inline 3">
+                    <input class="form-check-input" type="radio" name="dataOptions" id="CaseRatio" value="case" checked>
+                    <label class="form-check-label" for="CaseRatio">Case</label>
+                </div>
+                <div class="form-check form-check-inline 3">
+                    <input class="form-check-input" type="radio" name="dataOptions" id="DeathRatio" value="death">
+                    <label class="form-check-label" for="DeathRatio">Death</label>
+                </div>
+                <div class="form-check form-check-inline 3">
+                    <input class="form-check-input" type="radio" name="dataOptions" id="Case_per_100k_capitaRatio" value="case_per_100k_capit">
+                    <label class="form-check-label" for="Case_per_100k_capitaRatio">Case per 100k capita</label>
+                </div>
+                <div class="form-check form-check-inline 3">
+                    <input class="form-check-input" type="radio" name="dataOptions" id="Death_per_100k_capitaRatio" value="death_per_100k_capita">
+                    <label class="form-check-label" for="Death_per_100k_capitaRatio">Death per 100k capita</label>
+                </div>
+            </div>
+        </div> -->
         <div id="playButton" class="esri-widget esri-widget--button toggle-button">
             <div>
                 <span class="toggle-button-icon esri-icon-play" aria-label="play icon"></span> Time
