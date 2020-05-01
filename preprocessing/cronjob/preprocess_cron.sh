@@ -12,7 +12,7 @@ make_copy_data(){
 	cp ../counties_update_new.geojson .
 	cp ../states_update.geojson .
 	mkdir -p illinois
-	cp ../illinois/nyt_illinois_counties_data.geojson ./illinois/
+	cp ../illinois/nyt_illinois_counties_data.geojson ./illinois/nyt_illinois_counties_data-tmp.geojson
 }
 setup_env(){
 	cd /var/covid19_project/wherecovid19_webapp/preprocessing/cronjob
@@ -75,6 +75,7 @@ restore_data(){
 	cp classes-tmp.json classes.json
 	cp nyt_states_data-tmp.geojson nyt_states_data.geojson
 	cp nyt_counties_data-tmp.geojson nyt_counties_data.geojson
+        cp illinois/nyt_illinois_counties_data-tmp.geojson ../illinois/nyt_illinois_counties_data.geojson
 	cp us-counties-tmp.csv us-counties.csv
 	cp us-states-tmp.csv us-states.csv
 	destroy_env
