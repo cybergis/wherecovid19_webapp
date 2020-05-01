@@ -136,6 +136,62 @@
             var states_data_str = null;
             var classes_data = null;
             var dynamic_classes_data = null;
+            var visualizationSchema = {
+                'illinois':{
+                    'case':{
+                        'value':'nolog',
+                        'breaks':'NaturalBreaks',
+                    },
+                    'death':{
+                        'value':'nolog',
+                        'breaks':'NaturalBreaks',
+                    },
+                    'case_per_100k_capita':{
+                        'value':'nolog',
+                        'breaks':'NaturalBreaks',
+                    },
+                    'death_per_100k_capita':{
+                        'value':'nolog',
+                        'breaks':'NaturalBreaks',
+                    }
+                },
+                'state':{
+                    'case':{
+                        'value':'nolog',
+                        'breaks':'NaturalBreaks',
+                    },
+                    'death':{
+                        'value':'nolog',
+                        'breaks':'NaturalBreaks',
+                    },
+                    'case_per_100k_capita':{
+                        'value':'nolog',
+                        'breaks':'NaturalBreaks',
+                    },
+                    'death_per_100k_capita':{
+                        'value':'nolog',
+                        'breaks':'NaturalBreaks',
+                    }
+                },
+                'county':{
+                    'case':{
+                        'value':'nolog',
+                        'breaks':'Quantiles',
+                    },
+                    'death':{
+                        'value':'nolog',
+                        'breaks':'NaturalBreaks',
+                    },
+                    'case_per_100k_capita':{
+                        'value':'nolog',
+                        'breaks':'Quantiles',
+                    },
+                    'death_per_100k_capita':{
+                        'value':'nolog',
+                        'breaks':'NaturalBreaks',
+                    }
+                }
+            }
 
             // main() is called after external json file is loaded
             function main(arg1) {
@@ -1466,13 +1522,13 @@
                     // let if_log = document.querySelector('input[name="logOptions"]:checked').value;
                     // let method = document.querySelector('input[name="renderOptions"]:checked').value;
                     let event_type = "case"
-                    let if_log = "nolog"
-                    let method = "NaturalBreaks"
+                    // let if_log = "nolog"
+                    // let method = "NaturalBreaks"
 
                     if (_layer == null) {
                         return;
                     }
-                    _layer.renderer = classRender(_date, _event_type = event_type, _if_log = if_log, _method = method, _level = level);
+                    _layer.renderer = classRender(_date, _event_type = event_type, _level = level);
 
                     // if (animation_type == "case") {
                     //     _layer.renderer = dailyEventNumberRender(_date, _event_type = "case", _scale = "loge");
@@ -1752,16 +1808,15 @@
                     };
                 }
 
-                function classRender(_date, _event_type = "case", _if_log = "nolog", _method = "Quantiles", _level = "county") {
+                function classRender(_date, _event_type = "case", _level = "county") {
                     const colors = ["#fef0d9", "#fdd49e", "#fdbb84", "#fc8d59", "#e34a33", "#b30000"];
                     const background_color = [0, 0, 0];
                     let constant_class = classes_data;
                     let dynamic_class = dynamic_classes_data;
-                    //Now set default method as Quantiles
-                    if(_level == "county"){
-                        _method = "Quantiles";
-                    }
+                    //Specify the methods
                     let source = null;
+                    _method = visualizationSchema[_level][_event_type]['breaks'];
+                    _if_log = visualizationSchema[_level][_event_type]['value'];
                     // 5 Common type: Constant Classes
                     if (_event_type == "case" || _event_type == "death" || _event_type == "case_per_100k_capita"
                         || _event_type == "death_per_100k_capita" || _event_type == "death_case_ratio") {
@@ -1859,21 +1914,21 @@
                         if(event_type == "case" || event_type == "case_per_100k_capita"){
                             var case_ts = Split($feature['cases_ts'],',');
                             val = case_ts[index];
-                            if(if_log == "log"){
-                                val = Log(val + 1);
-                            }
                             if(event_type == "case_per_100k_capita"){
                                 val = val/population;
+                            }
+                            if(if_log == "log"){
+                                val = Log(val + 1);
                             }
                         }
                         else if(event_type == "death" || event_type == "death_per_100k_capita"){
                             var death_ts = Split($feature['deaths_ts'],',');
                             val = death_ts[index];
-                            if(if_log == "log"){
-                                val = Log(val + 1);
-                            }
                             if(event_type == "death_per_100k_capita"){
                                 val = val/population;
+                            }
+                            if(if_log == "log"){
+                                val = Log(val + 1);
                             }
                         }
                         // else if(event_type == "death_case_ratio"){
@@ -2396,7 +2451,7 @@
                     <label class="form-check-label" for="DeathRatio">Death</label>
                 </div>
                 <div class="form-check form-check-inline 3">
-                    <input class="form-check-input" type="radio" name="dataOptions" id="Case_per_100k_capitaRatio" value="case_per_100k_capit">
+                    <input class="form-check-input" type="radio" name="dataOptions" id="Case_per_100k_capitaRatio" value="case_per_100k_capita">
                     <label class="form-check-label" for="Case_per_100k_capitaRatio">Case per 100k capita</label>
                 </div>
                 <div class="form-check form-check-inline 3">
