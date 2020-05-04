@@ -1,0 +1,329 @@
+body {
+    font-size: .875rem;
+    color: #b3b3b3;
+}
+
+.feather {
+    width: 16px;
+    height: 16px;
+    vertical-align: text-bottom;
+}
+
+.sticky-top {
+    position: -webkit-sticky;
+    position: sticky;
+}
+
+
+/*
+ * Navbar
+ */
+
+.navbar {
+    /* background-color: #ffffff; */
+    min-width: 1080px;
+    height: 60px;
+    /* color: #000; */
+    background-color: #303030;
+    border-bottom: #404040 solid 1px;
+}
+
+.header-title {
+    font-size: 20px;
+    color: #FFFFFF;
+}
+
+
+/*
+ * Sidebar
+ */
+
+.sidebar {
+    z-index: 100;
+    /* Behind the navbar */
+    padding: 60px 0 0;
+    /* Height of navbar */
+    background-color: #363636;
+    width: 550px;
+}
+
+.sidebar-sticky {
+    position: relative;
+    top: 0;
+    height: calc(100vh - 60px);
+    padding-top: 0;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    /* Scrollable contents if viewport is shorter than content. */
+}
+
+@supports ((position: -webkit-sticky) or (position: sticky)) {
+    .sidebar-sticky {
+        position: -webkit-sticky;
+        position: sticky;
+    }
+}
+
+.sidebar .nav-item {
+    width: 50%;
+    min-height: 70px;
+}
+
+.sidebar .nav-link {
+    font-weight: 500;
+    color: #FFF;
+    border-radius: 0;
+    text-align: center;
+}
+
+.sidebar .nav-link.active {
+    color: #FFFFFF;
+    background-color: #363636;
+}
+
+.sidebar .nav-link {
+    color: #b3b3b3;
+    background-color: #303030;
+}
+
+.sidebar .nav-link span {
+    color: #eabf00;
+    font-weight: bold;
+}
+
+
+/*
+* Sidebar content
+*/
+
+.highlight {
+    text-align: left;
+    font-size: 15px;
+    color: #b3b3b3;
+    line-height: 1.5rem;
+}
+
+.highlight .label {
+    font-weight: normal;
+}
+
+.highlight .case-number {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.highlight:nth-child(2) {
+    border-left: #404040 solid 1px;
+    border-right: #404040 solid 1px;
+}
+
+.highlight.death .case-number,
+.highlight.death .change,
+.death {
+    color: #ff4c4c !important;
+}
+
+.highlight.recovered .case-number,
+.highlight.recovered .change,
+.recovered {
+    color: #00cc29 !important;
+}
+
+.highlight.tested .case-number,
+.highlight.tested .change,
+.tested {
+    color: #1cd5ee !important;
+}
+
+.highlight.confirmed .case-number,
+.highlight.confirmed .change,
+.confirmed {
+    color: #eabf00 !important;
+}
+
+.highlight .change {
+    font-weight: bold;
+    font-size: 12px;
+    line-height: 1.5rem;
+}
+
+.highlight .change i {
+    padding-right: 5px;
+}
+
+
+/*
+* Sidebar tabs control
+*/
+
+.tab-content>div {
+    display: none;
+}
+
+.tab-content>.active {
+    display: block;
+}
+
+
+/*
+* Sidebar Search
+*/
+
+.form-control,
+.input-group>.input-group-prepend>.input-group-text {
+    border-radius: 0;
+}
+
+.input-group>.input-group-prepend>.input-group-text {
+    background-color: #363636;
+    border: #414141 1px solid;
+}
+
+.input-group input,
+.input-group input:focus {
+    background-color: #363636;
+    border: #414141 1px solid;
+    color: #b3b3b3;
+}
+
+
+/*
+* Sidebar tables
+*/
+
+#illinois-table,
+#world-table {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.dataTables_filter {
+    width: 100%;
+}
+
+.dataTables_wrapper {
+    overflow-y: scroll;
+    height: 600px;
+    overflow-x: hidden;
+    color: #b3b3b3;
+}
+
+.table thead th,
+.table {
+    background-color: #303030;
+}
+
+.table thead th {
+    border-top: none;
+    border-bottom: #414141 1px solid;
+}
+
+.table td,
+.table th {
+    padding: .75rem;
+    vertical-align: top;
+    border-top: none;
+    border-bottom: #414141 solid 1px;
+    color: #b3b3b3;
+}
+
+table td {
+    text-align: right;
+    font-size: 13px;
+}
+
+
+/*
+ * Content
+ */
+
+
+/* #svg-wrap {
+    background-color: #363636;
+}
+
+#svg-wrap .row {
+    overflow: hidden;
+}
+
+#applicationDiv {
+    position: relative;
+    width: 100%;
+    height: calc(100% - 86px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#viewDiv {
+    width: 100%;
+    height: calc(100% - 70px);
+    flex: 1 1 auto;
+    order: 1;
+}
+
+#sliderContainer {
+    flex: 0 0 70px;
+    order: 2;
+    display: flex;
+    flex-flow: row;
+    padding: 0 12px;
+}
+
+#sliderValue {
+    flex: 0 0 100px;
+    order: 1;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    font-size: 300%;
+    padding: 0 20px;
+}
+
+#sliderInnerContainer {
+    flex: 1 1 auto;
+    order: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#slider {
+    width: 100%;
+} */
+
+
+/**
+* Play/Stop toggle button
+*/
+
+#playButton {
+    flex: 0 0 100px;
+    order: 3;
+    margin: 20px 0;
+}
+
+.toggle-button {
+    display: flex;
+}
+
+.toggle-button.toggled .toggle-button-icon {
+    color: #cc1b1b;
+}
+
+.toggle-button .toggle-button-icon {
+    color: #1bcc1b;
+}
+
+.toggle-button> :nth-child(2) {
+    display: none;
+}
+
+.toggle-button.toggled> :nth-child(1) {
+    display: none;
+}
+
+.toggle-button.toggled> :nth-child(2) {
+    display: block;
+}
