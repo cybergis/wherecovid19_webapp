@@ -37,12 +37,12 @@
                     <ul class="nav nav-pills">
                         <li class="nav-item ">
                             <a class="nav-link active p-4" href="#illinois" data-toggle="tab" role="tab" aria-controls="illinois" aria-selected="true" id="illinois-tab">
-                               Illinois,USA <span class="cases">20,852</span>
+                               Illinois,USA <span class="cases"></span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link p-4" href="#world" data-toggle="tab" role="tab" aria-controls="world" aria-selected="false" id="world-tab">
-                               World Map <span class="cases">1,847,095</span>
+                            <a class="nav-link p-4" href="#county" data-toggle="tab" role="tab" aria-controls="county" aria-selected="false" id="county-tab">
+                               US Counties <span class="cases">1,847,095</span>
                             </a>
                         </li>
                     </ul>
@@ -51,20 +51,20 @@
                         <div class="active" id="illinois" role="tabpanel" aria-labelledby="illinois-tab">
                             <div class="content-wrap">
                                 <div class="highlight-wrap d-flex p-2">
-                                    <div class="highlight confirmed col-4">
+                                    <div class="highlight confirmed col-6" id="illinois_total_case_number">
                                         <div class="label">Confirmed:</div>
                                         <div class="case-number">20,852</div>
-                                        <div class="change"><i class="fas fa-caret-up"></i> 62,171 </div>
+                                        <!-- <div class="change"><i class="fas fa-caret-up"></i> 62,171 </div> -->
                                     </div>
-                                    <div class="highlight death col-4">
+                                    <!-- <div class="highlight death col-4">
                                         <div class="label">Deaths:</div>
                                         <div class="case-number">720</div>
                                         <div class="change"><i class="fas fa-caret-up"></i> 62,171 </div>
-                                    </div>
-                                    <div class="highlight tested col-4">
+                                    </div> -->
+                                    <div class="highlight tested col-7" id="illinois_total_test_number">
                                         <div class="label">Tested:</div>
                                         <div class="case-number">100,735</div>
-                                        <div class="change"><i class="fas fa-caret-up"></i> 62,171 </div>
+                                        <!-- <div class="change"><i class="fas fa-caret-up"></i> 62,171 </div> -->
                                     </div>
                                 </div>
                                 <!-- End highlight-wrap -->
@@ -79,18 +79,27 @@
                                     </div>
                                 </div>
                                 <!-- End search-wrap -->
+                                <template>
+                                    <tr>
+                                        <th scope="row" class="align-middle">USA</th>
+                                        <td class="confirmed">1,013<br>-</td>
+                                        <td class="tested">13<br>-</td>
+                                        <!-- <td class="recovered">0<br>-</td> -->
+                                    </tr>
+                                </template>
                                 <div class="table-wrap">
                                     <table id="illinois-table" class="table">
                                         <thead class="sticky-top">
                                             <tr>
-                                                <th scope="col">Country</th>
+                                                <th scope="col">County</th>
                                                 <th scope="col">Confirmed</th>
-                                                <th scope="col">Deaths</th>
-                                                <th scope="col">Recovered</th>
+                                                <th scope="col">Tested</th>
+                                                <!-- <th scope="col">Recovered</th> -->
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
+                                            
+                                            <!-- <tr>
                                                 <th scope="row" class="align-middle">USA</th>
                                                 <td class="confirmed">1,013<br><i class="fas fa-caret-up"></i> 46</td>
                                                 <td class="death">13<br>-</td>
@@ -173,7 +182,7 @@
                                                 <td class="confirmed">1,013<br><i class="fas fa-caret-up"></i> 46</td>
                                                 <td class="death">13<br>-</td>
                                                 <td class="recovered">197<br><i class="fas fa-caret-up"></i> 24</td>
-                                            </tr>
+                                            </tr> -->
                                         </tbody>
                                     </table>
                                 </div>
@@ -186,24 +195,24 @@
                             <!-- End content-wrap -->
                         </div>
 
-                        <div id="world" role="tabpanel" aria-labelledby="world-tab">
+                        <div id="county" role="tabpanel" aria-labelledby="county-tab">
                             <div class="content-wrap">
                                 <div class="highlight-wrap d-flex p-2">
-                                    <div class="highlight confirmed col-4">
+                                    <div class="highlight confirmed col-6" id="counties_total_case_number">
                                         <div class="label">Confirmed:</div>
                                         <div class="case-number">1,847,095</div>
                                         <div class="change"><i class="fas fa-caret-up"></i> 62,171 </div>
                                     </div>
-                                    <div class="highlight death col-4">
+                                    <div class="highlight death col-7" id ="counties_total_death_number">
                                         <div class="label">Deaths:</div>
                                         <div class="case-number">113,902</div>
                                         <div class="change"><i class="fas fa-caret-up"></i> 62,171 </div>
                                     </div>
-                                    <div class="highlight recovered col-4">
+                                    <!-- <div class="highlight recovered col-4">
                                         <div class="label">Recovered:</div>
                                         <div class="case-number">422,488</div>
                                         <div class="change"><i class="fas fa-caret-up"></i> 62,171 </div>
-                                    </div>
+                                    </div> -->
                                 </div>
                                 <!-- End highlight-wrap -->
                                 <div class="search-wrap">
@@ -217,18 +226,26 @@
                                     </div>
                                 </div>
                                 <!-- End search-wrap -->
+                                <template>
+                                    <tr>
+                                        <th scope="row" class="align-middle">USA</th>
+                                        <td class="confirmed">1,013<br><i class="fas fa-caret-up"></i> 46</td>
+                                        <td class="death">13<br>-</td>
+                                        <!-- <td class="recovered">197<br><i class="fas fa-caret-up"></i> 24</td> -->
+                                    </tr>
+                                </template>
                                 <div class="table-wrap">
-                                    <table id="world-table" class="table table-dark">
+                                    <table id="county-table" class="table table-dark">
                                         <thead class="sticky-top">
                                             <tr>
-                                                <th scope="col">Country</th>
+                                                <th scope="col">County</th>
                                                 <th scope="col">Confirmed</th>
                                                 <th scope="col">Deaths</th>
-                                                <th scope="col">Recovered</th>
+                                                <!-- <th scope="col">Recovered</th> -->
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
+                                            <!-- <tr>
                                                 <th scope="row" class="align-middle">USA</th>
                                                 <td class="confirmed">1,013<br><i class="fas fa-caret-up"></i> 46</td>
                                                 <td class="death">13<br>-</td>
@@ -311,7 +328,7 @@
                                                 <td class="confirmed">1,013<br><i class="fas fa-caret-up"></i> 46</td>
                                                 <td class="death">13<br>-</td>
                                                 <td class="recovered">197<br><i class="fas fa-caret-up"></i> 24</td>
-                                            </tr>
+                                            </tr> -->
                                         </tbody>
                                     </table>
                                 </div>

@@ -271,7 +271,7 @@ require([
                 url: dph_illinois_zipcode_url,
                 outFields: ["*"],
                 title: "DPH Zipcode-level Cases",
-                renderer: illinoisZipCodeRender("confirmed_cases", 0, 200),
+                renderer: illinoisZipCodeRender("confirmed_cases", 0, 500),
                 visible: false,
             }
         );
@@ -279,7 +279,7 @@ require([
                 url: dph_illinois_county_static_url,
                 outFields: ["*"],
                 title: "DPH County-level Cases",
-                renderer: illinoisZipCodeRender("confirmed_cases", 0, 200),
+                renderer: illinoisZipCodeRender("total_tested", 0, 1000),
                 visible: false,
             }
         );
@@ -673,53 +673,165 @@ require([
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
 
-        //setTotalDiv();
-        function setTotalDiv() {
-            const query = nyt_layer_counties.createQuery();
-            const totalConfrimStat = {
+        setListview();
+        function setListview() {
+            const illinois_query = dph_illinois_county_static.createQuery();
+            const illiniConfrimed = {
+                onStatisticField: "confirmed_cases",
+                outStatisticFieldName: "Total_Cases",
+                statisticType: "sum"
+            }
+            const illiniTested = {
+                onStatisticField: "total_tested",
+                outStatisticFieldName: "Total_Tested",
+                statisticType: "sum"
+            }
+            illinois_query.outStatistics = [illiniConfrimed, illiniTested];
+            dph_illinois_county_static.queryFeatures(illinois_query)
+                .then(function (response){
+                    let stats = response.features[0].attributes;
+                    let tab = document.getElementById('illinois-tab');
+                    
+                    tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(stats.Total_Cases)
+                    let case_div = document.getElementById('illinois_total_case_number')
+                    console.log(case_div.querySelector('.case-number').innerHTML)
+                    let test_div = document.getElementById('illinois_total_test_number')
+                    case_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Cases)
+                    test_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Tested)
+                }
+            );
+            
+            const illinois_list_query = dph_illinois_county_static.createQuery();
+            illinois_list_query.orderByFields = ['confirmed_cases DESC'];
+            dph_illinois_county_static.queryFeatures(illinois_list_query)
+                .then(function (response){
+                    let illinois_table = document.getElementById('illinois-table').querySelector('tbody');
+                    let template = document.querySelector('template')
+                    let result_list = response.features.map(function(value){
+                        return {
+                            county:value.attributes.County,
+                            case:value.attributes.confirmed_cases,
+                            tested:value.attributes.total_tested
+                        }
+                    });
+                    result_list.forEach(function(value){
+                        let instance = template.content.cloneNode(true);
+                        instance.querySelector('th').innerHTML = value.county;
+                        instance.querySelector('.confirmed').innerHTML = value.case;
+                        instance.querySelector('.tested').innerHTML = value.tested;
+                        illinois_table.appendChild(instance);
+                    })
+                }
+            );
+
+            const counties_query = nyt_layer_counties.createQuery();
+            const countiesConfrimed = {
                 onStatisticField: "today_case",
                 outStatisticFieldName: "Total_Cases",
                 statisticType: "sum"
-            };
-            const totalDeathStat = {
+            }
+            const countiesDeath = {
                 onStatisticField: "today_death",
                 outStatisticFieldName: "Total_Deaths",
                 statisticType: "sum"
-            };
-            query.outStatistics = [totalConfrimStat, totalDeathStat];
-            nyt_layer_counties.queryFeatures(query)
+            }
+            const countiesNewConfrimed = {
+                onStatisticField: "today_new_case",
+                outStatisticFieldName: "Total_New_Cases",
+                statisticType: "sum"
+            }
+            const countiesNewDeath = {
+                onStatisticField: "today_new_death",
+                outStatisticFieldName: "Total_New_Deaths",
+                statisticType: "sum"
+            }
+            counties_query.outStatistics = [countiesConfrimed, countiesDeath, countiesNewConfrimed, countiesNewDeath];
+            nyt_layer_counties.queryFeatures(counties_query)
+                .then(function (response){
+                    let stats = response.features[0].attributes;
+                    let tab = document.getElementById('county-tab');
+                    tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(stats.Total_Cases)
+                    let case_div = document.getElementById('counties_total_case_number')
+                    let death_div = document.getElementById('counties_total_death_number')
+                    case_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Cases)
+                    case_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i>"  + numberWithCommas(stats.Total_New_Cases)
+                    death_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Deaths)
+                    death_div.querySelector('.change').innerHTML ="<i class='fas fa-caret-up'></i>" + numberWithCommas(stats.Total_New_Deaths)
+                }
+            );
 
-                .then(function (response) {
-                    //console.log(response);
-                    var stats = response.features[0].attributes;
-                    confirmDiv.getElementsByTagName('h3')[0].innerHTML = numberWithCommas(stats.Total_Cases);
-                    deathDiv.getElementsByTagName('h3')[0].innerHTML = numberWithCommas(stats.Total_Deaths);
-                });
-
-            const list_query = nyt_layer_counties.createQuery();
-            list_query.orderByFields = ['today_case DESC'];
-            nyt_layer_counties.queryFeatures(list_query)
-                .then(function (response) {
-                    //console.log(response);
-                    var listDiv = document.getElementsByClassName('case-list')[0];
-                    var template = document.getElementsByTagName('template')[0];
-                    var result_list = response.features.map(function (value) {
+            const counties_list_query = nyt_layer_counties.createQuery();
+            counties_list_query.orderByFields = ['today_case DESC'];
+            nyt_layer_counties.queryFeatures(counties_list_query)
+                .then(function (response){
+                    console.log(response)
+                    let couneites_table = document.getElementById('county-table').querySelector('tbody');
+                    let template = document.querySelectorAll('template')[1]
+                    let result_list = response.features.map(function(value){
                         return {
-                            county: value.attributes.NAME,
-                            state: value.attributes.state_name,
-                            cases: value.attributes.today_case,
-                        };
-                        //return value.NAME;
+                            county:value.attributes.NAME,
+                            case:value.attributes.today_case,
+                            new_case:value.attributes.today_new_case,
+                            death:value.attributes.today_death,
+                            new_death:value.attributes.today_new_death,
+                        }
                     });
-                    //console.log(result_list)
-                    result = result_list.slice(0, 11);
-                    result.forEach(function (value) {
-                        var instance = template.content.cloneNode(true);
-                        instance.querySelector('strong').textContent = numberWithCommas(value.cases);
-                        instance.querySelectorAll('span')[2].textContent = value.county + "," + value.state;
-                        listDiv.appendChild(instance);
-                    });
-                });
+                    result = result_list.slice(0, 100);
+                    result.forEach(function(value){
+                        let instance = template.content.cloneNode(true);
+                        instance.querySelector('th').innerHTML = value.county;
+                        instance.querySelector('.confirmed').innerHTML = value.case + '<br><i class="fas fa-caret-up">' + value.new_case;
+                        instance.querySelector('.death').innerHTML = value.death + '<br><i class="fas fa-caret-up">' + value.new_death;
+                        couneites_table.appendChild(instance);
+                    })
+                }
+            );
+
+            // const query = nyt_layer_counties.createQuery();
+            // const totalConfrimStat = {
+            //     onStatisticField: "today_case",
+            //     outStatisticFieldName: "Total_Cases",
+            //     statisticType: "sum"
+            // };
+            // const totalDeathStat = {
+            //     onStatisticField: "today_death",
+            //     outStatisticFieldName: "Total_Deaths",
+            //     statisticType: "sum"
+            // };
+            // query.outStatistics = [totalConfrimStat, totalDeathStat];
+            // nyt_layer_counties.queryFeatures(query)
+
+            //     .then(function (response) {
+            //         //console.log(response);
+            //         var stats = response.features[0].attributes;
+            //         confirmDiv.getElementsByTagName('h3')[0].innerHTML = numberWithCommas(stats.Total_Cases);
+            //         deathDiv.getElementsByTagName('h3')[0].innerHTML = numberWithCommas(stats.Total_Deaths);
+            //     });
+
+            // const list_query = nyt_layer_counties.createQuery();
+            // list_query.orderByFields = ['today_case DESC'];
+            // nyt_layer_counties.queryFeatures(list_query)
+            //     .then(function (response) {
+            //         //console.log(response);
+            //         var listDiv = document.getElementsByClassName('case-list')[0];
+            //         var template = document.getElementsByTagName('template')[0];
+            //         var result_list = response.features.map(function (value) {
+            //             return {
+            //                 county: value.attributes.NAME,
+            //                 state: value.attributes.state_name,
+            //                 cases: value.attributes.today_case,
+            //             };
+            //             //return value.NAME;
+            //         });
+            //         //console.log(result_list)
+            //         result = result_list.slice(0, 11);
+            //         result.forEach(function (value) {
+            //             var instance = template.content.cloneNode(true);
+            //             instance.querySelector('strong').textContent = numberWithCommas(value.cases);
+            //             instance.querySelectorAll('span')[2].textContent = value.county + "," + value.state;
+            //             listDiv.appendChild(instance);
+            //         });
+            //     });
 
         }
 
