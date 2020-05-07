@@ -89,6 +89,24 @@ require([
     var classes_data = null;
     var dynamic_classes_data = null;
     var visualizationSchema = {
+        'dph_illinois':{
+            'case':{
+                'value':'nolog',
+                'breaks':'NaturalBreaks',
+            },
+            'death':{
+                'value':'nolog',
+                'breaks':'NaturalBreaks',
+            },
+            'case_per_100k_capita':{
+                'value':'nolog',
+                'breaks':'NaturalBreaks',
+            },
+            'death_per_100k_capita':{
+                'value':'nolog',
+                'breaks':'NaturalBreaks',
+            }
+        },
         'illinois':{
             'case':{
                 'value':'nolog',
@@ -185,6 +203,9 @@ require([
         var illinois_hospitals_url = "preprocessing/illinois/illinois_hospitals.geojson";
         var illinois_testing_url = "preprocessing/illinois/illinois_testing.geojson";
         var illinois_report_url = "preprocessing/illinois/nyt_illinois_counties_data.geojson";
+        var dph_illinois_zipcode_url = "preprocessing/illinois/dph_zipcode_data.geojson";
+        var dph_illinois_county_dynamic_url = "preprocessing/illinois/dph_county_data.geojson";
+        var dph_illinois_county_static_url = "preprocessing/illinois/dph_county_static_data.geojson";
 
         if (production_mode) {
             // nyt_layer_states_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data/FeatureServer/0";
@@ -246,6 +267,31 @@ require([
                 visible: false,
             }
         );
+        var dph_illinois_zipcode = new GeoJSONLayer({
+                url: dph_illinois_zipcode_url,
+                outFields: ["*"],
+                title: "DPH Zipcode-level Cases",
+                renderer: illinoisZipCodeRender("confirmed_cases", 0, 200),
+                visible: false,
+            }
+        );
+        var dph_illinois_county_static = new GeoJSONLayer({
+                url: dph_illinois_county_static_url,
+                outFields: ["*"],
+                title: "DPH County-level Cases",
+                renderer: illinoisZipCodeRender("confirmed_cases", 0, 200),
+                visible: false,
+            }
+        );
+
+        var dph_illinois_county_dynamic = new GeoJSONLayer({
+            url: dph_illinois_county_dynamic_url,
+            outFields: ["*"],
+            title: "DPH County-level Cases with Time Series",
+            renderer: default_polygon_renderer,
+            visible: false,
+        }
+    );
 
         var illinois_report = new GeoJSONLayer({
             url: illinois_report_url,
@@ -318,8 +364,10 @@ require([
         });
 
         // order matters! last layer is at top
-        var animation_layers = [nyt_layer_states, nyt_layer_counties, illinois_report];
-        var static_layers = [illinois_hospitals, illinois_testing, illinois_counties, illinois_zipcode];
+        var animation_layers = [nyt_layer_states, nyt_layer_counties, illinois_report,
+            dph_illinois_county_dynamic];
+        var static_layers = [illinois_hospitals, illinois_testing, illinois_counties, 
+            illinois_zipcode, dph_illinois_zipcode, dph_illinois_county_static];
 
         // // new GroupLayer object may affect other GroupLayer objects
         // // Comment out unused GroupLayer objects to avoid strange bugs
@@ -363,7 +411,8 @@ require([
             visible: true,
             visibilityMode: "independent",
             layers: [illinois_hospitals, illinois_testing, illinois_counties, illinois_zipcode,
-                illinois_access_layer, chicago_access_layer, illinois_report],
+                illinois_access_layer, chicago_access_layer, illinois_report, dph_illinois_zipcode, 
+                dph_illinois_county_static, dph_illinois_county_dynamic],
             opacity: 0.75
         });
 
@@ -878,6 +927,54 @@ require([
         };
 
         illinois_zipcode.popupTemplate = ilZipTemplate;
+
+        var ilZipCaseTemplate = {
+            title: "{id}",
+            content: [
+                {
+                    type:"fields",
+                    fieldInfos:[
+                        {
+                            fieldName:"confirmed_cases",
+                            visible: true,
+                            label: "Confirmed Cases"
+                        },
+                        {
+                            fieldName:"total_tested",
+                            visible: true,
+                            label: "Total Tested"
+                        },
+                    ]
+                }
+            ]
+        };
+        dph_illinois_zipcode.popupTemplate = ilZipCaseTemplate;
+
+
+        var ilCountyCaseTemplate = {
+            title: "{County}",
+            content: [
+                {
+                    type:"fields",
+                    fieldInfos:[
+                        {
+                            fieldName:"confirmed_cases",
+                            visible: true,
+                            label: "Confirmed Cases"
+                        },
+                        {
+                            fieldName:"total_tested",
+                            visible: true,
+                            label: "Total Tested"
+                        },
+                    ]
+                }
+            ]
+        };
+
+        dph_illinois_county_static.popupTemplate = ilCountyCaseTemplate;
+        
+
 
         var ilCountyTemplate = {
 
@@ -1441,11 +1538,13 @@ require([
                 if (value.visible == true && value.parent.visible == true) {
                     console.log(value.title);
                     if (value.title == illinois_report.title) {
-                        level = "illinois"
+                        level = "illinois";
                     } else if (value.title == nyt_layer_counties.title) {
                         level = "county";
                     } else if (value.title == nyt_layer_states.title) {
                         level = "state";
+                    } else if (value.title == dph_illinois_county_dynamic.title) {
+                        level = "dph_illinois";
                     }
                 }
             })
