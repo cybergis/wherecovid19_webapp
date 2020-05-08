@@ -278,7 +278,7 @@ require([
         var dph_illinois_county_static = new GeoJSONLayer({
                 url: dph_illinois_county_static_url,
                 outFields: ["*"],
-                title: "DPH County-level Cases",
+                title: "DPH County-level Test Data",
                 renderer: illinoisZipCodeRender("total_tested", 0, 1000),
                 visible: false,
             }
@@ -287,7 +287,7 @@ require([
         var dph_illinois_county_dynamic = new GeoJSONLayer({
             url: dph_illinois_county_dynamic_url,
             outFields: ["*"],
-            title: "DPH County-level Cases with Time Series",
+            title: "DPH County-level Cases",
             renderer: default_polygon_renderer,
             visible: false,
         }
@@ -721,6 +721,18 @@ require([
                         instance.querySelector('.tested').innerHTML = value.tested;
                         illinois_table.appendChild(instance);
                     })
+
+                    var illini_table = $('#illinois-table').DataTable({
+                        paging: false,
+                        ordering: true,
+                        info: false,
+                        dom: "t",
+                    });
+                
+                    $('#il-search-input').on('input', function() {
+                        console.log($('#il-search-input').val());
+                        illini_table.search($('#il-search-input').val()).draw();
+                    });
                 }
             );
 
@@ -784,6 +796,18 @@ require([
                         instance.querySelector('.death').innerHTML = value.death + '<br><i class="fas fa-caret-up">' + value.new_death;
                         couneites_table.appendChild(instance);
                     })
+                    var county_table = $('#county-table').DataTable({
+                        paging: false,
+                        ordering: true,
+                        info: false,
+                        dom: "t",
+                    });
+
+                    $('#w-search-input').on('input', function() {
+                        console.log($('#w-search-input').val());
+                        county_table.search($('#w-search-input').val()).draw();
+                    });
+                    
                 }
             );
 
