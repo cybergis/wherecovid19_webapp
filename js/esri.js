@@ -105,7 +105,19 @@ require([
             'death_per_100k_capita':{
                 'value':'nolog',
                 'breaks':'NaturalBreaks',
-            }
+            },
+            'tested':{
+                'value':'nolog',
+                'breaks':'NaturalBreaks'
+            },
+            'zipcode_case':{
+                'value':'nolog',
+                'breaks':'NaturalBreaks'
+            },
+            'zipcode_tested':{
+                'value':'nolog',
+                'breaks':'NaturalBreaks'
+            },
         },
         'illinois':{
             'case':{
@@ -271,7 +283,7 @@ require([
                 url: dph_illinois_zipcode_url,
                 outFields: ["*"],
                 title: "DPH Zipcode-level Cases",
-                renderer: illinoisZipCodeRender("confirmed_cases", 0, 500),
+                renderer: dphStaticRender("zipcode_case"),
                 visible: false,
             }
         );
@@ -279,10 +291,11 @@ require([
                 url: dph_illinois_county_static_url,
                 outFields: ["*"],
                 title: "DPH County-level Test Data",
-                renderer: illinoisZipCodeRender("total_tested", 0, 1000),
+                renderer: dphStaticRender("tested"),
                 visible: false,
             }
         );
+        console.log(dph_illinois_zipcode.renderer)
 
         var dph_illinois_county_dynamic = new GeoJSONLayer({
             url: dph_illinois_county_dynamic_url,
@@ -2421,6 +2434,59 @@ return sum;
             };
             return renderer;
 
+        }
+
+        function dphStaticRender(_event_type) {
+            const colors = ["#fef0d9", "#fdd49e", "#fdbb84", "#fc8d59", "#e34a33", "#b30000"];
+            const background_color = [0, 0, 0];
+            let constant_class = classes_data;
+            //Specify the methods
+            let method = visualizationSchema['dph_illinois'][_event_type]['breaks'];
+            let if_log = visualizationSchema['dph_illinois'][_event_type]['value'];
+            let source = constant_class['dph_illinois'][_event_type][if_log][method];
+            let bins = source.bins.split(",")
+            let stop_array = [{
+                value: -1,
+                color: background_color,
+                label: 0
+            }];
+            for (let i = 0; i < bins.length; i++) {
+                var val = bins[i];
+                if (parseFloat(val) < 0) {
+                    label = parseFloat(val);
+                } else {
+                    label = parseInt(val);
+                }
+                stop_array.push({
+                    value: val,
+                    color: colors[i],
+                    label: label,
+                })
+            }
+            let fieldName = "";
+            if(_event_type == "tested" || _event_type == "zipcode_tested"){
+                fieldName = "total_tested"
+            }else if(_event_type == "zipcode_case"){
+                fieldName = "confirmed_cases"
+            }
+            return {
+                type: "simple",
+                symbol: {
+                    type: "simple-fill",
+                    outline: {  // autocasts as new SimpleLineSymbol()
+                        color: [128, 128, 128, 50],
+                    }
+                },
+                visualVariables: [
+                    {
+                        type: "color",
+                        field: fieldName,
+                        //valueExpressionTitle: "Voter Turnout",
+                        stops: stop_array.reverse(),
+                    
+                    }
+                ]
+            };
         }
 
 
