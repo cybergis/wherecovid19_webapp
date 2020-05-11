@@ -766,9 +766,9 @@ require([
                     let case_div = document.getElementById('counties_total_case_number')
                     let death_div = document.getElementById('counties_total_death_number')
                     case_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Cases)
-                    case_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i>"  + numberWithCommas(stats.Total_New_Cases)
+                    case_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> "  + numberWithCommas(stats.Total_New_Cases)
                     death_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Deaths)
-                    death_div.querySelector('.change').innerHTML ="<i class='fas fa-caret-up'></i>" + numberWithCommas(stats.Total_New_Deaths)
+                    death_div.querySelector('.change').innerHTML ="<i class='fas fa-caret-up'></i> " + numberWithCommas(stats.Total_New_Deaths)
                 }
             );
 
@@ -792,8 +792,8 @@ require([
                     result.forEach(function(value){
                         let instance = template.content.cloneNode(true);
                         instance.querySelector('th').innerHTML = value.county;
-                        instance.querySelector('.confirmed').innerHTML = value.case + '<br><i class="fas fa-caret-up">' + value.new_case;
-                        instance.querySelector('.death').innerHTML = value.death + '<br><i class="fas fa-caret-up">' + value.new_death;
+                        instance.querySelector('.confirmed').innerHTML = value.case + '<br><i class="fas fa-caret-up"></i> ' + value.new_case;
+                        instance.querySelector('.death').innerHTML = value.death + '<br><i class="fas fa-caret-up"></i> ' + value.new_death;
                         couneites_table.appendChild(instance);
                     })
                     var county_table = $('#county-table').DataTable({
