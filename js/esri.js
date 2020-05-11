@@ -2458,7 +2458,7 @@ return sum;
                     label = parseInt(val);
                 }
                 stop_array.push({
-                    value: val,
+                    value: i,
                     color: colors[i],
                     label: label,
                 })
@@ -2480,13 +2480,37 @@ return sum;
                 visualVariables: [
                     {
                         type: "color",
-                        field: fieldName,
+                        valueExpression: dphStaticArcade(bins,fieldName),
                         //valueExpressionTitle: "Voter Turnout",
                         stops: stop_array.reverse(),
                     
                     }
                 ]
             };
+        }
+
+        function dphStaticArcade(_class, _fieldName) {
+
+            // Drew: return must be followed by the open ` on the same line, and a semi-colon ";" is required after the close `!!!
+            return `
+                //be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
+                var fieldName = '${_fieldName}';
+                var val = Number($feature[fieldName]);
+                var class = 0;
+                var bins = [${_class}];
+
+                for(var x = 0; x < Count(bins); x ++){
+                    if(val <= 0){
+                        class = -1;
+                        break;
+                    }
+                    if(val <= Number(bins[x])){
+                        class = x;
+                        break;
+                    }
+                }
+                return class;
+            `;
         }
 
 
