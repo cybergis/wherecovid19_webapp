@@ -45,6 +45,7 @@ body {
     /* Height of navbar */
     background-color: #363636;
     width: 550px;
+    border-right: #404040 solid 1px;
 }
 
 .sidebar-sticky {
@@ -177,11 +178,12 @@ body {
 .input-group>.input-group-prepend>.input-group-text {
     background-color: #363636;
     border: #414141 1px solid;
+    color: #646464;
 }
 
 .input-group input,
 .input-group input:focus {
-    background-color: #363636;
+    background-color: #646464;
     border: #414141 1px solid;
     color: #b3b3b3;
 }
@@ -203,11 +205,17 @@ body {
 
 .dataTables_wrapper {
     overflow-y: scroll;
-    height: 600px;
     overflow-x: hidden;
     color: #b3b3b3;
 }
 
+#county-table_wrapper {
+    height: calc(100vh - 288px);
+}
+
+#illinois-table_wrapper {
+    height: calc(100vh - 264px);
+}
 .table thead th,
 .table {
     background-color: #303030;
@@ -216,6 +224,7 @@ body {
 .table thead th {
     border-top: none;
     border-bottom: #414141 1px solid;
+    text-align: center;
 }
 
 .table td,
@@ -228,7 +237,7 @@ body {
 }
 
 table td {
-    text-align: right;
+    text-align: center;
     font-size: 13px;
 }
 
@@ -326,4 +335,35 @@ table td {
 
 .toggle-button.toggled> :nth-child(2) {
     display: block;
+}
+
+#sidebar_control,
+#sidebar_control:focus {
+    /* position: absolute; 
+    bottom: 50%; 
+    left: 0; */
+    background-color: #cc1b1b;;
+    border: none;
+    z-index: 10;
+    border-radius: 0;
+    padding: 0 10px;
+    flex: 0 0 30px;
+    order: 2;
+    margin: 0 auto;
+    text-decoration: none;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+#sidebar_control.closed i {
+    transform: rotate(180deg); /* Equal to rotateZ(45deg) */
+}
+#sidebar_control.closed {
+    background-color: #1bcc1b;
+}
+
+#sliderContainer {
+    padding: 0 !important;
 }
