@@ -978,6 +978,7 @@ require([
             let dt_thumb = date.add(dt_start, dt_interval_unit, thumb_value);
             //console.log(dt_thumb);
             setDate(dt_thumb, animation_type = animation_type);
+            updateChart(hitGraphic);
         }
 
         // Toggle animation on/off when user
@@ -1471,6 +1472,171 @@ require([
         var hitTest = null;
         var hoverover_callback = null;
         var activeAnimationLayerView = null;
+        var hitGraphic = null;
+
+        function updateChart(graphic) {
+
+            Chart.defaults.global.defaultFontSize = 15;
+            Chart.defaults.global.defaultFontColor = '#777';
+
+            var datasetList = [];
+
+            if (graphic.getAttribute("cases_ts") != undefined) {
+                var CasesArray = (graphic.getAttribute("cases_ts")).split(",");
+
+                var IncreasedCases = [];
+                for (i = 1; i < CasesArray.length; i++) {
+                    IncreasedCases.push(CasesArray[i] - CasesArray[i - 1])
+                }
+                ;
+                IncreasedCases.unshift(0);
+
+                var ExtendedCasesArray = CasesArray.slice(0)
+                ExtendedCasesArray.unshift(0, 0, 0, 0, 0, 0, 0)
+
+                var ExtendedIncreasedCases = IncreasedCases.slice(0)
+                ExtendedIncreasedCases.unshift(0, 0, 0, 0, 0, 0, 0)
+            }
+
+            if (graphic.getAttribute("deaths_ts") != undefined) {
+                var DeathsArray = (graphic.getAttribute("deaths_ts")).split(",");
+                
+                var IncreasedDeaths = [];
+                for (i = 1; i < DeathsArray.length; i++) {
+                    IncreasedDeaths.push(DeathsArray[i] - DeathsArray[i - 1])
+                }
+                ;
+                IncreasedDeaths.unshift(0);
+
+                var ExtendedDeathsArray = DeathsArray.slice(0)            
+                ExtendedDeathsArray.unshift(0, 0, 0, 0, 0, 0, 0)
+                
+                var ExtendedIncreasedDeaths = IncreasedDeaths.slice(0)            
+                ExtendedIncreasedDeaths.unshift(0, 0, 0, 0, 0, 0, 0)
+            }
+
+            var LabelDates = [];
+            var LabelDate = new Date(2020, 0, 13);
+            for (i = 0; i < ExtendedCasesArray.length; i++) {
+                LabelDate.setDate(LabelDate.getDate() + 1);
+                LabelDates.push(LabelDate.toLocaleDateString());
+            }
+            ;
+
+            const verticalLinePlugin = {
+                getLinePosition: function (chart, pointIndex) {
+                    const meta = chart.getDatasetMeta(0); // first dataset is used to discover X coordinate of a point
+                    const data = meta.data;
+                    return data[pointIndex]._model.x;
+                },
+                renderVerticalLine: function (chartInstance, pointIndex) {
+                    const lineLeftOffset = this.getLinePosition(chartInstance, pointIndex);
+                    const scale = chartInstance.scales['y-axis-0'];
+                    const context = chartInstance.chart.ctx;
+
+                    // render vertical line
+                    context.beginPath();
+                    context.strokeStyle = '#ffffff';
+                    context.setLineDash([10, 5]);
+                    context.moveTo(lineLeftOffset, scale.top);
+                    context.lineTo(lineLeftOffset, scale.bottom);
+                    context.stroke();
+
+                    // write label
+                    context.fillStyle = "#ffffff";
+                    context.textAlign = 'right';
+                    //context.fillText('Current Day ', lineLeftOffset, (scale.bottom - scale.top) / 2 + scale.top);
+                },
+
+                afterDatasetsDraw: function (chart, easing) {
+                    if (chart.config.lineAtIndex) {
+                        chart.config.lineAtIndex.forEach(pointIndex => this.renderVerticalLine(chart, pointIndex));
+                    }
+                }
+            };
+
+            Chart.plugins.register(verticalLinePlugin);
+
+            dic1={
+                    data: ExtendedCasesArray,
+                    label: "Confirmed Cases ",//+"("+graphic.getAttribute("NAME")+")",
+                    borderColor: "#ffab24",
+                    pointStyle: "circle",
+                    fill: false
+                };
+            dic2={
+                    data: ExtendedIncreasedCases,
+                    label: "Increased Cases ",//+"("+graphic.getAttribute("NAME")+")",
+                    borderColor: "#f25100",
+                    pointStyle: "circle",
+                    fill: false
+                };
+            dic3={
+                    data: ExtendedDeathsArray,
+                    label: "Deaths ",//+"("+graphic.getAttribute("NAME")+")",
+                    borderColor: "#a10025",
+                    pointStyle: "circle",
+                    fill: false
+                }; 
+            dic4={
+                    data: ExtendedIncreasedDeaths,
+                    label: "Increased Deaths ",//+"("+graphic.getAttribute("NAME")+")",
+                    borderColor: "#6a28c7",
+                    pointStyle: "circle",
+                    fill: false
+                };
+            
+            if (graphic.getAttribute("cases_ts") != undefined) {
+                datasetList.push(dic1)
+            }
+            if (graphic.getAttribute("cases_ts") != undefined) {
+                datasetList.push(dic2)
+            }
+            if (graphic.getAttribute("deaths_ts") != undefined) {
+                datasetList.push(dic3)
+            }
+            if (graphic.getAttribute("deaths_ts") != undefined) {
+                datasetList.push(dic4)
+            }
+
+            if (window.bar != undefined) {
+                window.bar.destroy();
+            }
+
+            window.bar = new Chart(myChart, {
+                type: 'line',
+                data: {
+                    labels: LabelDates,
+                    datasets: datasetList
+                },
+                options: {
+                    title: {
+                        display: false,
+                        text: 'COVID19 Time Series',
+                        fontSize: 15
+                    },
+                    legend: {
+                        position: 'top',
+                        fullWidth: true,
+                        labels: {
+                            fontSize: 12
+                        }
+                    },
+                    fontSize: 12,
+                    responsive: true,
+                    maintainAspectRatio: false
+                },
+                lineAtIndex: [slider.values[0]],
+                animation: {
+                    duration: 0
+                },
+                responsiveAnimationDuration: 0
+            });
+
+            // Prevent the animation of redrawing the chart
+            window.bar.update(0);
+
+        }
 
         function setupHoverTooltip(layerview) {
 
@@ -1524,133 +1690,10 @@ require([
 
                                 var graphic = hit.graphic;
                                 var screenPoint = hit.screenPoint;
-                                //var myChart = document.getElementById('myChart').getContext('2d');
-                                //var infoWindow = document.getElementById('infoWindow');
+                                
+                                hitGraphic = hit.graphic;
 
-                                Chart.defaults.global.defaultFontSize = 15;
-                                Chart.defaults.global.defaultFontColor = '#777';
-
-                                var CasesArray = (graphic.getAttribute("cases_ts")).split(",");
-                                var DeathsArray = (graphic.getAttribute("deaths_ts")).split(",");
-
-                                var IncreasedCases = [];
-                                for (i = 1; i < CasesArray.length; i++) {
-                                    IncreasedCases.push(CasesArray[i] - CasesArray[i - 1])
-                                }
-                                ;
-                                IncreasedCases.unshift(0);
-
-                                var IncreasedDeaths = [];
-                                for (i = 1; i < DeathsArray.length; i++) {
-                                    IncreasedDeaths.push(DeathsArray[i] - DeathsArray[i - 1])
-                                }
-                                ;
-                                IncreasedDeaths.unshift(0);
-
-                                var ExtendedCasesArray = CasesArray.slice(0)
-                                var ExtendedDeathsArray = DeathsArray.slice(0)
-                                ExtendedCasesArray.unshift(0, 0, 0, 0, 0, 0, 0)
-                                ExtendedDeathsArray.unshift(0, 0, 0, 0, 0, 0, 0)
-
-                                var ExtendedIncreasedCases = IncreasedCases.slice(0)
-                                var ExtendedIncreasedDeaths = IncreasedDeaths.slice(0)
-                                ExtendedIncreasedCases.unshift(0, 0, 0, 0, 0, 0, 0)
-                                ExtendedIncreasedDeaths.unshift(0, 0, 0, 0, 0, 0, 0)
-
-                                var LabelDates = [];
-                                var LabelDate = new Date(2020, 0, 13);
-                                for (i = 0; i < ExtendedCasesArray.length; i++) {
-                                    LabelDate.setDate(LabelDate.getDate() + 1);
-                                    LabelDates.push(LabelDate.toLocaleDateString());
-                                }
-                                ;
-
-                                // var InfoWindowDate = new Date(2020, 0, 14);
-                                // InfoWindowDate.setDate(InfoWindowDate.getDate() + slider.values[0]);
-                                // var InfoWindowDateStr = InfoWindowDate.toLocaleDateString();
-
-                                // infoWindow.innerHTML = "Cases on " + InfoWindowDateStr + ": " + Math.round(ExtendedCasesArray[slider.values[0]]) + "<br>" +
-                                //     "Deaths on " + InfoWindowDateStr + ": " + Math.round(ExtendedDeathsArray[slider.values[0]]);
-
-                                const verticalLinePlugin = {
-                                    getLinePosition: function (chart, pointIndex) {
-                                        const meta = chart.getDatasetMeta(0); // first dataset is used to discover X coordinate of a point
-                                        const data = meta.data;
-                                        return data[pointIndex]._model.x;
-                                    },
-                                    renderVerticalLine: function (chartInstance, pointIndex) {
-                                        const lineLeftOffset = this.getLinePosition(chartInstance, pointIndex);
-                                        const scale = chartInstance.scales['y-axis-0'];
-                                        const context = chartInstance.chart.ctx;
-
-                                        // render vertical line
-                                        context.beginPath();
-                                        context.strokeStyle = '#ffffff';
-                                        context.setLineDash([10, 5]);
-                                        context.moveTo(lineLeftOffset, scale.top);
-                                        context.lineTo(lineLeftOffset, scale.bottom);
-                                        context.stroke();
-
-                                        // write label
-                                        context.fillStyle = "#ffffff";
-                                        context.textAlign = 'right';
-                                        context.fillText('Current Day ', lineLeftOffset, (scale.bottom - scale.top) / 2 + scale.top);
-                                    },
-
-                                    afterDatasetsDraw: function (chart, easing) {
-                                        if (chart.config.lineAtIndex) {
-                                            chart.config.lineAtIndex.forEach(pointIndex => this.renderVerticalLine(chart, pointIndex));
-                                        }
-                                    }
-                                };
-
-                                Chart.plugins.register(verticalLinePlugin);
-
-                                window.bar = new Chart(myChart, {
-                                    type: 'line',
-                                    data: {
-                                        labels: LabelDates,
-                                        datasets: [{
-                                            data: ExtendedCasesArray,
-                                            label: "Confirmed Cases",
-                                            borderColor: "#ffab24",
-                                            fill: false
-                                        }, {
-                                            data: ExtendedIncreasedCases,
-                                            label: "Increased Cases",
-                                            borderColor: "#f25100",
-                                            fill: false
-                                        }, {
-                                            data: ExtendedDeathsArray,
-                                            label: "Deaths",
-                                            borderColor: "#a10025",
-                                            fill: false
-                                        }, {
-                                            data: ExtendedIncreasedDeaths,
-                                            label: "Increased Deaths",
-                                            borderColor: "#6a28c7",
-                                            fill: false
-                                        }]
-                                    },
-                                    options: {
-                                        title: {
-                                            display: false,
-                                            text: 'COVID19 Time Series',
-                                            fontSize: 15
-                                        },
-                                        legend: {
-                                            position: 'top',
-                                            fullWidth: true,
-                                            labels: {
-                                                fontSize: 12
-                                            }
-                                        },
-                                        fontSize: 12,
-                                        responsive: true,
-                                        maintainAspectRatio: false
-                                    }
-                                    //lineAtIndex: [slider.values[0]]
-                                });
+                                updateChart(graphic);
 
                                 highlight = activeAnimationLayerView.highlight(graphic);
                                 console.log(graphic);
@@ -2559,6 +2602,7 @@ return sum;
                 // Update at 30fps
                 setTimeout(function () {
                     requestAnimationFrame(frame);
+                    updateChart(hitGraphic);
                 }, 1000 / 10);
             };
 
