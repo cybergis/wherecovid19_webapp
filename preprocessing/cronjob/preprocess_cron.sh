@@ -80,13 +80,13 @@ run_defineintervels(){
 run_extract_zipcode(){
 	cd illinois
    	python extract_zipcode.py
-        cd ..
         if [ $? -ne 0 ]
         then
-            	restore_data
+            	cd ..
+		restore_data
                 exit 1
         fi
-
+	cd ..
 }
 restore_data(){
 	echo "restoring data"
