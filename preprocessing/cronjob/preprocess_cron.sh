@@ -13,6 +13,9 @@ make_copy_data(){
 	cp ../states_update.geojson .
 	mkdir -p illinois
 	cp ../illinois/nyt_illinois_counties_data.geojson ./illinois/nyt_illinois_counties_data-tmp.geojson
+        cp ../illinois/dph_county_data.geojson ./illinois/dph_county_data-tmp.geojson
+ 	cp ../illinois/dph_county_static_data.geojson ./illinois/dph_county_static_data-tmp.geojson
+	cp ../illinois/dph_zipcode_data.geojson ./illinois/ph_zipcode_data-tmp.geojson
 }
 setup_env(){
 	cd /var/covid19_project/wherecovid19_webapp/preprocessing/cronjob
@@ -37,15 +40,18 @@ should_preprocessing_be_done(){
 	return 0
 }
 download_files(){
-	#Download new NYT data 
+	#Download new NYT data
+        echo "Downloading NYT data" 
 	#wget https://raw.githubusercontent.com/nytimes/covid-19-data/master/us.csv -O ./us.csv
 	wget https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv -O  ./us-states.csv
 	wget https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv -O ./us-counties.csv
 }
 convert_notebooks(){
+        echo "Converting notebooks"
 	jupyter nbconvert --to python --output-dir='.' ../states_new.ipynb
 	jupyter nbconvert --to python --output-dir='.' ../counties_new.ipynb
 	jupyter nbconvert --to python --output-dir='.' ../DefineInterval.ipynb
+	jupyter nbconvert --to python --output-dir='./illinois/' ../illinois/extract_zipcode.ipynb
 }
 run_state(){
 	python states_new.py
@@ -71,13 +77,28 @@ run_defineintervels(){
                 exit 1
         fi
 }
+run_extract_zipcode(){
+	cd illinois
+   	python extract_zipcode.py
+        if [ $? -ne 0 ]
+        then
+            	cd ..
+		restore_data
+                exit 1
+        fi
+	cd ..
+}
 restore_data(){
-	cp classes-tmp.json classes.json
+	echo "restoring data"
+        cp classes-tmp.json classes.json
 	cp nyt_states_data-tmp.geojson nyt_states_data.geojson
 	cp nyt_counties_data-tmp.geojson nyt_counties_data.geojson
         cp illinois/nyt_illinois_counties_data-tmp.geojson ../illinois/nyt_illinois_counties_data.geojson
 	cp us-counties-tmp.csv us-counties.csv
 	cp us-states-tmp.csv us-states.csv
+        cp illinois/dph_county_data-tmp.geojson ../illinois/dph_county_data.geojson
+	cp illinois/dph_county_static_data-tmp.geojson	../illinois/dph_county_static_data.geojson
+	cp illinois/dph_zipcode_data-tmp.geojson	../illinois/dph_zipcode_data.geojson
 	destroy_env
 }
 destroy_env(){
@@ -91,6 +112,7 @@ copy_back_results_webfolder(){
         cp nyt_states_data.geojson ..
         cp classes.json ..
 	cp ./illinois/nyt_illinois_counties_data.geojson ../illinois/
+        cp ./illinois/dph_*_data.geojson ../illinois/
 }
 
 
@@ -103,8 +125,10 @@ then
 	convert_notebooks
 	run_state
 	run_counties
+        run_extract_zipcode
 	run_defineintervels
+        copy_back_results_webfolder
 fi
-copy_back_results_webfolder
+#copy_back_results_webfolder
 destroy_env
 exit 0
