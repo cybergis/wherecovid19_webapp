@@ -302,7 +302,7 @@ require([
             outFields: ["*"],
             title: "DPH County-level Cases",
             renderer: default_polygon_renderer,
-            visible: false,
+            visible: true,
         }
     );
 
@@ -377,10 +377,10 @@ require([
         });
 
         // order matters! last layer is at top
-        var animation_layers = [nyt_layer_states, nyt_layer_counties, illinois_report,
+        var animation_layers = [nyt_layer_states, nyt_layer_counties,
             dph_illinois_county_dynamic];
-        var static_layers = [illinois_hospitals, illinois_testing, illinois_counties, 
-            illinois_zipcode, dph_illinois_zipcode, dph_illinois_county_static];
+        var static_layers = [illinois_hospitals, illinois_testing,
+            dph_illinois_zipcode, dph_illinois_county_static];
 
         // // new GroupLayer object may affect other GroupLayer objects
         // // Comment out unused GroupLayer objects to avoid strange bugs
@@ -423,8 +423,8 @@ require([
             title: "Illinois",
             visible: true,
             visibilityMode: "independent",
-            layers: [illinois_hospitals, illinois_testing, illinois_counties, illinois_zipcode,
-                illinois_access_layer, chicago_access_layer, illinois_report, dph_illinois_zipcode, 
+            layers: [illinois_hospitals, illinois_testing,
+                illinois_access_layer, chicago_access_layer, dph_illinois_zipcode,
                 dph_illinois_county_static, dph_illinois_county_dynamic],
             opacity: 0.75
         });
