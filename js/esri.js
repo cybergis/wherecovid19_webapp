@@ -1336,22 +1336,24 @@ require([
 
             var datasetList = [];
 
-            if (graphic.getAttribute("cases_ts") != undefined) {
-                var CasesArray = (graphic.getAttribute("cases_ts")).split(",");
+            var CasesArray = (graphic.getAttribute("cases_ts")).split(",");
 
-                var IncreasedCases = [];
-                for (i = 1; i < CasesArray.length; i++) {
-                    IncreasedCases.push(CasesArray[i] - CasesArray[i - 1])
-                }
-                ;
-                IncreasedCases.unshift(0);
-
-                var ExtendedCasesArray = CasesArray.slice(0)
-                ExtendedCasesArray.unshift(0, 0, 0, 0, 0, 0, 0)
-
-                var ExtendedIncreasedCases = IncreasedCases.slice(0)
-                ExtendedIncreasedCases.unshift(0, 0, 0, 0, 0, 0, 0)
+            var IncreasedCases = [];
+            for (i = 1; i < CasesArray.length; i++) {
+                IncreasedCases.push(CasesArray[i] - CasesArray[i - 1])
             }
+            ;
+            IncreasedCases.unshift(0);
+
+            var ExtendedCasesArray = CasesArray.slice(0);
+            ExtendedCasesArray.unshift(0, 0, 0, 0, 0, 0, 0);
+
+            var ExtendedIncreasedCases = IncreasedCases.slice(0);
+            ExtendedIncreasedCases.unshift(0, 0, 0, 0, 0, 0, 0);
+
+            var firstCaseIndex = ExtendedCasesArray.findIndex(val=>val > 0);
+            SlicedCasesArray = ExtendedCasesArray.slice(firstCaseIndex);
+            SlicedIncreasedCases = ExtendedIncreasedCases.slice(firstCaseIndex);
 
             if (graphic.getAttribute("deaths_ts") != undefined) {
                 var DeathsArray = (graphic.getAttribute("deaths_ts")).split(",");
@@ -1363,20 +1365,30 @@ require([
                 ;
                 IncreasedDeaths.unshift(0);
 
-                var ExtendedDeathsArray = DeathsArray.slice(0)            
-                ExtendedDeathsArray.unshift(0, 0, 0, 0, 0, 0, 0)
+                var ExtendedDeathsArray = DeathsArray.slice(0);            
+                ExtendedDeathsArray.unshift(0, 0, 0, 0, 0, 0, 0);
                 
-                var ExtendedIncreasedDeaths = IncreasedDeaths.slice(0)            
-                ExtendedIncreasedDeaths.unshift(0, 0, 0, 0, 0, 0, 0)
+                var ExtendedIncreasedDeaths = IncreasedDeaths.slice(0);           
+                ExtendedIncreasedDeaths.unshift(0, 0, 0, 0, 0, 0, 0);
+
+                SlicedDeathsArray = ExtendedDeathsArray.slice(firstCaseIndex);
+                SlicedIncreasedDeaths = ExtendedIncreasedDeaths.slice(firstCaseIndex);
             }
 
             var LabelDates = [];
-            var LabelDate = new Date(2020, 0, 13);
+            if (graphic.getAttribute("dt_start") == "2020-03-17"){
+                var LabelDate = new Date(2020, 2, 9);
+            }
+            else {
+                var LabelDate = new Date(2020, 0, 13);
+            }
+            
             for (i = 0; i < ExtendedCasesArray.length; i++) {
                 LabelDate.setDate(LabelDate.getDate() + 1);
                 LabelDates.push(LabelDate.toLocaleDateString());
             }
-            ;
+
+            SlicedLabelDates = LabelDates.slice(firstCaseIndex);
 
             const verticalLinePlugin = {
                 getLinePosition: function (chart, pointIndex) {
@@ -1413,44 +1425,44 @@ require([
             Chart.plugins.register(verticalLinePlugin);
 
             dic1={
-                    data: ExtendedCasesArray,
+                    data: SlicedCasesArray,
                     label: "Confirmed Cases ",//+"("+graphic.getAttribute("NAME")+")",
                     borderColor: "#ffab24",
                     pointStyle: "circle",
                     fill: false
                 };
             dic2={
-                    data: ExtendedIncreasedCases,
+                    data: SlicedIncreasedCases,
                     label: "Increased Cases ",//+"("+graphic.getAttribute("NAME")+")",
                     borderColor: "#f25100",
                     pointStyle: "circle",
                     fill: false
                 };
-            dic3={
-                    data: ExtendedDeathsArray,
-                    label: "Deaths ",//+"("+graphic.getAttribute("NAME")+")",
-                    borderColor: "#a10025",
-                    pointStyle: "circle",
-                    fill: false
-                }; 
-            dic4={
-                    data: ExtendedIncreasedDeaths,
-                    label: "Increased Deaths ",//+"("+graphic.getAttribute("NAME")+")",
-                    borderColor: "#6a28c7",
-                    pointStyle: "circle",
-                    fill: false
-                };
+                
+            if (graphic.getAttribute("deaths_ts") != undefined) {
+                dic3={
+                        data: SlicedDeathsArray,
+                        label: "Deaths ",//+"("+graphic.getAttribute("NAME")+")",
+                        borderColor: "#a10025",
+                        pointStyle: "circle",
+                        fill: false
+                    }; 
+                dic4={
+                        data: SlicedIncreasedDeaths,
+                        label: "Increased Deaths ",//+"("+graphic.getAttribute("NAME")+")",
+                        borderColor: "#6a28c7",
+                        pointStyle: "circle",
+                        fill: false
+                    };
+            }            
             
             if (graphic.getAttribute("cases_ts") != undefined) {
                 datasetList.push(dic1)
-            }
-            if (graphic.getAttribute("cases_ts") != undefined) {
                 datasetList.push(dic2)
             }
+
             if (graphic.getAttribute("deaths_ts") != undefined) {
                 datasetList.push(dic3)
-            }
-            if (graphic.getAttribute("deaths_ts") != undefined) {
                 datasetList.push(dic4)
             }
 
@@ -1461,7 +1473,7 @@ require([
             window.bar = new Chart(myChart, {
                 type: 'line',
                 data: {
-                    labels: LabelDates,
+                    labels: SlicedLabelDates,
                     datasets: datasetList
                 },
                 options: {
@@ -1481,7 +1493,7 @@ require([
                     responsive: true,
                     maintainAspectRatio: false
                 },
-                lineAtIndex: [slider.values[0]],
+                lineAtIndex: [slider.values[0]-firstCaseIndex],
                 animation: {
                     duration: 0
                 },
