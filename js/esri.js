@@ -1204,7 +1204,88 @@ require([
         };
 
         nyt_layer_states.popupTemplate = usStateTemplate;
+        function dynamicArcade(_column, _date){
+            return `
+                //be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
 
+                var dt_thumb = Date(${_date.getFullYear()}, ${_date.getMonth()}, ${_date.getDate()});
+                var ts = Split($feature['${_column}'],',');
+                var dt_start_array = Split($feature.dt_start, '-');
+                var dt_start = Date(Number(dt_start_array[0]), Number(dt_start_array[1])-1, Number(dt_start_array[2]));
+                if(dt_thumb < dt_start){
+                    return '0';
+                }
+                var days=DateDiff(dt_thumb, dt_start, "days");
+                return Round(ts[days]);
+
+
+            `;
+        }
+        function getDynamicPopup(date){
+            var dphDynamicPopup = {
+
+                title: "{NAME}",
+                expressionInfos: [
+                    {
+                        name: "current_cases",
+                        title: "Confirmed Cases",
+                        expression: dynamicArcade('cases_ts',date)
+                    },
+                    {
+                        name: "current_deaths",
+                        title: "Deaths",
+                        expression: dynamicArcade('deaths_ts',date)
+                    },
+                    // {
+                    //     name: "death_rate",
+                    //     title: "Death Rate (%)",
+                    //     expression: "Round((Split($feature.deaths_ts, ',')[-1]/Split($feature.cases_ts, ',')[-1])*100,2)"
+                    // }
+    
+                ],
+                content: [
+                    {
+                        type: "fields", // FieldsContentElement
+                        fieldInfos: [
+    
+                            {
+                                fieldName: "expression/current_cases",
+                                visible: true,
+                                label: "Confirmed Cases"
+                            },
+                            {
+                                fieldName: "expression/current_deaths",
+                                visible: true,
+                                label: "Deaths"
+                            },
+                            // {
+                            //     fieldName: "expression/death_rate",
+                            //     visible: true,
+                            //     label: "Death Rate"
+                            // },
+                            {
+                                fieldName: "dt_first_case",
+                                visible: true,
+                                label: "First Date of Confirmed Cases"
+                            },
+                            {
+                                fieldName: "dt_first_death",
+                                visible: true,
+                                label: "First Date of Deaths"
+                            }
+                            // },
+                            // {
+                            //     fieldName: "population",
+                            //     visible: true,
+                            //     label: "Population"
+                            // }
+    
+                        ]
+                    }
+                ]
+            };
+            return dphDynamicPopup;
+        }
 
         var usCountyTemplate = {
 
@@ -1526,7 +1607,7 @@ require([
 
         function setupHoverTooltip(layerview) {
 
-            var highlight;
+            // var highlight;
             activeAnimationLayerView = layerview;
 
             if (hitTest == null) {
@@ -1616,6 +1697,7 @@ require([
         function setDate(_date, animation_type = "case") {
             let level = null;
             animation_layers.forEach(function (value) {
+                value.popupTemplate = getDynamicPopup(_date);
                 if (value.visible == true && value.parent.visible == true) {
                     console.log(value.title);
                     if (value.title == illinois_report.title) {
