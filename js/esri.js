@@ -628,6 +628,7 @@ require([
                         instance.querySelector('th').setAttribute('data-x',value.centroid_x);
                         instance.querySelector('th').setAttribute('data-y',value.centroid_y);
                         instance.querySelector('th').setAttribute('data-uid',index);
+                        instance.querySelector('th').setAttribute('data-county',value.county);
                         instance.querySelector('.confirmed').innerHTML = value.case;
                         instance.querySelector('.tested').innerHTML = value.tested;
                         instance.querySelector('.death').innerHTML = value.death;
@@ -716,6 +717,7 @@ require([
                         instance.querySelector('th').setAttribute('data-x',value.centroid_x);
                         instance.querySelector('th').setAttribute('data-y',value.centroid_y);
                         instance.querySelector('th').setAttribute('data-uid',value.uid);
+                        instance.querySelector('th').setAttribute('data-county',value.county);
                         instance.querySelector('.confirmed').innerHTML = '<span>'+value.case + '</span><br><i class="fas fa-caret-up"></i> ' + value.new_case;
                         instance.querySelector('.death').innerHTML = '<span>'+value.death + '</span><br><i class="fas fa-caret-up"></i> ' + value.new_death;
                         instance.querySelector('.confirmed').setAttribute('data-order',value.case);
@@ -1510,7 +1512,7 @@ require([
                     responsive: true,
                     maintainAspectRatio: false
                 },
-                lineAtIndex: [slider.values[0]-firstCaseIndex],
+                //lineAtIndex: [slider.values[0]-firstCaseIndex],
                 animation: {
                     duration: 0
                 },
@@ -1574,9 +1576,9 @@ require([
                                 
                                 hitGraphic = hit.graphic;
 
-                                view.goTo({
-                                    center: [graphic.geometry.centroid.longitude, graphic.geometry.centroid.latitude],
-                                })
+                                // view.goTo({
+                                //     center: [graphic.geometry.centroid.longitude, graphic.geometry.centroid.latitude],
+                                // })
 
                                 updateChart(graphic);
 
@@ -2464,7 +2466,9 @@ require([
         /////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////Handle Table clicking//////////////////////////////
         /////////////////////////////////////////////////////////////////////////////////
-       
+        
+        var highlight;
+
         /// illinois Table
         document.querySelector("#illinois-table tbody").addEventListener("click", function(event) {
             var tr = event.target;
@@ -2481,15 +2485,33 @@ require([
                 lat = parseFloat(tr.firstElementChild.dataset.x);
                 long = parseFloat(tr.firstElementChild.dataset.y);
                 objID = parseFloat(tr.firstElementChild.dataset.uid);
+                countyName = tr.firstElementChild.dataset.county;
+
+                console.log(countyName);
 
                 view.goTo({
                     center: [lat, long],
-                    zoom: 9,
+                    zoom: 8,
                 })
                 .catch(function(error) {
                 if (error.name != "AbortError") {
                     console.error(error);
                 }
+                });
+
+                let topVisibleLayer = getTopVisibleLayer(map.layers,);
+                view.whenLayerView(topVisibleLayer).then(function(layerView){
+                var query = topVisibleLayer.createQuery();
+                query.where = "NAME = "+"'"+countyName+"'";
+                topVisibleLayer.queryFeatures(query).then(function(result){
+                console.log(query);
+                console.log(result);
+                console.log(highlight);
+                if (highlight) {
+                highlight.remove();
+                }
+                highlight = layerView.highlight(result.features);
+                })
                 });
 
             }
@@ -2511,15 +2533,33 @@ require([
                 lat = parseFloat(tr.firstElementChild.dataset.x);
                 long = parseFloat(tr.firstElementChild.dataset.y);
                 objID = parseFloat(tr.firstElementChild.dataset.uid);
+                countyName = tr.firstElementChild.dataset.county;
+
+                console.log(countyName);
 
                 view.goTo({
                     center: [lat, long],
-                    zoom: 9,
+                    zoom: 8,
                 })
                 .catch(function(error) {
                 if (error.name != "AbortError") {
                     console.error(error);
                 }
+                });
+
+                let topVisibleLayer = getTopVisibleLayer(map.layers,);
+                view.whenLayerView(topVisibleLayer).then(function(layerView){
+                var query = topVisibleLayer.createQuery();
+                query.where = "NAME = "+"'"+countyName+"'";
+                topVisibleLayer.queryFeatures(query).then(function(result){
+                console.log(query);
+                console.log(result);
+                console.log(highlight);
+                if (highlight) {
+                highlight.remove();
+                }
+                highlight = layerView.highlight(result.features);
+                })
                 });
 
             }
