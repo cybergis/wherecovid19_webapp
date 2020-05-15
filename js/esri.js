@@ -275,7 +275,7 @@ require([
         var dph_illinois_zipcode = new GeoJSONLayer({
                 url: dph_illinois_zipcode_url,
                 outFields: ["*"],
-                title: "iDPH Zipcode-level Cases",
+                title: "IDPH Zipcode-level Cases",
                 renderer: dphStaticRender("zipcode_case"),
                 visible: false,
             }
@@ -283,7 +283,7 @@ require([
         var dph_illinois_county_static = new GeoJSONLayer({
                 url: dph_illinois_county_static_url,
                 outFields: ["*"],
-                title: "iDPH County-level Test Data",
+                title: "IDPH County-level Test Data",
                 renderer: dphStaticRender("tested"),
                 visible: false,
             }
@@ -292,7 +292,7 @@ require([
         var dph_illinois_county_dynamic = new GeoJSONLayer({
             url: dph_illinois_county_dynamic_url,
             outFields: ["*"],
-            title: "iDPH County-level Cases",
+            title: "IDPH County-level Cases",
             renderer: default_polygon_renderer,
             visible: true,
         }
@@ -386,7 +386,7 @@ require([
             title: "Illinois",
             visible: true,
             visibilityMode: "independent",
-            layers: [illinois_hospitals, illinois_testing,
+            layers: [illinois_hospitals,
                 illinois_access_layer, chicago_access_layer, dph_illinois_zipcode,
                 dph_illinois_county_static, dph_illinois_county_dynamic],
             opacity: 0.75
