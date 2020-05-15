@@ -9,6 +9,7 @@ require([
     "esri/widgets/Slider",
     "esri/widgets/Fullscreen",
     "esri/geometry/SpatialReference",
+    "esri/geometry/Point",
     "esri/Basemap",
     "esri/layers/MapImageLayer",
     "esri/symbols/SimpleFillSymbol",
@@ -18,9 +19,12 @@ require([
     "esri/widgets/Expand",
     "esri/layers/GeoJSONLayer",
     "esri/tasks/support/Query",
+    "esri/geometry/geometryEngine",
     "esri/layers/support/LabelClass",
     "esri/widgets/Zoom",
     "dojo/dom",
+    "dojo/on",
+    "dojo/Evented",
     "dojo/date",
     "dojo/date/locale",
     "dojox/data/CsvStore",
@@ -30,6 +34,7 @@ require([
     "dojo/_base/declare",
     "dojo/query",
     "dojo",
+    "dojo/domReady!"
 ], function (
     Map,
     FeatureLayer,
@@ -40,6 +45,7 @@ require([
     Slider,
     Fullscreen,
     SpatialReference,
+    Point,
     Basemap,
     MapImageLayer,
     SimpleFillSymbol,
@@ -49,9 +55,12 @@ require([
     Expand,
     GeoJSONLayer,
     Query,
+    geometryEngine,
     LabelClass,
     Zoom,
     dom,
+    on,
+    Evented,
     date,
     locale,
     CsvStore,
@@ -187,27 +196,17 @@ require([
         var applicationDiv = document.getElementById("applicationDiv");
         var sliderValue = document.getElementById("sliderValue");
         var playButton = document.getElementById("playButton");
-        var titleDiv = document.getElementById("titleDiv");
         var animation = null;
         var slider = null;
         var sliderDiv = document.getElementById("sliderContainer");
         var myChart = document.getElementById('myChart').getContext('2d');
 
-        // Query total numbers for left slide bar
-        var confirmDiv = document.getElementById("total_confirm_div");
-        var deathDiv = document.getElementById("total_death_div");
-        var recoverDiv = document.getElementById("total_recover_div");
 
         //--------------------------------------------------------------------------
         //
         //  Setup Map and View
         //
         //--------------------------------------------------------------------------
-
-        // var nyt_layer_states_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data_dev/FeatureServer/0";
-        // var nyt_layer_counties_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data_dev/FeatureServer/0";
-        // var illinios_county_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_county_dev/FeatureServer/0";
-        // var illinios_zipcode_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_zipcode_dev/FeatureServer/0";
         var nyt_layer_states_url = "preprocessing/nyt_states_data.geojson";
         var nyt_layer_counties_url = "preprocessing/nyt_counties_data.geojson";
         var illinios_county_url = "preprocessing/illinois/illinois_forecast_county.geojson";
@@ -220,10 +219,6 @@ require([
         var dph_illinois_county_static_url = "preprocessing/illinois/dph_county_static_data.geojson";
 
         if (production_mode) {
-            // nyt_layer_states_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_states_data/FeatureServer/0";
-            // nyt_layer_counties_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/nyt_counties_data/FeatureServer/0";
-            // illinios_county_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_county/FeatureServer/0";
-            // illinios_zipcode_url = "https://services.arcgis.com/GL0fWlNkwysZaKeV/arcgis/rest/services/illinois_forecast_zipcode/FeatureServer/0";
             nyt_layer_states_url = "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/preprocessing/nyt_states_data.geojson";
             nyt_layer_counties_url = "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/preprocessing/nyt_counties_data.geojson";
             illinios_county_url = "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/preprocessing/illinois/illinois_forecast_county.geojson";
@@ -244,7 +239,6 @@ require([
         };
 
         //nyt states
-        //var nyt_layer_states = new FeatureLayer({
         var nyt_layer_states = new GeoJSONLayer({
             url: nyt_layer_states_url,
             outFields: ["*"],
@@ -254,7 +248,6 @@ require([
         });
 
         //nyt counties
-        //var nyt_layer_counties = new FeatureLayer({
         var nyt_layer_counties = new GeoJSONLayer({
             url: nyt_layer_counties_url,
             outFields: ["*"],
@@ -295,16 +288,15 @@ require([
                 visible: false,
             }
         );
-        console.log(dph_illinois_zipcode.renderer)
 
         var dph_illinois_county_dynamic = new GeoJSONLayer({
-            url: dph_illinois_county_dynamic_url,
-            outFields: ["*"],
-            title: "DPH County-level Cases",
-            renderer: default_polygon_renderer,
-            visible: false,
-        }
-    );
+                url: dph_illinois_county_dynamic_url,
+                outFields: ["*"],
+                title: "DPH County-level Cases",
+                renderer: default_polygon_renderer,
+                visible: false,
+            }
+        );
 
         var illinois_report = new GeoJSONLayer({
             url: illinois_report_url,
@@ -321,7 +313,7 @@ require([
             renderer: {
                 type: "simple",
                 symbol: {
-                    type: "picture-marker", // autocasts as new PictureMarkerSymbol()
+                    type: "picture-marker", 
                     url: "img/hospital.png",
                     width: "32px",
                     height: "32px"
@@ -382,35 +374,6 @@ require([
         var static_layers = [illinois_hospitals, illinois_testing, illinois_counties, 
             illinois_zipcode, dph_illinois_zipcode, dph_illinois_county_static];
 
-        // // new GroupLayer object may affect other GroupLayer objects
-        // // Comment out unused GroupLayer objects to avoid strange bugs
-        // // like group layer can not expand!!!!!
-        // var animationGroupLayer = new GroupLayer({
-        //     title: "Time-enabled Layers",
-        //     visible: true,
-        //     visibilityMode: "exclusive",
-        //     layers: new Array().concat(animation_layers),
-        //     opacity: 0.75
-        // });
-        // var staticGroupLayer = new GroupLayer({
-        //     title: "Static Layers",
-        //     visible: true,
-        //     visibilityMode: "exclusive",
-        //     layers: new Array().concat(static_layers),
-        //     opacity: 0.75
-        // });
-
-        // new GroupLayer object may affect other GroupLayer objects
-        // Comment out unused GroupLayer objects to avoid strange bugs
-        // like group layer can not expand!!!!
-        // var allInOneGroupLayer = new GroupLayer({
-        //     title: "Layers",
-        //     visible: true,
-        //     visibilityMode: "exclusive",
-        //     layers: new Array().concat(animation_layers, static_layers),
-        //     opacity: 0.75
-        // });
-
         var us_group = new GroupLayer({
             title: "US",
             visible: false,
@@ -430,15 +393,12 @@ require([
         });
 
         // order mattes! last layer is at top
-        //var all_layers = [animationGroupLayer, staticGroupLayer];
-        //var all_layers = allInOneGroupLayer.layers;
         var all_layers = new Array().concat(animation_layers, static_layers);
 
         // A non-3857 basemap
         var basemap = new Basemap({
             baseLayers: [
                 new MapImageLayer({
-                    //url: "https://services.arcgisonline.com/arcgis/rest/services/Polar/Arctic_Ocean_Base/MapServer",
                     url: "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer",
                     title: "Basemap"
                 })
@@ -536,6 +496,7 @@ require([
             mywatcher.set("active_animation_layer", topVisibleLayer);
             //Setup hover effects
             view.whenLayerView(topVisibleLayer).then(setupHoverTooltip);
+
         }
 
         // Listen for layer visibility change
@@ -544,7 +505,7 @@ require([
         // https://developers.arcgis.com/javascript/latest/sample-code/sandbox/index.html?sample=animation-layer-visibility
         map.allLayers.forEach(function (item) {
             item.watch("visible", function (visible) {
-                console.log(item.title, visible)
+                // console.log(item.title, visible)
                 if (visible === true && item.type !== "group") {
                     map.layers.forEach(function (value) {
 
@@ -583,6 +544,15 @@ require([
                     }
                 } // if(visible === true){
                 setActiveAnimationLayer(item);
+
+                
+                // close the side bar when the layer is changed 
+                if($(".sidebar").hasClass("open")) {
+                    $('#sidebar_control').removeClass("open").addClass("closed");
+                    $(".sidebar").animate({width:'toggle'},10).removeClass("open").addClass("closed");
+                    // $(".sidebar").removeClass("open").hide("slide", { direction: "left" }, 1000).addClass("closed");
+                    $("main").removeClass("col-9").addClass("col-12");
+                } 
             });
         });
 
@@ -594,93 +564,6 @@ require([
                 statusIndicators: false
             },
         });
-
-        // function defineActions(event) {
-        //     // The event object contains an item property.
-        //     // is is a ListItem referencing the associated layer
-        //     // and other properties. You can control the visibility of the
-        //     // item, its title, and actions using this object.
-        //
-        //     var item = event.item;
-        //
-        //     if (item.title === "Pandemic" || item.title === "Census-2000") {
-        //         // An array of objects defining actions to place in the LayerList.
-        //         // By making this array two-dimensional, you can separate similar
-        //         // actions into separate groups with a breaking line.
-        //
-        //         item.actionsSections = [
-        //             [
-        //                 {
-        //                     title: "Go to full extent",
-        //                     className: "esri-icon-zoom-out-fixed",
-        //                     id: "full-extent"
-        //                 },
-        //                 {
-        //                     title: "Layer information",
-        //                     className: "esri-icon-description",
-        //                     id: "information"
-        //                 }
-        //             ],
-        //             [
-        //                 {
-        //                     title: "Increase opacity",
-        //                     className: "esri-icon-up",
-        //                     id: "increase-opacity"
-        //                 },
-        //                 {
-        //                     title: "Decrease opacity",
-        //                     className: "esri-icon-down",
-        //                     id: "decrease-opacity"
-        //                 }
-        //             ]
-        //         ];
-        //     }
-        // }
-        //
-        // layerlist.on("trigger-action", function (event) {
-        //     // The layer visible in the view at the time of the trigger.
-        //     console.log(event);
-        //     let visibleLayer = event.item.layer;
-        //
-        //     // Capture the action id.
-        //     var id = event.action.id;
-        //
-        //     if (id === "full-extent") {
-        //         // if the full-extent action is triggered then navigate
-        //         // to the full extent of the visible layer
-        //         view.goTo(visibleLayer.fullExtent);
-        //     } else if (id === "information") {
-        //         // if the information action is triggered, then
-        //         // open the item details page of the service layer
-        //         window.open(visibleLayer.url);
-        //     } else if (id === "increase-opacity") {
-        //         // if the increase-opacity action is triggered, then
-        //         // increase the opacity of the GroupLayer by 0.25
-        //
-        //         if (visibleLayer.opacity < 1) {
-        //             visibleLayer.opacity += 0.25;
-        //         }
-        //     } else if (id === "decrease-opacity") {
-        //         // if the decrease-opacity action is triggered, then
-        //         // decrease the opacity of the GroupLayer by 0.25
-        //
-        //         if (visibleLayer.opacity > 0) {
-        //             visibleLayer.opacity -= 0.25;
-        //         }
-        //     }
-        //
-        // });
-
-        // var basemapGallery = new BasemapGallery({
-        //     view: view,
-        // });
-        //
-        //
-        // view.ui.add(new Expand({
-        //     view: view,
-        //     content: basemapGallery,
-        // }), "top-right");
-
 
         function numberWithCommas(x) {
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -704,7 +587,6 @@ require([
                 .then(function (response){
                     let stats = response.features[0].attributes;
                     let tab = document.getElementById('illinois-tab');
-                    
                     tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(stats.Total_Cases)
                     let case_div = document.getElementById('illinois_total_case_number')
                     console.log(case_div.querySelector('.case-number').innerHTML)
@@ -716,28 +598,39 @@ require([
             
             const illinois_list_query = dph_illinois_county_static.createQuery();
             illinois_list_query.orderByFields = ['confirmed_cases DESC'];
+            
             dph_illinois_county_static.queryFeatures(illinois_list_query)
                 .then(function (response){
+                    console.log(response);
                     let illinois_table = document.getElementById('illinois-table').querySelector('tbody');
                     let template = document.querySelector('template')
                     let result_list = response.features.map(function(value){
                         return {
+                            centroid_x:value.geometry.centroid.x,
+                            centroid_y:value.geometry.centroid.y,
+                            uid:value.attributes.OBJECTID,
                             county:value.attributes.County,
                             case:value.attributes.confirmed_cases,
                             tested:value.attributes.total_tested
                         }
                     });
-                    result_list.forEach(function(value){
+                    result_list.forEach(function(value,index){
                         let instance = template.content.cloneNode(true);
                         instance.querySelector('th').innerHTML = value.county;
+                        instance.querySelector('th').setAttribute('data-x',value.centroid_x);
+                        instance.querySelector('th').setAttribute('data-y',value.centroid_y);
+                        instance.querySelector('th').setAttribute('data-uid',index);
                         instance.querySelector('.confirmed').innerHTML = value.case;
                         instance.querySelector('.tested').innerHTML = value.tested;
+                        instance.querySelector('.confirmed').setAttribute('data-order',value.case);
+                        instance.querySelector('.tested').setAttribute('data-order',value.tested);
                         illinois_table.appendChild(instance);
                     })
 
                     var illini_table = $('#illinois-table').DataTable({
                         paging: false,
                         ordering: true,
+                        order:[[1,"desc"]],
                         info: false,
                         dom: "t",
                     });
@@ -792,8 +685,11 @@ require([
                     console.log(response)
                     let couneites_table = document.getElementById('county-table').querySelector('tbody');
                     let template = document.querySelectorAll('template')[1]
-                    let result_list = response.features.map(function(value){
+                    let result_list = response.features.map(function(value,index){
                         return {
+                            centroid_x:value.geometry.centroid.x,
+                            centroid_y:value.geometry.centroid.y,
+                            uid:value.attributes.OBJECTID,
                             county:value.attributes.NAME,
                             case:value.attributes.today_case,
                             new_case:value.attributes.today_new_case,
@@ -805,13 +701,19 @@ require([
                     result.forEach(function(value){
                         let instance = template.content.cloneNode(true);
                         instance.querySelector('th').innerHTML = value.county;
-                        instance.querySelector('.confirmed').innerHTML = value.case + '<br><i class="fas fa-caret-up"></i> ' + value.new_case;
-                        instance.querySelector('.death').innerHTML = value.death + '<br><i class="fas fa-caret-up"></i> ' + value.new_death;
+                        instance.querySelector('th').setAttribute('data-x',value.centroid_x);
+                        instance.querySelector('th').setAttribute('data-y',value.centroid_y);
+                        instance.querySelector('th').setAttribute('data-uid',value.uid);
+                        instance.querySelector('.confirmed').innerHTML = '<span>'+value.case + '</span><br><i class="fas fa-caret-up"></i> ' + value.new_case;
+                        instance.querySelector('.death').innerHTML = '<span>'+value.death + '</span><br><i class="fas fa-caret-up"></i> ' + value.new_death;
+                        instance.querySelector('.confirmed').setAttribute('data-order',value.case);
+                        instance.querySelector('.death').setAttribute('data-order',value.death);
                         couneites_table.appendChild(instance);
                     })
                     var county_table = $('#county-table').DataTable({
                         paging: false,
                         ordering: true,
+                        order:[[1, "desc"]],
                         info: false,
                         dom: "t",
                     });
@@ -823,52 +725,6 @@ require([
                     
                 }
             );
-
-            // const query = nyt_layer_counties.createQuery();
-            // const totalConfrimStat = {
-            //     onStatisticField: "today_case",
-            //     outStatisticFieldName: "Total_Cases",
-            //     statisticType: "sum"
-            // };
-            // const totalDeathStat = {
-            //     onStatisticField: "today_death",
-            //     outStatisticFieldName: "Total_Deaths",
-            //     statisticType: "sum"
-            // };
-            // query.outStatistics = [totalConfrimStat, totalDeathStat];
-            // nyt_layer_counties.queryFeatures(query)
-
-            //     .then(function (response) {
-            //         //console.log(response);
-            //         var stats = response.features[0].attributes;
-            //         confirmDiv.getElementsByTagName('h3')[0].innerHTML = numberWithCommas(stats.Total_Cases);
-            //         deathDiv.getElementsByTagName('h3')[0].innerHTML = numberWithCommas(stats.Total_Deaths);
-            //     });
-
-            // const list_query = nyt_layer_counties.createQuery();
-            // list_query.orderByFields = ['today_case DESC'];
-            // nyt_layer_counties.queryFeatures(list_query)
-            //     .then(function (response) {
-            //         //console.log(response);
-            //         var listDiv = document.getElementsByClassName('case-list')[0];
-            //         var template = document.getElementsByTagName('template')[0];
-            //         var result_list = response.features.map(function (value) {
-            //             return {
-            //                 county: value.attributes.NAME,
-            //                 state: value.attributes.state_name,
-            //                 cases: value.attributes.today_case,
-            //             };
-            //             //return value.NAME;
-            //         });
-            //         //console.log(result_list)
-            //         result = result_list.slice(0, 11);
-            //         result.forEach(function (value) {
-            //             var instance = template.content.cloneNode(true);
-            //             instance.querySelector('strong').textContent = numberWithCommas(value.cases);
-            //             instance.querySelectorAll('span')[2].textContent = value.county + "," + value.state;
-            //             listDiv.appendChild(instance);
-            //         });
-            //     });
 
         }
 
@@ -1124,7 +980,6 @@ require([
 
         dph_illinois_county_static.popupTemplate = ilCountyCaseTemplate;
         
-
 
         var ilCountyTemplate = {
 
@@ -1643,10 +1498,6 @@ require([
             var highlight;
             activeAnimationLayerView = layerview;
 
-            // if (tooltip == null) {
-            //     tooltip = createTooltip();
-            // }
-
             if (hitTest == null) {
                 hitTest = promiseUtils.debounce(function (event) {
                     return view.hitTest(event).then(function (hit) {
@@ -1665,9 +1516,10 @@ require([
                     });
                 });
             }
+
             if (hoverover_callback == null) {
                 view.on("click", function (event) {
-                    //view.on("pointer-move", function (event) {
+                    console.log("click!")
                     return hitTest(event).then(
                         function (hit) {
                             // remove current highlighted feature
@@ -1693,11 +1545,17 @@ require([
                                 
                                 hitGraphic = hit.graphic;
 
+                                view.goTo({
+                                    center: [graphic.geometry.centroid.longitude, graphic.geometry.centroid.latitude],
+                                })
+
                                 updateChart(graphic);
 
                                 highlight = activeAnimationLayerView.highlight(graphic);
-                                console.log(graphic);
-                                console.log(screenPoint);
+                                // console.log(graphic.geometry.centroid.latitude);
+                                // console.log(graphic.geometry.centroid.longitude);
+                                // console.log(graphic);
+                                // console.log(screenPoint);
                                 // tooltip.show(
                                 //     screenPoint,
                                 //     "Cases in " + graphic.getAttribute("NAME")
@@ -1773,183 +1631,167 @@ require([
             }
             _layer.renderer = classRender(_date, _event_type = event_type, _level = level);
 
-            // if (animation_type == "case") {
-            //     _layer.renderer = dailyEventNumberRender(_date, _event_type = "case", _scale = "loge");
-            // } else if (animation_type == "death" || animation_type == "death/case" ||
-            //     animation_type == "new_case" || animation_type == "new_death") {
-            //     _layer.renderer = dailyEventNumberRender(_date, _event_type = animation_type, _scale = "");
-            // } else {
-            //     let event_type = "case";
-            //     if (animation_type == "first_death") {
-            //         event_type = "death"
-            //     }
-
-            //     _layer.renderer = classRender(_date, _event_type = event_type, _if_log = if_log, _method = method, _level = level);
-            // }
-
-            //covid19_layer.renderer = dailyEventNumberRender(_date, _event_type="death/case", _scale="");
-            //covid19_layer.renderer = firstEventRender(_date, _event_type="Deaths");
         }
 
         function getDailyEventNumberArcade(_date, _event_type = "case", _scale = "") { // get accumulated Case Number
             return `
-  // be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
-  var d_thumb = Date(${_date.getFullYear()},${_date.getMonth()},${_date.getDate()});
-  var event_type = '${_event_type}';
-  event_type = Lower(event_type);
-  var scale = '${_scale}';
-  //Console(d_thumb);
-  //Console($feature);
+            // be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
+            var d_thumb = Date(${_date.getFullYear()},${_date.getMonth()},${_date.getDate()});
+            var event_type = '${_event_type}';
+            event_type = Lower(event_type);
+            var scale = '${_scale}';
+            //Console(d_thumb);
+            //Console($feature);
 
-  var population = DefaultValue($feature.population, 0);
+            var population = DefaultValue($feature.population, 0);
 
-  var cases_num=0;
-  var deaths_num=0;
-  var cases_num_yesterday=0;
-  var deaths_num_yesterday=0;
-  var final_return_value = 0;
-
-
-  if (IsEmpty($feature['cases_ts']))
-  {
-      cases_num = 0;
-      deaths_num = 0;
-      cases_num_yesterday=0;
-      deaths_num_yesterday=0;
-  }
-  else
-  {
-    var dt_start_array = Split($feature.dt_start, '-');
-    var dt_start = Date(Number(dt_start_array[0]), Number(dt_start_array[1])-1, Number(dt_start_array[2]));
-      if (d_thumb < dt_start)
-      {
-         cases_num = 0;
-         deaths_num = 0;
-         cases_num_yesterday=0;
-         deaths_num_yesterday=0;
-      }
-      else
-      {
-          //var cases_ts_array = Dictionary($feature["cases_ts"]).values;
-          //var deaths_ts_array = Dictionary($feature["deaths_ts"]).values;
-          var cases_ts_array = Split($feature["cases_ts"], ',');
-          var deaths_ts_array = Split($feature["deaths_ts"], ',');
+            var cases_num=0;
+            var deaths_num=0;
+            var cases_num_yesterday=0;
+            var deaths_num_yesterday=0;
+            var final_return_value = 0;
 
 
-          var days=DateDiff(d_thumb, dt_start, "days");
-          var index = Ceil(days);
-          //Console(days);
-          if(HasKey($feature, "dt_unit"))
-          {
-            if($feature["dt_unit"]=="week")
+            if (IsEmpty($feature['cases_ts']))
             {
-              index=Ceil(days/7);
+                cases_num = 0;
+                deaths_num = 0;
+                cases_num_yesterday=0;
+                deaths_num_yesterday=0;
             }
-          }
+            else
+            {
+                var dt_start_array = Split($feature.dt_start, '-');
+                var dt_start = Date(Number(dt_start_array[0]), Number(dt_start_array[1])-1, Number(dt_start_array[2]));
+                if (d_thumb < dt_start)
+                {
+                    cases_num = 0;
+                    deaths_num = 0;
+                    cases_num_yesterday=0;
+                    deaths_num_yesterday=0;
+                }
+                else
+                {
+                    //var cases_ts_array = Dictionary($feature["cases_ts"]).values;
+                    //var deaths_ts_array = Dictionary($feature["deaths_ts"]).values;
+                    var cases_ts_array = Split($feature["cases_ts"], ',');
+                    var deaths_ts_array = Split($feature["deaths_ts"], ',');
 
-          cases_num = Number(cases_ts_array[index]);
-          deaths_num = Number(deaths_ts_array[index]);
-          if(index>0)
-          {
-            cases_num_yesterday=Number(cases_ts_array[index-1]);
-            deaths_num_yesterday=Number(deaths_ts_array[index-1]);
-          }
-          else
-          {
-            cases_num_yesterday=cases_num;
-            deaths_num_yesterday=deaths_num;
-          }
 
-      } //if (d_thumb < dt_start)
-  } //if (fea_dt_start==-1)
+                    var days=DateDiff(d_thumb, dt_start, "days");
+                    var index = Ceil(days);
+                    //Console(days);
+                    if(HasKey($feature, "dt_unit"))
+                    {
+                        if($feature["dt_unit"]=="week")
+                        {
+                        index=Ceil(days/7);
+                        }
+                    }
 
-  if (event_type=="case")
-  {
-     final_return_value = cases_num;
-  }
-  else if (event_type=="death")
-  {
-     final_return_value = deaths_num;
-  }
-  else if (event_type=="death/case")
-  {
-     if (cases_num>0)
-     {
-        final_return_value = deaths_num/cases_num;
-     }
-     else
-     {
-        final_return_value=0;
-     }
-  }
-  else if(event_type=="case/population")
-  {
-     if (population >0 )
-     {
-     final_return_value = cases_num/population;
-     }
-     else
-     {
-     final_return_value=0;
-     }
-  }
-  else if(event_type=="death/population")
-  {
-     if(population >0 )
-     {
-     final_return_value = deaths_num/population;
-     }
-     else
-     {
-     final_return_value=0;
-     }
-  }
-  else if(event_type=="new_case")
-  {
-     final_return_value = cases_num - cases_num_yesterday;
-  }
-  else if(event_type=="new_death")
-  {
-     final_return_value = deaths_num - deaths_num_yesterday;
-  }
-  else
-  {
-     final_return_value = 0;
-  }
+                    cases_num = Number(cases_ts_array[index]);
+                    deaths_num = Number(deaths_ts_array[index]);
+                    if(index>0)
+                    {
+                        cases_num_yesterday=Number(cases_ts_array[index-1]);
+                        deaths_num_yesterday=Number(deaths_ts_array[index-1]);
+                    }
+                    else
+                    {
+                        cases_num_yesterday=cases_num;
+                        deaths_num_yesterday=deaths_num;
+                    }
 
-  // scaling
-  if (scale=="loge")
-    {
-    final_return_value = Log(final_return_value+1);
-    }
+                } //if (d_thumb < dt_start)
+            } //if (fea_dt_start==-1)
 
-    //Console(final_return_value);
-    return final_return_value;
+            if (event_type=="case")
+            {
+                final_return_value = cases_num;
+            }
+            else if (event_type=="death")
+            {
+                final_return_value = deaths_num;
+            }
+            else if (event_type=="death/case")
+            {
+                if (cases_num>0)
+                {
+                    final_return_value = deaths_num/cases_num;
+                }
+                else
+                {
+                    final_return_value=0;
+                }
+            }
+            else if(event_type=="case/population")
+            {
+                if (population >0 )
+                {
+                final_return_value = cases_num/population;
+                }
+                else
+                {
+                final_return_value=0;
+                }
+            }
+            else if(event_type=="death/population")
+            {
+                if(population >0 )
+                {
+                final_return_value = deaths_num/population;
+                }
+                else
+                {
+                final_return_value=0;
+                }
+            }
+            else if(event_type=="new_case")
+            {
+                final_return_value = cases_num - cases_num_yesterday;
+            }
+            else if(event_type=="new_death")
+            {
+                final_return_value = deaths_num - deaths_num_yesterday;
+            }
+            else
+            {
+                final_return_value = 0;
+            }
 
-  `;
+            // scaling
+            if (scale=="loge")
+                {
+                final_return_value = Log(final_return_value+1);
+                }
+
+                //Console(final_return_value);
+                return final_return_value;
+
+            `;
         }
 
         // Deprecated
         function getDailyEventNumberArcade2(_date) {
             // get accumulated Case Number if daily increase is stored
             return `
-// start date; Month 0-based in Arcade Date class
-// be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
-var end_dt = Date(${_date.getFullYear()},${_date.getMonth()},${_date.getDate()});
-//var end_dt = Date(2020,2,26);
-var start_dt = Date(2020,0,21);
-var days=DateDiff(end_dt, start_dt, "days");
-var sum=0;
-for(var i=0; i<=days; i++) {
-var d = DateAdd(start_dt, i, "days");
-var key=Text(d, "FY_MM_DD");
-// if attribute value is null, use 0
-var day_value = IIf(IsEmpty($feature[key]), 0, $feature[key]);
-sum += day_value;
-}
-return sum;
+            // start date; Month 0-based in Arcade Date class
+            // be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
+            var end_dt = Date(${_date.getFullYear()},${_date.getMonth()},${_date.getDate()});
+            //var end_dt = Date(2020,2,26);
+            var start_dt = Date(2020,0,21);
+            var days=DateDiff(end_dt, start_dt, "days");
+            var sum=0;
+            for(var i=0; i<=days; i++) {
+            var d = DateAdd(start_dt, i, "days");
+            var key=Text(d, "FY_MM_DD");
+            // if attribute value is null, use 0
+            var day_value = IIf(IsEmpty($feature[key]), 0, $feature[key]);
+            sum += day_value;
+            }
+            return sum;
 
-    `;
+                `;
         }
 
         function dailyEventNumberRender(_date, _event_type = "case", _scale = "") {
@@ -2334,39 +2176,39 @@ return sum;
         function firstEventArcade(_date, _event_type = "Case") {
             // Drew: return must be followed by the open ` on the same line, and a semi-colon ";" is required after the close `!!!
             return `
-  //be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
+            //be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
 
-  var dt_thumb = Date(${_date.getFullYear()}, ${_date.getMonth()}, ${_date.getDate()});
-  var event_type = Lower('${_event_type}');
-  var dt_first_event = null;
-  var dt_null_string = '2099-01-01-';
+            var dt_thumb = Date(${_date.getFullYear()}, ${_date.getMonth()}, ${_date.getDate()});
+            var event_type = Lower('${_event_type}');
+            var dt_first_event = null;
+            var dt_null_string = '2099-01-01-';
 
-   var field_name = "";
-   if (event_type=="case")
-   {field_name="dt_first_case";}
-   else
-   {field_name="dt_first_death";}
-  var dt_first_event = DefaultValue($feature[field_name], dt_null_string);
-  var dt_first_event_array = Split(dt_first_event, '-');
-  var dt_first_event = Date(Number(dt_first_event_array[0]),
-                          Number(dt_first_event_array[1])-1,
-                          Number(dt_first_event_array[2]));
+            var field_name = "";
+            if (event_type=="case")
+            {field_name="dt_first_case";}
+            else
+            {field_name="dt_first_death";}
+            var dt_first_event = DefaultValue($feature[field_name], dt_null_string);
+            var dt_first_event_array = Split(dt_first_event, '-');
+            var dt_first_event = Date(Number(dt_first_event_array[0]),
+                                    Number(dt_first_event_array[1])-1,
+                                    Number(dt_first_event_array[2]));
 
-  var days=DateDiff(dt_thumb, dt_first_event, "days");
-  return days;
+            var days=DateDiff(dt_thumb, dt_first_event, "days");
+            return days;
 
-  // // For UniqueValueRender or ClassBreakRender
-  // if (days==0)
-  // { return 0; }
-  // else
-  // {
-  //   if (days>0)
-  //       {return 1; }
-  //   else
-  //       {return -1;}
-  // }
+            // // For UniqueValueRender or ClassBreakRender
+            // if (days==0)
+            // { return 0; }
+            // else
+            // {
+            //   if (days>0)
+            //       {return 1; }
+            //   else
+            //       {return -1;}
+            // }
 
-  `;
+            `;
         }
 
         function firstEventRender2(_date, _event_type = "Case") {
@@ -2395,32 +2237,6 @@ return sum;
                 }
             };
 
-
-            // return {
-            //   type: "unique-value",
-            //     //defaultSymbol: { type: "simple-fill",color: "yellow" },
-            //     valueExpression: firstEventArcade(_date, _event_type=_event_type),
-            //       //valueExpression: "return 0",
-            // valueExpressionTitle:
-            //   "First Event: " + _event_type,
-            //     uniqueValueInfos: [
-            //               {
-            //           value: 1,
-            //           symbol: sym1,
-            //           label: _event_type+"(s) Reported",
-            //         },
-            //         {
-            //           value: 0,
-            //           symbol: sym0,
-            //           label: "First " + _event_type,
-            //         },
-            //           {
-            //           value: -1,
-            //           symbol: sym_1,
-            //           label: "No " + _event_type,
-            //         },
-            //       ],
-            // };
             return {
                 type: "class-breaks", // autocasts as new ClassBreaksRenderer()
 
@@ -2615,7 +2431,74 @@ return sum;
             };
         }
 
-    }; //main
+
+        /////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////Handle Table clicking//////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////
+       
+        /// illinois Table
+        document.querySelector("#illinois-table tbody").addEventListener("click", function(event) {
+            var tr = event.target;
+            while (tr !== this && !tr.matches("tr")) {
+                tr = tr.parentNode;
+            }
+            if (tr === this) {
+                console.log("No table cell found");
+            } else {
+                // console.log(tr.firstElementChild.dataset.x);
+                // console.log(tr.firstElementChild.dataset.y);
+                // console.log(tr.firstElementChild.dataset.uid);
+
+                lat = parseFloat(tr.firstElementChild.dataset.x);
+                long = parseFloat(tr.firstElementChild.dataset.y);
+                objID = parseFloat(tr.firstElementChild.dataset.uid);
+
+                view.goTo({
+                    center: [lat, long],
+                    zoom: 9,
+                })
+                .catch(function(error) {
+                if (error.name != "AbortError") {
+                    console.error(error);
+                }
+                });
+
+            }
+        });
+
+        /// US Table
+        document.querySelector("#county-table tbody").addEventListener("click", function(event) {
+            var tr = event.target;
+            while (tr !== this && !tr.matches("tr")) {
+                tr = tr.parentNode;
+            }
+            if (tr === this) {
+                console.log("No table cell found");
+            } else {
+                // console.log(tr.firstElementChild.dataset.x);
+                // console.log(tr.firstElementChild.dataset.y);
+                // console.log(tr.firstElementChild.dataset.uid);
+
+                lat = parseFloat(tr.firstElementChild.dataset.x);
+                long = parseFloat(tr.firstElementChild.dataset.y);
+                objID = parseFloat(tr.firstElementChild.dataset.uid);
+
+                view.goTo({
+                    center: [lat, long],
+                    zoom: 9,
+                })
+                .catch(function(error) {
+                if (error.name != "AbortError") {
+                    console.error(error);
+                }
+                });
+
+            }
+        });
+
+
+                
+    }; //End main
 
 
     function pre_main() {

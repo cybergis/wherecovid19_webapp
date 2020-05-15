@@ -75,6 +75,7 @@ body {
     color: #FFF;
     border-radius: 0;
     text-align: center;
+    font-size:18px;
 }
 
 .sidebar .nav-link.active {
@@ -88,6 +89,7 @@ body {
 }
 
 .sidebar .nav-link span {
+    display: block;
     color: #eabf00;
     font-weight: bold;
 }
@@ -210,11 +212,11 @@ body {
 }
 
 #county-table_wrapper {
-    height: calc(100vh - 288px);
+    height: calc(100vh - 307px);
 }
 
 #illinois-table_wrapper {
-    height: calc(100vh - 264px);
+    height: calc(100vh - 280px);
 }
 .table thead th,
 .table {
@@ -242,111 +244,17 @@ table td {
 }
 
 
-/*
- * Content
- */
-
-
-/* #svg-wrap {
-    background-color: #363636;
-}
-
-#svg-wrap .row {
-    overflow: hidden;
-}
-
-#applicationDiv {
-    position: relative;
-    width: 100%;
-    height: calc(100% - 86px);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-#viewDiv {
-    width: 100%;
-    height: calc(100% - 70px);
-    flex: 1 1 auto;
-    order: 1;
-}
-
-#sliderContainer {
-    flex: 0 0 70px;
-    order: 2;
-    display: flex;
-    flex-flow: row;
-    padding: 0 12px;
-}
-
-#sliderValue {
-    flex: 0 0 100px;
-    order: 1;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    text-align: center;
-    font-size: 300%;
-    padding: 0 20px;
-}
-
-#sliderInnerContainer {
-    flex: 1 1 auto;
-    order: 2;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-#slider {
-    width: 100%;
-} */
-
-
-/**
-* Play/Stop toggle button
-*/
-
-#playButton {
-    flex: 0 0 100px;
-    order: 3;
-    margin: 20px 0;
-}
-
-.toggle-button {
-    display: flex;
-}
-
-.toggle-button.toggled .toggle-button-icon {
-    color: #cc1b1b;
-}
-
-.toggle-button .toggle-button-icon {
-    color: #1bcc1b;
-}
-
-.toggle-button> :nth-child(2) {
-    display: none;
-}
-
-.toggle-button.toggled> :nth-child(1) {
-    display: none;
-}
-
-.toggle-button.toggled> :nth-child(2) {
-    display: block;
-}
-
 #sidebar_control,
 #sidebar_control:focus {
-    /* position: absolute; 
-    bottom: 50%; 
-    left: 0; */
+    position: absolute;
+    top: 50%;
     background-color: #cc1b1b;;
     border: none;
     z-index: 10;
     border-radius: 0;
-    padding: 0 10px;
+    height: 52px;
+    padding: 10px;
+    line-height: 2rem;
     flex: 0 0 30px;
     order: 2;
     margin: 0 auto;
@@ -366,4 +274,8 @@ table td {
 
 #sliderContainer {
     padding: 0 !important;
+}
+
+.esri-view-height-small .esri-expand .esri-widget--panel, .esri-view-height-small .esri-expand .esri-widget--panel-height-only, .esri-view-height-small .esri-ui-corner .esri-component.esri-widget--panel, .esri-view-height-small .esri-ui-corner .esri-component.esri-widget--panel-height-only {
+    max-height: 350px !important;
 }

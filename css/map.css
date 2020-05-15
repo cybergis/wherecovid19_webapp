@@ -99,7 +99,7 @@ body {
 #playButton {
     flex: 0 0 100px;
     order: 2;
-    margin: 10px 0;
+    margin: 10px;
 }
 
 .toggle-button {
@@ -296,4 +296,9 @@ body {
 ::-webkit-scrollbar-thumb {
     background: #9d9d9d;
     border-radius: 0px
+}
+
+
+.esri-view-height-medium .esri-expand .esri-widget--panel, .esri-view-height-medium .esri-expand .esri-widget--panel-height-only, .esri-view-height-medium .esri-ui-corner .esri-component.esri-widget--panel, .esri-view-height-medium .esri-ui-corner .esri-component.esri-widget--panel-height-only {
+    max-height: 335px !important;
 }
