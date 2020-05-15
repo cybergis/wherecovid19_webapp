@@ -1521,14 +1521,19 @@ require([
             }
 
             var LabelDates = [];
-            var LabelDate = new Date(2020, 0, 13);
+            if (graphic.getAttribute("dt_start") == "2020-03-17"){
+                var LabelDate = new Date(2020, 2, 9);
+            }
+            else {
+                var LabelDate = new Date(2020, 0, 13);
+            }
+            
             for (i = 0; i < ExtendedCasesArray.length; i++) {
                 LabelDate.setDate(LabelDate.getDate() + 1);
                 LabelDates.push(LabelDate.toLocaleDateString());
             }
 
             SlicedLabelDates = LabelDates.slice(firstCaseIndex);
-            ;
 
             const verticalLinePlugin = {
                 getLinePosition: function (chart, pointIndex) {
