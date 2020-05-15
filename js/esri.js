@@ -290,13 +290,13 @@ require([
         );
 
         var dph_illinois_county_dynamic = new GeoJSONLayer({
-                url: dph_illinois_county_dynamic_url,
-                outFields: ["*"],
-                title: "DPH County-level Cases",
-                renderer: default_polygon_renderer,
-                visible: false,
-            }
-        );
+            url: dph_illinois_county_dynamic_url,
+            outFields: ["*"],
+            title: "DPH County-level Cases",
+            renderer: default_polygon_renderer,
+            visible: true,
+        }
+    );
 
         var illinois_report = new GeoJSONLayer({
             url: illinois_report_url,
@@ -369,10 +369,10 @@ require([
         });
 
         // order matters! last layer is at top
-        var animation_layers = [nyt_layer_states, nyt_layer_counties, illinois_report,
+        var animation_layers = [nyt_layer_states, nyt_layer_counties,
             dph_illinois_county_dynamic];
-        var static_layers = [illinois_hospitals, illinois_testing, illinois_counties, 
-            illinois_zipcode, dph_illinois_zipcode, dph_illinois_county_static];
+        var static_layers = [illinois_hospitals, illinois_testing,
+            dph_illinois_zipcode, dph_illinois_county_static];
 
         var us_group = new GroupLayer({
             title: "US",
@@ -386,8 +386,8 @@ require([
             title: "Illinois",
             visible: true,
             visibilityMode: "independent",
-            layers: [illinois_hospitals, illinois_testing, illinois_counties, illinois_zipcode,
-                illinois_access_layer, chicago_access_layer, illinois_report, dph_illinois_zipcode, 
+            layers: [illinois_hospitals, illinois_testing,
+                illinois_access_layer, chicago_access_layer, dph_illinois_zipcode,
                 dph_illinois_county_static, dph_illinois_county_dynamic],
             opacity: 0.75
         });
