@@ -84,11 +84,16 @@ body {
 }
 
 .sidebar .nav-link {
-    color: #b3b3b3;
+    color: #666666;
     background-color: #303030;
 }
 
 .sidebar .nav-link span {
+    display: block;
+    color: #666666;
+    font-weight: bold;
+}
+.sidebar .nav-link.active span {
     display: block;
     color: #eabf00;
     font-weight: bold;
