@@ -275,7 +275,7 @@ require([
         var dph_illinois_zipcode = new GeoJSONLayer({
                 url: dph_illinois_zipcode_url,
                 outFields: ["*"],
-                title: "DPH Zipcode-level Cases",
+                title: "iDPH Zipcode-level Cases",
                 renderer: dphStaticRender("zipcode_case"),
                 visible: false,
             }
@@ -283,7 +283,7 @@ require([
         var dph_illinois_county_static = new GeoJSONLayer({
                 url: dph_illinois_county_static_url,
                 outFields: ["*"],
-                title: "DPH County-level Test Data",
+                title: "iDPH County-level Test Data",
                 renderer: dphStaticRender("tested"),
                 visible: false,
             }
@@ -292,7 +292,7 @@ require([
         var dph_illinois_county_dynamic = new GeoJSONLayer({
             url: dph_illinois_county_dynamic_url,
             outFields: ["*"],
-            title: "DPH County-level Cases",
+            title: "iDPH County-level Cases",
             renderer: default_polygon_renderer,
             visible: true,
         }
@@ -582,16 +582,23 @@ require([
                 outStatisticFieldName: "Total_Tested",
                 statisticType: "sum"
             }
-            illinois_query.outStatistics = [illiniConfrimed, illiniTested];
+            const illiniDeath = {
+                onStatisticField: "deaths",
+                outStatisticFieldName: "Total_Death",
+                statisticType: "sum"
+            }
+            illinois_query.outStatistics = [illiniConfrimed, illiniTested, illiniDeath];
             dph_illinois_county_static.queryFeatures(illinois_query)
                 .then(function (response){
                     let stats = response.features[0].attributes;
                     let tab = document.getElementById('illinois-tab');
                     tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(stats.Total_Cases)
                     let case_div = document.getElementById('illinois_total_case_number')
-                    console.log(case_div.querySelector('.case-number').innerHTML)
+                    // console.log(case_div.querySelector('.case-number').innerHTML)
                     let test_div = document.getElementById('illinois_total_test_number')
+                    let death_div = document.getElementById('illinois_total_death_number')
                     case_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Cases)
+                    death_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Death)
                     test_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Tested)
                 }
             );
@@ -611,6 +618,7 @@ require([
                             uid:value.attributes.OBJECTID,
                             county:value.attributes.County,
                             case:value.attributes.confirmed_cases,
+                            death:value.attributes.deaths,
                             tested:value.attributes.total_tested
                         }
                     });
@@ -622,7 +630,9 @@ require([
                         instance.querySelector('th').setAttribute('data-uid',index);
                         instance.querySelector('.confirmed').innerHTML = value.case;
                         instance.querySelector('.tested').innerHTML = value.tested;
+                        instance.querySelector('.death').innerHTML = value.death;
                         instance.querySelector('.confirmed').setAttribute('data-order',value.case);
+                        instance.querySelector('.death').setAttribute('data-order',value.death);
                         instance.querySelector('.tested').setAttribute('data-order',value.tested);
                         illinois_table.appendChild(instance);
                     })
@@ -691,16 +701,18 @@ require([
                             centroid_y:value.geometry.centroid.y,
                             uid:value.attributes.OBJECTID,
                             county:value.attributes.NAME,
+                            state:value.attributes.state_name,
                             case:value.attributes.today_case,
                             new_case:value.attributes.today_new_case,
                             death:value.attributes.today_death,
                             new_death:value.attributes.today_new_death,
                         }
                     });
-                    result = result_list.slice(0, 100);
-                    result.forEach(function(value){
+                    //result = result_list.slice(0, 100);
+                    result_list.forEach(function(value){
                         let instance = template.content.cloneNode(true);
-                        instance.querySelector('th').innerHTML = value.county;
+                
+                        instance.querySelector('th').innerHTML = value.county + ", " + value.state;
                         instance.querySelector('th').setAttribute('data-x',value.centroid_x);
                         instance.querySelector('th').setAttribute('data-y',value.centroid_y);
                         instance.querySelector('th').setAttribute('data-uid',value.uid);
@@ -967,6 +979,11 @@ require([
                             fieldName:"confirmed_cases",
                             visible: true,
                             label: "Confirmed Cases"
+                        },
+                        {
+                            fieldName:"deaths",
+                            visible: true,
+                            label: "Deaths"
                         },
                         {
                             fieldName:"total_tested",
