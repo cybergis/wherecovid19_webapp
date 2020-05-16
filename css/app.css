@@ -27,6 +27,9 @@ body {
     background-color: #303030;
     border-bottom: #404040 solid 1px;
 }
+.navbar h1 a:hover {
+text-decoration: none;
+}
 
 .header-title {
     font-size: 20px;
