@@ -17,9 +17,9 @@ make_copy_data(){
   cp ./illinois/idph_CountyDemos.json ./illinois/idph_CountyDemos-tmp.json
   cp ./illinois/idph_COVIDZip.json ./illinois/idph_COVIDZip-tmp.json
   cp ./illinois/idph_COVIDHistoricalTestResults.json ./illinois/idph_COVIDHistoricalTestResults-tmp.json
-  cp ./illinois/dph_county_data.geojson ./illinois/dph_county_data-tmp.geojson
- 	cp ./illinois/dph_county_static_data.geojson ./illinois/dph_county_static_data-tmp.geojson
-	cp ./illinois/dph_zipcode_data.geojson ./illinois/ph_zipcode_data-tmp.geojson
+  cp ../illinois/dph_county_data.geojson ./illinois/dph_county_data-tmp.geojson
+ 	cp ../illinois/dph_county_static_data.geojson ./illinois/dph_county_static_data-tmp.geojson
+	cp ../illinois/dph_zipcode_data.geojson ./illinois/ph_zipcode_data-tmp.geojson
 }
 setup_env(){
 	cd /var/covid19_project/wherecovid19_webapp/preprocessing/cronjob
@@ -124,16 +124,16 @@ restore_data(){
   cp classes-tmp.json classes.json
 	cp nyt_states_data-tmp.geojson nyt_states_data.geojson
 	cp nyt_counties_data-tmp.geojson nyt_counties_data.geojson
-  cp illinois/nyt_illinois_counties_data-tmp.geojson ../illinois/nyt_illinois_counties_data.geojson
+  cp ./illinois/nyt_illinois_counties_data-tmp.geojson ./illinois/nyt_illinois_counties_data.geojson
 	cp us-counties-tmp.csv us-counties.csv
 	cp us-states-tmp.csv us-states.csv
 
-	cp ./illinois/idph_CountyDemos-tmp.json ../illinois/idph_CountyDemos.json
-  cp ./illinois/idph_COVIDZip-tmp.json ../illinois/idph_COVIDZip.json
-  cp ./illinois/idph_COVIDHistoricalTestResults-tmp.json ../illinois/idph_COVIDHistoricalTestResults.json
-  cp ./illinois/dph_county_data-tmp.geojson ../illinois/dph_county_data.geojson
-	cp ./illinois/dph_county_static_data-tmp.geojson	../illinois/dph_county_static_data.geojson
-	cp ./illinois/dph_zipcode_data-tmp.geojson	../illinois/dph_zipcode_data.geojson
+	cp ./illinois/idph_CountyDemos-tmp.json ./illinois/idph_CountyDemos.json
+  cp ./illinois/idph_COVIDZip-tmp.json ./illinois/idph_COVIDZip.json
+  cp ./illinois/idph_COVIDHistoricalTestResults-tmp.json ./illinois/idph_COVIDHistoricalTestResults.json
+  cp ./illinois/dph_county_data-tmp.geojson ./illinois/dph_county_data.geojson
+	cp ./illinois/dph_county_static_data-tmp.geojson	./illinois/dph_county_static_data.geojson
+	cp ./illinois/dph_zipcode_data-tmp.geojson	./illinois/dph_zipcode_data.geojson
 	destroy_env
 }
 destroy_env(){
