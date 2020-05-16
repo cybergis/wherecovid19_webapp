@@ -14,12 +14,12 @@ make_copy_data(){
 	mkdir -p illinois
 	cp ../illinois/nyt_illinois_counties_data.geojson ./illinois/nyt_illinois_counties_data-tmp.geojson
 
-  cp ../illinois/idph_CountyDemos.json ./illinois/idph_CountyDemos-tmp.json
-  cp ../illinois/idph_COVIDZip.json ./illinois/idph_COVIDZip-tmp.json
-  cp ../illinois/idph_COVIDHistoricalTestResults.json ./illinois/idph_COVIDHistoricalTestResults-tmp.json
-  cp ../illinois/dph_county_data.geojson ./illinois/dph_county_data-tmp.geojson
- 	cp ../illinois/dph_county_static_data.geojson ./illinois/dph_county_static_data-tmp.geojson
-	cp ../illinois/dph_zipcode_data.geojson ./illinois/ph_zipcode_data-tmp.geojson
+  cp ./illinois/idph_CountyDemos.json ./illinois/idph_CountyDemos-tmp.json
+  cp ./illinois/idph_COVIDZip.json ./illinois/idph_COVIDZip-tmp.json
+  cp ./illinois/idph_COVIDHistoricalTestResults.json ./illinois/idph_COVIDHistoricalTestResults-tmp.json
+  cp ./illinois/dph_county_data.geojson ./illinois/dph_county_data-tmp.geojson
+ 	cp ./illinois/dph_county_static_data.geojson ./illinois/dph_county_static_data-tmp.geojson
+	cp ./illinois/dph_zipcode_data.geojson ./illinois/ph_zipcode_data-tmp.geojson
 }
 setup_env(){
 	cd /var/covid19_project/wherecovid19_webapp/preprocessing/cronjob
