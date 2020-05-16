@@ -5,9 +5,9 @@ make_copy_data(){
 	#Record previous copy
 	cp us-states.csv us-states-tmp.csv
 	cp us-counties.csv us-counties-tmp.csv
-	cp nyt_counties_data.geojson nyt_counties_data-tmp.geojson
-	cp nyt_states_data.geojson nyt_states_data-tmp.geojson
-	cp classes.json classes-tmp.json 
+	cp ../nyt_counties_data.geojson nyt_counties_data-tmp.geojson
+	cp ../nyt_states_data.geojson nyt_states_data-tmp.geojson
+	cp ../classes.json classes-tmp.json
 	#Copy needed datasets from parent directory
 	cp ../counties_update_new.geojson .
 	cp ../states_update.geojson .
@@ -160,9 +160,9 @@ then
 	convert_notebooks
 	run_state
 	run_counties
-        run_extract_zipcode
+  run_extract_zipcode
 	run_defineintervels
-        copy_back_results_webfolder
+  copy_back_results_webfolder
 fi
 #copy_back_results_webfolder
 destroy_env
