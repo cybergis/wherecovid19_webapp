@@ -1,14 +1,11 @@
-$(window).on('load', function() {
+$( window ).on('load', function() {
+    // initialize our loader overlay
+    loader.initialize();
     console.log("TESTing");
+    window.setTimeout(hide_loader, 10000);
+});
+
+function hide_loader() {
     $('.loading-overlay, .loading-overlay-image-container').hide();
-});
-
-$(document).ready(function() {
-
-    $('.sidebar-left i').click(function() {
-        console.log("click");
-        $(this).parent().addClass("d-none").removeClass("d-flex");
-    });
-
-
-});
+    console.log("loaded");
+}
