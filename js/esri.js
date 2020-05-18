@@ -571,35 +571,55 @@ require([
 
         setListview();
         function setListview() {
+            // const illinois_query = dph_illinois_county_static.createQuery();
+            // const illiniConfrimed = {
+            //     onStatisticField: "confirmed_cases",
+            //     outStatisticFieldName: "Total_Cases",
+            //     statisticType: "sum"
+            // }
+            // const illiniTested = {
+            //     onStatisticField: "total_tested",
+            //     outStatisticFieldName: "Total_Tested",
+            //     statisticType: "sum"
+            // }
+            // const illiniDeath = {
+            //     onStatisticField: "deaths",
+            //     outStatisticFieldName: "Total_Death",
+            //     statisticType: "sum"
+            // }
+            // illinois_query.outStatistics = [illiniConfrimed, illiniTested, illiniDeath];
+            // dph_illinois_county_static.queryFeatures(illinois_query)
+            //     .then(function (response){
+            //         let stats = response.features[0].attributes;
+            //         let tab = document.getElementById('illinois-tab');
+            //         tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(stats.Total_Cases)
+            //         let case_div = document.getElementById('illinois_total_case_number')
+            //         // console.log(case_div.querySelector('.case-number').innerHTML)
+            //         let test_div = document.getElementById('illinois_total_test_number')
+            //         let death_div = document.getElementById('illinois_total_death_number')
+            //         case_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Cases)
+            //         death_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Death)
+            //         test_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Tested)
+            //     }
+            // );
+
             const illinois_query = dph_illinois_county_static.createQuery();
-            const illiniConfrimed = {
-                onStatisticField: "confirmed_cases",
-                outStatisticFieldName: "Total_Cases",
-                statisticType: "sum"
-            }
-            const illiniTested = {
-                onStatisticField: "total_tested",
-                outStatisticFieldName: "Total_Tested",
-                statisticType: "sum"
-            }
-            const illiniDeath = {
-                onStatisticField: "deaths",
-                outStatisticFieldName: "Total_Death",
-                statisticType: "sum"
-            }
-            illinois_query.outStatistics = [illiniConfrimed, illiniTested, illiniDeath];
+
+            illinois_query.where = "NAME = 'Illinois'";
+            illinois_query.outFields = ["confirmed_cases", "total_tested", "deaths"];
+
             dph_illinois_county_static.queryFeatures(illinois_query)
                 .then(function (response){
                     let stats = response.features[0].attributes;
                     let tab = document.getElementById('illinois-tab');
-                    tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(stats.Total_Cases)
+                    tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(stats.confirmed_cases)
                     let case_div = document.getElementById('illinois_total_case_number')
                     // console.log(case_div.querySelector('.case-number').innerHTML)
                     let test_div = document.getElementById('illinois_total_test_number')
                     let death_div = document.getElementById('illinois_total_death_number')
-                    case_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Cases)
-                    death_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Death)
-                    test_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Tested)
+                    case_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.confirmed_cases)
+                    death_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.deaths)
+                    test_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.total_tested)
                 }
             );
             
@@ -623,19 +643,22 @@ require([
                         }
                     });
                     result_list.forEach(function(value,index){
-                        let instance = template.content.cloneNode(true);
-                        instance.querySelector('th').innerHTML = value.county;
-                        instance.querySelector('th').setAttribute('data-x',value.centroid_x);
-                        instance.querySelector('th').setAttribute('data-y',value.centroid_y);
-                        instance.querySelector('th').setAttribute('data-uid',index);
-                        instance.querySelector('th').setAttribute('data-county',value.county);
-                        instance.querySelector('.confirmed').innerHTML = value.case;
-                        instance.querySelector('.tested').innerHTML = value.tested;
-                        instance.querySelector('.death').innerHTML = value.death;
-                        instance.querySelector('.confirmed').setAttribute('data-order',value.case);
-                        instance.querySelector('.death').setAttribute('data-order',value.death);
-                        instance.querySelector('.tested').setAttribute('data-order',value.tested);
-                        illinois_table.appendChild(instance);
+                        if (value.county !== "Illinois")
+                        {
+                            let instance = template.content.cloneNode(true);
+                            instance.querySelector('th').innerHTML = value.county;
+                            instance.querySelector('th').setAttribute('data-x',value.centroid_x);
+                            instance.querySelector('th').setAttribute('data-y',value.centroid_y);
+                            instance.querySelector('th').setAttribute('data-uid',index);
+                            instance.querySelector('th').setAttribute('data-county',value.county);
+                            instance.querySelector('.confirmed').innerHTML = value.case;
+                            instance.querySelector('.tested').innerHTML = value.tested;
+                            instance.querySelector('.death').innerHTML = value.death;
+                            instance.querySelector('.confirmed').setAttribute('data-order',value.case);
+                            instance.querySelector('.death').setAttribute('data-order',value.death);
+                            instance.querySelector('.tested').setAttribute('data-order',value.tested);
+                            illinois_table.appendChild(instance);
+                        }
                     })
 
                     var illini_table = $('#illinois-table').DataTable({
