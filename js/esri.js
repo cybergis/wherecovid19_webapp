@@ -1460,6 +1460,14 @@ require([
             var datasetList = [];
 
             var CasesArray = (graphic.getAttribute("cases_ts")).split(",");
+            
+            // Fix negative numbers of increased cases 
+
+            for (k = CasesArray.length-1; k > 0 ; k--) {
+                if (parseInt(CasesArray[k-1])>parseInt(CasesArray[k])) {
+                    CasesArray[k-1] = CasesArray[k];
+                }
+            }
 
             var IncreasedCases = [];
             for (i = 1; i < CasesArray.length; i++) {
@@ -1480,6 +1488,14 @@ require([
 
             if (graphic.getAttribute("deaths_ts") != undefined) {
                 var DeathsArray = (graphic.getAttribute("deaths_ts")).split(",");
+
+                // Fix negative numbers of increased cases 
+
+                for (k = DeathsArray.length-1; k > 0 ; k--) {
+                    if (parseInt(DeathsArray[k-1])>parseInt(DeathsArray[k])) {
+                        DeathsArray[k-1] = DeathsArray[k];
+                    }
+                }
                 
                 var IncreasedDeaths = [];
                 for (i = 1; i < DeathsArray.length; i++) {
