@@ -2594,6 +2594,8 @@ require([
 
         /// illinois Table
         document.querySelector("#illinois-table tbody").addEventListener("click", function(event) {
+            dph_illinois_county_dynamic.visible = true;
+
             var tr = event.target;
             while (tr !== this && !tr.matches("tr")) {
                 tr = tr.parentNode;
@@ -2612,36 +2614,39 @@ require([
 
                 console.log(countyName);
 
-                view.goTo({
-                    center: [lat, long],
-                    zoom: 8,
-                })
-                .catch(function(error) {
-                if (error.name != "AbortError") {
-                    console.error(error);
-                }
-                });
-
-                let topVisibleLayer = getTopVisibleLayer(map.layers,);
+                // let topVisibleLayer = getTopVisibleLayer(map.layers,);
+                let topVisibleLayer = dph_illinois_county_dynamic;
                 view.whenLayerView(topVisibleLayer).then(function(layerView){
                 var query = topVisibleLayer.createQuery();
                 query.where = "NAME = "+"'"+countyName+"'";
                 topVisibleLayer.queryFeatures(query).then(function(result){
-                console.log(query);
-                console.log(result);
-                console.log(highlight);
+                // console.log(query);
+                // console.log(result);
+                // console.log(highlight);
                 if (highlight) {
                 highlight.remove();
                 }
                 highlight = layerView.highlight(result.features);
                 })
+                }).then(function() {
+                    view.goTo({
+                        center: [lat, long],
+                        zoom: 8,
+                    })
+                    .catch(function(error) {
+                    if (error.name != "AbortError") {
+                        console.error(error);
+                    }
+                    });
                 });
-
+            
             }
         });
 
         /// US Table
         document.querySelector("#county-table tbody").addEventListener("click", function(event) {
+            nyt_layer_counties.visible = true;
+
             var tr = event.target;
             while (tr !== this && !tr.matches("tr")) {
                 tr = tr.parentNode;
@@ -2660,35 +2665,43 @@ require([
 
                 console.log(countyName);
 
-                view.goTo({
-                    center: [lat, long],
-                    zoom: 8,
-                })
-                .catch(function(error) {
-                if (error.name != "AbortError") {
-                    console.error(error);
-                }
-                });
-
-                let topVisibleLayer = getTopVisibleLayer(map.layers,);
+                // let topVisibleLayer = getTopVisibleLayer(map.layers,);
+                let topVisibleLayer = nyt_layer_counties;
                 view.whenLayerView(topVisibleLayer).then(function(layerView){
                 var query = topVisibleLayer.createQuery();
                 query.where = "NAME = "+"'"+countyName+"'";
                 topVisibleLayer.queryFeatures(query).then(function(result){
-                console.log(query);
-                console.log(result);
-                console.log(highlight);
+                // console.log(query);
+                // console.log(result);
+                // console.log(highlight);
                 if (highlight) {
                 highlight.remove();
                 }
                 highlight = layerView.highlight(result.features);
                 })
+                }).then(function() {
+                    view.goTo({
+                        center: [lat, long],
+                        zoom: 8,
+                    })
+                    .catch(function(error) {
+                    if (error.name != "AbortError") {
+                        console.error(error);
+                    }
+                    });
                 });
 
             }
         });
 
+        //Set default layers after clicking side panels
+        document.getElementById("illinois-tab").addEventListener("click", function(event) {
+            dph_illinois_county_dynamic.visible = true;
+        });
 
+        document.getElementById("county-tab").addEventListener("click", function(event) {
+            nyt_layer_counties.visible = true;
+        });
                 
     }; //End main
 
