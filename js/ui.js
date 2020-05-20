@@ -1,7 +1,7 @@
 $( window ).on('load', function() {
     // initialize our loader overlay
     loader.initialize();
-    window.setTimeout(hide_loader, 10000);
+    window.setTimeout(hide_loader, 6000);
 });
 
 function hide_loader() {
