@@ -2617,7 +2617,7 @@ require([
 
         /// illinois Table
         document.querySelector("#illinois-table tbody").addEventListener("click", function (event) {
-            composite_risk_layer.visible = true;
+            dph_illinois_county_dynamic.visible = true;
 
             var tr = event.target;
             while (tr !== this && !tr.matches("tr")) {
@@ -2638,7 +2638,7 @@ require([
                 console.log(countyName);
 
                 // let topVisibleLayer = getTopVisibleLayer(map.layers,);
-                let topVisibleLayer = composite_risk_layer;
+                let topVisibleLayer = dph_illinois_county_dynamic;
                 view.whenLayerView(topVisibleLayer).then(function (layerView) {
                     var query = topVisibleLayer.createQuery();
                     query.where = "NAME = " + "'" + countyName + "'";
@@ -2718,11 +2718,11 @@ require([
 
         //Set default layers after clicking side panels
         document.getElementById("illinois-tab").addEventListener("click", function (event) {
-            dph_illinois_county_dynamic.visible = true;
+            composite_risk_layer.visible = true;
 
             // Bring hidden panel to display
             // To override the side effect in Layer Change event
-            view.whenLayerView(dph_illinois_county_dynamic).then(function () {
+            view.whenLayerView(composite_risk_layer).then(function () {
 
                     if ($(".sidebar").hasClass("closed")) {
                         $('#sidebar_control').removeClass("closed").addClass("open");
