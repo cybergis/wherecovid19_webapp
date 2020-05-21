@@ -293,7 +293,7 @@ require([
                 outFields: ["*"],
                 title: "IDPH County-level Cases",
                 renderer: default_polygon_renderer,
-                visible: true,
+                visible: false,
             }
         );
 
@@ -383,11 +383,18 @@ require([
             listMode: "hide-children",
         });
 
+        var composite_risk_layer = new MapImageLayer({
+            url: "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Composite_Risk/MapServer",
+            title: "Composite Risk",
+            visible: true,
+            listMode: "hide-children",
+        });
+
         // order matters! last layer is at top
         var animation_layers = [nyt_layer_states, nyt_layer_counties,
             dph_illinois_county_dynamic];
         var static_layers = [illinois_hospitals, illinois_testing,
-            dph_illinois_zipcode, dph_illinois_county_static, hiv_layer, svi_layer];
+            dph_illinois_zipcode, dph_illinois_county_static, hiv_layer, svi_layer, composite_risk_layer];
 
         var us_group = new GroupLayer({
             title: "US",
@@ -403,7 +410,7 @@ require([
             visibilityMode: "independent",
             layers: [illinois_hospitals, svi_layer, hiv_layer,
                 illinois_access_layer, chicago_access_layer, dph_illinois_zipcode,
-                dph_illinois_county_static, dph_illinois_county_dynamic],
+                dph_illinois_county_static, dph_illinois_county_dynamic, composite_risk_layer],
             opacity: 0.75
         });
 
