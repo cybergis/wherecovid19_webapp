@@ -385,7 +385,7 @@ require([
 
         var composite_risk_layer = new MapImageLayer({
             url: "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Composite_Risk/MapServer",
-            title: "Composite Risk",
+            title: "Vulnerability",
             visible: true,
             listMode: "hide-children",
         });
