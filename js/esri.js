@@ -293,7 +293,7 @@ require([
                 outFields: ["*"],
                 title: "IDPH County-level Cases",
                 renderer: default_polygon_renderer,
-                visible: true,
+                visible: false,
             }
         );
 
@@ -352,7 +352,8 @@ require([
         // references an ArcGIS Online item pointing to a Map Service Layer
         var illinois_access_layer = new MapImageLayer({
             url:
-                "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/acc_il/MapServer",
+                //"https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/acc_il/MapServer",
+                "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Accessibility_Measure/MapServer",
             title: "Accessibility Measure (State-wide)",
             visible: false,
             listMode: "hide-children",
@@ -361,9 +362,31 @@ require([
 
         var chicago_access_layer = new MapImageLayer({
             url:
-                "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/acc_chicago/MapServer",
+                //"https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/acc_chicago/MapServer",
+                "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Accessibility_Measure_Chicago/MapServer",
             title: "Accessibility Measure (Chicago)",
             visible: false,
+            listMode: "hide-children",
+        });
+
+        var hiv_layer = new MapImageLayer({
+            url: "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/HIV_Map/MapServer",
+            title: "HIV Patients",
+            visible: false,
+            listMode: "hide-children",
+        });
+
+        var svi_layer = new MapImageLayer({
+            url: "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/SVI_2018/MapServer",
+            title: "CDC Social Vulnerability Index",
+            visible: false,
+            listMode: "hide-children",
+        });
+
+        var composite_risk_layer = new MapImageLayer({
+            url: "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Composite_Risk/MapServer",
+            title: "Vulnerability",
+            visible: true,
             listMode: "hide-children",
         });
 
@@ -371,7 +394,7 @@ require([
         var animation_layers = [nyt_layer_states, nyt_layer_counties,
             dph_illinois_county_dynamic];
         var static_layers = [illinois_hospitals, illinois_testing,
-            dph_illinois_zipcode, dph_illinois_county_static];
+            dph_illinois_zipcode, dph_illinois_county_static, hiv_layer, svi_layer, composite_risk_layer];
 
         var us_group = new GroupLayer({
             title: "US",
@@ -385,9 +408,9 @@ require([
             title: "Illinois",
             visible: true,
             visibilityMode: "independent",
-            layers: [illinois_hospitals,
+            layers: [illinois_hospitals, svi_layer, hiv_layer,
                 illinois_access_layer, chicago_access_layer, dph_illinois_zipcode,
-                dph_illinois_county_static, dph_illinois_county_dynamic],
+                dph_illinois_county_static, dph_illinois_county_dynamic, composite_risk_layer],
             opacity: 0.75
         });
 
@@ -2695,11 +2718,11 @@ require([
 
         //Set default layers after clicking side panels
         document.getElementById("illinois-tab").addEventListener("click", function (event) {
-            dph_illinois_county_dynamic.visible = true;
+            composite_risk_layer.visible = true;
 
             // Bring hidden panel to display
             // To override the side effect in Layer Change event
-            view.whenLayerView(dph_illinois_county_dynamic).then(function () {
+            view.whenLayerView(composite_risk_layer).then(function () {
 
                     if ($(".sidebar").hasClass("closed")) {
                         $('#sidebar_control').removeClass("closed").addClass("open");
