@@ -2638,7 +2638,7 @@ require([
                 console.log(countyName);
 
                 // let topVisibleLayer = getTopVisibleLayer(map.layers,);
-                let topVisibleLayer = dph_illinois_county_dynamic;
+                let topVisibleLayer = composite_risk_layer;
                 view.whenLayerView(topVisibleLayer).then(function (layerView) {
                     var query = topVisibleLayer.createQuery();
                     query.where = "NAME = " + "'" + countyName + "'";
