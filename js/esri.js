@@ -216,6 +216,7 @@ require([
         var dph_illinois_zipcode_url = "preprocessing/illinois/dph_zipcode_data.geojson";
         var dph_illinois_county_dynamic_url = "preprocessing/illinois/dph_county_data.geojson";
         var dph_illinois_county_static_url = "preprocessing/illinois/dph_county_static_data.geojson";
+        var chicago_acc_animation_url = "preprocessing/illinois/Chicago_ACC_dissolve_animation.geojson";
 
         if (production_mode) {
             nyt_layer_states_url = "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/preprocessing/nyt_states_data.geojson";
@@ -236,6 +237,14 @@ require([
                 }
             }
         };
+
+        var chicago_acc_animation_layer = new GeoJSONLayer({
+            url: chicago_acc_animation_url,
+            outFields: ["*"],
+            title: "Chicago Accessibility Animation",
+            visible: false,
+            // renderer: default_polygon_renderer,
+        })
 
         //nyt states
         var nyt_layer_states = new GeoJSONLayer({
@@ -392,7 +401,7 @@ require([
 
         // order matters! last layer is at top
         var animation_layers = [nyt_layer_states, nyt_layer_counties,
-            dph_illinois_county_dynamic];
+            dph_illinois_county_dynamic, chicago_acc_animation_layer];
         var static_layers = [illinois_hospitals, illinois_testing,
             dph_illinois_zipcode, dph_illinois_county_static, hiv_layer, svi_layer, composite_risk_layer];
 
@@ -410,7 +419,7 @@ require([
             visibilityMode: "independent",
             layers: [illinois_hospitals, svi_layer, hiv_layer,
                 illinois_access_layer, chicago_access_layer, dph_illinois_zipcode,
-                dph_illinois_county_static, dph_illinois_county_dynamic, composite_risk_layer],
+                dph_illinois_county_static, dph_illinois_county_dynamic, composite_risk_layer, chicago_acc_animation_layer],
             opacity: 0.75
         });
 
@@ -1477,6 +1486,7 @@ require([
         var hitGraphic = null;
 
         function updateChart(graphic) {
+            return;
 
             Chart.defaults.global.defaultFontSize = 15;
             Chart.defaults.global.defaultFontColor = '#777';
@@ -1806,7 +1816,12 @@ require([
             if (_layer == null) {
                 return;
             }
-            _layer.renderer = classRender(_date, _event_type = event_type, _level = level);
+            if (_layer == chicago_acc_animation_layer) {
+                _layer.renderer = classRender_time_enabled(_date);
+            } else {
+                _layer.renderer = classRender(_date, _event_type = event_type, _level = level);
+            }
+            
 
         }
 
@@ -2150,6 +2165,53 @@ require([
 
         }
 
+        function classRender_time_enabled(_date) {
+            const colors = ["#fef0d9", "#fdd49e", "#fdbb84", "#fc8d59", "#e34a33", "#b30000"];
+            const opacityValues = [0,1,1,1,1,1];
+
+            var stop_array_opacity =[];
+            var stop_array_color =[];
+
+            for (let i = -1; i < 5; i++) {
+                stop_array_opacity.push({
+                    value: i,
+                    opacity: opacityValues[i+1],
+                    label: i.toString(),
+                })
+            }
+
+            for (let i = -1; i < 5; i++) {
+                stop_array_color.push({
+                    value: i,
+                    color: colors[i+1],
+                    label: i.toString(),
+                })
+            }
+
+            return {
+                type: "simple",
+                symbol: {
+                    type: "simple-fill",
+                    color: "#0000FF",
+                    outline: {  // autocasts as new SimpleLineSymbol()
+                        color: [128, 128, 128, 50],
+                    }
+                },
+                visualVariables: [
+                    {
+                        type: "opacity",
+                        valueExpression: classArcade_time_enabled(_date),
+                        stops: stop_array_opacity.reverse(),
+                    },
+                    {
+                        type: "color",
+                        valueExpression: classArcade_time_enabled(_date),
+                        stops: stop_array_color.reverse(),
+                    }
+                ]
+            };
+        }
+
         function classArcade(_date, _class, _event_type = "case", _if_log = "nolog") {
 
             // Drew: return must be followed by the open ` on the same line, and a semi-colon ";" is required after the close `!!!
@@ -2208,6 +2270,27 @@ require([
                         break;
                     }
                 }
+                return class;
+            `;
+        }
+
+
+        function classArcade_time_enabled(_date) {
+
+            // Drew: return must be followed by the open ` on the same line, and a semi-colon ";" is required after the close `!!!
+            return `
+                //be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
+
+                var dt_thumb_obj = Date(${_date.getFullYear()}, ${_date.getMonth()}, ${_date.getDate()});
+                var dt_thumb = Text(dt_thumb_obj, "Y-MM-DD");
+                var dt_feature = $feature.date;
+                var class = -1;
+                Console(dt_thumb);
+                Console(dt_feature);
+                Console("...");
+                if(dt_feature == dt_thumb){
+                    class = Number($feature.category);
+                } 
                 return class;
             `;
         }
