@@ -352,7 +352,8 @@ require([
         // references an ArcGIS Online item pointing to a Map Service Layer
         var illinois_access_layer = new MapImageLayer({
             url:
-                "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/acc_il/MapServer",
+                //"https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/acc_il/MapServer",
+                "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Accessibility_Measure/MapServer",
             title: "Accessibility Measure (State-wide)",
             visible: false,
             listMode: "hide-children",
@@ -361,7 +362,8 @@ require([
 
         var chicago_access_layer = new MapImageLayer({
             url:
-                "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/acc_chicago/MapServer",
+                //"https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/acc_chicago/MapServer",
+                "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Accessibility_Measure_Chicago/MapServer",
             title: "Accessibility Measure (Chicago)",
             visible: false,
             listMode: "hide-children",
@@ -374,15 +376,6 @@ require([
             listMode: "hide-children",
         });
 
-
-        var accessibility_layer = new MapImageLayer({
-            url: "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Accessibility_Measure/MapServer",
-            title: "Accessibility Measure",
-            visible: false,
-            listMode: "hide-children",
-        });
-
-
         var svi_layer = new MapImageLayer({
             url: "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/SVI_2018/MapServer",
             title: "CDC Social Vulnerability Index",
@@ -394,7 +387,7 @@ require([
         var animation_layers = [nyt_layer_states, nyt_layer_counties,
             dph_illinois_county_dynamic];
         var static_layers = [illinois_hospitals, illinois_testing,
-            dph_illinois_zipcode, dph_illinois_county_static, hiv_layer, accessibility_layer, svi_layer];
+            dph_illinois_zipcode, dph_illinois_county_static, hiv_layer, svi_layer];
 
         var us_group = new GroupLayer({
             title: "US",
@@ -408,7 +401,7 @@ require([
             title: "Illinois",
             visible: true,
             visibilityMode: "independent",
-            layers: [illinois_hospitals, accessibility_layer,svi_layer, hiv_layer,
+            layers: [illinois_hospitals, svi_layer, hiv_layer,
                 illinois_access_layer, chicago_access_layer, dph_illinois_zipcode,
                 dph_illinois_county_static, dph_illinois_county_dynamic],
             opacity: 0.75
