@@ -390,11 +390,18 @@ require([
             listMode: "hide-children",
         });
 
+        var testing_sites_layer = new MapImageLayer({
+            url: "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Testing_Sites/MapServer",
+            title: "Testing Sites",
+            visible: false,
+            listMode: "hide-children",
+        });
+
         // order matters! last layer is at top
         var animation_layers = [nyt_layer_states, nyt_layer_counties,
             dph_illinois_county_dynamic];
         var static_layers = [illinois_hospitals, illinois_testing,
-            dph_illinois_zipcode, dph_illinois_county_static, hiv_layer, svi_layer, composite_risk_layer];
+            dph_illinois_zipcode, dph_illinois_county_static, hiv_layer, svi_layer, composite_risk_layer, testing_sites_layer];
 
         var us_group = new GroupLayer({
             title: "US",
@@ -408,7 +415,7 @@ require([
             title: "Illinois",
             visible: true,
             visibilityMode: "independent",
-            layers: [illinois_hospitals, svi_layer, hiv_layer,
+            layers: [illinois_hospitals, testing_sites_layer, svi_layer, hiv_layer,
                 illinois_access_layer, chicago_access_layer, dph_illinois_zipcode,
                 dph_illinois_county_static, dph_illinois_county_dynamic, composite_risk_layer],
             opacity: 0.75
