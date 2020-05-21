@@ -2617,7 +2617,7 @@ require([
 
         /// illinois Table
         document.querySelector("#illinois-table tbody").addEventListener("click", function (event) {
-            dph_illinois_county_dynamic.visible = true;
+            composite_risk_layer.visible = true;
 
             var tr = event.target;
             while (tr !== this && !tr.matches("tr")) {
