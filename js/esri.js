@@ -217,6 +217,7 @@ require([
         var dph_illinois_county_dynamic_url = "preprocessing/illinois/dph_county_data.geojson";
         var dph_illinois_county_static_url = "preprocessing/illinois/dph_county_static_data.geojson";
         var chicago_acc_animation_url = "preprocessing/illinois/Chicago_ACC_dissolve_animation.geojson";
+        var illinois_acc_animation_url = "preprocessing/illinois/Illinois_ACC_dissolve_animation.geojson";
 
         if (production_mode) {
             nyt_layer_states_url = "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/preprocessing/nyt_states_data.geojson";
@@ -242,6 +243,14 @@ require([
             url: chicago_acc_animation_url,
             outFields: ["*"],
             title: "Chicago Accessibility Animation",
+            visible: false,
+            // renderer: default_polygon_renderer,
+        })
+
+        var illinois_acc_animation_layer = new GeoJSONLayer({
+            url: illinois_acc_animation_url,
+            outFields: ["*"],
+            title: "Illinois Accessibility Animation",
             visible: false,
             // renderer: default_polygon_renderer,
         })
@@ -401,7 +410,7 @@ require([
 
         // order matters! last layer is at top
         var animation_layers = [nyt_layer_states, nyt_layer_counties,
-            dph_illinois_county_dynamic, chicago_acc_animation_layer];
+            dph_illinois_county_dynamic, chicago_acc_animation_layer, illinois_acc_animation_layer];
         var static_layers = [illinois_hospitals, illinois_testing,
             dph_illinois_zipcode, dph_illinois_county_static, hiv_layer, svi_layer, composite_risk_layer];
 
@@ -419,7 +428,8 @@ require([
             visibilityMode: "independent",
             layers: [illinois_hospitals, svi_layer, hiv_layer,
                 illinois_access_layer, chicago_access_layer, dph_illinois_zipcode,
-                dph_illinois_county_static, dph_illinois_county_dynamic, composite_risk_layer, chicago_acc_animation_layer],
+                dph_illinois_county_static, dph_illinois_county_dynamic, composite_risk_layer,
+                chicago_acc_animation_layer, illinois_acc_animation_layer],
             opacity: 0.75
         });
 
@@ -1816,7 +1826,7 @@ require([
             if (_layer == null) {
                 return;
             }
-            if (_layer == chicago_acc_animation_layer) {
+            if (_layer == chicago_acc_animation_layer || _layer == illinois_acc_animation_layer) {
                 _layer.renderer = classRender_time_enabled(_date);
             } else {
                 _layer.renderer = classRender(_date, _event_type = event_type, _level = level);
