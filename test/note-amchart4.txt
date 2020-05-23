@@ -1,0 +1,9 @@
+Geographical Legends 
+https://www.amcharts.com/docs/v4/chart-types/map/#Geographical_heat_maps
+
+Customize Legends
+https://www.amcharts.com/docs/v4/concepts/legend/
+
+Heatmap legends (Continuous value) 
+https://www.amcharts.com/docs/v4/concepts/legend/heat-legend/
+
