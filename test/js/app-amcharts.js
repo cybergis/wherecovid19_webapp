@@ -21,90 +21,44 @@ am4core.ready(function() {
     chart.background.opacity = 1;
     chart.deltaLongitude = -8;
     chart.projection = new am4maps.projections.Miller();
-    chart.backgroundSeries.events.on("hit", resetMap);
-
-
-
-
-
-    // Create map polygon series for world map
-    var worldSeries = chart.series.push(new am4maps.MapPolygonSeries());
-    worldSeries.useGeodata = true;
-
-    worldSeries.geodata = am4geodata_worldLow; // Use series data to set custom zoom points for countries
-    worldSeries.exclude = ["AQ"];
-
-    var worldPolygon = worldSeries.mapPolygons.template;
-    worldPolygon.tooltipText = "{name}";
-    worldPolygon.nonScalingStroke = true;
-    worldPolygon.strokeOpacity = 0.1;
-    worldPolygon.fill = am4core.color("#363636");
-
-    hs = worldPolygon.states.create("hover");
-    hs.properties.fill = chart.colors.getIndex(1);
-
-
 
     //Create Illinois county map
     var illinoisCountySeries = chart.series.push(new am4maps.MapPolygonSeries());
-    illinoisCountySeries.useGeodata = true;
     illinoisCountySeries.geodata = ilCounty;
+    illinoisCountySeries.useGeodata = true;
 
     var illinoisCountyPolygon = illinoisCountySeries.mapPolygons.template;
-    illinoisCountyPolygon.tooltipText = "{name}";
+    illinoisCountyPolygon.tooltipText = "{name}: {value} :{id}";
     illinoisCountyPolygon.nonScalingStroke = true;
     illinoisCountyPolygon.strokeOpacity = 0.1;
-    illinoisCountyPolygon.fill = am4core.color("#363636");
+    // illinoisCountyPolygon.fill = am4core.color("#363636");
+    illinoisCountyPolygon.propertyFields.fill = "fill";
 
+    hs = illinoisCountyPolygon.states.create("hover");
+    hs.properties.fill = chart.colors.getIndex(1);
 
-    worldSeries.hide();
+    illinoisCountySeries.heatRules.push({
+        "property": "fill",
+        "target": illinoisCountySeries.mapPolygons.template,
+        "min": am4core.color("#ffffff"),
+        "max": am4core.color("#AAAA00")
+    });
 
-    // // Create country specific series (but hide it for now)
-    // var countrySeries = chart.series.push(new am4maps.MapPolygonSeries());
-    // countrySeries.useGeodata = true;
-    // countrySeries.hide();
-    // countrySeries.geodataSource.events.on("done", function(ev) {
-    //     worldSeries.hide();
-    //     countrySeries.show();
-    // });
+    illinoisCountyPolygon.events.on("hit", function(event) {
+        console.log(event.target.dataItem);
+    });
 
-    // var countryPolygon = countrySeries.mapPolygons.template;
-    // countryPolygon.tooltipText = "{name}";
-    // countryPolygon.nonScalingStroke = true;
-    // countryPolygon.strokeOpacity = 0.1;
-    // countryPolygon.fill = am4core.color("#363636");
-
-    // hs = countryPolygon.states.create("hover");
-    // hs.properties.fill = chart.colors.getIndex(10);
-
-    // // Set up click events
-    // worldPolygon.events.on("hit", function(ev) {
-    //     ev.target.series.chart.zoomToMapObject(ev.target);
-    //     var map = ev.target.dataItem.dataContext.map;
-    //     console.log(map);
-    //     if (map) {
-    //         ev.target.isHover = false;
-    //         countrySeries.geodataSource.url =
-    //             "https://www.amcharts.com/lib/4/geodata/json/" + map + ".json";
-    //         countrySeries.geodataSource.load();
-    //     }
-    // });
-
-    // // Set up data for countries
-    // var data = [];
-    // for (var id in am4geodata_data_countries2) {
-    //     if (am4geodata_data_countries2.hasOwnProperty(id)) {
-    //         var country = am4geodata_data_countries2[id];
-    //         if (country.maps.length) {
-    //             data.push({
-    //                 id: id,
-    //                 color: chart.colors.getIndex(continents[country.continent_code]),
-    //                 map: country.maps[0],
-    //             });
-    //         }
-    //     }
-    // }
-    // worldSeries.data = data;
+    illinoisCountySeries.data = [{
+        "id": "15",
+        "name": "United States",
+        "value": 100,
+        "fill": am4core.color("#F05C5C")
+    }, {
+        "id": "103",
+        "name": "France",
+        "value": 50,
+        "fill": am4core.color("#5C5CFF")
+    }];
 
     // Zoom control
     chart.zoomControl = new am4maps.ZoomControl();
