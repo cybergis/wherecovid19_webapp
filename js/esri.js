@@ -1496,7 +1496,6 @@ require([
         var hitGraphic = null;
 
         function updateChart(graphic) {
-            return;
 
             Chart.defaults.global.defaultFontSize = 15;
             Chart.defaults.global.defaultFontColor = '#777';
@@ -2212,6 +2211,9 @@ require([
                         type: "opacity",
                         valueExpression: classArcade_time_enabled(_date),
                         stops: stop_array_opacity.reverse(),
+                        legendOptions: {
+                            showLegend: false
+                          },
                     },
                     {
                         type: "color",
