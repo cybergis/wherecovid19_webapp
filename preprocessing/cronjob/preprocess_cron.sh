@@ -87,7 +87,10 @@ download_files(){
 	wget -O ./illinois/idph_CountyDemos.json http://www.dph.illinois.gov/sitefiles/CountyDemos.json?nocache=1
 	wget -O ./illinois/idph_COVIDZip.json http://www.dph.illinois.gov/sitefiles/COVIDZip.json?nocache=1
 	wget -O ./illinois/idph_COVIDHistoricalTestResults.json http://www.dph.illinois.gov/sitefiles/COVIDHistoricalTestResults.json?nocache=1
-	wget -O ./worldwide/global-covid19-who-gis.json https://dashboards-dev.sprinklr.com/data/9043/global-covid19-who-gis.json
+	wget -O ./global-covid19-who-gis.json.gz https://dashboards-dev.sprinklr.com/data/9043/global-covid19-who-gis.json
+  gunzip -f ./global-covid19-who-gis.json.gz
+  mv -f ./global-covid19-who-gis.json ./worldwide/
+  rm -f ./global-covid19-who-gis.json.gz
 
 }
 convert_notebooks(){
