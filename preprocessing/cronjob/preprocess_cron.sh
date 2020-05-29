@@ -182,6 +182,7 @@ copy_back_results_webfolder(){
 	cp ./illinois/nyt_illinois_counties_data.geojson ../illinois/
   cp ./illinois/dph_*_data.geojson ../illinois/
   cp ./worldwide/who_world_data.geojson ../worldwide/
+  cp ./worldwide/global-covid19-who-gis.json ../worldwide/
 }
 
 
