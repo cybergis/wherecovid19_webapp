@@ -5,6 +5,8 @@ am4core.useTheme(am4themes_dark);
 
 am4core.ready(function () {
 
+  
+
   var usa = false;
   // Create map instance
   var chart = am4core.create("viewDiv", am4maps.MapChart);
@@ -42,15 +44,13 @@ am4core.ready(function () {
   // Create map polygon series for world map
   var worldSeries = chart.series.push(new am4maps.MapPolygonSeries());
   worldSeries.id = "world";
-  worldSeries.useGeodata = true;
   worldSeries.geodata = am4geodata_worldLow; // Use series data to set custom zoom points for countries
+  worldSeries.useGeodata = true;
   worldSeries.exclude = ["AQ"];
   worldSeries.events.on("shown", function (ev) {
-    // if(usa == true){
       chart.projection = new am4maps.projections.Miller();
       chart.projection = new am4maps.projections.Miller();
       chart.deltaLongitude = -10;
-    // }
   });
 
   var worldPolygon = worldSeries.mapPolygons.template;
@@ -59,22 +59,52 @@ am4core.ready(function () {
   worldPolygon.stroke = am4core.color("#FFFFFF");
   worldPolygon.strokeOpacity = 0.1;
   worldPolygon.fill = am4core.color("#363636");
+  worldPolygon.propertyFields.fill = "fill";
 
   var hs = worldPolygon.states.create("hover");
   hs.properties.fill = chart.colors.getIndex(1);
+
+  worldSeries.data = [{
+    "id": "US",
+    "fill":"#00FF00",
+    "zoomLevel": 5,
+    "zoomGeoPoint": {
+      "latitude": 40,
+      "longitude": -95
+    }
+  }, {
+    "id": "CA",
+    "fill":"#00FF00",
+    "zoomLevel": 5,
+    "zoomGeoPoint": {
+      "latitude": 0,
+      "longitude": 0
+    }
+  }];
+  
+  worldSeries.dataFields.zoomLevel = "zoomLevel";
+  worldSeries.dataFields.zoomGeoPoint = "zoomGeoPoint";
+  
 
   // Set up click events
   worldPolygon.events.on("hit", function (ev) {
     ev.target.series.chart.zoomToMapObject(ev.target);
     var map = ev.target.dataItem.dataContext.map;
-    console.log(map);
+    console.log(ev.target.dataItem);
     if (map) {
       ev.target.isHover = false;
-      countrySeries.geodataSource.url =
-        "https://www.amcharts.com/lib/4/geodata/json/" + map + ".json";
-      countrySeries.geodataSource.load();
-      if(map == "usaLow") {usa = true;}
-      else {usa=false;}
+      if(map == "usaLow") {
+        usa = true;
+        worldSeries.hide();
+        chart.projection = new am4maps.projections.AlbersUsa();
+        countrySeries.geodata = am4geodata_region_usa_usaCountiesLow;
+        countrySeries.show();
+      } else {
+        usa=false;
+        countrySeries.geodataSource.url =
+          "https://www.amcharts.com/lib/4/geodata/json/" + map + ".json";
+        countrySeries.geodataSource.load();
+      }
     }
   });
 
@@ -109,32 +139,13 @@ am4core.ready(function () {
     countrySeries.show();
     if(usa == true) {
       chart.projection = new am4maps.projections.AlbersUsa();
-    } else {
-      // chart.projection = new am4maps.projections.Miller();
     }
   });
 
-  countrySeries.data = [{
-    "id": "NZ",
-    "zoomLevel": 12,
-    "zoomGeoPoint": {
-      "latitude": -41,
-      "longitude": 173
-    }
-  }, {
-    "id": "RU",
-    "zoomLevel": 2.5,
-    "zoomGeoPoint": {
-      "latitude": 62,
-      "longitude": 96
-    }
-  }];
-  
-  countrySeries.dataFields.zoomLevel = "zoomLevel";
-  countrySeries.dataFields.zoomGeoPoint = "zoomGeoPoint";
+
 
   var countryPolygon = countrySeries.mapPolygons.template;
-  countryPolygon.tooltipText = "{name}";
+  countryPolygon.tooltipText = "{name} {id}";
   countryPolygon.stroke = am4core.color("#FFFFFF");
   countryPolygon.strokeOpacity = 0.1;
   countryPolygon.nonScalingStroke = true;
@@ -143,11 +154,20 @@ am4core.ready(function () {
   var hs = countryPolygon.states.create("hover");
   hs.properties.fill = chart.colors.getIndex(10);
 
+  countryPolygon.events.on("hit", function (ev) {
+    ev.target.series.chart.zoomToMapObject(ev.target);
+    var stateID = ev.target.dataItem.dataContext.id;
+    console.log(stateID);
+    if(stateID=="US-IL") {
+      ILcountySeries.geodataSource.url =
+            "https://www.amcharts.com/lib/4/geodata/json/region/usa/ilLow.json";
+      ILcountySeries.geodataSource.load();
+    }
+  });
+
   // Create country specific series (but hide it for now)
   var ILcountySeries = chart.series.push(new am4maps.MapPolygonSeries());
   ILcountySeries.hide();
-  // ILcountySeries.geodataSource.url =
-  //       "https://www.amcharts.com/lib/4/geodata/json/region/usa/ilLow.json";
   ILcountySeries.useGeodata = true;
   ILcountySeries.data = [
     {
@@ -155,7 +175,26 @@ am4core.ready(function () {
       value: 1545345,
       fill: "#00FF00",
     },
+    {
+      id: "17041",
+      value: 23412,
+      fill: "#FF0000",
+    },
   ];
+
+  //Set min/max fill color for each area
+  ILcountySeries.heatRules.push({
+    property: "fill",
+    target: ILcountySeries.mapPolygons.template,
+    min: chart.colors.getIndex(1).brighten(1),
+    max: chart.colors.getIndex(1).brighten(-0.3)
+  });
+
+  ILcountySeries.geodataSource.events.on("done", function (ev) {
+    worldSeries.hide();
+    countrySeries.hide();
+    ILcountySeries.show();
+  });
 
   var ILcountyPolygon = ILcountySeries.mapPolygons.template;
   ILcountyPolygon.tooltipText = "{name} : {value}";
@@ -163,12 +202,13 @@ am4core.ready(function () {
   ILcountyPolygon.stroke = am4core.color("#FFFFFF");
   ILcountyPolygon.strokeOpacity = 0.1;
   ILcountyPolygon.fill = am4core.color("#363636");
-  ILcountyPolygon.propertyFields.fill = "fill";
+  //ILcountyPolygon.propertyFields.fill = "fill";
   countrySeries.hide();
 
   function resetMap() {
     worldSeries.show();
     countrySeries.hide();
+    ILcountySeries.hide();
     chart.goHome();
   }
 }); // end am4core.ready()
