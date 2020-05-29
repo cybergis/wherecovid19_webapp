@@ -86,6 +86,8 @@ require([
     const mywatcher = new MyWatcher({
         active_animation_layer: null,
     });
+    // first time the animation button is clicked for this layer?
+    var flag_first_click_anination_per_layer = true;
 
     var production_mode = false; //true or false
 
@@ -986,6 +988,8 @@ require([
 
         function onActiveAnimationLayerChange(name, oldValue, value) {
             //console.log(name, oldValue, value);
+            // reset flag when animation layer changed
+            flag_first_click_anination_per_layer = true;
             if (value == null) {
                 addClass2Elem(sliderDiv, true, "hideDiv");
 
@@ -2690,6 +2694,7 @@ require([
             stopAnimation();
             animation = animate(slider.values[0]);
             playButton.classList.add("toggled");
+            flag_first_click_anination_per_layer = false;
         }
 
         /**
@@ -2719,10 +2724,15 @@ require([
 
                 value += 1;
                 if (value > slider.max) {
-                    value = slider.max;
-                    animating = false;
-                    stopAnimation();
-                    return;
+                    if (flag_first_click_anination_per_layer)
+                    {
+                        value = slider.min;
+                    }
+                    else {
+                        animating = false;
+                        stopAnimation();
+                        return;
+                    }
                 }
                 var dt_thumb = date.add(dt_start, dt_interval_unit, Math.floor(value));
                 setDate(dt_thumb, animation_type = animation_type);
