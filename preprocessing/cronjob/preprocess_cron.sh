@@ -78,6 +78,7 @@ should_preprocessing_be_done(){
   chksum_who_tmp=`md5sum ./worldwide/global-covid19-who-gis-tmp.json | awk -F' '  '{print $1}'`
   if [ $chksum_who != $chksum_who_tmp ]
   then
+          echo "$chksum_who; $chksum_who_tmp"
           echo "global-covid19-who-gis.json updated"
           return 1
   fi
