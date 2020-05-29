@@ -728,6 +728,7 @@ require([
                             ordering: true,
                             order: [[1, "desc"]],
                             info: false,
+                            responsive: true,
                             dom: "t",
                         });
 
@@ -814,6 +815,7 @@ require([
                             ordering: true,
                             order: [[1, "desc"]],
                             info: false,
+                            responsive: true,
                             dom: "t",
                         });
 
