@@ -135,7 +135,7 @@ run_extract_zipcode(){
 }
 run_world_layer_who(){
 	cd worldwide
-   	python extract_zipcoworld_layer_usingCountryID.py
+   	python world_layer_usingCountryID.py
         if [ $? -ne 0 ]
         then
             	cd ..
