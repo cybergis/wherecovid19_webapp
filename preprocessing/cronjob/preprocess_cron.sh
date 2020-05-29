@@ -38,6 +38,7 @@ should_preprocessing_be_done(){
 	#echo "$chksum_st; $chksum_st_tmp"
 	if [ $chksum_count != $chksum_count_tmp ]
 	then
+	  echo "us-counties.csv updated"
 		return 1
 	fi
 
@@ -45,6 +46,7 @@ should_preprocessing_be_done(){
   chksum_st_tmp=`md5sum us-states-tmp.csv | awk -F' '  '{print $1}'`
   if [ $chksum_st != $chksum_st_tmp ]
   then
+          echo "us-states.csv updated"
           return 1
   fi
 
@@ -52,6 +54,7 @@ should_preprocessing_be_done(){
   chksum_idph1_tmp=`md5sum ./illinois/idph_COVIDZip-tmp.json | awk -F' '  '{print $1}'`
   if [ $chksum_idph1 != $chksum_idph1_tmp ]
   then
+          echo "idph_COVIDZip.json updated"
           return 1
   fi
 
@@ -59,6 +62,7 @@ should_preprocessing_be_done(){
   chksum_idph2_tmp=`md5sum ./illinois/idph_CountyDemos-tmp.json | awk -F' '  '{print $1}'`
   if [ $chksum_idph2 != $chksum_idph2_tmp ]
   then
+          echo "idph_CountyDemos.json updated"
           return 1
   fi
 
@@ -66,6 +70,7 @@ should_preprocessing_be_done(){
   chksum_idph3_tmp=`md5sum ./illinois/idph_COVIDHistoricalTestResults-tmp.json | awk -F' '  '{print $1}'`
   if [ $chksum_idph3 != $chksum_idph3_tmp ]
   then
+          echo "idph_COVIDHistoricalTestResults.json updated"
           return 1
   fi
 
@@ -73,6 +78,7 @@ should_preprocessing_be_done(){
   chksum_who_tmp=`md5sum ./worldwide/global-covid19-who-gis-tmp.json | awk -F' '  '{print $1}'`
   if [ $chksum_who != $chksum_who_tmp ]
   then
+          echo "global-covid19-who-gis.json updated"
           return 1
   fi
 
