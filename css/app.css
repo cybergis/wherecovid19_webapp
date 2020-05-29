@@ -69,7 +69,7 @@ text-decoration: none;
 }
 
 .sidebar .nav-item {
-    width: 50%;
+    width: 33%;
     min-height: 70px;
 }
 
@@ -219,7 +219,7 @@ text-decoration: none;
     color: #b3b3b3;
 }
 
-#county-table_wrapper {
+#county-table_wrapper, #world-table_wrapper {
     height: calc(100vh - 307px);
 }
 
