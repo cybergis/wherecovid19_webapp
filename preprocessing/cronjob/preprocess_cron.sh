@@ -181,15 +181,15 @@ destroy_env(){
 }
 copy_back_results_webfolder(){
         #Copy needed datasets from parent dir
-	cp us-states.csv ..
-  cp us-counties.csv ..
-  cp nyt_counties_data.geojson ..
-  cp nyt_states_data.geojson ..
-  cp classes.json ..
-	cp ./illinois/nyt_illinois_counties_data.geojson ../illinois/
-  cp ./illinois/dph_*_data.geojson ../illinois/
-  cp ./worldwide/who_world_data.geojson ../worldwide/
-  cp ./worldwide/global-covid19-who-gis.json ../worldwide/
+	yes | cp us-states.csv ..
+  yes | cp us-counties.csv ..
+  yes | cp nyt_counties_data.geojson ..
+  yes | cp nyt_states_data.geojson ..
+  yes | cp classes.json ..
+	yes | cp ./illinois/nyt_illinois_counties_data.geojson ../illinois/
+  yes | cp ./illinois/dph_*_data.geojson ../illinois/
+  yes | cp ./worldwide/who_world_data.geojson ../worldwide/
+  yes | cp ./worldwide/global-covid19-who-gis.json ../worldwide/
 }
 
 
