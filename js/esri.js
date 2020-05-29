@@ -302,7 +302,7 @@ require([
         var dph_illinois_county_static = new GeoJSONLayer({
                 url: dph_illinois_county_static_url,
                 outFields: ["*"],
-                title: "IDPH County-level Test Data",
+                title: "IDPH County-level Testing Data",
                 renderer: dphStaticRender("tested"),
                 visible: false,
             }
@@ -313,7 +313,7 @@ require([
                 outFields: ["*"],
                 title: "IDPH County-level Cases",
                 renderer: default_polygon_renderer,
-                visible: false,
+                visible: true,
             }
         );
 
@@ -322,7 +322,7 @@ require([
             outFields: ["*"],
             title: "Cases (New York Times)",
             renderer: default_polygon_renderer,
-            visible: true,
+            visible: false,
         });
 
         var illinois_hospitals = new GeoJSONLayer({
@@ -391,7 +391,7 @@ require([
 
         var hiv_layer = new MapImageLayer({
             url: "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/HIV_Map/MapServer",
-            title: "HIV Patients",
+            title: "Density of PLWH (Persons Living with HIV)",
             visible: false,
             listMode: "hide-children",
         });
@@ -406,7 +406,7 @@ require([
         var composite_risk_layer = new MapImageLayer({
             url: "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Vulnerability/MapServer",
             title: "Vulnerability",
-            visible: true,
+            visible: false,
             listMode: "hide-children",
         });
 
@@ -2899,7 +2899,7 @@ require([
 
         //Set default layers after clicking side panels
         document.getElementById("illinois-tab").addEventListener("click", function (event) {
-            composite_risk_layer.visible = true;
+            dph_illinois_county_dynamic.visible = true;
 
             // Bring hidden panel to display
             // To override the side effect in Layer Change event
