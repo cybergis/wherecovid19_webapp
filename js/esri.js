@@ -313,7 +313,7 @@ require([
                 outFields: ["*"],
                 title: "IDPH County-level Cases",
                 renderer: default_polygon_renderer,
-                visible: true,
+                visible: false,
             }
         );
 
@@ -406,7 +406,7 @@ require([
         var composite_risk_layer = new MapImageLayer({
             url: "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Vulnerability/MapServer",
             title: "Vulnerability",
-            visible: false,
+            visible: true,
             listMode: "hide-children",
         });
 
