@@ -69,7 +69,7 @@ text-decoration: none;
 }
 
 .sidebar .nav-item {
-    width: 33%;
+    width: 33.3333333%;
     min-height: 70px;
 }
 
@@ -83,7 +83,7 @@ text-decoration: none;
 
 .sidebar .nav-link.active {
     color: #FFFFFF;
-    background-color: #363636;
+    background-color: #5d5d5d;
 }
 
 .sidebar .nav-link {
@@ -166,6 +166,10 @@ text-decoration: none;
 /*
 * Sidebar tabs control
 */
+
+.tab-content {
+    background-color: #5d5d5d;
+}
 
 .tab-content>div {
     display: none;
