@@ -2716,6 +2716,9 @@ require([
                 value += 1;
                 if (value > slider.max) {
                     value = slider.max;
+                    animating = false;
+                    stopAnimation();
+                    return;
                 }
                 var dt_thumb = date.add(dt_start, dt_interval_unit, Math.floor(value));
                 setDate(dt_thumb, animation_type = animation_type);
