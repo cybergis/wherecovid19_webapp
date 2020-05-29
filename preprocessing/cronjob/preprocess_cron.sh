@@ -20,6 +20,11 @@ make_copy_data(){
   cp ../illinois/dph_county_data.geojson ./illinois/dph_county_data-tmp.geojson
  	cp ../illinois/dph_county_static_data.geojson ./illinois/dph_county_static_data-tmp.geojson
 	cp ../illinois/dph_zipcode_data.geojson ./illinois/ph_zipcode_data-tmp.geojson
+
+  mkdir -p worldwide
+  cp ../worldwide/World_Countries_Boundaries_new.geojson ./worldwide/World_Countries_Boundaries_new.geojson
+	cp ../worldwide/who_world_data.geojson ./worldwide/who_world_data-tmp.geojson
+	cp ../worldwide/global-covid19-who-gis.json ./worldwide/global-covid19-who-gis-tmp.json
 }
 setup_env(){
 	cd /var/covid19_project/wherecovid19_webapp/preprocessing/cronjob
@@ -64,6 +69,13 @@ should_preprocessing_be_done(){
           return 1
   fi
 
+  chksum_who=`md5sum ./worldwide/global-covid19-who-gis.json | awk -F' '  '{print $1}'`
+  chksum_who_tmp=`md5sum ./worldwide/global-covid19-who-gis-tmp.json | awk -F' '  '{print $1}'`
+  if [ $chksum_who != $chksum_who_tmp ]
+  then
+          return 1
+  fi
+
 	return 0
 }
 download_files(){
@@ -75,6 +87,7 @@ download_files(){
 	wget -O ./illinois/idph_CountyDemos.json http://www.dph.illinois.gov/sitefiles/CountyDemos.json?nocache=1
 	wget -O ./illinois/idph_COVIDZip.json http://www.dph.illinois.gov/sitefiles/COVIDZip.json?nocache=1
 	wget -O ./illinois/idph_COVIDHistoricalTestResults.json http://www.dph.illinois.gov/sitefiles/COVIDHistoricalTestResults.json?nocache=1
+	wget -O ./worldwide/global-covid19-who-gis.json https://dashboards-dev.sprinklr.com/data/9043/global-covid19-who-gis.json
 
 }
 convert_notebooks(){
@@ -83,6 +96,7 @@ convert_notebooks(){
 	jupyter nbconvert --to python --output-dir='.' ../counties_new.ipynb
 	jupyter nbconvert --to python --output-dir='.' ../DefineInterval.ipynb
 	jupyter nbconvert --to python --output-dir='./illinois/' ../illinois/extract_zipcode.ipynb
+	jupyter nbconvert --to python --output-dir='./worldwide/' ../worldwide/world_layer_usingCountryID.ipynb
 }
 run_state(){
 	python states_new.py
@@ -119,6 +133,18 @@ run_extract_zipcode(){
         fi
 	cd ..
 }
+run_world_layer_who(){
+	cd worldwide
+   	python extract_zipcoworld_layer_usingCountryID.py
+        if [ $? -ne 0 ]
+        then
+            	cd ..
+		restore_data
+                exit 1
+        fi
+	cd ..
+}
+
 restore_data(){
 	echo "restoring data"
   cp classes-tmp.json classes.json
@@ -148,6 +174,7 @@ copy_back_results_webfolder(){
   cp classes.json ..
 	cp ./illinois/nyt_illinois_counties_data.geojson ../illinois/
   cp ./illinois/dph_*_data.geojson ../illinois/
+  cp ./worldwide/who_world_data.geojson ../worldwide/
 }
 
 
@@ -161,6 +188,7 @@ then
 	run_state
 	run_counties
   run_extract_zipcode
+  run_world_layer_who
 	run_defineintervels
   copy_back_results_webfolder
 fi
