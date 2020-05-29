@@ -160,6 +160,10 @@ restore_data(){
   cp ./illinois/dph_county_data-tmp.geojson ./illinois/dph_county_data.geojson
 	cp ./illinois/dph_county_static_data-tmp.geojson	./illinois/dph_county_static_data.geojson
 	cp ./illinois/dph_zipcode_data-tmp.geojson	./illinois/dph_zipcode_data.geojson
+
+	cp ./worldwide/who_world_data-tmp.geojson ./worldwide/who_world_data.geojson
+	cp ./worldwide/global-covid19-who-gis-tmp.json ./worldwide/global-covid19-who-gis.json
+
 	destroy_env
 }
 destroy_env(){
