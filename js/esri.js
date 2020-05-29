@@ -1669,6 +1669,8 @@ require([
             var LabelDates = [];
             if (graphic.getAttribute("dt_start") == "2020-03-17") {
                 var LabelDate = new Date(2020, 2, 9);
+            } else if (graphic.getAttribute("dt_start") == "2020-01-11") {
+                var LabelDate = new Date(2020, 0, 3);
             } else {
                 var LabelDate = new Date(2020, 0, 13);
             }
