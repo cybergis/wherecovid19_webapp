@@ -15,7 +15,7 @@
 
         gtag('config', 'UA-162446800-1');
     </script>
-     <!-- Required meta tags -->
+    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="css/loader.css">
@@ -25,268 +25,367 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://kit.fontawesome.com/83341c3e60.js" crossorigin="anonymous"></script>
 
 
     <link rel="stylesheet" href="css/app.css">
     <link rel="stylesheet" href="css/map.css">
 
-    <link rel="stylesheet" href="https://js.arcgis.com/4.15/esri/themes/dark-blue/main.css"/>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.15/esri/themes/dark-blue/main.css" />
 
     <title>WhereCOVID-19 Map by CyberGIS Center for Spatial and Digital Studies</title>
 </head>
 
 <body>
-<nav class="navbar navbar-dark fixed-top flex-nowrap p-2 px-3 d-flex justify-content-between">
-    <div class="navbar-brand">
-        <img class="topic-logo" style="display: inline-block;width: 30px;" src="img/favicon.ico">
-        <h1 class="header-title d-inline"><b>WhereCOVID-19</b> by
-            <a style="color: #00a4e4;;" href="https://cybergis.illinois.edu/" title="CyberGIS center website"
-               target="_blank">
-                CyberGIS Center for Advanced Digital and Spatial Studies
-            </a> at
-            <a style="color: #00a4e4;;" href="https://www.illinois.edu/"
-               title="University of Illinois at Urbana-Champaign website" target="_blank">
-                University of Illinois at Urbana-Champaign
-            </a></h1>
-    </div>
-    <div>
+    <nav class="navbar navbar-dark fixed-top flex-nowrap p-2 px-3 d-flex justify-content-between">
+        <div class="navbar-brand">
+            <img class="topic-logo" style="display: inline-block;width: 30px;" src="img/favicon.ico">
+            <h1 class="header-title d-inline"><b>WhereCOVID-19</b>
+                <span style="font-size:12px;">
+                    by
+                    <a style="color: #00a4e4;;" href="https://cybergis.illinois.edu/" title="CyberGIS center website"
+                        target="_blank">
+                        CyberGIS Center for Advanced Digital and Spatial Studies
+                    </a> at
+                    <a style="color: #00a4e4;;" href="https://www.illinois.edu/"
+                        title="University of Illinois at Urbana-Champaign website" target="_blank">
+                        University of Illinois at Urbana-Champaign
+                    </a>
+                </span>
+            </h1>
+        </div>
+        <div>
+            <a class="btn btn-dark" style="color: white;" data-toggle="modal" data-target="#aboutModal">About WhereCOVID-19</a>
+            <a class="btn btn-dark" href="http://www.cybergisx.org/" title="CyberGISX hub website" target="_blank">Go to
+                CyberGISX</a>
+            <a href="http://illinois.edu/"><img style="width: 20px; margin-left: 15px;" class="uoi-header"
+                    src="https://cybergis.illinois.edu/wp-content/themes/cybergis-new/images/uoi.png"
+                    alt="U of I logo"></a>
+        </div>
+    </nav>
 
-        <a class="btn btn-dark" href="http://www.cybergisx.org/" title="CyberGISX hub website" target="_blank">Go to
-            CyberGISX</a>
-        <a href="http://illinois.edu/"><img style="width: 20px; margin-left: 15px;" class="uoi-header"
-                                            src="https://cybergis.illinois.edu/wp-content/themes/cybergis-new/images/uoi.png"
-                                            alt="U of I logo"></a>
-    </div>
-</nav>
-
-<div class="container-fluid">
-    <!--d-flex-->
-    <div class="row">
-        <!--d-flex flex-row flex-nowrap-->
-        <nav class="sidebar col-3 open">
-            <div class="sidebar-sticky">
-                <ul class="nav nav-pills">
-                    <li class="nav-item ">
-                        <a class="nav-link active p-3" href="#illinois" data-toggle="tab" role="tab"
-                           aria-controls="illinois" aria-selected="true" id="illinois-tab">
-                            Illinois <span class="cases"></span>
-                        </a>
-                        <!-- <a class="nav-link active p-4" href="#illinois" data-toggle="collapse" role="tab" aria-controls="illinois" aria-selected="true" id="illinois-tab">
+    <div class="container-fluid">
+        <!--d-flex-->
+        <div class="row">
+            <!--d-flex flex-row flex-nowrap-->
+            <nav class="sidebar col-6 col-sm-5 col-md-5 col-lg-4 col-xl-3 open">
+                <div class="sidebar-sticky">
+                    <ul class="nav nav-pills">
+                        <li class="nav-item ">
+                            <a class="nav-link active pt-3 pb-3 p-1 " href="#illinois" data-toggle="tab" role="tab"
+                                aria-controls="illinois" aria-selected="true" id="illinois-tab">
+                                Illinois <span class="cases"></span>
+                            </a>
+                            <!-- <a class="nav-link active p-4" href="#illinois" data-toggle="collapse" role="tab" aria-controls="illinois" aria-selected="true" id="illinois-tab">
                             Illinois,USA <span class="cases"></span>
                          </a> -->
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link p-3" href="#county" data-toggle="tab" role="tab" aria-controls="county"
-                           aria-selected="false" id="county-tab">
-                            US County level <span class="cases"></span>
-                        </a>
-                    </li>
-                </ul>
-                <!-- Sidebar Tabs content -->
-                <div class="tab-content">
-                    <div class="active" id="illinois" role="tabpanel" aria-labelledby="illinois-tab">
-                        <div class="content-wrap">
-                            <div class="highlight-wrap d-flex p-2">
-                                <div class="highlight confirmed col-4" id="illinois_total_case_number">
-                                    <div class="label">Confirmed:</div>
-                                    <div class="case-number"></div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link  pt-3 pb-3 p-1 " href="#county" data-toggle="tab" role="tab" aria-controls="county"
+                                aria-selected="false" id="county-tab">
+                                USA <span class="cases"></span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link  pt-3 pb-3 p-1 " href="#world" data-toggle="tab" role="tab" aria-controls="world"
+                                aria-selected="false" id="world-tab">
+                                World <span class="cases"></span>
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- Sidebar Tabs content -->
+                    <div class="tab-content">
+                        <div class="active" id="illinois" role="tabpanel" aria-labelledby="illinois-tab">
+                            <div class="content-wrap">
+                                <div class="highlight-wrap d-flex flex-row justify-content-around p-2">
+                                    <div class="highlight confirmed" id="illinois_total_case_number">
+                                        <div class="label">Confirmed:</div>
+                                        <div class="case-number"></div>
+                                    </div>
+                                    <div class="highlight death" id="illinois_total_death_number">
+                                        <div class="label">Death:</div>
+                                        <div class="case-number"></div>
+                                    </div>
+                                    <div class="highlight tested" id="illinois_total_test_number">
+                                        <div class="label">Tested:</div>
+                                        <div class="case-number"></div>
+                                    </div>
                                 </div>
-                                <div class="highlight death col-4" id="illinois_total_death_number">
-                                    <div class="label">Death:</div>
-                                    <div class="case-number"></div>
-                                </div>
-                                <div class="highlight tested col-4" id="illinois_total_test_number">
-                                    <div class="label">Tested:</div>
-                                    <div class="case-number"></div>
-                                </div>
-                            </div>
-                            <!-- End highlight-wrap -->
-                            <div class="search-wrap">
-                                <div class="input-group p-3">
-                                    <div class="input-group-prepend">
+                                <!-- End highlight-wrap -->
+                                <div class="search-wrap">
+                                    <div class="input-group p-3">
+                                        <div class="input-group-prepend">
                                             <span class="input-group-text" id="inputGroup-sizing-default">
                                                 <i class="fas fa-search"></i>
                                             </span>
+                                        </div>
+                                        <input type="text" id="il-search-input" class="form-control"
+                                            aria-label="Sizing example input"
+                                            aria-describedby="inputGroup-sizing-default">
                                     </div>
-                                    <input type="text" id="il-search-input" class="form-control"
-                                           aria-label="Sizing example input"
-                                           aria-describedby="inputGroup-sizing-default">
                                 </div>
-                            </div>
-                            <!-- End search-wrap -->
-                            <template>
-                                <tr>
-                                    <th scope="row" class="align-middle">USA</th>
-                                    <td class="confirmed"><br>-</td>
-                                    <td class="death"><br>-</td>
-                                    <td class="tested"><br>-</td>
-                                    <!-- <td class="recovered">0<br>-</td> -->
-                                </tr>
-                            </template>
-                            <div class="table-wrap">
-                                <table id="illinois-table" class="table">
-                                    <thead class="sticky-top">
+                                <!-- End search-wrap -->
+                                <template>
                                     <tr>
-                                        <th scope="col">County</th>
-                                        <th scope="col">Confirmed</th>
-                                        <th scope="col">Death</th>
-                                        <th scope="col">Tested</th>
+                                        <th scope="row" class="align-middle">USA</th>
+                                        <td class="confirmed"><br>-</td>
+                                        <td class="death"><br>-</td>
+                                        <td class="tested"><br>-</td>
+                                        <!-- <td class="recovered">0<br>-</td> -->
                                     </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
+                                </template>
+                                <div class="table-wrap">
+                                    <table id="illinois-table" class="table responsive">
+                                        <thead class="sticky-top">
+                                            <tr>
+                                                <th scope="col" data-priority="1">County</th>
+                                                <th scope="col">Confirmed</th>
+                                                <th scope="col">Death</th>
+                                                <th scope="col">Tested</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- End table-wrap -->
                             </div>
-                            <!-- End table-wrap -->
+                            <!-- End content-wrap -->
                         </div>
-                        <!-- End content-wrap -->
-                    </div>
 
-                    <div id="county" role="tabpanel" aria-labelledby="county-tab">
-                        <div class="content-wrap">
-                            <div class="highlight-wrap d-flex p-2">
-                                <div class="highlight confirmed col-6" id="counties_total_case_number">
-                                    <div class="label">Confirmed:</div>
-                                    <div class="case-number"></div>
-                                    <div class="change"><i class="fas fa-caret-up"></i></div>
+                        <div id="county" role="tabpanel" aria-labelledby="county-tab">
+                            <div class="content-wrap">
+                                <div class="highlight-wrap d-flex d-flex flex-row justify-content-around p-2">
+                                    <div class="highlight confirmed" id="counties_total_case_number">
+                                        <div class="label">Confirmed:</div>
+                                        <div class="case-number"></div>
+                                        <div class="change"><i class="fas fa-caret-up"></i></div>
+                                    </div>
+                                    <div class="highlight death " id="counties_total_death_number">
+                                        <div class="label">Deaths:</div>
+                                        <div class="case-number"></div>
+                                        <div class="change"><i class="fas fa-caret-up"></i></div>
+                                    </div>
                                 </div>
-                                <div class="highlight death col-7" id="counties_total_death_number">
-                                    <div class="label">Deaths:</div>
-                                    <div class="case-number"></div>
-                                    <div class="change"><i class="fas fa-caret-up"></i></div>
-                                </div>
-                            </div>
-                            <!-- End highlight-wrap -->
-                            <div class="search-wrap">
-                                <div class="input-group p-3">
-                                    <div class="input-group-prepend">
+                                <!-- End highlight-wrap -->
+                                <div class="search-wrap">
+                                    <div class="input-group p-3">
+                                        <div class="input-group-prepend">
                                             <span class="input-group-text" id="inputGroup-sizing-default">
                                                 <i class="fas fa-search"></i>
                                             </span>
+                                        </div>
+                                        <input type="text" id="w-search-input" class="form-control"
+                                            aria-label="Sizing example input"
+                                            aria-describedby="inputGroup-sizing-default">
                                     </div>
-                                    <input type="text" id="w-search-input" class="form-control"
-                                           aria-label="Sizing example input"
-                                           aria-describedby="inputGroup-sizing-default">
                                 </div>
-                            </div>
-                            <!-- End search-wrap -->
-                            <template>
-                                <tr>
-                                    <th scope="row" class="align-middle">USA</th>
-                                    <td class="confirmed"><br><i class="fas fa-caret-up"></i></td>
-                                    <td class="death"><br>-</td>
-                                </tr>
-                            </template>
-                            <div class="table-wrap">
-                                <table id="county-table" class="table table-dark">
-                                    <thead class="sticky-top">
+                                <!-- End search-wrap -->
+                                <template>
                                     <tr>
-                                        <th scope="col">County</th>
-                                        <th scope="col">Confirmed</th>
-                                        <th scope="col">Deaths</th>
+                                        <th scope="row" class="align-middle">USA</th>
+                                        <td class="confirmed"><br><i class="fas fa-caret-up"></i></td>
+                                        <td class="death"><br>-</td>
                                     </tr>
-                                    </thead>
-                                    <tbody>
+                                </template>
+                                <div class="table-wrap">
+                                    <table id="county-table" class="table table-dark responsive">
+                                        <thead class="sticky-top">
+                                            <tr>
+                                                <th scope="col" data-priority="1">County</th>
+                                                <th scope="col">Confirmed</th>
+                                                <th scope="col">Deaths</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
 
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!-- End table-wrap -->
-                        </div>
-                        <!-- End content-wrap -->
-                    </div>
-                </div>
-        </nav>
-
-        <main role="main" class="col-9">
-            <div class="row d-flex flex-column">
-                <div class="col-12">
-                    <div style="height: 60px;"></div>
-                </div>
-
-                <div class="col-12">
-                    <div class="row" style="height: calc(100vh - 60px);">
-
-                        <div id="applicationDiv">
-
-                            <a href="#" id="sidebar_control" class="open" role="button" aria-pressed="true"
-                               title="close the sidebar"><i class="fas fa-angle-left"></i></a>
-
-                            <div id="sliderContainer" class="esri-widget">
-                                <div id="playButton" class="esri-widget esri-widget--button toggle-button">
-                                    <div>
-                                        <span class="toggle-button-icon esri-icon-play" aria-label="play icon"></span>
-                                        Time
-                                    </div>
-                                    <div>
-                                        <span class="toggle-button-icon esri-icon-pause" aria-label="pause icon"></span>
-                                        Pause
-                                    </div>
+                                        </tbody>
+                                    </table>
                                 </div>
-                                <div id="sliderInnerContainer">
-                                    <div id="slider"></div>
-                                </div>
-                                <span id="sliderValue"></span>
-
+                                <!-- End table-wrap -->
                             </div>
-
-                            <div id="viewDiv">
-                            </div>
-
-                            <div class="chart-wrap">
-                                <canvas id="myChart"></canvas>
-                            </div>
-                            <div>
-                                <select name="select" id="animation_dropdown" style="display: none">
-                                    <option value="case">Cases</option>
-                                    <option value="death">Deaths</option>
-                                    <option value="death/case">Deaths/Cases</option>
-                                    <option value="new_case">New Cases</option>
-                                    <option value="new_death">New Deaths</option>
-                                    <option value="first_case" selected="selected">First Case Report</option>
-                                    <option value="first_death">First Death Report</option>
-                                </select>
-                            </div>
-
+                            <!-- End content-wrap -->
                         </div>
 
+                        <div id="world" role="tabpanel" aria-labelledby="world-tab">
+                            <div class="content-wrap">
+                                <div class="highlight-wrap d-flex  d-flex flex-row justify-content-around p-2">
+                                    <div class="highlight confirmed" id="world_total_case_number">
+                                        <div class="label">Confirmed:</div>
+                                        <div class="case-number"></div>
+                                        <div class="change"><i class="fas fa-caret-up"></i></div>
+                                    </div>
+                                    <div class="highlight death " id="world_total_death_number">
+                                        <div class="label">Deaths:</div>
+                                        <div class="case-number"></div>
+                                        <div class="change"><i class="fas fa-caret-up"></i></div>
+                                    </div>
+                                </div>
+                                <!-- End highlight-wrap -->
+                                <div class="search-wrap">
+                                    <div class="input-group p-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="inputGroup-sizing-default">
+                                                <i class="fas fa-search"></i>
+                                            </span>
+                                        </div>
+                                        <input type="text" id="world-search-input" class="form-control"
+                                            aria-label="Sizing example input"
+                                            aria-describedby="inputGroup-sizing-default">
+                                    </div>
+                                </div>
+                                <!-- End search-wrap -->
+                                <template>
+                                    <tr>
+                                        <th scope="row" class="align-middle">USA</th>
+                                        <td class="confirmed"><br><i class="fas fa-caret-up"></i></td>
+                                        <td class="death"><br>-</td>
+                                    </tr>
+                                </template>
+                                <div class="table-wrap">
+                                    <table id="world-table" class="table table-dark responsive">
+                                        <thead class="sticky-top">
+                                            <tr>
+                                                <th scope="col" data-priority="1">Country</th>
+                                                <th scope="col">Confirmed</th>
+                                                <th scope="col">Deaths</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- End table-wrap -->
+                            </div>
+                            <!-- End content-wrap -->
+                        </div>
                     </div>
+            </nav>
+
+            <main role="main" class="col-9">
+                <div class="row d-flex flex-column">
+                    <div class="col-12">
+                        <div style="height: 60px;"></div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="row" style="height: calc(100vh - 60px);">
+
+                            <div id="applicationDiv">
+
+                                <a href="#" id="sidebar_control" class="open" role="button" aria-pressed="true"
+                                    title="close the sidebar"><i class="fas fa-angle-left"></i></a>
+
+                                <div id="sliderContainer" class="esri-widget">
+                                    <div id="playButton" class="esri-widget esri-widget--button toggle-button">
+                                        <div>
+                                            <span class="toggle-button-icon esri-icon-play"
+                                                aria-label="play icon"></span> Time
+                                        </div>
+                                        <div>
+                                            <span class="toggle-button-icon esri-icon-pause"
+                                                aria-label="pause icon"></span> Pause
+                                        </div>
+                                    </div>
+                                    <div id="sliderInnerContainer">
+                                        <div id="slider"></div>
+                                    </div>
+                                    <span id="sliderValue"></span>
+
+                                </div>
+
+                                <div id="viewDiv">
+                                </div>
+
+                                <div class="chart-wrap">
+                                    <canvas id="myChart"></canvas>
+                                </div>
+                                <div>
+                                    <select name="select" id="animation_dropdown" style="display: none">
+                                        <option value="case">Cases</option>
+                                        <option value="death">Deaths</option>
+                                        <option value="death/case">Deaths/Cases</option>
+                                        <option value="new_case">New Cases</option>
+                                        <option value="new_death">New Deaths</option>
+                                        <option value="first_case" selected="selected">First Case Report</option>
+                                        <option value="first_death">First Death Report</option>
+                                    </select>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+
                 </div>
+            </main>
 
-
-            </div>
-        </main>
+        </div>
 
     </div>
+    <!-- Modal -->
+    <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel" style="color:black; text-align: center;width: 100%;">
+                        WhereCOVID-19: Mapping Multi-Scale Spread and Impacts <br>of COVID-19 for Spatial Decision Support
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body"
+                    style="color:black;">
+                    <p>   The ongoing COVID-19 pandemic has put the world into an unprecedented situation causing massive impacts on populations and businesses. While there exist numerous geospatial data portals and resources for fighting against the COVID crisis, a major challenge is that few of these are based on rigorous geospatial analysis and modeling as many simply report COVID-19 cases and summary statistics. To tackle this challenge requires detailed data on populations, health care services, and high-risk settings, along with decision support tools for geospatial analytics and place-based intervention. Dynamic and interactive mapping informed by rigorous geospatial analysis and modeling is urgently needed for understanding how COVID-19 spreads across a number of spatial and temporal scales in different population contexts and for supporting decision making to mitigate the spread and save lives. However, such geospatial analysis and modeling are often computation- and data-intensive, and thus requires integration with and enablement by cyberGIS – geospatial information science and systems (GIS) based on advanced cyberinfrastructure. Therefore, the CyberGIS Center for Advanced Digital and Spatial Studies at the University of Illinois at Urbana-Champaign has established the WhereCOVID-19 platform to pursue important knowledge of multi-scale spread and impacts of COVID-19 while producing a unique and critically urgent capability for spatial decision support.
+                    </p> 
+                    <p> Specifically, WhereCOVID-19 maps and predicts where COVID-19 is spreading across a number of spatial and temporal scales while providing an online spatial decision support system for identifying populations at risk and targeting health care interventions. The platform is developed collaboratively with public health and epidemiology researchers as well as public health officials with the aim to provide a one-stop geospatial data and analysis system to support cutting-edge research and timely decision-making. WhereCOVID-19 seeks to answer a number of critical “where” questions such as where COVID-19 cases are and will likely be; where vulnerable populations are; where containment and mitigation measures should be applied; where health care services might be overwhelmed; and where additional health care resources should be deployed. WhereCOVID-19 is committed to providing mapping and spatial decision support capabilities based on scientific understanding of how spatiotemporal patterns and trends of COVID-19 relate to population characteristics and health care resources. The WhereCOVID-19 platform is made available to the general public, a broad range of stakeholders, and research and education communities.</p>
+                    <p>Currently, WhereCOVID-19 provides a collection of static and dynamic maps for estimating the spread and exposure risk of COVID-19 at various spatial and temporal scales. For example, a set of vulnerability maps synthesize information of confirmed COVID-19 cases, tested cases, population density, social vulnerability index based on CDC data, people living with HIV, and spatial accessibility to hospital resources based on a linear model. Another example is a suite of maps representing spatial accessibility to healthcare resources based on the outcome of a recent study: <a href="
+                    https://medrxiv.org/cgi/content/short/2020.05.06.20093534v1" target="_blank">
+                    https://medrxiv.org/cgi/content/short/2020.05.06.20093534v1</a>. </p>
+                    <p style="text-align:center;">A Quick Tutorial on the CyberGIS App of WhereCOVID-19: <a href="https://youtu.be/yKP3wYEF2Ng" target="_blank">Play Video</a></p>
+                    <p style="text-align:center;"><a href="https://youtu.be/yKP3wYEF2Ng" target="_blank"><img width="560" height="315" style="margin: 15px auto;" src="img/video.png" frameborder="0" ></img></a></p>
+                </div>
+                <!-- <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div> -->
+            </div>
+        </div>
+    </div>
 
-</div>
-
-<!-- Optional JavaScript -->
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js "
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js "
         integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo "
         crossorigin="anonymous "></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js "
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js "
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6 "
         crossorigin="anonymous "></script>
 
-<!--Datatable Jquery plugin-->
-<link rel="stylesheet " type="text/css "
-      href="https://cdn.datatables.net/v/bs4/dt-1.10.20/fh-3.1.6/sc-2.0.1/sp-1.0.1/datatables.min.css "/>
-<script type="text/javascript "
+    <!--Datatable Jquery plugin-->
+    <link rel="stylesheet " type="text/css "
+        href="https://cdn.datatables.net/v/bs4/dt-1.10.20/fh-3.1.6/sc-2.0.1/sp-1.0.1/datatables.min.css " />
+    <script type="text/javascript "
         src="https://cdn.datatables.net/v/bs4/dt-1.10.20/fh-3.1.6/sc-2.0.1/sp-1.0.1/datatables.min.js "></script>
+    <!-- <link rel="stylesheet " type="text/css "
+    href="https://cdn.datatables.net/responsive/2.2.4/css/responsive.dataTables.min.css" />
+    <script type="text/javascript "
+        src="https://cdn.datatables.net/responsive/2.2.4/js/dataTables.responsive.min.js "></script> -->
 
-<!-- Load ESRI.js -->
-<script defer src="https://js.arcgis.com/4.15/"></script>
-<script defer src="js/esri.js"></script>
-<script src="js/app.js "></script>
+
+    <!-- Load ESRI.js -->
+    <script defer src="https://js.arcgis.com/4.15/"></script>
+    <script defer src="js/esri.js"></script>
+    <script src="js/app.js "></script>
 
 
-<!-- include chart script -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js"></script>
+    <!-- include chart script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js"></script>
 </body>
 
 </html>

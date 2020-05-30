@@ -69,7 +69,7 @@ text-decoration: none;
 }
 
 .sidebar .nav-item {
-    width: 50%;
+    width: 33.3333333%;
     min-height: 70px;
 }
 
@@ -78,12 +78,12 @@ text-decoration: none;
     color: #FFF;
     border-radius: 0;
     text-align: center;
-    font-size:18px;
+    font-size:17px;
 }
 
 .sidebar .nav-link.active {
     color: #FFFFFF;
-    background-color: #363636;
+    background-color: #5d5d5d;
 }
 
 .sidebar .nav-link {
@@ -123,10 +123,10 @@ text-decoration: none;
     font-weight: bold;
 }
 
-.highlight:nth-child(2) {
+/* .highlight:nth-child(2) {
     border-left: #404040 solid 1px;
     border-right: #404040 solid 1px;
-}
+} */
 
 .highlight.death .case-number,
 .highlight.death .change,
@@ -166,6 +166,10 @@ text-decoration: none;
 /*
 * Sidebar tabs control
 */
+
+.tab-content {
+    background-color: #5d5d5d;
+}
 
 .tab-content>div {
     display: none;
@@ -215,11 +219,11 @@ text-decoration: none;
 
 .dataTables_wrapper {
     overflow-y: scroll;
-    overflow-x: hidden;
+    /* overflow-x: hidden; */
     color: #b3b3b3;
 }
 
-#county-table_wrapper {
+#county-table_wrapper, #world-table_wrapper {
     height: calc(100vh - 307px);
 }
 
@@ -286,4 +290,45 @@ table td {
 
 .esri-view-height-small .esri-expand .esri-widget--panel, .esri-view-height-small .esri-expand .esri-widget--panel-height-only, .esri-view-height-small .esri-ui-corner .esri-component.esri-widget--panel, .esri-view-height-small .esri-ui-corner .esri-component.esri-widget--panel-height-only {
     max-height: 350px !important;
+}
+
+/* // Extra small devices (portrait phones, less than 576px) */
+@media (max-width: 575.98px) {
+
+    .sidebar .nav-link {
+        font-size:13px;
+    }
+    .highlight .case-number {
+        font-size: 13px;
+        font-weight: bold;
+    }
+    
+}
+
+/* // Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    
+    .sidebar .nav-link {
+        font-size:15px;
+    }
+    .highlight .case-number {
+        font-size: 17px;
+        font-weight: bold;
+    }
+    
+}
+
+/* // Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    
+}
+
+/* // Large devices (desktops, 992px and up) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    
+}
+
+/* // Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    
 }

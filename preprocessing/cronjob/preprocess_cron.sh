@@ -20,6 +20,11 @@ make_copy_data(){
   cp ../illinois/dph_county_data.geojson ./illinois/dph_county_data-tmp.geojson
  	cp ../illinois/dph_county_static_data.geojson ./illinois/dph_county_static_data-tmp.geojson
 	cp ../illinois/dph_zipcode_data.geojson ./illinois/ph_zipcode_data-tmp.geojson
+
+  mkdir -p worldwide
+  cp ../worldwide/World_Countries_Boundaries_new.geojson ./worldwide/World_Countries_Boundaries_new.geojson
+	cp ../worldwide/who_world_data.geojson ./worldwide/who_world_data-tmp.geojson
+	cp ../worldwide/global-covid19-who-gis.json ./worldwide/global-covid19-who-gis-tmp.json
 }
 setup_env(){
 	cd /var/covid19_project/wherecovid19_webapp/preprocessing/cronjob
@@ -33,6 +38,7 @@ should_preprocessing_be_done(){
 	#echo "$chksum_st; $chksum_st_tmp"
 	if [ $chksum_count != $chksum_count_tmp ]
 	then
+	  echo "us-counties.csv updated"
 		return 1
 	fi
 
@@ -40,6 +46,7 @@ should_preprocessing_be_done(){
   chksum_st_tmp=`md5sum us-states-tmp.csv | awk -F' '  '{print $1}'`
   if [ $chksum_st != $chksum_st_tmp ]
   then
+          echo "us-states.csv updated"
           return 1
   fi
 
@@ -47,6 +54,7 @@ should_preprocessing_be_done(){
   chksum_idph1_tmp=`md5sum ./illinois/idph_COVIDZip-tmp.json | awk -F' '  '{print $1}'`
   if [ $chksum_idph1 != $chksum_idph1_tmp ]
   then
+          echo "idph_COVIDZip.json updated"
           return 1
   fi
 
@@ -54,6 +62,7 @@ should_preprocessing_be_done(){
   chksum_idph2_tmp=`md5sum ./illinois/idph_CountyDemos-tmp.json | awk -F' '  '{print $1}'`
   if [ $chksum_idph2 != $chksum_idph2_tmp ]
   then
+          echo "idph_CountyDemos.json updated"
           return 1
   fi
 
@@ -61,6 +70,16 @@ should_preprocessing_be_done(){
   chksum_idph3_tmp=`md5sum ./illinois/idph_COVIDHistoricalTestResults-tmp.json | awk -F' '  '{print $1}'`
   if [ $chksum_idph3 != $chksum_idph3_tmp ]
   then
+          echo "idph_COVIDHistoricalTestResults.json updated"
+          return 1
+  fi
+
+  chksum_who=`md5sum ./worldwide/global-covid19-who-gis.json | awk -F' '  '{print $1}'`
+  chksum_who_tmp=`md5sum ./worldwide/global-covid19-who-gis-tmp.json | awk -F' '  '{print $1}'`
+  if [ $chksum_who != $chksum_who_tmp ]
+  then
+          echo "$chksum_who; $chksum_who_tmp"
+          echo "global-covid19-who-gis.json updated"
           return 1
   fi
 
@@ -75,6 +94,10 @@ download_files(){
 	wget -O ./illinois/idph_CountyDemos.json http://www.dph.illinois.gov/sitefiles/CountyDemos.json?nocache=1
 	wget -O ./illinois/idph_COVIDZip.json http://www.dph.illinois.gov/sitefiles/COVIDZip.json?nocache=1
 	wget -O ./illinois/idph_COVIDHistoricalTestResults.json http://www.dph.illinois.gov/sitefiles/COVIDHistoricalTestResults.json?nocache=1
+	wget -O ./global-covid19-who-gis.json.gz https://dashboards-dev.sprinklr.com/data/9043/global-covid19-who-gis.json
+  gunzip -f ./global-covid19-who-gis.json.gz
+  mv -f ./global-covid19-who-gis.json ./worldwide/
+  rm -f ./global-covid19-who-gis.json.gz
 
 }
 convert_notebooks(){
@@ -83,6 +106,7 @@ convert_notebooks(){
 	jupyter nbconvert --to python --output-dir='.' ../counties_new.ipynb
 	jupyter nbconvert --to python --output-dir='.' ../DefineInterval.ipynb
 	jupyter nbconvert --to python --output-dir='./illinois/' ../illinois/extract_zipcode.ipynb
+	jupyter nbconvert --to python --output-dir='./worldwide/' ../worldwide/world_layer_usingCountryID.ipynb
 }
 run_state(){
 	python states_new.py
@@ -119,6 +143,18 @@ run_extract_zipcode(){
         fi
 	cd ..
 }
+run_world_layer_who(){
+	cd worldwide
+   	python world_layer_usingCountryID.py
+        if [ $? -ne 0 ]
+        then
+            	cd ..
+		restore_data
+                exit 1
+        fi
+	cd ..
+}
+
 restore_data(){
 	echo "restoring data"
   cp classes-tmp.json classes.json
@@ -134,6 +170,10 @@ restore_data(){
   cp ./illinois/dph_county_data-tmp.geojson ./illinois/dph_county_data.geojson
 	cp ./illinois/dph_county_static_data-tmp.geojson	./illinois/dph_county_static_data.geojson
 	cp ./illinois/dph_zipcode_data-tmp.geojson	./illinois/dph_zipcode_data.geojson
+
+	cp ./worldwide/who_world_data-tmp.geojson ./worldwide/who_world_data.geojson
+	cp ./worldwide/global-covid19-who-gis-tmp.json ./worldwide/global-covid19-who-gis.json
+
 	destroy_env
 }
 destroy_env(){
@@ -141,13 +181,15 @@ destroy_env(){
 }
 copy_back_results_webfolder(){
         #Copy needed datasets from parent dir
-	cp us-states.csv ..
-  cp us-counties.csv ..
-  cp nyt_counties_data.geojson ..
-  cp nyt_states_data.geojson ..
-  cp classes.json ..
-	cp ./illinois/nyt_illinois_counties_data.geojson ../illinois/
-  cp ./illinois/dph_*_data.geojson ../illinois/
+	/bin/cp us-states.csv ..
+  /bin/cp us-counties.csv ..
+  /bin/cp nyt_counties_data.geojson ..
+  /bin/cp nyt_states_data.geojson ..
+  /bin/cp classes.json ..
+	/bin/cp ./illinois/nyt_illinois_counties_data.geojson ../illinois/
+  /bin/cp ./illinois/dph_*_data.geojson ../illinois/
+  /bin/cp ./worldwide/who_world_data.geojson ../worldwide/
+  /bin/cp ./worldwide/global-covid19-who-gis.json ../worldwide/
 }
 
 
@@ -161,6 +203,7 @@ then
 	run_state
 	run_counties
   run_extract_zipcode
+  run_world_layer_who
 	run_defineintervels
   copy_back_results_webfolder
 fi
