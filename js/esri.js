@@ -985,13 +985,13 @@ require([
         }
 
         function onActiveAnimationLayerChange(name, oldValue, value) {
+            //Hide the chart
+            document.getElementById('myChart').classList.add("d-none");
+            document.getElementById('myChart').classList.remove("d-block");
+            
             //console.log(name, oldValue, value);
             if (value == null) {
                 addClass2Elem(sliderDiv, true, "hideDiv");
-
-                //Hide the chart
-                document.getElementById('myChart').classList.add("d-none");
-                document.getElementById('myChart').classList.remove("d-block");
             } else {
                 if (value != oldValue) {
                     // enable slider div
