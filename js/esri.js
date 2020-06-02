@@ -216,8 +216,8 @@ require([
         var dph_illinois_zipcode_url = "preprocessing/illinois/dph_zipcode_data.geojson";
         var dph_illinois_county_dynamic_url = "preprocessing/illinois/dph_county_data.geojson";
         var dph_illinois_county_static_url = "preprocessing/illinois/dph_county_static_data.geojson";
-        var chicago_acc_animation_url = "preprocessing/illinois/Chicago_ACC_dissolve_animation.geojson";
-        var illinois_acc_animation_url = "preprocessing/illinois/Illinois_ACC_dissolve_animation.geojson";
+        var chicago_acc_animation_url = "preprocessing/illinois/Chicago_ACC_dissolve.geojson";
+        var illinois_acc_animation_url = "preprocessing/illinois/Illinois_ACC_dissolve.geojson";
 
         if (production_mode) {
             nyt_layer_states_url = "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/preprocessing/nyt_states_data.geojson";
@@ -233,6 +233,56 @@ require([
             symbol: {
                 type: "simple-fill",
                 color: [0, 0, 0, 0.1],
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
                 outline: { // autocasts as new SimpleLineSymbol()
                     color: [128, 128, 128, 0.5],
                 }
@@ -2180,12 +2230,22 @@ require([
 
             var stop_array_opacity =[];
             var stop_array_color =[];
+            
+            function labeling(value) {
+                if (value == -1) {
+                    return "Low"
+                } else if (value == 4) {
+                    return "High"
+                } else {
+                    return ""
+                }
+            }
 
             for (let i = -1; i < 5; i++) {
                 stop_array_opacity.push({
                     value: i,
                     opacity: opacityValues[i+1],
-                    label: i.toString(),
+                    label: labeling(i),
                 })
             }
 
@@ -2193,7 +2253,7 @@ require([
                 stop_array_color.push({
                     value: i,
                     color: colors[i+1],
-                    label: i.toString(),
+                    label: labeling(i),
                 })
             }
 
