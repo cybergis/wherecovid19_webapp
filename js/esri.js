@@ -244,7 +244,7 @@ require([
             outFields: ["*"],
             title: "Chicago Accessibility Animation",
             visible: false,
-            // renderer: default_polygon_renderer,
+            renderer: default_polygon_renderer,
         })
 
         var illinois_acc_animation_layer = new GeoJSONLayer({
@@ -252,7 +252,7 @@ require([
             outFields: ["*"],
             title: "Illinois Accessibility Animation",
             visible: false,
-            // renderer: default_polygon_renderer,
+            renderer: default_polygon_renderer,
         })
 
         //nyt states
@@ -2180,7 +2180,7 @@ require([
         }
 
         function classRender_time_enabled(_date) {
-            const colors = ["#fef0d9", "#fdd49e", "#fdbb84", "#fc8d59", "#e34a33", "#b30000"];
+            const colors = ["#eff3ff", "#c6dbef", "#9ecae1", "#6baed6", "#3182bd", "#08519c"];
             const opacityValues = [0,1,1,1,1,1];
 
             var stop_array_opacity =[];
@@ -2219,6 +2219,7 @@ require([
                     color: "#0000FF",
                     outline: {  // autocasts as new SimpleLineSymbol()
                         color: [128, 128, 128, 50],
+                        width: 0
                     }
                 },
                 visualVariables: [
