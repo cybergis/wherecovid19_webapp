@@ -233,56 +233,6 @@ require([
             symbol: {
                 type: "simple-fill",
                 color: [0, 0, 0, 0.1],
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                
                 outline: { // autocasts as new SimpleLineSymbol()
                     color: [128, 128, 128, 0.5],
                 }
@@ -586,8 +536,9 @@ require([
             let topVisibleLayer = getTopVisibleLayer(map.layers, animation_layers);
             mywatcher.set("active_animation_layer", topVisibleLayer);
             //Setup hover effects
-            view.whenLayerView(topVisibleLayer).then(setupHoverTooltip);
-
+            if (topVisibleLayer != chicago_acc_animation_layer && topVisibleLayer != illinois_acc_animation_layer) {
+                view.whenLayerView(topVisibleLayer).then(setupHoverTooltip);
+            }
         }
 
         // Listen for layer visibility change
@@ -926,13 +877,13 @@ require([
         }
 
         function onActiveAnimationLayerChange(name, oldValue, value) {
+            //Hide the chart
+            document.getElementById('myChart').classList.add("d-none");
+            document.getElementById('myChart').classList.remove("d-block");
+            
             //console.log(name, oldValue, value);
             if (value == null) {
                 addClass2Elem(sliderDiv, true, "hideDiv");
-
-                //Hide the chart
-                document.getElementById('myChart').classList.add("d-none");
-                document.getElementById('myChart').classList.remove("d-block");
             } else {
                 if (value != oldValue) {
                     // enable slider div
@@ -1005,6 +956,7 @@ require([
             "top-right"
         );
 
+        view.popup.autoOpenEnabled = true;
         view.popup.autoCloseEnabled = true;
 
         // When the layerview is available, setup hovering interactivity
@@ -1830,7 +1782,10 @@ require([
         function setDate(_date, animation_type = "case") {
             let level = null;
             animation_layers.forEach(function (value) {
-                value.popupTemplate = getDynamicPopup(_date);
+                if (value.title != chicago_acc_animation_layer.title && value.title != illinois_acc_animation_layer.title) {
+                    value.popupTemplate = getDynamicPopup(_date);
+                }
+                                
                 if (value.visible == true && value.parent.visible == true) {
                     console.log(value.title);
                     if (value.title == illinois_report.title) {
