@@ -1,4 +1,4 @@
-$( window ).on('load', function() {
+$(window).on('load', function() {
     // initialize our loader overlay
     loader.initialize();
     window.setTimeout(hide_loader, 6000);

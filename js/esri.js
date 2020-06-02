@@ -180,6 +180,16 @@ require([
                 'value': 'nolog',
                 'breaks': 'NaturalBreaks',
             }
+        },
+        'who_world': {
+            'case': {
+                'value': 'nolog',
+                'breaks': 'NaturalBreaks',
+            },
+            'death': {
+                'value': 'nolog',
+                'breaks': 'NaturalBreaks',
+            }
         }
     }
 
@@ -218,6 +228,7 @@ require([
         var dph_illinois_county_static_url = "preprocessing/illinois/dph_county_static_data.geojson";
         var chicago_acc_animation_url = "preprocessing/illinois/Chicago_ACC_dissolve.geojson";
         var illinois_acc_animation_url = "preprocessing/illinois/Illinois_ACC_dissolve.geojson";
+        var who_world_layer_url = "preprocessing/worldwide/who_world_data.geojson"
 
         if (production_mode) {
             nyt_layer_states_url = "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/preprocessing/nyt_states_data.geojson";
@@ -242,7 +253,7 @@ require([
         var chicago_acc_animation_layer = new GeoJSONLayer({
             url: chicago_acc_animation_url,
             outFields: ["*"],
-            title: "Chicago Accessibility Animation",
+            title: " Accessibility Measure (Chicago)",
             visible: false,
             renderer: default_polygon_renderer,
         })
@@ -250,10 +261,18 @@ require([
         var illinois_acc_animation_layer = new GeoJSONLayer({
             url: illinois_acc_animation_url,
             outFields: ["*"],
-            title: "Illinois Accessibility Animation",
+            title: "Accessibility Measure (State-wide)",
             visible: false,
             renderer: default_polygon_renderer,
         })
+        //who worldwide
+        var who_world_layer = new GeoJSONLayer({
+            url: who_world_layer_url,
+            outFields: ["*"],
+            title: "WHO Country-level Cases",
+            visible: false,
+            renderer: default_polygon_renderer,
+        });
 
         //nyt states
         var nyt_layer_states = new GeoJSONLayer({
@@ -300,7 +319,7 @@ require([
         var dph_illinois_county_static = new GeoJSONLayer({
                 url: dph_illinois_county_static_url,
                 outFields: ["*"],
-                title: "IDPH County-level Test Data",
+                title: "IDPH County-level Testing Data",
                 renderer: dphStaticRender("tested"),
                 visible: false,
             }
@@ -320,7 +339,7 @@ require([
             outFields: ["*"],
             title: "Cases (New York Times)",
             renderer: default_polygon_renderer,
-            visible: true,
+            visible: false,
         });
 
         var illinois_hospitals = new GeoJSONLayer({
@@ -368,28 +387,10 @@ require([
         // Some Layer Types can NOT be published on ArcGIS Online
         // https://developers.arcgis.com/documentation/core-concepts/layers/
         // references an ArcGIS Online item pointing to a Map Service Layer
-        var illinois_access_layer = new MapImageLayer({
-            url:
-                //"https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/acc_il/MapServer",
-                "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Accessibility_Measure/MapServer",
-            title: "Accessibility Measure (State-wide)",
-            visible: false,
-            listMode: "hide-children",
-        });
-
-
-        var chicago_access_layer = new MapImageLayer({
-            url:
-                //"https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/acc_chicago/MapServer",
-                "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Accessibility_Measure_Chicago/MapServer",
-            title: "Accessibility Measure (Chicago)",
-            visible: false,
-            listMode: "hide-children",
-        });
 
         var hiv_layer = new MapImageLayer({
             url: "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/HIV_Map/MapServer",
-            title: "HIV Patients",
+            title: "Density of PLWH (Persons Living with HIV)",
             visible: false,
             listMode: "hide-children",
         });
@@ -402,17 +403,32 @@ require([
         });
 
         var composite_risk_layer = new MapImageLayer({
-            url: "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Composite_Risk/MapServer",
+            url: "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Vulnerability/MapServer",
             title: "Vulnerability",
             visible: true,
             listMode: "hide-children",
         });
 
+        var testing_sites_layer = new MapImageLayer({
+            url: "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Testing_Sites/MapServer",
+            title: "Testing Sites",
+            visible: false,
+            listMode: "hide-children",
+        });
+
         // order matters! last layer is at top
-        var animation_layers = [nyt_layer_states, nyt_layer_counties,
+        var animation_layers = [who_world_layer, nyt_layer_states, nyt_layer_counties,
             dph_illinois_county_dynamic, chicago_acc_animation_layer, illinois_acc_animation_layer];
         var static_layers = [illinois_hospitals, illinois_testing,
-            dph_illinois_zipcode, dph_illinois_county_static, hiv_layer, svi_layer, composite_risk_layer];
+            dph_illinois_zipcode, dph_illinois_county_static, hiv_layer, svi_layer, composite_risk_layer, testing_sites_layer];
+
+        var world_group = new GroupLayer({
+            title: "World",
+            visible: false,
+            visibilityMode: "independent",
+            layers: [who_world_layer],
+            opacity: 0.75
+        })
 
         var us_group = new GroupLayer({
             title: "US",
@@ -426,10 +442,9 @@ require([
             title: "Illinois",
             visible: true,
             visibilityMode: "independent",
-            layers: [illinois_hospitals, svi_layer, hiv_layer,
-                illinois_access_layer, chicago_access_layer, dph_illinois_zipcode,
-                dph_illinois_county_static, dph_illinois_county_dynamic, composite_risk_layer,
-                chicago_acc_animation_layer, illinois_acc_animation_layer],
+            layers: [illinois_hospitals, testing_sites_layer, svi_layer, hiv_layer,
+                dph_illinois_zipcode, dph_illinois_county_static, dph_illinois_county_dynamic,
+                chicago_acc_animation_layer, illinois_acc_animation_layer, composite_risk_layer],
             opacity: 0.75
         });
 
@@ -455,7 +470,7 @@ require([
                     id: "4f2e99ba65e34bb8af49733d9778fb8e",
                 }
             },
-            layers: [us_group, illinois_group],
+            layers: [world_group, us_group, illinois_group],
         });
 
         // Set up callback function for active_animation_layer value change before any map things
@@ -568,7 +583,7 @@ require([
                         }
                     });
 
-                    if (item.title === chicago_access_layer.title) {
+                    if (item.title === chicago_acc_animation_layer.title) {
                         view.goTo({
                             center: [-87.631721, 41.868428],
                             zoom: 10,
@@ -582,6 +597,11 @@ require([
                         view.goTo({
                             center: [-88.984300, 40.474679],
                             zoom: 6
+                        })
+                    } else if (item.parent.title === world_group.title || item.title === world_group.title) {
+                        view.goTo({
+                            center: [-60, 20],
+                            zoom: 2
                         })
                     }
                 } // if(visible === true){
@@ -708,6 +728,7 @@ require([
                             ordering: true,
                             order: [[1, "desc"]],
                             info: false,
+                            responsive: true,
                             dom: "t",
                         });
 
@@ -794,12 +815,99 @@ require([
                             ordering: true,
                             order: [[1, "desc"]],
                             info: false,
+                            responsive: true,
                             dom: "t",
                         });
 
                         $('#w-search-input').on('input', function () {
                             console.log($('#w-search-input').val());
                             county_table.search($('#w-search-input').val()).draw();
+                        });
+
+                    }
+                );
+
+            const world_query = who_world_layer.createQuery();
+            const worldConfrimed = {
+                onStatisticField: "today_case",
+                outStatisticFieldName: "Total_Cases",
+                statisticType: "sum"
+            }
+            const worldDeath = {
+                onStatisticField: "today_death",
+                outStatisticFieldName: "Total_Deaths",
+                statisticType: "sum"
+            }
+            const worldNewConfrimed = {
+                onStatisticField: "today_new_case",
+                outStatisticFieldName: "Total_New_Cases",
+                statisticType: "sum"
+            }
+            const worldNewDeath = {
+                onStatisticField: "today_new_death",
+                outStatisticFieldName: "Total_New_Deaths",
+                statisticType: "sum"
+            }
+            world_query.outStatistics = [worldConfrimed, worldDeath, worldNewConfrimed, worldNewDeath];
+            who_world_layer.queryFeatures(world_query)
+                .then(function (response) {
+                        let stats = response.features[0].attributes;
+                        let tab = document.getElementById('world-tab');
+                        tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(stats.Total_Cases)
+                        let case_div = document.getElementById('world_total_case_number')
+                        let death_div = document.getElementById('world_total_death_number')
+                        case_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Cases)
+                        case_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(stats.Total_New_Cases)
+                        death_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Deaths)
+                        death_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(stats.Total_New_Deaths)
+                    }
+                );
+
+            const world_list_query = who_world_layer.createQuery();
+            world_list_query.orderByFields = ['today_case DESC'];
+            who_world_layer.queryFeatures(world_list_query)
+                .then(function (response) {
+                        console.log(response)
+                        let couneites_table = document.getElementById('world-table').querySelector('tbody');
+                        let template = document.querySelectorAll('template')[1]
+                        let result_list = response.features.map(function (value, index) {
+                            return {
+                                centroid_x: value.geometry.centroid.x,
+                                centroid_y: value.geometry.centroid.y,
+                                uid: value.attributes.OBJECTID,
+                                country: value.attributes.NAME,
+                                case: value.attributes.today_case,
+                                new_case: value.attributes.today_new_case,
+                                death: value.attributes.today_death,
+                                new_death: value.attributes.today_new_death,
+                            }
+                        });
+                        //result = result_list.slice(0, 100);
+                        result_list.forEach(function (value) {
+                            let instance = template.content.cloneNode(true);
+
+                            instance.querySelector('th').innerHTML = value.country;
+                            instance.querySelector('th').setAttribute('data-x', value.centroid_x);
+                            instance.querySelector('th').setAttribute('data-y', value.centroid_y);
+                            instance.querySelector('th').setAttribute('data-uid', value.uid);
+                            instance.querySelector('th').setAttribute('data-country', value.country);
+                            instance.querySelector('.confirmed').innerHTML = '<span>' + value.case + '</span><br><i class="fas fa-caret-up"></i> ' + value.new_case;
+                            instance.querySelector('.death').innerHTML = '<span>' + value.death + '</span><br><i class="fas fa-caret-up"></i> ' + value.new_death;
+                            instance.querySelector('.confirmed').setAttribute('data-order', value.case);
+                            instance.querySelector('.death').setAttribute('data-order', value.death);
+                            couneites_table.appendChild(instance);
+                        })
+                        var world_table = $('#world-table').DataTable({
+                            paging: false,
+                            ordering: true,
+                            order: [[1, "desc"]],
+                            info: false,
+                            dom: "t",
+                        });
+
+                        $('#world-search-input').on('input', function () {
+                            console.log($('#world-search-input').val());
+                            world_table.search($('#world-search-input').val()).draw();
                         });
 
                     }
@@ -1564,6 +1672,8 @@ require([
             var LabelDates = [];
             if (graphic.getAttribute("dt_start") == "2020-03-17") {
                 var LabelDate = new Date(2020, 2, 9);
+            } else if (graphic.getAttribute("dt_start") == "2020-01-11") {
+                var LabelDate = new Date(2020, 0, 3);
             } else {
                 var LabelDate = new Date(2020, 0, 13);
             }
@@ -1796,6 +1906,8 @@ require([
                         level = "state";
                     } else if (value.title == dph_illinois_county_dynamic.title) {
                         level = "dph_illinois";
+                    } else if (value.title == who_world_layer.title) {
+                        level = "who_world";
                     }
                 }
             })
@@ -2699,6 +2811,9 @@ require([
                 value += 1;
                 if (value > slider.max) {
                     value = slider.max;
+                    animating = false;
+                    stopAnimation();
+                    return;
                 }
                 var dt_thumb = date.add(dt_start, dt_interval_unit, Math.floor(value));
                 setDate(dt_thumb, animation_type = animation_type);
@@ -2827,9 +2942,59 @@ require([
             }
         });
 
+        /// World Table
+        document.querySelector("#world-table tbody").addEventListener("click", function (event) {
+            who_world_layer.visible = true;
+
+            var tr = event.target;
+            while (tr !== this && !tr.matches("tr")) {
+                tr = tr.parentNode;
+            }
+            if (tr === this) {
+                console.log("No table cell found");
+            } else {
+                // console.log(tr.firstElementChild.dataset.x);
+                // console.log(tr.firstElementChild.dataset.y);
+                // console.log(tr.firstElementChild.dataset.uid);
+
+                lat = parseFloat(tr.firstElementChild.dataset.x);
+                long = parseFloat(tr.firstElementChild.dataset.y);
+                objID = parseFloat(tr.firstElementChild.dataset.uid);
+                countryName = tr.firstElementChild.dataset.country;
+
+                console.log(countryName);
+
+                // let topVisibleLayer = getTopVisibleLayer(map.layers,);
+                let topVisibleLayer = who_world_layer;
+                view.whenLayerView(topVisibleLayer).then(function (layerView) {
+                    var query = topVisibleLayer.createQuery();
+                    query.where = "NAME = " + "'" + countryName + "'";
+                    topVisibleLayer.queryFeatures(query).then(function (result) {
+                        // console.log(query);
+                        // console.log(result);
+                        // console.log(highlight);
+                        if (highlight) {
+                            highlight.remove();
+                        }
+                        highlight = layerView.highlight(result.features);
+                    })
+                }).then(function () {
+                    view.goTo({
+                        center: [lat, long],
+                        zoom: 4,
+                    })
+                        .catch(function (error) {
+                            if (error.name != "AbortError") {
+                                console.error(error);
+                            }
+                        });
+                });
+            }
+        });
+
         //Set default layers after clicking side panels
         document.getElementById("illinois-tab").addEventListener("click", function (event) {
-            composite_risk_layer.visible = true;
+            dph_illinois_county_dynamic.visible = true;
 
             // Bring hidden panel to display
             // To override the side effect in Layer Change event
@@ -2851,6 +3016,23 @@ require([
             // Bring hidden panel to display
             // To override the side effect in Layer Change event
             view.whenLayerView(nyt_layer_counties).then(function () {
+
+                    if ($(".sidebar").hasClass("closed")) {
+                        $('#sidebar_control').removeClass("closed").addClass("open");
+                        $(".sidebar").animate({width: 'toggle'}, 10).removeClass("closed").addClass("open");
+                        // $(".sidebar").removeClass("open").hide("slide", { direction: "left" }, 1000).addClass("closed");
+                        $("main").removeClass("col-12").addClass("col-9");
+                    }
+                }
+            )
+        });
+
+        document.getElementById("world-tab").addEventListener("click", function (event) {
+            who_world_layer.visible = true;
+
+            // Bring hidden panel to display
+            // To override the side effect in Layer Change event
+            view.whenLayerView(who_world_layer).then(function () {
 
                     if ($(".sidebar").hasClass("closed")) {
                         $('#sidebar_control').removeClass("closed").addClass("open");
