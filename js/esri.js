@@ -985,6 +985,10 @@ require([
         }
 
         function onActiveAnimationLayerChange(name, oldValue, value) {
+
+            //Undock popup window
+            view.popup.dockEnabled = false;
+
             //Hide the chart
             document.getElementById('myChart').classList.add("d-none");
             document.getElementById('myChart').classList.remove("d-block");
