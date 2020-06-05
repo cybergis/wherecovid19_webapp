@@ -1911,7 +1911,7 @@ require([
         function setDate(_date, animation_type = "case") {
             let level = null;
             animation_layers.forEach(function (value) {
-                
+
                 if (value.title != vulnerability_layer.title) {
                     value.popupTemplate = getDynamicPopup(_date);
                 }
@@ -2250,17 +2250,30 @@ require([
                 || _event_type == "death_per_100k_capita" || _event_type == "death_case_ratio") {
                 source = constant_class[_level][_event_type][_if_log][_method];
                 let bins = source.bins.split(",")
-                let stop_array = [{
-                    value: -1,
-                    color: background_color,
-                    label: 0
-                }];
+                
+                if (_level != "vulnerability") {
+                    var stop_array = [{
+                        value: -1,
+                        color: background_color,
+                        label: 0
+                    }];
+                } else {
+                    var stop_array = [];
+                }
+                
                 // bins.length <= colors.length
                 // e.g. if only 2 classes, get [4,5] colors
                 for (let i = 0; i < bins.length; i++) {
                     var label = bins[i];
                     if (parseFloat(label) % 1 != 0) {
-                        label = parseFloat(label).toFixed(2);
+                        // label = parseFloat(label).toFixed(2);
+                        if (i == 0) {
+                            label = "low"
+                        } else if (i == bins.length-1) {
+                            label = "high"
+                        } else {
+                            label = ""
+                        }
                     } else {
                         label = parseInt(label);
                     }
