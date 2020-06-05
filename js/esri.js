@@ -2258,7 +2258,11 @@ require([
                         label: 0
                     }];
                 } else {
-                    var stop_array = [];
+                    var stop_array = [{
+                        value: -1,
+                        color: background_color,
+                        label: ""
+                    }];
                 }
                 
                 // bins.length <= colors.length
@@ -2268,9 +2272,9 @@ require([
                     if (parseFloat(label) % 1 != 0) {
                         // label = parseFloat(label).toFixed(2);
                         if (i == 0) {
-                            label = "low"
+                            label = "Low"
                         } else if (i == bins.length-1) {
-                            label = "high"
+                            label = "High"
                         } else {
                             label = ""
                         }
