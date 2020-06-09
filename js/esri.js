@@ -839,12 +839,12 @@ require([
                 statisticType: "sum"
             }
             const worldNewConfrimed = {
-                onStatisticField: "today_new_case",
+                onStatisticField: "yesterday_new_case",
                 outStatisticFieldName: "Total_New_Cases",
                 statisticType: "sum"
             }
             const worldNewDeath = {
-                onStatisticField: "today_new_death",
+                onStatisticField: "yesterday_new_death",
                 outStatisticFieldName: "Total_New_Deaths",
                 statisticType: "sum"
             }
