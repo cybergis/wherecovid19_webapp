@@ -1086,6 +1086,7 @@ require([
 
         view.ui.empty("top-left");
 
+        // Make the layerlist widget expandable
         var layerExpand = new Expand({
             view: view,
             content: layerlist
@@ -1106,6 +1107,7 @@ require([
             "top-right"
         );
 
+        // Make the legend widget expandable
         const legend = new Expand({
             content: new Legend({
               view: view,
