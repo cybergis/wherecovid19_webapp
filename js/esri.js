@@ -436,7 +436,7 @@ require([
             visible: false,
         });
 
-        vulnerability_layer = new GeoJSONLayer({
+        var vulnerability_layer = new GeoJSONLayer({
             url: vulnerability_layer_url,
             outFields: ["*"],
             title: "Illinois Vulnerability",
@@ -462,12 +462,12 @@ require([
             listMode: "hide-children",
         });
 
-        var composite_risk_layer = new MapImageLayer({
-            url: "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Vulnerability/MapServer",
-            title: "Vulnerability",
-            visible: true,
-            listMode: "hide-children",
-        });
+        // var composite_risk_layer = new MapImageLayer({
+        //     url: "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Vulnerability/MapServer",
+        //     title: "Vulnerability",
+        //     visible: true,
+        //     listMode: "hide-children",
+        // });
 
         var testing_sites_layer = new MapImageLayer({
             url: "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Testing_Sites/MapServer",
@@ -480,7 +480,7 @@ require([
         var animation_layers = [who_world_layer, nyt_layer_states, nyt_layer_counties,
             dph_illinois_county_dynamic, chicago_acc_animation_layer, illinois_acc_animation_layer, vulnerability_layer];
         var static_layers = [chicago_acc_hospitals, illinois_acc_hospitals, illinois_hospitals, illinois_testing,
-            dph_illinois_zipcode, dph_illinois_county_static, hiv_layer, svi_layer, composite_risk_layer, testing_sites_layer];
+            dph_illinois_zipcode, dph_illinois_county_static, hiv_layer, svi_layer, testing_sites_layer];
 
         var world_group = new GroupLayer({
             title: "World",
@@ -505,7 +505,7 @@ require([
             layers: [illinois_hospitals, testing_sites_layer, svi_layer, hiv_layer,
                 dph_illinois_zipcode, dph_illinois_county_static, dph_illinois_county_dynamic,
                 chicago_acc_animation_layer, chicago_acc_hospitals, illinois_acc_animation_layer, illinois_acc_hospitals, 
-                composite_risk_layer, vulnerability_layer],
+                vulnerability_layer],
             opacity: 0.75
         });
 
