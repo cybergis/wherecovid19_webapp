@@ -190,6 +190,12 @@ require([
                 'value': 'nolog',
                 'breaks': 'NaturalBreaks',
             }
+        },
+        'vulnerability': {
+            'case': {
+                'value': 'nolog',
+                'breaks': 'NaturalBreaks',
+            },
         }
     }
 
@@ -229,7 +235,8 @@ require([
         var chicago_hospitals_url = "preprocessing/illinois/chicago_hospitals.geojson";
         var chicago_acc_animation_url = "preprocessing/illinois/Chicago_ACC_dissolve.geojson";
         var illinois_acc_animation_url = "preprocessing/illinois/Illinois_ACC_dissolve.geojson";
-        var who_world_layer_url = "preprocessing/worldwide/who_world_data.geojson"
+        var who_world_layer_url = "preprocessing/worldwide/who_world_data.geojson";
+        var vulnerability_layer_url = "preprocessing/illinois/vulnerability.geojson";
 
         if (production_mode) {
             nyt_layer_states_url = "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/preprocessing/nyt_states_data.geojson";
@@ -429,6 +436,14 @@ require([
             visible: false,
         });
 
+        var vulnerability_layer = new GeoJSONLayer({
+            url: vulnerability_layer_url,
+            outFields: ["*"],
+            title: "Vulnerability",
+            visible: false,
+            renderer: default_polygon_renderer,
+        });
+
         // Some Layer Types can NOT be published on ArcGIS Online
         // https://developers.arcgis.com/documentation/core-concepts/layers/
         // references an ArcGIS Online item pointing to a Map Service Layer
@@ -447,12 +462,12 @@ require([
             listMode: "hide-children",
         });
 
-        var composite_risk_layer = new MapImageLayer({
-            url: "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Vulnerability/MapServer",
-            title: "Vulnerability",
-            visible: true,
-            listMode: "hide-children",
-        });
+        // var composite_risk_layer = new MapImageLayer({
+        //     url: "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Vulnerability/MapServer",
+        //     title: "Vulnerability",
+        //     visible: true,
+        //     listMode: "hide-children",
+        // });
 
         var testing_sites_layer = new MapImageLayer({
             url: "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Testing_Sites/MapServer",
@@ -463,9 +478,9 @@ require([
 
         // order matters! last layer is at top
         var animation_layers = [who_world_layer, nyt_layer_states, nyt_layer_counties,
-            dph_illinois_county_dynamic, chicago_acc_animation_layer, illinois_acc_animation_layer];
+            dph_illinois_county_dynamic, chicago_acc_animation_layer, illinois_acc_animation_layer, vulnerability_layer];
         var static_layers = [chicago_acc_hospitals, illinois_acc_hospitals, illinois_hospitals, illinois_testing,
-            dph_illinois_zipcode, dph_illinois_county_static, hiv_layer, svi_layer, composite_risk_layer, testing_sites_layer];
+            dph_illinois_zipcode, dph_illinois_county_static, hiv_layer, svi_layer, testing_sites_layer];
 
         var world_group = new GroupLayer({
             title: "World",
@@ -490,7 +505,7 @@ require([
             layers: [illinois_hospitals, testing_sites_layer, svi_layer, hiv_layer,
                 dph_illinois_zipcode, dph_illinois_county_static, dph_illinois_county_dynamic,
                 chicago_acc_animation_layer, chicago_acc_hospitals, illinois_acc_animation_layer, illinois_acc_hospitals, 
-                composite_risk_layer],
+                vulnerability_layer],
             opacity: 0.75
         });
 
@@ -597,7 +612,7 @@ require([
             let topVisibleLayer = getTopVisibleLayer(map.layers, animation_layers);
             mywatcher.set("active_animation_layer", topVisibleLayer);
             //Setup hover effects
-            if (topVisibleLayer != chicago_acc_animation_layer && topVisibleLayer != illinois_acc_animation_layer) {
+            if (topVisibleLayer != chicago_acc_animation_layer && topVisibleLayer != illinois_acc_animation_layer && topVisibleLayer != vulnerability_layer) {
                 view.whenLayerView(topVisibleLayer).then(setupHoverTooltip);
             }
         }
@@ -1942,7 +1957,7 @@ require([
         function setDate(_date, animation_type = "case") {
             let level = null;
             animation_layers.forEach(function (value) {
-                if (value.title != chicago_acc_animation_layer.title && value.title != illinois_acc_animation_layer.title) {
+                if (value.title != chicago_acc_animation_layer.title && value.title != illinois_acc_animation_layer.title && value.title != vulnerability_layer.title) {
                     value.popupTemplate = getDynamicPopup(_date);
                 }
                                 
@@ -1958,6 +1973,8 @@ require([
                         level = "dph_illinois";
                     } else if (value.title == who_world_layer.title) {
                         level = "who_world";
+                    } else if (value.title == vulnerability_layer.title) {
+                        level = "vulnerability";
                     }
                 }
             })
@@ -2263,6 +2280,14 @@ require([
 
         function classRender(_date, _event_type = "case", _level = "county") {
             const colors = ["#fef0d9", "#fdd49e", "#fdbb84", "#fc8d59", "#e34a33", "#b30000"];
+            const colors_vul = ['#199640', '#a5d96a', '#ffffbf', '#fdaf61', '#d7191c', '#8c0002']
+            function colorPicker(level) {
+                if (level == "vulnerability") {
+                    return colors_vul
+                } else {
+                    return colors
+                }
+            }
             const background_color = [0, 0, 0];
             let constant_class = classes_data;
             let dynamic_class = dynamic_classes_data;
@@ -2275,23 +2300,40 @@ require([
                 || _event_type == "death_per_100k_capita" || _event_type == "death_case_ratio") {
                 source = constant_class[_level][_event_type][_if_log][_method];
                 let bins = source.bins.split(",")
-                let stop_array = [{
-                    value: -1,
-                    color: background_color,
-                    label: 0
-                }];
+                
+                if (_level != "vulnerability") {
+                    var stop_array = [{
+                        value: -1,
+                        color: background_color,
+                        label: 0
+                    }];
+                } else {
+                    var stop_array = [{
+                        value: -1,
+                        color: background_color,
+                        label: ""
+                    }];
+                }
+                
                 // bins.length <= colors.length
                 // e.g. if only 2 classes, get [4,5] colors
                 for (let i = 0; i < bins.length; i++) {
                     var label = bins[i];
-                    if (parseFloat(label) < 0) {
-                        label = parseFloat(label);
+                    if (parseFloat(label) % 1 != 0) {
+                        // label = parseFloat(label).toFixed(2);
+                        if (i == 0) {
+                            label = "Low"
+                        } else if (i == bins.length-1) {
+                            label = "High"
+                        } else {
+                            label = ""
+                        }
                     } else {
                         label = parseInt(label);
                     }
                     stop_array.push({
                         value: i,
-                        color: colors[i],
+                        color: colorPicker(_level)[i],
                         label: label,
                     })
                 }
@@ -2337,8 +2379,6 @@ require([
                     ]
                 };
             }
-
-
         }
 
         function classRender_time_enabled(_date) {
@@ -3048,7 +3088,7 @@ require([
 
             // Bring hidden panel to display
             // To override the side effect in Layer Change event
-            view.whenLayerView(composite_risk_layer).then(function () {
+            view.whenLayerView(dph_illinois_county_dynamic).then(function () {
 
                     if ($(".sidebar").hasClass("closed")) {
                         $('#sidebar_control').removeClass("closed").addClass("open");

@@ -14,23 +14,28 @@ make_copy_data(){
 	mkdir -p illinois
 	cp ./illinois/nyt_illinois_counties_data.geojson ./illinois/nyt_illinois_counties_data-tmp.geojson
 
-        cp ./illinois/idph_CountyDemos.json ./illinois/idph_CountyDemos-tmp.json
-        cp ./illinois/idph_COVIDZip.json ./illinois/idph_COVIDZip-tmp.json
-        cp ./illinois/idph_COVIDHistoricalTestResults.json ./illinois/idph_COVIDHistoricalTestResults-tmp.json
-        cp ../illinois/dph_county_data.geojson ./illinois/dph_county_data-tmp.geojson
+	cp ./illinois/idph_CountyDemos.json ./illinois/idph_CountyDemos-tmp.json
+	cp ./illinois/idph_COVIDZip.json ./illinois/idph_COVIDZip-tmp.json
+	cp ./illinois/idph_COVIDHistoricalTestResults.json ./illinois/idph_COVIDHistoricalTestResults-tmp.json
+	cp ../illinois/dph_county_data.geojson ./illinois/dph_county_data-tmp.geojson
  	cp ./illinois/dph_county_static_data.geojson ./illinois/dph_county_static_data-tmp.geojson
 	cp ./illinois/dph_zipcode_data.geojson ./illinois/ph_zipcode_data-tmp.geojson
-        # WHO
-        mkdir -p worldwide
-        cp ./worldwide/World_Countries_Boundaries_new.geojson ./worldwide/World_Countries_Boundaries_new.geojson
+	# WHO
+	mkdir -p worldwide
+	cp ./worldwide/World_Countries_Boundaries_new.geojson ./worldwide/World_Countries_Boundaries_new.geojson
 	cp ./worldwide/who_world_data.geojson ./worldwide/who_world_data-tmp.geojson
 	cp ./worldwide/global-covid19-who-gis.json ./worldwide/global-covid19-who-gis-tmp.json
-        # IL Aaccessibility
-        mkdir -p ./illinois
-        mkdir -p ./illinois/Accessibility_Dissolve_Animation
-        cp ./illinois/Chicago_ACC_dissolve.geojson ./illinois/Chicago_ACC_dissolve-tmp.geojson
-        cp ./illinois/Illinois_ACC_dissolve.geojson ./illinois/Illinois_ACC_dissolve-tmp.geojson
-        cp ./illinois/Accessibility_Dissolve_Animation/updates.txt ./illinois/Accessibility_Dissolve_Animation/updates-tmp.txt
+	# IL Aaccessibility
+	mkdir -p ./illinois
+	mkdir -p ./illinois/Accessibility_Dissolve_Animation
+	cp ./illinois/Chicago_ACC_dissolve.geojson ./illinois/Chicago_ACC_dissolve-tmp.geojson
+	cp ./illinois/Illinois_ACC_dissolve.geojson ./illinois/Illinois_ACC_dissolve-tmp.geojson
+	cp ./illinois/Accessibility_Dissolve_Animation/updates.txt ./illinois/Accessibility_Dissolve_Animation/updates-tmp.txt
+	#IL Vulnerability
+	mkdir -p ./illinois
+	mkdir -p ./illinois/Vulnerability_Animation
+	cp ./illinois/vulnerability.geojson ./illinois/vulnerability-tmp.geojson #1
+	cp ./illinois/Vulnerability_Animation/updates.txt ./illinois/Vulnerability_Animation/updates-tmp.txt #1
 }
 setup_env(){
 	cd /var/covid19_project/wherecovid19_webapp/preprocessing/cronjob
@@ -38,7 +43,7 @@ setup_env(){
 }
 should_preprocessing_be_done(){
 	echo "Checking checksum"
-        #calculate checksum
+	#calculate checksum
 	chksum_count=`md5sum us-counties.csv | awk -F' '  '{print $1}'`
 	chksum_count_tmp=`md5sum us-counties-tmp.csv | awk -F' '  '{print $1}'`
 	#echo "$chksum_count; $chksum_count_tmp"
@@ -103,12 +108,12 @@ should_preprocessing_be_done(){
 }
 download_files(){
 	#Download new NYT data
-        echo "Downloading NYT data" 
+	echo "Downloading NYT data" 
 	#wget https://raw.githubusercontent.com/nytimes/covid-19-data/master/us.csv -O ./us.csv
 	wget https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv -O  ./us-states.csv
 	wget https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv -O ./us-counties.csv
 	#IDPH
-        wget -O ./illinois/idph_CountyDemos.json http://www.dph.illinois.gov/sitefiles/CountyDemos.json?nocache=1
+	wget -O ./illinois/idph_CountyDemos.json http://www.dph.illinois.gov/sitefiles/CountyDemos.json?nocache=1
 	wget -O ./illinois/idph_COVIDZip.json http://www.dph.illinois.gov/sitefiles/COVIDZip.json?nocache=1
 	wget -O ./illinois/idph_COVIDHistoricalTestResults.json http://www.dph.illinois.gov/sitefiles/COVIDHistoricalTestResults.json?nocache=1
 	wget -O ./global-covid19-who-gis.json.gz https://dashboards-dev.sprinklr.com/data/9043/global-covid19-who-gis.json
@@ -119,6 +124,9 @@ download_files(){
         # IL Accessibility
         mkdir -p ./illinois/Accessibility_Dissolve_Animation
         cp -v ../illinois/Accessibility_Dissolve_Animation/* ./illinois/Accessibility_Dissolve_Animation/
+		# IL Vulnerability
+		mkdir -p ./illinois/Vulnerability_Animation
+        cp -v ../illinois/Vulnerability_Animation/* ./illinois/Vulnerability_Animation/ #2
         
 }
 convert_notebooks(){
@@ -128,7 +136,8 @@ convert_notebooks(){
 	jupyter nbconvert --to python --output-dir='.' ../DefineInterval.ipynb
 	jupyter nbconvert --to python --output-dir='./illinois/' ../illinois/extract_zipcode.ipynb
 	jupyter nbconvert --to python --output-dir='./worldwide/' ../worldwide/world_layer_usingCountryID.ipynb
-        jupyter nbconvert --to python --output-dir='./illinois/' ../illinois/accessibility_time_series.ipynb
+	jupyter nbconvert --to python --output-dir='./illinois/' ../illinois/accessibility_time_series.ipynb
+	jupyter nbconvert --to python --output-dir='./illinois/' ../illinois/vulnerability_time_series.ipynb #3
 }
 run_state(){
 	python states_new.py
@@ -189,6 +198,18 @@ run_illinois_accessibility(){
 	cd ..
 }
 
+run_illinois_vulnerability(){
+        cd illinois
+        python vulnerability_time_series.py
+        if [ $? -ne 0 ]
+        then
+            	cd ..
+                restore_data
+                exit 1
+        fi
+	cd ..
+} #4
+
 restore_data(){
 	echo "restoring data"
         cp classes-tmp.json classes.json
@@ -208,8 +229,10 @@ restore_data(){
 	cp ./worldwide/who_world_data-tmp.geojson ./worldwide/who_world_data.geojson
 	cp ./worldwide/global-covid19-who-gis-tmp.json ./worldwide/global-covid19-who-gis.json
         
-        cp ./illinois/Chicago_ACC_dissolve-tmp.geojson ./illinois/Chicago_ACC_dissolve.geojson
+	cp ./illinois/Chicago_ACC_dissolve-tmp.geojson ./illinois/Chicago_ACC_dissolve.geojson
 	cp ./illinois/Illinois_ACC_dissolve-tmp.geojson ./illinois/Illinois_ACC_dissolve.geojson
+	
+	cp ./illinois/vulnerability-tmp.geojson ./illinois/vulnerability.geojson #5
   
         destroy_env
 }
@@ -229,6 +252,7 @@ copy_back_results_webfolder(){
   cp ./worldwide/global-covid19-who-gis.json ../worldwide/
   cp ./illinois/Chicago_ACC_dissolve.geojson ../illinois/
   cp ./illinois/Illinois_ACC_dissolve.geojson ../illinois/
+  cp ./illinois/vulnerability.geojson ../illinois/ #6
 }
 
 setup_env
@@ -240,11 +264,12 @@ then
 	convert_notebooks
 	run_state
 	run_counties
-        run_extract_zipcode
-        run_world_layer_who
-        run_illinois_accessibility
+	run_extract_zipcode
+	run_world_layer_who
+	run_illinois_accessibility
+	run_illinois_vulnerability #7
 	run_defineintervels
-        copy_back_results_webfolder
+	copy_back_results_webfolder
 fi
 destroy_env
 exit 0
