@@ -439,7 +439,7 @@ require([
         var vulnerability_layer = new GeoJSONLayer({
             url: vulnerability_layer_url,
             outFields: ["*"],
-            title: "Illinois Vulnerability",
+            title: "Vulnerability",
             visible: false,
             renderer: default_polygon_renderer,
         });
