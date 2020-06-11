@@ -440,7 +440,7 @@ require([
             url: vulnerability_layer_url,
             outFields: ["*"],
             title: "Vulnerability",
-            visible: false,
+            visible: true,
             renderer: default_polygon_renderer,
         });
 
