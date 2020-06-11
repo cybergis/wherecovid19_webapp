@@ -1085,7 +1085,12 @@ require([
         });
 
         view.ui.empty("top-left");
-        view.ui.add(layerlist, "top-left");
+
+        var layerExpand = new Expand({
+            view: view,
+            content: layerlist
+        });
+        view.ui.add(layerExpand, "top-left");
         //view.ui.add(titleDiv, "top-left");
 
         view.ui.add(
@@ -1100,12 +1105,17 @@ require([
             }),
             "top-right"
         );
-        view.ui.add(
-            new Legend({
-                view: view
+
+        const legend = new Expand({
+            content: new Legend({
+              view: view,
+              style: "classic"
             }),
-            "bottom-right"
-        );
+            view: view,
+            expanded: true
+          });
+        view.ui.add(legend,"bottom-right");
+        
         view.ui.add(
             new Fullscreen({
                 view: view,
