@@ -224,11 +224,8 @@ require([
         //--------------------------------------------------------------------------
         var nyt_layer_states_url = "preprocessing/nyt_states_data.geojson";
         var nyt_layer_counties_url = "preprocessing/nyt_counties_data.geojson";
-        var illinios_county_url = "preprocessing/illinois/illinois_forecast_county.geojson";
-        var illinios_zipcode_url = "preprocessing/illinois/illinois_forecast_zipcode.geojson";
         var illinois_hospitals_url = "preprocessing/illinois/illinois_hospitals.geojson";
         var illinois_testing_url = "preprocessing/illinois/illinois_testing.geojson";
-        var illinois_report_url = "preprocessing/illinois/nyt_illinois_counties_data.geojson";
         var dph_illinois_zipcode_url = "preprocessing/illinois/dph_zipcode_data.geojson";
         var dph_illinois_county_dynamic_url = "preprocessing/illinois/dph_county_data.geojson";
         var dph_illinois_county_static_url = "preprocessing/illinois/dph_county_static_data.geojson";
@@ -237,15 +234,6 @@ require([
         var illinois_acc_animation_url = "preprocessing/illinois/Illinois_ACC_dissolve.geojson";
         var who_world_layer_url = "preprocessing/worldwide/who_world_data.geojson";
         var vulnerability_layer_url = "preprocessing/illinois/vulnerability.geojson";
-
-        if (production_mode) {
-            nyt_layer_states_url = "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/preprocessing/nyt_states_data.geojson";
-            nyt_layer_counties_url = "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/preprocessing/nyt_counties_data.geojson";
-            illinios_county_url = "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/preprocessing/illinois/illinois_forecast_county.geojson";
-            illinios_zipcode_url = "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/preprocessing/illinois/illinois_forecast_zipcode.geojson";
-            illinois_hospitals_url = "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/preprocessing/illinois/illinois_hospitals_valid.geojson";
-            illinois_testing_url = "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/preprocessing/illinois/illinois_testing.geojson";
-        }
 
         const default_polygon_renderer = {
             type: "simple",
@@ -344,22 +332,6 @@ require([
             renderer: default_polygon_renderer,
         });
 
-        var illinois_counties = new GeoJSONLayer({
-            url: illinios_county_url,
-            outFields: ["*"],
-            title: "County-level Info",
-            renderer: illinoisZipCodeRender("CountyForecast", 7, 8200),
-            visible: false,
-        });
-
-        var illinois_zipcode = new GeoJSONLayer({
-                url: illinios_zipcode_url,
-                outFields: ["*"],
-                title: "Zipcode-level Info",
-                renderer: illinoisZipCodeRender("ZipCodeForecast", 0, 200),
-                visible: false,
-            }
-        );
         var dph_illinois_zipcode = new GeoJSONLayer({
                 url: dph_illinois_zipcode_url,
                 outFields: ["*"],
@@ -385,14 +357,6 @@ require([
                 visible: false,
             }
         );
-
-        var illinois_report = new GeoJSONLayer({
-            url: illinois_report_url,
-            outFields: ["*"],
-            title: "Cases (New York Times)",
-            renderer: default_polygon_renderer,
-            visible: false,
-        });
 
         var illinois_hospitals = new GeoJSONLayer({
             url: illinois_hospitals_url,
@@ -462,13 +426,6 @@ require([
             listMode: "hide-children",
         });
 
-        // var composite_risk_layer = new MapImageLayer({
-        //     url: "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Vulnerability/MapServer",
-        //     title: "Vulnerability",
-        //     visible: true,
-        //     listMode: "hide-children",
-        // });
-
         var testing_sites_layer = new MapImageLayer({
             url: "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Testing_Sites/MapServer",
             title: "Testing Sites",
@@ -509,20 +466,17 @@ require([
             opacity: 0.75
         });
 
-        // order mattes! last layer is at top
-        var all_layers = new Array().concat(animation_layers, static_layers);
-
         // A non-3857 basemap
-        var basemap = new Basemap({
-            baseLayers: [
-                new MapImageLayer({
-                    url: "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer",
-                    title: "Basemap"
-                })
-            ],
-            title: "basemap",
-            id: "basemap"
-        });
+        // var basemap = new Basemap({
+        //     baseLayers: [
+        //         new MapImageLayer({
+        //             url: "https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer",
+        //             title: "Basemap"
+        //         })
+        //     ],
+        //     title: "basemap",
+        //     id: "basemap"
+        // });
 
         var map = new Map({
             //basemap: basemap,
@@ -695,37 +649,6 @@ require([
         setListview();
 
         function setListview() {
-            // const illinois_query = dph_illinois_county_static.createQuery();
-            // const illiniConfrimed = {
-            //     onStatisticField: "confirmed_cases",
-            //     outStatisticFieldName: "Total_Cases",
-            //     statisticType: "sum"
-            // }
-            // const illiniTested = {
-            //     onStatisticField: "total_tested",
-            //     outStatisticFieldName: "Total_Tested",
-            //     statisticType: "sum"
-            // }
-            // const illiniDeath = {
-            //     onStatisticField: "deaths",
-            //     outStatisticFieldName: "Total_Death",
-            //     statisticType: "sum"
-            // }
-            // illinois_query.outStatistics = [illiniConfrimed, illiniTested, illiniDeath];
-            // dph_illinois_county_static.queryFeatures(illinois_query)
-            //     .then(function (response){
-            //         let stats = response.features[0].attributes;
-            //         let tab = document.getElementById('illinois-tab');
-            //         tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(stats.Total_Cases)
-            //         let case_div = document.getElementById('illinois_total_case_number')
-            //         // console.log(case_div.querySelector('.case-number').innerHTML)
-            //         let test_div = document.getElementById('illinois_total_test_number')
-            //         let death_div = document.getElementById('illinois_total_death_number')
-            //         case_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Cases)
-            //         death_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Death)
-            //         test_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Tested)
-            //     }
-            // );
 
             const illinois_query = dph_illinois_county_static.createQuery();
 
@@ -1149,44 +1072,6 @@ require([
             setDate(current_date, animation_type = animation_type);
         });
 
-
-        var ilZipTemplate = {
-            expressionInfos: [{
-                name: "zipcode",
-                title: "Zip Code",
-                expression: "Text($feature.ZipCode)"
-            },],
-
-            title: "{expression/zipcode}",
-
-            content: [{
-                type: "fields", // FieldsContentElement
-                fieldInfos: [{
-                    fieldName: "ZipCode",
-                    visible: true,
-                    label: "Zip Code"
-                }, {
-                    fieldName: "MainCity",
-                    visible: true,
-                    label: "Main City"
-                }, {
-                    fieldName: "FIPS",
-                    visible: true,
-                    label: "FIPS"
-                }, {
-                    fieldName: "population",
-                    visible: true,
-                    label: "Population"
-                }, {
-                    fieldName: "ZipCodeForecast",
-                    visible: true,
-                    label: "Forecast New Cases (week Apr 5-11, 2020)"
-                }]
-            }]
-        };
-
-        illinois_zipcode.popupTemplate = ilZipTemplate;
-
         var ilZipCaseTemplate = {
             title: "{id}",
             content: [
@@ -1208,7 +1093,6 @@ require([
             ]
         };
         dph_illinois_zipcode.popupTemplate = ilZipCaseTemplate;
-
 
         var ilCountyCaseTemplate = {
             title: "{County}",
@@ -1237,39 +1121,6 @@ require([
         };
 
         dph_illinois_county_static.popupTemplate = ilCountyCaseTemplate;
-
-
-        var ilCountyTemplate = {
-
-            title: "{NAME}",
-
-            content: [{
-                type: "fields", // FieldsContentElement
-                fieldInfos: [
-
-                    {
-                        fieldName: "FIPS",
-                        visible: true,
-                        label: "FIPS"
-                    }, {
-                        fieldName: "population",
-                        visible: true,
-                        label: "Population"
-                    }, {
-                        fieldName: "CountyForecast",
-                        visible: true,
-                        label: "Forecast New Cases (week Apr 5-11, 2020)"
-                    }, {
-                        fieldName: "Number_Booths",
-                        visible: true,
-                        label: "Booths"
-                    }
-
-                ]
-            }]
-        };
-
-        illinois_counties.popupTemplate = ilCountyTemplate;
 
         var ilHospitalTemplate = {
 
@@ -1924,10 +1775,6 @@ require([
                                 updateChart(graphic);
 
                                 highlight = activeAnimationLayerView.highlight(graphic);
-                                // console.log(graphic.geometry.centroid.latitude);
-                                // console.log(graphic.geometry.centroid.longitude);
-                                // console.log(graphic);
-                                // console.log(screenPoint);
                                 // tooltip.show(
                                 //     screenPoint,
                                 //     "Cases in " + graphic.getAttribute("NAME")
@@ -1963,9 +1810,7 @@ require([
                                 
                 if (value.visible == true && value.parent.visible == true) {
                     console.log(value.title);
-                    if (value.title == illinois_report.title) {
-                        level = "illinois";
-                    } else if (value.title == nyt_layer_counties.title) {
+                    if (value.title == nyt_layer_counties.title) {
                         level = "county";
                     } else if (value.title == nyt_layer_states.title) {
                         level = "state";
@@ -2014,268 +1859,6 @@ require([
             } else {
                 _layer.renderer = classRender(_date, _event_type = event_type, _level = level);
             }
-            
-
-        }
-
-        function getDailyEventNumberArcade(_date, _event_type = "case", _scale = "") { // get accumulated Case Number
-            return `
-            // be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
-            var d_thumb = Date(${_date.getFullYear()},${_date.getMonth()},${_date.getDate()});
-            var event_type = '${_event_type}';
-            event_type = Lower(event_type);
-            var scale = '${_scale}';
-            //Console(d_thumb);
-            //Console($feature);
-
-            var population = DefaultValue($feature.population, 0);
-
-            var cases_num=0;
-            var deaths_num=0;
-            var cases_num_yesterday=0;
-            var deaths_num_yesterday=0;
-            var final_return_value = 0;
-
-
-            if (IsEmpty($feature['cases_ts']))
-            {
-                cases_num = 0;
-                deaths_num = 0;
-                cases_num_yesterday=0;
-                deaths_num_yesterday=0;
-            }
-            else
-            {
-                var dt_start_array = Split($feature.dt_start, '-');
-                var dt_start = Date(Number(dt_start_array[0]), Number(dt_start_array[1])-1, Number(dt_start_array[2]));
-                if (d_thumb < dt_start)
-                {
-                    cases_num = 0;
-                    deaths_num = 0;
-                    cases_num_yesterday=0;
-                    deaths_num_yesterday=0;
-                }
-                else
-                {
-                    //var cases_ts_array = Dictionary($feature["cases_ts"]).values;
-                    //var deaths_ts_array = Dictionary($feature["deaths_ts"]).values;
-                    var cases_ts_array = Split($feature["cases_ts"], ',');
-                    var deaths_ts_array = Split($feature["deaths_ts"], ',');
-
-
-                    var days=DateDiff(d_thumb, dt_start, "days");
-                    var index = Ceil(days);
-                    //Console(days);
-                    if(HasKey($feature, "dt_unit"))
-                    {
-                        if($feature["dt_unit"]=="week")
-                        {
-                        index=Ceil(days/7);
-                        }
-                    }
-
-                    cases_num = Number(cases_ts_array[index]);
-                    deaths_num = Number(deaths_ts_array[index]);
-                    if(index>0)
-                    {
-                        cases_num_yesterday=Number(cases_ts_array[index-1]);
-                        deaths_num_yesterday=Number(deaths_ts_array[index-1]);
-                    }
-                    else
-                    {
-                        cases_num_yesterday=cases_num;
-                        deaths_num_yesterday=deaths_num;
-                    }
-
-                } //if (d_thumb < dt_start)
-            } //if (fea_dt_start==-1)
-
-            if (event_type=="case")
-            {
-                final_return_value = cases_num;
-            }
-            else if (event_type=="death")
-            {
-                final_return_value = deaths_num;
-            }
-            else if (event_type=="death/case")
-            {
-                if (cases_num>0)
-                {
-                    final_return_value = deaths_num/cases_num;
-                }
-                else
-                {
-                    final_return_value=0;
-                }
-            }
-            else if(event_type=="case/population")
-            {
-                if (population >0 )
-                {
-                final_return_value = cases_num/population;
-                }
-                else
-                {
-                final_return_value=0;
-                }
-            }
-            else if(event_type=="death/population")
-            {
-                if(population >0 )
-                {
-                final_return_value = deaths_num/population;
-                }
-                else
-                {
-                final_return_value=0;
-                }
-            }
-            else if(event_type=="new_case")
-            {
-                final_return_value = cases_num - cases_num_yesterday;
-            }
-            else if(event_type=="new_death")
-            {
-                final_return_value = deaths_num - deaths_num_yesterday;
-            }
-            else
-            {
-                final_return_value = 0;
-            }
-
-            // scaling
-            if (scale=="loge")
-                {
-                final_return_value = Log(final_return_value+1);
-                }
-
-                //Console(final_return_value);
-                return final_return_value;
-
-            `;
-        }
-
-        // Deprecated
-        function getDailyEventNumberArcade2(_date) {
-            // get accumulated Case Number if daily increase is stored
-            return `
-            // start date; Month 0-based in Arcade Date class
-            // be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
-            var end_dt = Date(${_date.getFullYear()},${_date.getMonth()},${_date.getDate()});
-            //var end_dt = Date(2020,2,26);
-            var start_dt = Date(2020,0,21);
-            var days=DateDiff(end_dt, start_dt, "days");
-            var sum=0;
-            for(var i=0; i<=days; i++) {
-            var d = DateAdd(start_dt, i, "days");
-            var key=Text(d, "FY_MM_DD");
-            // if attribute value is null, use 0
-            var day_value = IIf(IsEmpty($feature[key]), 0, $feature[key]);
-            sum += day_value;
-            }
-            return sum;
-
-                `;
-        }
-
-        function dailyEventNumberRender(_date, _event_type = "case", _scale = "") {
-
-            const colors = ["#000000", "#fef0d9", "#fdcc8a", "#fc8d59", "#e34a33", "#b30000"];
-            let stops = [0, 0.01, 0.05, 0.10, 0.15, 0.2];
-            let labels = ["0", "1%", "5%", "10%", "15%", "20%"];
-
-            let event_type = _event_type.toLowerCase();
-
-            if (event_type == "case") {
-                //let case_max = Math.max.apply(Math, counties_data.metadata.cases);
-                let case_max = 500;
-
-                let interval = Math.ceil(case_max / 20);
-                stops = [0, 1, interval, 2 * interval, 3 * interval, case_max];
-                labels = stops.map(x => x.toString());
-                stops = [0, 1, interval, 2 * interval, 3 * interval, case_max];
-                stops = stops.map(x => Math.log(x));
-
-            } else if (event_type == "death") {
-                //let death_max = Math.max.apply(Math, counties_data.metadata.deaths);
-                let death_max = 200;
-
-                let interval = Math.ceil(death_max / 10);
-                stops = [0, 1, interval, 2 * interval, 3 * interval, death_max];
-                labels = stops.map(x => x.toString());
-
-            } else if (event_type == "death/case") {
-                stops = [0, 0.01, 0.05, 0.10, 0.15, 0.2];
-                labels = ["0", "1%", "5%", "10%", "15%", "20%"];
-            } else {
-                stops = [0, 1, 100, 500, 1000, 5000];
-                labels = stops.map(x => x.toString());
-
-            }
-
-            let stops_array = [];
-            for (let i = 0; i < colors.length; i++) {
-                let stop_item = {
-                    value: stops[i],
-                    color: colors[i],
-                    label: labels[i].toString()
-                };
-                stops_array.push(stop_item);
-            }
-
-
-            return {
-                type: "simple",
-                symbol: {
-                    type: "simple-fill",
-                    color: [0, 0, 0, 0],
-                    outline: { // autocasts as new SimpleLineSymbol()
-                        color: [128, 128, 128, 0.5],
-                    }
-                },
-                visualVariables: [{
-                    type: "color",
-                    //field: 'F'+String(_date.getFullYear()).padStart(4, '0')+"_"+String(_date.getMonth()+1).padStart(2, '0')+"_"+String(_date.getDate()).padStart(2, '0'),
-                    valueExpression: getDailyEventNumberArcade(_date, _event_type = _event_type, _scale = _scale),
-                    //normalizationField: "population",
-                    valueExpressionTitle: _event_type,
-                    stops: stops_array.reverse(),
-                }]
-            };
-        }
-
-        function firstEventRender(_date, _event_type = "Case") {
-
-            return {
-                type: "simple",
-                symbol: {
-                    type: "simple-fill",
-                    color: [0, 0, 0, 0],
-                    outline: { // autocasts as new SimpleLineSymbol()
-                        color: [128, 128, 128, 0.5],
-                    }
-                },
-                visualVariables: [{
-                    type: "color",
-                    valueExpression: firstEventArcade(_date, _event_type = _event_type),
-                    //valueExpressionTitle: "Voter Turnout",
-                    stops: [{
-                        value: 1,
-                        color: [241, 138, 98, 1],
-                        label: _event_type + "(s) Reported"
-                    }, {
-                        value: 0,
-                        color: [0, 255, 255, 1],
-                        label: "First " + _event_type
-                    }, {
-                        value: -1,
-                        //color: "#000000",
-                        color: [0, 0, 0, 0],
-                        label: "No " + _event_type
-                    },],
-                }]
-            };
         }
 
         function classRender(_date, _event_type = "case", _level = "county") {
@@ -2355,29 +1938,6 @@ require([
                     ]
                 };
 
-            }
-            // Two Situation: Dynamic Classes
-            else if (_event_type == "new_case" || _event_type == "new_death") {
-                console.log(dynamic_class)
-                source = dynamic_class[_level][_event_type];
-
-                return {
-                    type: "simple",
-                    symbol: {
-                        type: "simple-fill",
-                        outline: {  // autocasts as new SimpleLineSymbol()
-                            color: [128, 128, 128, 0],
-                        }
-                    },
-                    visualVariables: [
-                        {
-                            type: "color",
-                            valueExpression: dynamicClassArcade(_date, _class = bins, _event_type = _event_type),
-                            //valueExpressionTitle: "Voter Turnout",
-                            stops: stop_array.reverse(),
-                        }
-                    ]
-                };
             }
         }
 
@@ -2523,231 +2083,6 @@ require([
                 } 
                 return class;
             `;
-        }
-
-        function dynamicClassArcade(_date, _class, _event_type = "case") {
-
-            // Drew: return must be followed by the open ` on the same line, and a semi-colon ";" is required after the close `!!!
-            return `
-                //be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
-
-                var dt_thumb = Date(${_date.getFullYear()}, ${_date.getMonth()}, ${_date.getDate()});
-                var event_type = Lower('${_event_type}');
-                var val = 0;
-                var class = 0;
-                var population = Number($feature['population'])/100000;
-                var dt_start_array = Split($feature.dt_start, '-');
-                var dt_start = Date(Number(dt_start_array[0]), Number(dt_start_array[1])-1, Number(dt_start_array[2]));
-                if(dt_thumb < dt_start){
-                    class = -1;
-                    return class;
-                }
-                var days=DateDiff(dt_thumb, dt_start, "days");
-                var index = Ceil(days);
-                // New Case & New Death: Dynamic Classes
-                if(event_type == "new_case" || event_type == "new_death"){
-                    var yesterday = index - 1;
-                    var bins = Dictionary(${_class})[index]
-                    if(yesterday < 0){
-                        return 0;
-                    }else{
-                        if(event_type == "new_case"){
-                            var case_ts = Split($feature['cases_ts'],',');
-                            val = Number(case_ts[index]) - Number(case_ts[yesterday]);
-                        }
-                        if(event_type == "new_death"){
-                            var death_ts = Split($feature['deaths_ts'],',');
-                            val = Number(death_ts[index]) - Number(death_ts[yesterday]);
-                        }
-                    }
-
-                }
-                // Other 5 situations: Constant Classes
-                else{
-                    var bins = [${_class}];
-                    if(event_type == "case" || event_type == "case_per_100k_capita"){
-                        var case_ts = Split($feature['cases_ts'],',');
-                        val = case_ts[index];
-                        if(event_type == "case_per_100k_capita"){
-                            val = val/population;
-                        }
-                    }
-                    else if(event_type == "death" || event_type == "death_per_100k_capita"){
-                        var death_ts = Split($feature['deaths_ts'],',');
-                        val = death_ts[index];
-                        if(event_type == "death_per_100k_capita"){
-                            val = val/population;
-                        }
-                    }
-                    else if(event_type == "death_case_ratio"){
-                        var case_ts = Split($feature['cases_ts'],',');
-                        var death_ts = Split($feature['deaths_ts'],',');
-                        val = death_ts[index]/case_ts[index];
-                    }
-                    
-                }
-                // Find Class from bins
-                if(Count(bins) == 1){
-                    return -1;
-                }
-                for(var x = 0; x < Count(bins); x ++){
-                    if(val <= 0){
-                        class = -1;
-                        break;
-                    }
-                    if(val <= Number(bins[x])){
-                        class = x;
-                        break;
-                    }
-                }
-                return class;
-                
-
-            `;
-        }
-
-        function dynamicClassArcade(_date, _class, _event_type = "case") {
-
-            // Drew: return must be followed by the open ` on the same line, and a semi-colon ";" is required after the close `!!!
-            return `
-                //be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
-
-                var dt_thumb = Date(${_date.getFullYear()}, ${_date.getMonth()}, ${_date.getDate()});
-                var event_type = Lower('${_event_type}');
-                var val = 0;
-                var class = 0;
-                var case_ts = null;
-                var death_ts = null;
-                var population = Number($feature['population'])/100000;
-                var bins = [${_class}];
-                var dt_start_array = Split($feature.dt_start, '-');
-                var dt_start = Date(Number(dt_start_array[0]), Number(dt_start_array[1])-1, Number(dt_start_array[2]));
-                if(dt_thumb < dt_start){
-                    class = -1;
-                    return class;
-                }
-                var days=DateDiff(dt_thumb, dt_start, "days");
-                var index = Ceil(days);
-
-                if(event_type == "case" || event_type == "case_per_100k_capita"){
-                    case_ts = Split($feature['cases_ts'],',');
-                    val = case_ts[index];
-                    if(event_type == "case_per_100k_capita"){
-                        val = val/population;
-                    }
-                }
-                else if(event_type == "death" || event_type == "death_per_100k_capita"){
-                    death_ts = Split($feature['deaths_ts'],',');
-                    val = death_ts[index];
-                    if(event_type == "death_per_100k_capita"){
-                        val = val/population;
-                    }
-                }
-                else if(event_type == "death_case_ratio"){
-                    case_ts = Split($feature['cases_ts'],',');
-                    death_ts = Split($feature['deaths_ts'],',');
-                    val = death_ts[index]/case_ts[index];
-                }
-                for(var x = 0; x < Count(bins); x ++){
-                    if(val <= 0){
-                        class = -1;
-                        break;
-                    }
-                    if(val <= Number(bins[x])){
-                        class = x;
-                        break;
-                    }
-                }
-                return class;
-
-            `;
-        }
-
-        function firstEventArcade(_date, _event_type = "Case") {
-            // Drew: return must be followed by the open ` on the same line, and a semi-colon ";" is required after the close `!!!
-            return `
-            //be sure to use .getDate() for Day value!  NOT .getDay()!!!!!!!
-
-            var dt_thumb = Date(${_date.getFullYear()}, ${_date.getMonth()}, ${_date.getDate()});
-            var event_type = Lower('${_event_type}');
-            var dt_first_event = null;
-            var dt_null_string = '2099-01-01-';
-
-            var field_name = "";
-            if (event_type=="case")
-            {field_name="dt_first_case";}
-            else
-            {field_name="dt_first_death";}
-            var dt_first_event = DefaultValue($feature[field_name], dt_null_string);
-            var dt_first_event_array = Split(dt_first_event, '-');
-            var dt_first_event = Date(Number(dt_first_event_array[0]),
-                                    Number(dt_first_event_array[1])-1,
-                                    Number(dt_first_event_array[2]));
-
-            var days=DateDiff(dt_thumb, dt_first_event, "days");
-            return days;
-
-            // // For UniqueValueRender or ClassBreakRender
-            // if (days==0)
-            // { return 0; }
-            // else
-            // {
-            //   if (days>0)
-            //       {return 1; }
-            //   else
-            //       {return -1;}
-            // }
-
-            `;
-        }
-
-        function firstEventRender2(_date, _event_type = "Case") {
-            var sym1 = {
-                type: "simple-fill", // autocasts as new SimpleFillSymbol()
-                color: "red",
-                outline: { // autocasts as new SimpleLineSymbol()
-                    color: [128, 128, 128, 0.5],
-                    width: "0.5px"
-                }
-            };
-            var sym0 = {
-                type: "simple-fill", // autocasts as new SimpleFillSymbol()
-                color: "#0ff",
-                outline: { // autocasts as new SimpleLineSymbol()
-                    color: [128, 128, 128, 0.5],
-                    width: "0.5px"
-                }
-            };
-            var sym_1 = {
-                type: "simple-fill", // autocasts as new SimpleFillSymbol()
-                color: "rgb(0, 0, 0)",
-                outline: { // autocasts as new SimpleLineSymbol()
-                    color: [128, 128, 128, 0.5],
-                    width: "0.5px"
-                }
-            };
-
-            return {
-                type: "class-breaks", // autocasts as new ClassBreaksRenderer()
-
-                valueExpression: firstEventArcade(_date, _event_type = _event_type),
-                classBreakInfos: [{
-                    minValue: 0,
-                    maxValue: 0,
-                    symbol: sym0,
-                    label: "First Case" // label for symbol in legend
-                }, {
-                    minValue: 1,
-                    maxValue: 1,
-                    symbol: sym1,
-                    label: "Case(s) Reported" // label for symbol in legend
-                }, {
-                    minValue: -1,
-                    maxValue: -1,
-                    symbol: sym_1,
-                    label: "No Case" // label for symbol in legend
-                },]
-            };
         }
 
         function illinoisZipCodeRender(field_name, min, max) {
@@ -2942,9 +2277,6 @@ require([
             if (tr === this) {
                 console.log("No table cell found");
             } else {
-                // console.log(tr.firstElementChild.dataset.x);
-                // console.log(tr.firstElementChild.dataset.y);
-                // console.log(tr.firstElementChild.dataset.uid);
 
                 lat = parseFloat(tr.firstElementChild.dataset.x);
                 long = parseFloat(tr.firstElementChild.dataset.y);
@@ -2959,9 +2291,6 @@ require([
                     var query = topVisibleLayer.createQuery();
                     query.where = "NAME = " + "'" + countyName + "'";
                     topVisibleLayer.queryFeatures(query).then(function (result) {
-                        // console.log(query);
-                        // console.log(result);
-                        // console.log(highlight);
                         if (highlight) {
                             highlight.remove();
                         }
@@ -2993,9 +2322,6 @@ require([
             if (tr === this) {
                 console.log("No table cell found");
             } else {
-                // console.log(tr.firstElementChild.dataset.x);
-                // console.log(tr.firstElementChild.dataset.y);
-                // console.log(tr.firstElementChild.dataset.uid);
 
                 lat = parseFloat(tr.firstElementChild.dataset.x);
                 long = parseFloat(tr.firstElementChild.dataset.y);
@@ -3010,9 +2336,6 @@ require([
                     var query = topVisibleLayer.createQuery();
                     query.where = "NAME = " + "'" + countyName + "'";
                     topVisibleLayer.queryFeatures(query).then(function (result) {
-                        // console.log(query);
-                        // console.log(result);
-                        // console.log(highlight);
                         if (highlight) {
                             highlight.remove();
                         }
@@ -3043,9 +2366,6 @@ require([
             if (tr === this) {
                 console.log("No table cell found");
             } else {
-                // console.log(tr.firstElementChild.dataset.x);
-                // console.log(tr.firstElementChild.dataset.y);
-                // console.log(tr.firstElementChild.dataset.uid);
 
                 lat = parseFloat(tr.firstElementChild.dataset.x);
                 long = parseFloat(tr.firstElementChild.dataset.y);
@@ -3060,9 +2380,6 @@ require([
                     var query = topVisibleLayer.createQuery();
                     query.where = "NAME = " + "'" + countryName + "'";
                     topVisibleLayer.queryFeatures(query).then(function (result) {
-                        // console.log(query);
-                        // console.log(result);
-                        // console.log(highlight);
                         if (highlight) {
                             highlight.remove();
                         }
