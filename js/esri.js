@@ -224,11 +224,8 @@ require([
         //--------------------------------------------------------------------------
         var nyt_layer_states_url = "preprocessing/nyt_states_data.geojson";
         var nyt_layer_counties_url = "preprocessing/nyt_counties_data.geojson";
-        var illinois_county_url = "preprocessing/illinois/illinois_forecast_county.geojson";
-        var illinois_zipcode_url = "preprocessing/illinois/illinois_forecast_zipcode.geojson";
         var illinois_hospitals_url = "preprocessing/illinois/illinois_hospitals.geojson";
         var illinois_testing_url = "preprocessing/illinois/illinois_testing.geojson";
-        var illinois_report_url = "preprocessing/illinois/nyt_illinois_counties_data.geojson";
         var dph_illinois_zipcode_url = "preprocessing/illinois/dph_zipcode_data.geojson";
         var dph_illinois_county_dynamic_url = "preprocessing/illinois/dph_county_data.geojson";
         var dph_illinois_county_static_url = "preprocessing/illinois/dph_county_static_data.geojson";
@@ -335,22 +332,6 @@ require([
             renderer: default_polygon_renderer,
         });
 
-        var illinois_counties = new GeoJSONLayer({
-            url: illinois_county_url,
-            outFields: ["*"],
-            title: "County-level Info",
-            renderer: illinoisZipCodeRender("CountyForecast", 7, 8200),
-            visible: false,
-        });
-
-        var illinois_zipcode = new GeoJSONLayer({
-                url: illinois_zipcode_url,
-                outFields: ["*"],
-                title: "Zipcode-level Info",
-                renderer: illinoisZipCodeRender("ZipCodeForecast", 0, 200),
-                visible: false,
-            }
-        );
         var dph_illinois_zipcode = new GeoJSONLayer({
                 url: dph_illinois_zipcode_url,
                 outFields: ["*"],
@@ -376,14 +357,6 @@ require([
                 visible: false,
             }
         );
-
-        var illinois_report = new GeoJSONLayer({
-            url: illinois_report_url,
-            outFields: ["*"],
-            title: "Cases (New York Times)",
-            renderer: default_polygon_renderer,
-            visible: false,
-        });
 
         var illinois_hospitals = new GeoJSONLayer({
             url: illinois_hospitals_url,
@@ -1099,44 +1072,6 @@ require([
             setDate(current_date, animation_type = animation_type);
         });
 
-
-        var ilZipTemplate = {
-            expressionInfos: [{
-                name: "zipcode",
-                title: "Zip Code",
-                expression: "Text($feature.ZipCode)"
-            },],
-
-            title: "{expression/zipcode}",
-
-            content: [{
-                type: "fields", // FieldsContentElement
-                fieldInfos: [{
-                    fieldName: "ZipCode",
-                    visible: true,
-                    label: "Zip Code"
-                }, {
-                    fieldName: "MainCity",
-                    visible: true,
-                    label: "Main City"
-                }, {
-                    fieldName: "FIPS",
-                    visible: true,
-                    label: "FIPS"
-                }, {
-                    fieldName: "population",
-                    visible: true,
-                    label: "Population"
-                }, {
-                    fieldName: "ZipCodeForecast",
-                    visible: true,
-                    label: "Forecast New Cases (week Apr 5-11, 2020)"
-                }]
-            }]
-        };
-
-        illinois_zipcode.popupTemplate = ilZipTemplate;
-
         var ilZipCaseTemplate = {
             title: "{id}",
             content: [
@@ -1158,7 +1093,6 @@ require([
             ]
         };
         dph_illinois_zipcode.popupTemplate = ilZipCaseTemplate;
-
 
         var ilCountyCaseTemplate = {
             title: "{County}",
@@ -1187,39 +1121,6 @@ require([
         };
 
         dph_illinois_county_static.popupTemplate = ilCountyCaseTemplate;
-
-
-        var ilCountyTemplate = {
-
-            title: "{NAME}",
-
-            content: [{
-                type: "fields", // FieldsContentElement
-                fieldInfos: [
-
-                    {
-                        fieldName: "FIPS",
-                        visible: true,
-                        label: "FIPS"
-                    }, {
-                        fieldName: "population",
-                        visible: true,
-                        label: "Population"
-                    }, {
-                        fieldName: "CountyForecast",
-                        visible: true,
-                        label: "Forecast New Cases (week Apr 5-11, 2020)"
-                    }, {
-                        fieldName: "Number_Booths",
-                        visible: true,
-                        label: "Booths"
-                    }
-
-                ]
-            }]
-        };
-
-        illinois_counties.popupTemplate = ilCountyTemplate;
 
         var ilHospitalTemplate = {
 
@@ -1909,9 +1810,7 @@ require([
                                 
                 if (value.visible == true && value.parent.visible == true) {
                     console.log(value.title);
-                    if (value.title == illinois_report.title) {
-                        level = "illinois";
-                    } else if (value.title == nyt_layer_counties.title) {
+                    if (value.title == nyt_layer_counties.title) {
                         level = "county";
                     } else if (value.title == nyt_layer_states.title) {
                         level = "state";
