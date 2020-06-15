@@ -22,6 +22,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="js/loader.js" crossorigin="anonymous"></script>
     <script src="js/ui.js" crossorigin="anonymous"></script>
+    <script src="js/responsive.js" crossorigin="anonymous"></script>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
@@ -42,7 +43,7 @@
         <div class="navbar-brand">
             <img class="topic-logo" style="display: inline-block;width: 30px;" src="img/favicon.ico">
             <h1 class="header-title d-inline"><b>WhereCOVID-19</b>
-                <span style="font-size:12px;">
+                <span style="font-size:12px;" class="d-xl-inline d-none">
                     by
                     <a style="color: #00a4e4;;" href="https://cybergis.illinois.edu/" title="CyberGIS center website"
                         target="_blank">
@@ -55,7 +56,7 @@
                 </span>
             </h1>
         </div>
-        <div>
+        <div class="d-none d-md-block">
             <a class="btn btn-dark" style="color: white;" data-toggle="modal" data-target="#aboutModal">About WhereCOVID-19</a>
             <a class="btn btn-dark" href="http://www.cybergisx.org/" title="CyberGISX hub website" target="_blank">Go to
                 CyberGISX</a>
@@ -264,7 +265,7 @@
                     </div>
             </nav>
 
-            <main role="main" class="col-9">
+            <main role="main" class="col-6 col-sm-7 col-md-7 col-lg-8 col-xl-9 ">
                 <div class="row d-flex flex-column">
                     <div class="col-12">
                         <div style="height: 60px;"></div>

@@ -476,6 +476,7 @@ require([
         // Set up callback function for active_animation_layer value change before any map things
         setupActiveAnimationLayerChangeCallback();
 
+ 
         // This event will be triggered once at startup as maps adds layers for the fist time
         // Listen for layer change: remove, add, reorder
         // https://developers.arcgis.com/javascript/latest/api-reference/esri-Map.html#layers
@@ -621,7 +622,7 @@ require([
         var layerlist = new LayerList({
             view: view,
             //listItemCreatedFunction: defineActions,
-            selectionEnabled: true,
+            selectionEnabled: false,
             visibleElements: {
                 statusIndicators: false
             },
@@ -1054,12 +1055,12 @@ require([
             }),
             "top-right"
         );
-        view.ui.add(
-            new Legend({
-                view: view
-            }),
-            "bottom-right"
-        );
+        // view.ui.add(
+        //     new Legend({
+        //         view: view
+        //     }),
+        //     "bottom-right"
+        // );
         view.ui.add(
             new Fullscreen({
                 view: view,
@@ -1070,6 +1071,68 @@ require([
 
         view.popup.autoOpenEnabled = true;
         view.popup.autoCloseEnabled = true;
+
+        /////////////////////////////////////////////////////////////////
+        //////////////////////////Responsive/////////////////////////////
+        /////////////////////////////////////////////////////////////////
+
+        // Desktop
+
+        var legend = new Legend({
+            view: view,
+            container: document.createElement("div")
+          });
+  
+          // Mobile
+  
+        var expandLegend = new Expand({
+        view: view,
+        content: new Legend({
+            view: view,
+            container: document.createElement("div")
+        })
+        });
+
+        // Load
+
+        isResponsiveSize = view.widthBreakpoint === "xsmall";
+        updateView(isResponsiveSize);
+
+        // Breakpoints
+
+        view.watch("widthBreakpoint", function(breakpoint) {
+            switch (breakpoint) {
+                case "xsmall":
+                    updateView(true);
+                    view.ui.move("home", "top-right");
+
+                break;
+                case "small":
+                case "medium":
+                case "large":
+                case "xlarge":
+                updateView(false);
+                view.ui.move("home", "bottom-right");
+                break;
+                default:
+            }
+        });
+
+        function updateView(isMobile) {
+            setLegendMobile(isMobile);
+        }
+
+        function setLegendMobile(isMobile) {
+            var toAdd = isMobile ? expandLegend : legend;
+            var toRemove = isMobile ? legend : expandLegend;
+
+            view.ui.remove(toRemove);
+            view.ui.add(toAdd, "bottom-right");
+        }
+
+        /////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////
 
         // When the layerview is available, setup hovering interactivity
         //view.whenLayerView(active_animation_layer).then(setupHoverTooltip);
@@ -1087,7 +1150,6 @@ require([
             let current_date = date.add(dt_start, dt_interval_unit, thumb_value);
             setDate(current_date, animation_type = animation_type);
         });
-
 
         var ilZipTemplate = {
             expressionInfos: [{

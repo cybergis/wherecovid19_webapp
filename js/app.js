@@ -9,12 +9,12 @@ $(function() {
             $('#sidebar_control').removeClass("open").addClass("closed");
             $(".sidebar").animate({width:'toggle'},10).removeClass("open").addClass("closed");
             // $(".sidebar").removeClass("open").hide("slide", { direction: "left" }, 1000).addClass("closed");
-            $("main").removeClass("col-9").addClass("col-12");
+            $("main").addClass("map-fullscreen");
         } else {
             $('#sidebar_control').removeClass("closed").addClass("open");
             $(".sidebar").animate({width:'toggle'},10).removeClass("closed").addClass("open");
             // $(".sidebar").removeClass("closed").show("slide", { direction: "left" }, 1000).addClass("open");
-            $("main").removeClass("col-12").addClass("col-9");
+            $("main").removeClass("map-fullscreen");
         }
     });
 

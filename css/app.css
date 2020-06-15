@@ -332,3 +332,33 @@ table td {
 @media (min-width: 1200px) {
     
 }
+.map-fullscreen {
+    width: 100% !important;
+    max-width: 100%;
+    flex: 0 0 100%;
+}
+
+.invisible {
+    visibility: collapse;
+}
+
+.esri-expand .esri-expand__content {
+    box-shadow: none;
+}
+
+.esri-view-height-xsmall
+.esri-ui-corner
+.esri-expand
+.esri-legend.esri-widget,
+.esri-view-height-small
+.esri-ui-corner
+.esri-expand
+.esri-legend.esri-widget {
+    max-height: 100%;
+}
+
+.esri-view-width-less-than-small .esri-zoom .esri-widget--button,
+/* .esri-view-width-less-than-small .esri-home, */
+.esri-view-width-less-than-small .esri-fullscreen  {
+    display: none;
+}
