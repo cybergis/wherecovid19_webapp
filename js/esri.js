@@ -226,6 +226,7 @@ require([
         var dph_illinois_zipcode_url = "preprocessing/illinois/dph_zipcode_data.geojson";
         var dph_illinois_county_dynamic_url = "preprocessing/illinois/dph_county_data.geojson";
         var dph_illinois_county_static_url = "preprocessing/illinois/dph_county_static_data.geojson";
+        var chicago_hospitals_url = "preprocessing/illinois/chicago_hospitals.geojson";
         var chicago_acc_animation_url = "preprocessing/illinois/Chicago_ACC_dissolve.geojson";
         var illinois_acc_animation_url = "preprocessing/illinois/Illinois_ACC_dissolve.geojson";
         var who_world_layer_url = "preprocessing/worldwide/who_world_data.geojson"
@@ -250,10 +251,54 @@ require([
             }
         };
 
+        var chicago_acc_hospitals = new GeoJSONLayer({
+            url: chicago_hospitals_url,
+            outFields: ["*"],
+            title: "Accessibility Measure (Chicago)",
+            renderer: {
+                type: "simple",
+                symbol: {
+                    type: "simple-marker",
+                    style: "cross",
+                    color: "red",
+                    size: "10px",
+                    outline: {
+                        color: [ 255, 0, 0, 1],
+                        width: "3px"
+                    }
+                }
+            },
+            listMode: "hide",
+            legendEnabled: false,
+            visible: false,
+        });
+
+        var illinois_acc_hospitals = new GeoJSONLayer({
+            url: illinois_hospitals_url,
+            outFields: ["*"],
+            title: "Accessibility Measure (State-wide)",
+            renderer: {
+                type: "simple",
+                symbol: {
+                    type: "simple-marker",
+                    style: "cross",
+                    color: "red",
+                    size: "10px",
+                    outline: {
+                        color: [ 255, 0, 0, 1],
+                        width: "3px"
+                    }
+                }
+            },
+            listMode: "hide",
+            legendEnabled: false,
+            visible: false,
+        });
+
         var chicago_acc_animation_layer = new GeoJSONLayer({
             url: chicago_acc_animation_url,
             outFields: ["*"],
-            title: " Accessibility Measure (Chicago)",
+            title: "Accessibility Measure (Chicago)",
             visible: false,
             renderer: default_polygon_renderer,
         })
@@ -419,7 +464,7 @@ require([
         // order matters! last layer is at top
         var animation_layers = [who_world_layer, nyt_layer_states, nyt_layer_counties,
             dph_illinois_county_dynamic, chicago_acc_animation_layer, illinois_acc_animation_layer];
-        var static_layers = [illinois_hospitals, illinois_testing,
+        var static_layers = [chicago_acc_hospitals, illinois_acc_hospitals, illinois_hospitals, illinois_testing,
             dph_illinois_zipcode, dph_illinois_county_static, hiv_layer, svi_layer, composite_risk_layer, testing_sites_layer];
 
         var world_group = new GroupLayer({
@@ -444,7 +489,8 @@ require([
             visibilityMode: "independent",
             layers: [illinois_hospitals, testing_sites_layer, svi_layer, hiv_layer,
                 dph_illinois_zipcode, dph_illinois_county_static, dph_illinois_county_dynamic,
-                chicago_acc_animation_layer, illinois_acc_animation_layer, composite_risk_layer],
+                chicago_acc_animation_layer, chicago_acc_hospitals, illinois_acc_animation_layer, illinois_acc_hospitals, 
+                composite_risk_layer],
             opacity: 0.75
         });
 
@@ -584,7 +630,7 @@ require([
                         }
                     });
 
-                    if (item.title === chicago_acc_animation_layer.title) {
+                    if (item.title === chicago_acc_animation_layer.title || item.title === chicago_acc_hospitals.title) {
                         view.goTo({
                             center: [-87.631721, 41.868428],
                             zoom: 10,
@@ -840,12 +886,12 @@ require([
                 statisticType: "sum"
             }
             const worldNewConfrimed = {
-                onStatisticField: "today_new_case",
+                onStatisticField: "yesterday_new_case",
                 outStatisticFieldName: "Total_New_Cases",
                 statisticType: "sum"
             }
             const worldNewDeath = {
-                onStatisticField: "today_new_death",
+                onStatisticField: "yesterday_new_death",
                 outStatisticFieldName: "Total_New_Deaths",
                 statisticType: "sum"
             }
@@ -1040,7 +1086,13 @@ require([
         });
 
         view.ui.empty("top-left");
-        view.ui.add(layerlist, "top-left");
+
+        // Make the layerlist widget expandable
+        var layerExpand = new Expand({
+            view: view,
+            content: layerlist
+        });
+        view.ui.add(layerExpand, "top-left");
         //view.ui.add(titleDiv, "top-left");
 
         view.ui.add(
@@ -1061,6 +1113,18 @@ require([
         //     }),
         //     "bottom-right"
         // );
+
+        // Make the legend widget expandable
+        const legend = new Expand({
+            content: new Legend({
+              view: view,
+              style: "classic"
+            }),
+            view: view,
+            expanded: true
+          });
+        view.ui.add(legend,"bottom-right");
+        
         view.ui.add(
             new Fullscreen({
                 view: view,
