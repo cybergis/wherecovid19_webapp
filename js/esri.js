@@ -936,9 +936,9 @@ require([
             });
             dt_start = _dt_start;
 
-            if (dt_interval_unit == "day") {
-                dt_start = dt_startConst;
-            }
+            // if (dt_interval_unit == "day") {
+            //     dt_start = dt_startConst;
+            // }
 
             let _slider_max = date.difference(dt_start, _dt_end, dt_interval_unit);
             //console.log(_slider_max);
