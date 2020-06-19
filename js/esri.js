@@ -2208,8 +2208,8 @@ require([
          */
         function startAnimation() {
             stopAnimation();
-            animation = animate(slider.values[0]);
             playButton.classList.add("toggled");
+            animation = animate(slider.values[0]);
             flag_first_click_anination_per_layer = false;
         }
 
@@ -2217,12 +2217,10 @@ require([
          * Stops the animations
          */
         function stopAnimation() {
-            if (!animation) {
-                return;
+            if (animation) {
+                animation.remove();
+                animation = null;
             }
-
-            animation.remove();
-            animation = null;
             playButton.classList.remove("toggled");
         }
 
