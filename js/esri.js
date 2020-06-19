@@ -86,6 +86,8 @@ require([
     const mywatcher = new MyWatcher({
         active_animation_layer: null,
     });
+    // first time the animation button is clicked for this layer?
+    var flag_first_click_anination_per_layer = true;
 
     var production_mode = false; //true or false
 
@@ -902,6 +904,7 @@ require([
         // Zero-based Month: 0==Jan
         const dt_startConst = new Date(2020, 0, 14);
         var dt_start = dt_startConst;
+        //var old_dt_start = dt_start;
         var dt_interval_unit = "day";
 
 
@@ -936,9 +939,9 @@ require([
             });
             dt_start = _dt_start;
 
-            if (dt_interval_unit == "day") {
-                dt_start = dt_startConst;
-            }
+            // if (dt_interval_unit == "day") {
+            //     dt_start = dt_startConst;
+            // }
 
             let _slider_max = date.difference(dt_start, _dt_end, dt_interval_unit);
             //console.log(_slider_max);
@@ -976,8 +979,12 @@ require([
             //Hide the chart
             document.getElementById('myChart').classList.add("d-none");
             document.getElementById('myChart').classList.remove("d-block");
+
+            var old_dt_start = dt_start;
             
             //console.log(name, oldValue, value);
+            // reset flag when animation layer changed
+            flag_first_click_anination_per_layer = true;
             if (value == null) {
                 addClass2Elem(sliderDiv, true, "hideDiv");
             } else {
@@ -985,9 +992,20 @@ require([
                     // enable slider div
                     addClass2Elem(sliderDiv, false, "hideDiv");
                     queryLayerDates(value).then(initSlider).then(function () {
-                        let thumb_value = slider.values[0];
-                        if (thumb_value > slider.max || thumb_value < slider.min) {
+                                                
+                        let thumb_value = slider.values[0]
+                        
+                        if (old_dt_start != undefined) {
+                            // Calculate the change of start dates for two different layers
+                            var start_date_change = date.difference(old_dt_start, dt_start, dt_interval_unit);
+                            // Remain on the same date while switching layers
+                            thumb_value = slider.values[0]-start_date_change;
+                        }
+                        
+                        if (thumb_value < slider.min) {
                             thumb_value = slider.min;
+                        } else if (thumb_value > slider.max) {
+                            thumb_value = slider.max;
                         }
                         let dt_thumb = date.add(dt_start, dt_interval_unit, thumb_value);
 
@@ -2075,9 +2093,6 @@ require([
                 var dt_thumb = Text(dt_thumb_obj, "Y-MM-DD");
                 var dt_feature = $feature.date;
                 var class = -1;
-                Console(dt_thumb);
-                Console(dt_feature);
-                Console("...");
                 if(dt_feature == dt_thumb){
                     class = Number($feature.category);
                 } 
@@ -2204,20 +2219,19 @@ require([
          */
         function startAnimation() {
             stopAnimation();
-            animation = animate(slider.values[0]);
             playButton.classList.add("toggled");
+            animation = animate(slider.values[0]);
+            flag_first_click_anination_per_layer = false;
         }
 
         /**
          * Stops the animations
          */
         function stopAnimation() {
-            if (!animation) {
-                return;
+            if (animation) {
+                animation.remove();
+                animation = null;
             }
-
-            animation.remove();
-            animation = null;
             playButton.classList.remove("toggled");
         }
 
@@ -2235,10 +2249,15 @@ require([
 
                 value += 1;
                 if (value > slider.max) {
-                    value = slider.max;
-                    animating = false;
-                    stopAnimation();
-                    return;
+                    if (flag_first_click_anination_per_layer)
+                    {
+                        value = slider.min;
+                    }
+                    else {
+                        animating = false;
+                        stopAnimation();
+                        return;
+                    }
                 }
                 var dt_thumb = date.add(dt_start, dt_interval_unit, Math.floor(value));
                 setDate(dt_thumb, animation_type = animation_type);
