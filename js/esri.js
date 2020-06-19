@@ -978,6 +978,11 @@ require([
             //Hide the chart
             document.getElementById('myChart').classList.add("d-none");
             document.getElementById('myChart').classList.remove("d-block");
+
+            if (dt_start == undefined) {
+                dt_start = new Date(2020, 0, 14);
+            }
+            var old_dt_start = dt_start;
             
             //console.log(name, oldValue, value);
             // reset flag when animation layer changed
@@ -989,7 +994,10 @@ require([
                     // enable slider div
                     addClass2Elem(sliderDiv, false, "hideDiv");
                     queryLayerDates(value).then(initSlider).then(function () {
-                        let thumb_value = slider.values[0];
+                        // Calculate the change of start dates for two different layers
+                        var start_date_change = date.difference(old_dt_start, dt_start, dt_interval_unit); 
+                        // Remain on the same date while switching layers
+                        let thumb_value = slider.values[0]-start_date_change;
                         if (thumb_value > slider.max || thumb_value < slider.min) {
                             thumb_value = slider.min;
                         }
@@ -2079,9 +2087,6 @@ require([
                 var dt_thumb = Text(dt_thumb_obj, "Y-MM-DD");
                 var dt_feature = $feature.date;
                 var class = -1;
-                Console(dt_thumb);
-                Console(dt_feature);
-                Console("...");
                 if(dt_feature == dt_thumb){
                     class = Number($feature.category);
                 } 
