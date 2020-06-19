@@ -902,6 +902,7 @@ require([
         // Zero-based Month: 0==Jan
         const dt_startConst = new Date(2020, 0, 14);
         var dt_start = dt_startConst;
+        //var old_dt_start = dt_start;
         var dt_interval_unit = "day";
 
 
@@ -977,7 +978,11 @@ require([
             document.getElementById('myChart').classList.add("d-none");
             document.getElementById('myChart').classList.remove("d-block");
             
-            //console.log(name, oldValue, value);
+            if (dt_start == undefined) {
+                dt_start = new Date(2020, 0, 14);
+            }
+            var old_dt_start = dt_start;
+
             if (value == null) {
                 addClass2Elem(sliderDiv, true, "hideDiv");
             } else {
@@ -985,7 +990,13 @@ require([
                     // enable slider div
                     addClass2Elem(sliderDiv, false, "hideDiv");
                     queryLayerDates(value).then(initSlider).then(function () {
-                        let thumb_value = slider.values[0];
+                        
+                        var start_date_change = date.difference(old_dt_start, dt_start, dt_interval_unit);                         
+                        // console.log(old_dt_start);
+                        // console.log(dt_start);
+                        // console.log(start_date_change);
+                        
+                        let thumb_value = slider.values[0]-start_date_change;
                         if (thumb_value > slider.max || thumb_value < slider.min) {
                             thumb_value = slider.min;
                         }
@@ -2075,9 +2086,6 @@ require([
                 var dt_thumb = Text(dt_thumb_obj, "Y-MM-DD");
                 var dt_feature = $feature.date;
                 var class = -1;
-                Console(dt_thumb);
-                Console(dt_feature);
-                Console("...");
                 if(dt_feature == dt_thumb){
                     class = Number($feature.category);
                 } 
