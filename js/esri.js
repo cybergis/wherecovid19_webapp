@@ -2307,6 +2307,7 @@ require([
         function animate(startValue) {
             var animating = true;
             var value = startValue;
+            var repeat_count = 0;
 
             var frame = function(timestamp) {
                 if (!animating) {
@@ -2315,9 +2316,14 @@ require([
 
                 value += 1;
                 if (value > slider.max) {
-                    if (flag_first_click_anination_per_layer) {
+                    // if (flag_first_click_anination_per_layer) {
+                    //     value = slider.min;
+                    // }
+                    if (startValue == slider.max && repeat_count==0) {
                         value = slider.min;
-                    } else {
+                        repeat_count += 1;
+                    }
+                    else {
                         animating = false;
                         stopAnimation();
                         return;
