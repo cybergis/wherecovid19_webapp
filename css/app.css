@@ -290,9 +290,9 @@ table td {
 #sidebar_control_mobile_close {
     position: absolute;
     z-index: 10;
-    right: 10px;
-    bottom: 10px;
-    border-radius: 15px;
+    right: 0;
+    bottom: 0px;
+    border-radius: 3px 0px 0px 3px;
     background-color: #cc1b1b;
     color: #FFFFFF;
     line-height: 0;
@@ -305,9 +305,9 @@ table td {
     display: none;
     position: absolute;
     z-index: 10;
-    left: 10px;
-    bottom: 10px;
-    border-radius: 15px;
+    left: 0px;
+    bottom: 20px;
+    border-radius: 0px 3px 3px 0px;
     background-color: #00cc29;
     color: #FFFFFF;
     line-height: 0;
