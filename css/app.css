@@ -21,7 +21,7 @@ body {
 
 .navbar {
     /* background-color: #ffffff; */
-    min-width: 1080px;
+    /* min-width: 1080px; */
     height: 60px;
     /* color: #000; */
     background-color: #303030;
@@ -49,7 +49,7 @@ body {
     padding: 60px 0 0;
     /* Height of navbar */
     background-color: #363636;
-    width: 550px;
+    /* width: 550px; */
     border-right: #404040 solid 1px;
     display: block;
 }
