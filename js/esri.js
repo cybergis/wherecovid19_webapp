@@ -333,7 +333,7 @@ require([
             visible: false,
             renderer: default_polygon_renderer,
         });
-      
+
         var dph_illinois_zipcode = new GeoJSONLayer({
             url: dph_illinois_zipcode_url,
             outFields: ["*"],
@@ -435,9 +435,11 @@ require([
         // order matters! last layer is at top
         var animation_layers = [who_world_layer, nyt_layer_states, nyt_layer_counties,
 
-            dph_illinois_county_dynamic, chicago_acc_animation_layer, illinois_acc_animation_layer, vulnerability_layer];
+            dph_illinois_county_dynamic, chicago_acc_animation_layer, illinois_acc_animation_layer, vulnerability_layer
+        ];
         var static_layers = [chicago_acc_hospitals, illinois_acc_hospitals, illinois_hospitals, illinois_testing,
-            dph_illinois_zipcode, dph_illinois_county_static, hiv_layer, svi_layer, testing_sites_layer];
+            dph_illinois_zipcode, dph_illinois_county_static, hiv_layer, svi_layer, testing_sites_layer
+        ];
 
         var world_group = new GroupLayer({
             title: "World",
@@ -461,8 +463,9 @@ require([
             visibilityMode: "independent",
             layers: [illinois_hospitals, testing_sites_layer, svi_layer, hiv_layer,
                 dph_illinois_zipcode, dph_illinois_county_static, dph_illinois_county_dynamic,
-                chicago_acc_animation_layer, chicago_acc_hospitals, illinois_acc_animation_layer, illinois_acc_hospitals, 
-                vulnerability_layer],
+                chicago_acc_animation_layer, chicago_acc_hospitals, illinois_acc_animation_layer, illinois_acc_hospitals,
+                vulnerability_layer
+            ],
             opacity: 0.75
         });
 
@@ -980,7 +983,7 @@ require([
             document.getElementById('myChart').classList.remove("d-block");
 
             var old_dt_start = dt_start;
-            
+
             //console.log(name, oldValue, value);
             // reset flag when animation layer changed
             flag_first_click_anination_per_layer = true;
@@ -990,17 +993,17 @@ require([
                 if (value != oldValue) {
                     // enable slider div
                     addClass2Elem(sliderDiv, false, "hideDiv");
-                    queryLayerDates(value).then(initSlider).then(function () {
-                                                
+                    queryLayerDates(value).then(initSlider).then(function() {
+
                         let thumb_value = slider.values[0]
-                        
+
                         if (old_dt_start != undefined) {
                             // Calculate the change of start dates for two different layers
                             var start_date_change = date.difference(old_dt_start, dt_start, dt_interval_unit);
                             // Remain on the same date while switching layers
-                            thumb_value = slider.values[0]-start_date_change;
+                            thumb_value = slider.values[0] - start_date_change;
                         }
-                        
+
                         if (thumb_value < slider.min) {
                             thumb_value = slider.min;
                         } else if (thumb_value > slider.max) {
@@ -1138,7 +1141,6 @@ require([
 
         function setLegendMobile(isMobile) {
 
-            view.ui.empty("top-left");
             view.ui.empty("bottom-right");
 
             if (isMobile) {
@@ -1147,6 +1149,7 @@ require([
 
                 view.ui.remove(layerlist, "top-left");
                 view.ui.add(expandLayerlist, "top-left");
+
             } else {
                 view.ui.remove(expandLegend, "bottom-right");
                 view.ui.add(legend, "bottom-right");
@@ -1888,7 +1891,7 @@ require([
         function setDate(_date, animation_type = "case") {
             let level = null;
 
-            animation_layers.forEach(function (value) {
+            animation_layers.forEach(function(value) {
                 if (value.title != chicago_acc_animation_layer.title && value.title != illinois_acc_animation_layer.title && value.title != vulnerability_layer.title) {
                     value.popupTemplate = getDynamicPopup(_date);
                 }
@@ -1949,6 +1952,7 @@ require([
         function classRender(_date, _event_type = "case", _level = "county") {
             const colors = ["#fef0d9", "#fdd49e", "#fdbb84", "#fc8d59", "#e34a33", "#b30000"];
             const colors_vul = ['#199640', '#a5d96a', '#ffffbf', '#fdaf61', '#d7191c', '#8c0002']
+
             function colorPicker(level) {
                 if (level == "vulnerability") {
                     return colors_vul
@@ -1968,7 +1972,7 @@ require([
                 _event_type == "death_per_100k_capita" || _event_type == "death_case_ratio") {
                 source = constant_class[_level][_event_type][_if_log][_method];
                 let bins = source.bins.split(",")
-                
+
                 if (_level != "vulnerability") {
                     var stop_array = [{
                         value: -1,
@@ -1982,7 +1986,7 @@ require([
                         label: ""
                     }];
                 }
-                
+
                 // bins.length <= colors.length
                 // e.g. if only 2 classes, get [4,5] colors
                 for (let i = 0; i < bins.length; i++) {
@@ -1991,7 +1995,7 @@ require([
                         // label = parseFloat(label).toFixed(2);
                         if (i == 0) {
                             label = "Low"
-                        } else if (i == bins.length-1) {
+                        } else if (i == bins.length - 1) {
                             label = "High"
                         } else {
                             label = ""
@@ -2311,11 +2315,9 @@ require([
 
                 value += 1;
                 if (value > slider.max) {
-                    if (flag_first_click_anination_per_layer)
-                    {
+                    if (flag_first_click_anination_per_layer) {
                         value = slider.min;
-                    }
-                    else {
+                    } else {
                         animating = false;
                         stopAnimation();
                         return;
@@ -2372,7 +2374,7 @@ require([
                     var query = topVisibleLayer.createQuery();
                     query.where = "NAME = " + "'" + countyName + "'";
 
-                    topVisibleLayer.queryFeatures(query).then(function (result) {
+                    topVisibleLayer.queryFeatures(query).then(function(result) {
 
                         if (highlight) {
                             highlight.remove();
@@ -2419,7 +2421,7 @@ require([
                     var query = topVisibleLayer.createQuery();
                     query.where = "NAME = " + "'" + countyName + "'";
 
-                    topVisibleLayer.queryFeatures(query).then(function (result) {
+                    topVisibleLayer.queryFeatures(query).then(function(result) {
 
                         if (highlight) {
                             highlight.remove();
@@ -2465,7 +2467,7 @@ require([
                     var query = topVisibleLayer.createQuery();
                     query.where = "NAME = " + "'" + countryName + "'";
 
-                    topVisibleLayer.queryFeatures(query).then(function (result) {
+                    topVisibleLayer.queryFeatures(query).then(function(result) {
 
                         if (highlight) {
                             highlight.remove();
@@ -2493,7 +2495,7 @@ require([
             // Bring hidden panel to display
             // To override the side effect in Layer Change event
 
-            view.whenLayerView(dph_illinois_county_dynamic).then(function () {
+            view.whenLayerView(dph_illinois_county_dynamic).then(function() {
 
                 if ($(".sidebar").hasClass("closed")) {
                     $('#sidebar_control').removeClass("closed").addClass("open");
