@@ -2497,11 +2497,10 @@ require([
 
             view.whenLayerView(dph_illinois_county_dynamic).then(function() {
 
-                if ($(".sidebar").hasClass("closed")) {
-                    $('#sidebar_control').removeClass("closed").addClass("open");
-                    $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("closed").addClass("open");
-                    // $(".sidebar").removeClass("open").hide("slide", { direction: "left" }, 1000).addClass("closed");
-                    $("main").removeClass("col-12").addClass("col-9");
+                if ($(".sidebar").hasClass("open")) {
+                    $('#sidebar_control').removeClass("open").addClass("closed");
+                    $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("open").addClass("closed");
+                    $("main").addClass("map-fullscreen");
                 }
             })
         });
@@ -2513,11 +2512,10 @@ require([
             // To override the side effect in Layer Change event
             view.whenLayerView(nyt_layer_counties).then(function() {
 
-                if ($(".sidebar").hasClass("closed")) {
-                    $('#sidebar_control').removeClass("closed").addClass("open");
-                    $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("closed").addClass("open");
-                    // $(".sidebar").removeClass("open").hide("slide", { direction: "left" }, 1000).addClass("closed");
-                    $("main").removeClass("col-12").addClass("col-9");
+                if ($(".sidebar").hasClass("open")) {
+                    $('#sidebar_control').removeClass("open").addClass("closed");
+                    $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("open").addClass("closed");
+                    $("main").addClass("map-fullscreen");
                 }
             })
         });
@@ -2529,11 +2527,10 @@ require([
             // To override the side effect in Layer Change event
             view.whenLayerView(who_world_layer).then(function() {
 
-                if ($(".sidebar").hasClass("closed")) {
-                    $('#sidebar_control').removeClass("closed").addClass("open");
-                    $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("closed").addClass("open");
-                    // $(".sidebar").removeClass("open").hide("slide", { direction: "left" }, 1000).addClass("closed");
-                    $("main").removeClass("col-12").addClass("col-9");
+                if ($(".sidebar").hasClass("open")) {
+                    $('#sidebar_control').removeClass("open").addClass("closed");
+                    $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("open").addClass("closed");
+                    $("main").addClass("map-fullscreen");
                 }
             })
         });

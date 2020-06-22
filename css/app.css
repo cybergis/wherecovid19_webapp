@@ -49,7 +49,7 @@ body {
     padding: 60px 0 0;
     /* Height of navbar */
     background-color: #363636;
-    /* width: 550px; */
+    max-width: 550px;
     border-right: #404040 solid 1px;
     display: block;
 }
