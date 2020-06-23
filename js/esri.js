@@ -554,7 +554,7 @@ require([
                             return layer;
                         } else {
                             if (filter_array.includes(layer)) {
-                                return layer
+                                return layer;
                             }
                         }
                     }
@@ -606,12 +606,12 @@ require([
                         view.goTo({
                             center: [-87.631721, 41.868428],
                             zoom: 10,
-                        })
+                        });
                     } else if (item.parent.title === us_group.title || item.title === us_group.title) {
                         view.goTo({
                             center: [-96.984300, 40.474679],
                             zoom: 3
-                        })
+                        });
                     } else if (item.parent.title === illinois_group.title || item.title === illinois_group.title) {
                         view.goTo({
                             center: [-88.984300, 40.474679],
@@ -700,9 +700,9 @@ require([
                             instance.querySelector('th').setAttribute('data-y', value.centroid_y);
                             instance.querySelector('th').setAttribute('data-uid', index);
                             instance.querySelector('th').setAttribute('data-county', value.county);
-                            instance.querySelector('.confirmed').innerHTML = value.case;
-                            instance.querySelector('.tested').innerHTML = value.tested;
-                            instance.querySelector('.death').innerHTML = value.death;
+                            instance.querySelector('.confirmed').innerHTML = numberWithCommas(value.case);
+                            instance.querySelector('.tested').innerHTML = numberWithCommas(value.tested);
+                            instance.querySelector('.death').innerHTML = numberWithCommas(value.death);
                             instance.querySelector('.confirmed').setAttribute('data-order', value.case);
                             instance.querySelector('.death').setAttribute('data-order', value.death);
                             instance.querySelector('.tested').setAttribute('data-order', value.tested);
@@ -791,8 +791,8 @@ require([
                         instance.querySelector('th').setAttribute('data-y', value.centroid_y);
                         instance.querySelector('th').setAttribute('data-uid', value.uid);
                         instance.querySelector('th').setAttribute('data-county', value.county);
-                        instance.querySelector('.confirmed').innerHTML = '<span>' + value.case+'</span><br><i class="fas fa-caret-up"></i> ' + value.new_case;
-                        instance.querySelector('.death').innerHTML = '<span>' + value.death + '</span><br><i class="fas fa-caret-up"></i> ' + value.new_death;
+                        instance.querySelector('.confirmed').innerHTML = '<span>' + numberWithCommas(value.case) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_case);
+                        instance.querySelector('.death').innerHTML = '<span>' + numberWithCommas(value.death) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_death);
                         instance.querySelector('.confirmed').setAttribute('data-order', value.case);
                         instance.querySelector('.death').setAttribute('data-order', value.death);
                         couneites_table.appendChild(instance);
@@ -878,8 +878,8 @@ require([
                         instance.querySelector('th').setAttribute('data-y', value.centroid_y);
                         instance.querySelector('th').setAttribute('data-uid', value.uid);
                         instance.querySelector('th').setAttribute('data-country', value.country);
-                        instance.querySelector('.confirmed').innerHTML = '<span>' + value.case+'</span><br><i class="fas fa-caret-up"></i> ' + value.new_case;
-                        instance.querySelector('.death').innerHTML = '<span>' + value.death + '</span><br><i class="fas fa-caret-up"></i> ' + value.new_death;
+                        instance.querySelector('.confirmed').innerHTML = '<span>' + numberWithCommas(value.case) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_case);
+                        instance.querySelector('.death').innerHTML = '<span>' + numberWithCommas(value.death) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_death);
                         instance.querySelector('.confirmed').setAttribute('data-order', value.case);
                         instance.querySelector('.death').setAttribute('data-order', value.death);
                         couneites_table.appendChild(instance);
