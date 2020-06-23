@@ -167,8 +167,8 @@ require([
         },
         'county': {
             'case': {
-                'value': 'nolog',
-                'breaks': 'Quantiles',
+                'value': 'log',
+                'breaks': 'NaturalBreaks',
             },
             'death': {
                 'value': 'nolog',
@@ -1920,7 +1920,9 @@ require([
                 // e.g. if only 2 classes, get [4,5] colors
                 for (let i = 0; i < bins.length; i++) {
                     var label = bins[i];
-                    if (parseFloat(label) % 1 != 0) {
+                    if (_if_log == "log") {
+                        label = Math.ceil(Math.pow(2.71828, label));
+                    } else if (parseFloat(label) % 1 != 0) {
                         // label = parseFloat(label).toFixed(2);
                         if (i == 0) {
                             label = "Low"
@@ -1935,7 +1937,7 @@ require([
                     stop_array.push({
                         value: i,
                         color: colorPicker(_level)[i],
-                        label: label,
+                        label: label
                     })
                 }
                 return {
