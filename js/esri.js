@@ -981,6 +981,9 @@ require([
             document.getElementById('myChart').classList.remove("d-block");
 
             var old_dt_start = dt_start;
+            if (slider != null) {
+                var old_slider_value = slider.values[0];
+            }            
             
             //console.log(name, oldValue, value);
             // reset flag when animation layer changed
@@ -993,13 +996,15 @@ require([
                     addClass2Elem(sliderDiv, false, "hideDiv");
                     queryLayerDates(value).then(initSlider).then(function () {
                                                 
+                        console.log(slider);
                         let thumb_value = slider.values[0]
                         
                         if (old_dt_start != undefined) {
                             // Calculate the change of start dates for two different layers
                             var start_date_change = date.difference(old_dt_start, dt_start, dt_interval_unit);
                             // Remain on the same date while switching layers
-                            thumb_value = slider.values[0]-start_date_change;
+                            // Instead of current slider value, we need to use the slider value of previous layer
+                            thumb_value = old_slider_value-start_date_change;
                         }
                         
                         if (thumb_value < slider.min) {
@@ -1007,6 +1012,7 @@ require([
                         } else if (thumb_value > slider.max) {
                             thumb_value = slider.max;
                         }
+
                         let dt_thumb = date.add(dt_start, dt_interval_unit, thumb_value);
 
                         setDate(dt_thumb, animation_type = animation_type);
