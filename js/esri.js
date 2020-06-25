@@ -232,8 +232,10 @@ require([
         var dph_illinois_county_dynamic_url = "preprocessing/illinois/dph_county_data.geojson";
         var dph_illinois_county_static_url = "preprocessing/illinois/dph_county_static_data.geojson";
         var chicago_hospitals_url = "preprocessing/illinois/chicago_hospitals.geojson";
-        var chicago_acc_animation_url = "preprocessing/illinois/Chicago_ACC_dissolve.geojson";
-        var illinois_acc_animation_url = "preprocessing/illinois/Illinois_ACC_dissolve.geojson";
+        var chicago_acc_i_url = "preprocessing/illinois/Chicago_ACC_i.geojson";
+        var chicago_acc_v_url = "preprocessing/illinois/Chicago_ACC_v.geojson";
+        var illinois_acc_i_url = "preprocessing/illinois/Illinois_ACC_i.geojson";
+        var illinois_acc_v_url = "preprocessing/illinois/Illinois_ACC_v.geojson";
         var who_world_layer_url = "preprocessing/worldwide/who_world_data.geojson";
         var vulnerability_layer_url = "preprocessing/illinois/vulnerability.geojson";
 
@@ -248,10 +250,10 @@ require([
             }
         };
 
-        var chicago_acc_hospitals = new GeoJSONLayer({
+        var chicago_acc_hospitals_i = new GeoJSONLayer({
             url: chicago_hospitals_url,
             outFields: ["*"],
-            title: "Accessibility Measure (Chicago)",
+            title: "Accessibility (ICU Beds-Chicago)",
             renderer: {
                 type: "simple",
                 symbol: {
@@ -270,10 +272,32 @@ require([
             visible: false,
         });
 
-        var illinois_acc_hospitals = new GeoJSONLayer({
+        var chicago_acc_hospitals_v = new GeoJSONLayer({
+            url: chicago_hospitals_url,
+            outFields: ["*"],
+            title: "Accessibility (Ventilators-Chicago)",
+            renderer: {
+                type: "simple",
+                symbol: {
+                    type: "simple-marker",
+                    style: "cross",
+                    color: "red",
+                    size: "10px",
+                    outline: {
+                        color: [ 255, 0, 0, 1],
+                        width: "3px"
+                    }
+                }
+            },
+            listMode: "hide",
+            legendEnabled: false,
+            visible: false,
+        });
+
+        var illinois_acc_hospitals_i = new GeoJSONLayer({
             url: illinois_hospitals_url,
             outFields: ["*"],
-            title: "Accessibility Measure (State-wide)",
+            title: "Accessibility (ICU Beds-State)",
             renderer: {
                 type: "simple",
                 symbol: {
@@ -292,18 +316,56 @@ require([
             visible: false,
         });
 
-        var chicago_acc_animation_layer = new GeoJSONLayer({
-            url: chicago_acc_animation_url,
+        var illinois_acc_hospitals_v = new GeoJSONLayer({
+            url: illinois_hospitals_url,
             outFields: ["*"],
-            title: "Accessibility Measure (Chicago)",
+            title: "Accessibility (Ventilators-State)",
+            renderer: {
+                type: "simple",
+                symbol: {
+                    type: "simple-marker",
+                    style: "cross",
+                    color: "red",
+                    size: "10px",
+                    outline: {
+                        color: [ 255, 0, 0, 1],
+                        width: "3px"
+                    }
+                }
+            },
+            listMode: "hide",
+            legendEnabled: false,
+            visible: false,
+        });
+
+        var chicago_acc_i_layer = new GeoJSONLayer({
+            url: chicago_acc_i_url,
+            outFields: ["*"],
+            title: "Accessibility (ICU Beds-Chicago)",
+            visible: false,
+            renderer: default_polygon_renderer,
+        })
+        
+        var chicago_acc_v_layer = new GeoJSONLayer({
+            url: chicago_acc_v_url,
+            outFields: ["*"],
+            title: "Accessibility (Ventilators-Chicago)",
             visible: false,
             renderer: default_polygon_renderer,
         })
 
-        var illinois_acc_animation_layer = new GeoJSONLayer({
-            url: illinois_acc_animation_url,
+        var illinois_acc_i_layer = new GeoJSONLayer({
+            url: illinois_acc_i_url,
             outFields: ["*"],
-            title: "Accessibility Measure (State-wide)",
+            title: "Accessibility (ICU Beds-State)",
+            visible: false,
+            renderer: default_polygon_renderer,
+        })
+
+        var illinois_acc_v_layer = new GeoJSONLayer({
+            url: illinois_acc_v_url,
+            outFields: ["*"],
+            title: "Accessibility (Ventilators-State)",
             visible: false,
             renderer: default_polygon_renderer,
         })
@@ -437,8 +499,10 @@ require([
 
         // order matters! last layer is at top
         var animation_layers = [who_world_layer, nyt_layer_states, nyt_layer_counties,
-            dph_illinois_county_dynamic, chicago_acc_animation_layer, illinois_acc_animation_layer, vulnerability_layer];
-        var static_layers = [chicago_acc_hospitals, illinois_acc_hospitals, illinois_hospitals, illinois_testing,
+            dph_illinois_county_dynamic, chicago_acc_i_layer, chicago_acc_v_layer, 
+            illinois_acc_i_layer, illinois_acc_v_layer, vulnerability_layer];
+        var static_layers = [chicago_acc_hospitals_i, chicago_acc_hospitals_v, 
+            illinois_acc_hospitals_i, illinois_acc_hospitals_v, illinois_hospitals, illinois_testing,
             dph_illinois_zipcode, dph_illinois_county_static, hiv_layer, svi_layer, testing_sites_layer];
 
         var world_group = new GroupLayer({
@@ -463,7 +527,8 @@ require([
             visibilityMode: "independent",
             layers: [illinois_hospitals, testing_sites_layer, svi_layer, hiv_layer,
                 dph_illinois_zipcode, dph_illinois_county_static, dph_illinois_county_dynamic,
-                chicago_acc_animation_layer, chicago_acc_hospitals, illinois_acc_animation_layer, illinois_acc_hospitals, 
+                chicago_acc_i_layer, chicago_acc_v_layer, chicago_acc_hospitals_i, chicago_acc_hospitals_v,
+                illinois_acc_i_layer, illinois_acc_v_layer, illinois_acc_hospitals_i, illinois_acc_hospitals_v,
                 vulnerability_layer],
             opacity: 0.75
         });
@@ -568,7 +633,11 @@ require([
             let topVisibleLayer = getTopVisibleLayer(map.layers, animation_layers);
             mywatcher.set("active_animation_layer", topVisibleLayer);
             //Setup hover effects
-            if (topVisibleLayer != chicago_acc_animation_layer && topVisibleLayer != illinois_acc_animation_layer && topVisibleLayer != vulnerability_layer) {
+            if (topVisibleLayer != chicago_acc_i_layer && 
+                topVisibleLayer != chicago_acc_v_layer && 
+                topVisibleLayer != illinois_acc_i_layer && 
+                topVisibleLayer != illinois_acc_v_layer && 
+                topVisibleLayer != vulnerability_layer) {
                 view.whenLayerView(topVisibleLayer).then(setupHoverTooltip);
             }
         }
@@ -600,7 +669,10 @@ require([
                         }
                     });
 
-                    if (item.title === chicago_acc_animation_layer.title || item.title === chicago_acc_hospitals.title) {
+                    if (item.title === chicago_acc_i_layer.title ||
+                        item.title === chicago_acc_v_layer.title || 
+                        item.title === chicago_acc_hospitals_i.title || 
+                        item.title === chicago_acc_hospitals_v) {
                         view.goTo({
                             center: [-87.631721, 41.868428],
                             zoom: 10,
@@ -1828,7 +1900,11 @@ require([
         function setDate(_date, animation_type = "case") {
             let level = null;
             animation_layers.forEach(function (value) {
-                if (value.title != chicago_acc_animation_layer.title && value.title != illinois_acc_animation_layer.title && value.title != vulnerability_layer.title) {
+                if (value.title != chicago_acc_i_layer.title && 
+                    value.title != chicago_acc_v_layer.title && 
+                    value.title != illinois_acc_i_layer.title && 
+                    value.title != illinois_acc_v_layer.title && 
+                    value.title != vulnerability_layer.title) {
                     value.popupTemplate = getDynamicPopup(_date);
                 }
                                 
@@ -1878,7 +1954,10 @@ require([
             if (_layer == null) {
                 return;
             }
-            if (_layer == chicago_acc_animation_layer || _layer == illinois_acc_animation_layer) {
+            if (_layer == chicago_acc_i_layer || 
+                _layer == chicago_acc_v_layer || 
+                _layer == illinois_acc_i_layer || 
+                _layer == illinois_acc_v_layer) {
                 _layer.renderer = classRender_time_enabled(_date);
             } else {
                 _layer.renderer = classRender(_date, _event_type = event_type, _level = level);
