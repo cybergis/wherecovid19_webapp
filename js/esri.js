@@ -34,7 +34,7 @@ require([
     "dojo/query",
     "dojo",
     "dojo/domReady!"
-], function (
+], function(
     Map,
     FeatureLayer,
     MapView,
@@ -74,10 +74,10 @@ require([
     // Subclass dojo/Stateful:
     const MyWatcher = declare([Stateful], {
         active_animation_layer: null,
-        _active_animation_layerGetter: function () {
+        _active_animation_layerGetter: function() {
             return this.active_animation_layer;
         },
-        _active_animation_layerSetter: function (value) {
+        _active_animation_layerSetter: function(value) {
             this.active_animation_layer = value;
         }
     });
@@ -245,7 +245,7 @@ require([
                 type: "simple-fill",
                 color: [0, 0, 0, 0.1],
                 outline: { // autocasts as new SimpleLineSymbol()
-                    color: [128, 128, 128, 0.5],
+                    color: [128, 128, 128, 0.2],
                 }
             }
         };
@@ -262,7 +262,7 @@ require([
                     color: "red",
                     size: "10px",
                     outline: {
-                        color: [ 255, 0, 0, 1],
+                        color: [255, 0, 0, 1],
                         width: "3px"
                     }
                 }
@@ -306,7 +306,7 @@ require([
                     color: "red",
                     size: "10px",
                     outline: {
-                        color: [ 255, 0, 0, 1],
+                        color: [255, 0, 0, 1],
                         width: "3px"
                     }
                 }
@@ -397,30 +397,27 @@ require([
         });
 
         var dph_illinois_zipcode = new GeoJSONLayer({
-                url: dph_illinois_zipcode_url,
-                outFields: ["*"],
-                title: "IDPH Zipcode-level Cases",
-                renderer: dphStaticRender("zipcode_case"),
-                visible: false,
-            }
-        );
+            url: dph_illinois_zipcode_url,
+            outFields: ["*"],
+            title: "IDPH Zipcode-level Cases",
+            renderer: dphStaticRender("zipcode_case"),
+            visible: false,
+        });
         var dph_illinois_county_static = new GeoJSONLayer({
-                url: dph_illinois_county_static_url,
-                outFields: ["*"],
-                title: "IDPH County-level Testing Data",
-                renderer: dphStaticRender("tested"),
-                visible: false,
-            }
-        );
+            url: dph_illinois_county_static_url,
+            outFields: ["*"],
+            title: "IDPH County-level Testing Data",
+            renderer: dphStaticRender("tested"),
+            visible: false,
+        });
 
         var dph_illinois_county_dynamic = new GeoJSONLayer({
-                url: dph_illinois_county_dynamic_url,
-                outFields: ["*"],
-                title: "IDPH County-level Cases",
-                renderer: default_polygon_renderer,
-                visible: false,
-            }
-        );
+            url: dph_illinois_county_dynamic_url,
+            outFields: ["*"],
+            title: "IDPH County-level Cases",
+            renderer: default_polygon_renderer,
+            visible: false,
+        });
 
         var illinois_hospitals = new GeoJSONLayer({
             url: illinois_hospitals_url,
@@ -511,7 +508,7 @@ require([
             visibilityMode: "independent",
             layers: [who_world_layer],
             opacity: 0.75
-        })
+        });
 
         var us_group = new GroupLayer({
             title: "US",
@@ -519,7 +516,7 @@ require([
             visibilityMode: "independent",
             layers: [nyt_layer_states, nyt_layer_counties],
             opacity: 0.75
-        })
+        });
 
         var illinois_group = new GroupLayer({
             title: "Illinois",
@@ -558,10 +555,11 @@ require([
         // Set up callback function for active_animation_layer value change before any map things
         setupActiveAnimationLayerChangeCallback();
 
+
         // This event will be triggered once at startup as maps adds layers for the fist time
         // Listen for layer change: remove, add, reorder
         // https://developers.arcgis.com/javascript/latest/api-reference/esri-Map.html#layers
-        map.allLayers.on("change", function (event) {
+        map.allLayers.on("change", function(event) {
             // this function will change active_animation_layer value
             setActiveAnimationLayer(event);
         });
@@ -570,7 +568,7 @@ require([
             map: map,
             container: "viewDiv",
             //spatialReference: new SpatialReference(wkid: 3857}),
-            center: [-88.984300, 40.474679],
+            center: [-89.7, 40],
             zoom: 5.5,
             constraints: {
                 snapToZoom: false,
@@ -646,15 +644,15 @@ require([
         // may get triggered more than once in if GroupLayer is in "exclusive" mode (radio button)
         // LayerA on->off and LayerB off->on
         // https://developers.arcgis.com/javascript/latest/sample-code/sandbox/index.html?sample=animation-layer-visibility
-        map.allLayers.forEach(function (item) {
-            item.watch("visible", function (visible) {
+        map.allLayers.forEach(function(item) {
+            item.watch("visible", function(visible) {
                 // console.log(item.title, visible)
                 if (visible === true && item.type !== "group") {
-                    map.layers.forEach(function (value) {
+                    map.layers.forEach(function(value) {
 
                         if (value.title === item.parent.title) {
                             value.visible = true;
-                            value.layers.forEach(function (val) {
+                            value.layers.forEach(function(val) {
                                 if (val.title === item.title) {
                                     val.visible = true;
                                 } else {
@@ -663,7 +661,7 @@ require([
                             })
                         } else {
                             value.visible = false;
-                            value.layers.forEach(function (val) {
+                            value.layers.forEach(function(val) {
                                 val.visible = false;
                             })
                         }
@@ -686,12 +684,12 @@ require([
                         view.goTo({
                             center: [-88.984300, 40.474679],
                             zoom: 6
-                        })
+                        });
                     } else if (item.parent.title === world_group.title || item.title === world_group.title) {
                         view.goTo({
                             center: [-60, 20],
                             zoom: 2
-                        })
+                        });
                     }
                 } // if(visible === true){
                 setActiveAnimationLayer(item);
@@ -700,9 +698,9 @@ require([
                 // close the side bar when the layer is changed 
                 if ($(".sidebar").hasClass("open")) {
                     $('#sidebar_control').removeClass("open").addClass("closed");
-                    $(".sidebar").animate({width: 'toggle'}, 10).removeClass("open").addClass("closed");
+                    $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("open").addClass("closed");
                     // $(".sidebar").removeClass("open").hide("slide", { direction: "left" }, 1000).addClass("closed");
-                    $("main").removeClass("col-9").addClass("col-12");
+                    $("main").addClass("map-fullscreen");
                 }
             });
         });
@@ -710,7 +708,7 @@ require([
         var layerlist = new LayerList({
             view: view,
             //listItemCreatedFunction: defineActions,
-            selectionEnabled: true,
+            selectionEnabled: false,
             visibleElements: {
                 statusIndicators: false
             },
@@ -730,72 +728,72 @@ require([
             illinois_query.outFields = ["confirmed_cases", "total_tested", "deaths"];
 
             dph_illinois_county_static.queryFeatures(illinois_query)
-                .then(function (response) {
-                        let stats = response.features[0].attributes;
-                        let tab = document.getElementById('illinois-tab');
-                        tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(stats.confirmed_cases)
-                        let case_div = document.getElementById('illinois_total_case_number')
+                .then(function(response) {
+                    let stats = response.features[0].attributes;
+                    let tab = document.getElementById('illinois-tab');
+                    tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(stats.confirmed_cases)
+                    let case_div = document.getElementById('illinois_total_case_number')
                         // console.log(case_div.querySelector('.case-number').innerHTML)
-                        let test_div = document.getElementById('illinois_total_test_number')
-                        let death_div = document.getElementById('illinois_total_death_number')
-                        case_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.confirmed_cases)
-                        death_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.deaths)
-                        test_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.total_tested)
-                    }
-                );
+                    let test_div = document.getElementById('illinois_total_test_number')
+                    let death_div = document.getElementById('illinois_total_death_number')
+                    case_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.confirmed_cases)
+                    death_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.deaths)
+                    test_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.total_tested)
+                });
 
             const illinois_list_query = dph_illinois_county_static.createQuery();
             illinois_list_query.orderByFields = ['confirmed_cases DESC'];
 
             dph_illinois_county_static.queryFeatures(illinois_list_query)
-                .then(function (response) {
-                        console.log(response);
-                        let illinois_table = document.getElementById('illinois-table').querySelector('tbody');
-                        let template = document.querySelector('template')
-                        let result_list = response.features.map(function (value) {
-                            return {
-                                centroid_x: value.geometry.centroid.x,
-                                centroid_y: value.geometry.centroid.y,
-                                uid: value.attributes.OBJECTID,
-                                county: value.attributes.County,
-                                case: value.attributes.confirmed_cases,
-                                death: value.attributes.deaths,
-                                tested: value.attributes.total_tested
-                            }
-                        });
-                        result_list.forEach(function (value, index) {
-                            if (value.county !== "Illinois") {
-                                let instance = template.content.cloneNode(true);
-                                instance.querySelector('th').innerHTML = value.county;
-                                instance.querySelector('th').setAttribute('data-x', value.centroid_x);
-                                instance.querySelector('th').setAttribute('data-y', value.centroid_y);
-                                instance.querySelector('th').setAttribute('data-uid', index);
-                                instance.querySelector('th').setAttribute('data-county', value.county);
-                                instance.querySelector('.confirmed').innerHTML = value.case;
-                                instance.querySelector('.tested').innerHTML = value.tested;
-                                instance.querySelector('.death').innerHTML = value.death;
-                                instance.querySelector('.confirmed').setAttribute('data-order', value.case);
-                                instance.querySelector('.death').setAttribute('data-order', value.death);
-                                instance.querySelector('.tested').setAttribute('data-order', value.tested);
-                                illinois_table.appendChild(instance);
-                            }
-                        })
+                .then(function(response) {
+                    console.log(response);
+                    let illinois_table = document.getElementById('illinois-table').querySelector('tbody');
+                    let template = document.querySelector('template')
+                    let result_list = response.features.map(function(value) {
+                        return {
+                            centroid_x: value.geometry.centroid.x,
+                            centroid_y: value.geometry.centroid.y,
+                            uid: value.attributes.OBJECTID,
+                            county: value.attributes.County,
+                            case: value.attributes.confirmed_cases,
+                            death: value.attributes.deaths,
+                            tested: value.attributes.total_tested
+                        }
+                    });
+                    result_list.forEach(function(value, index) {
+                        if (value.county !== "Illinois") {
+                            let instance = template.content.cloneNode(true);
+                            instance.querySelector('th').innerHTML = value.county;
+                            instance.querySelector('th').setAttribute('data-x', value.centroid_x);
+                            instance.querySelector('th').setAttribute('data-y', value.centroid_y);
+                            instance.querySelector('th').setAttribute('data-uid', index);
+                            instance.querySelector('th').setAttribute('data-county', value.county);
+                            instance.querySelector('.confirmed').innerHTML = value.case;
+                            instance.querySelector('.tested').innerHTML = value.tested;
+                            instance.querySelector('.death').innerHTML = value.death;
+                            instance.querySelector('.confirmed').setAttribute('data-order', value.case);
+                            instance.querySelector('.death').setAttribute('data-order', value.death);
+                            instance.querySelector('.tested').setAttribute('data-order', value.tested);
+                            illinois_table.appendChild(instance);
+                        }
+                    })
 
-                        var illini_table = $('#illinois-table').DataTable({
-                            paging: false,
-                            ordering: true,
-                            order: [[1, "desc"]],
-                            info: false,
-                            responsive: true,
-                            dom: "t",
-                        });
+                    var illini_table = $('#illinois-table').DataTable({
+                        paging: false,
+                        ordering: true,
+                        order: [
+                            [1, "desc"]
+                        ],
+                        info: false,
+                        responsive: true,
+                        dom: "t",
+                    });
 
-                        $('#il-search-input').on('input', function () {
-                            console.log($('#il-search-input').val());
-                            illini_table.search($('#il-search-input').val()).draw();
-                        });
-                    }
-                );
+                    $('#il-search-input').on('input', function() {
+                        console.log($('#il-search-input').val());
+                        illini_table.search($('#il-search-input').val()).draw();
+                    });
+                });
 
             const counties_query = nyt_layer_counties.createQuery();
             const countiesConfrimed = {
@@ -820,70 +818,70 @@ require([
             }
             counties_query.outStatistics = [countiesConfrimed, countiesDeath, countiesNewConfrimed, countiesNewDeath];
             nyt_layer_counties.queryFeatures(counties_query)
-                .then(function (response) {
-                        let stats = response.features[0].attributes;
-                        let tab = document.getElementById('county-tab');
-                        tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(stats.Total_Cases)
-                        let case_div = document.getElementById('counties_total_case_number')
-                        let death_div = document.getElementById('counties_total_death_number')
-                        case_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Cases)
-                        case_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(stats.Total_New_Cases)
-                        death_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Deaths)
-                        death_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(stats.Total_New_Deaths)
-                    }
-                );
+                .then(function(response) {
+                    let stats = response.features[0].attributes;
+                    let tab = document.getElementById('county-tab');
+                    tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(stats.Total_Cases)
+                    let case_div = document.getElementById('counties_total_case_number')
+                    let death_div = document.getElementById('counties_total_death_number')
+                    case_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Cases)
+                    case_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(stats.Total_New_Cases)
+                    death_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Deaths)
+                    death_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(stats.Total_New_Deaths)
+                });
 
             const counties_list_query = nyt_layer_counties.createQuery();
             counties_list_query.orderByFields = ['today_case DESC'];
             nyt_layer_counties.queryFeatures(counties_list_query)
-                .then(function (response) {
-                        console.log(response)
-                        let couneites_table = document.getElementById('county-table').querySelector('tbody');
-                        let template = document.querySelectorAll('template')[1]
-                        let result_list = response.features.map(function (value, index) {
-                            return {
-                                centroid_x: value.geometry.centroid.x,
-                                centroid_y: value.geometry.centroid.y,
-                                uid: value.attributes.OBJECTID,
-                                county: value.attributes.NAME,
-                                state: value.attributes.state_name,
-                                case: value.attributes.today_case,
-                                new_case: value.attributes.today_new_case,
-                                death: value.attributes.today_death,
-                                new_death: value.attributes.today_new_death,
-                            }
-                        });
-                        //result = result_list.slice(0, 100);
-                        result_list.forEach(function (value) {
-                            let instance = template.content.cloneNode(true);
+                .then(function(response) {
+                    console.log(response)
+                    let couneites_table = document.getElementById('county-table').querySelector('tbody');
+                    let template = document.querySelectorAll('template')[1]
+                    let result_list = response.features.map(function(value, index) {
+                        return {
+                            centroid_x: value.geometry.centroid.x,
+                            centroid_y: value.geometry.centroid.y,
+                            uid: value.attributes.OBJECTID,
+                            county: value.attributes.NAME,
+                            state: value.attributes.state_name,
+                            case: value.attributes.today_case,
+                            new_case: value.attributes.today_new_case,
+                            death: value.attributes.today_death,
+                            new_death: value.attributes.today_new_death,
+                        }
+                    });
+                    //result = result_list.slice(0, 100);
+                    result_list.forEach(function(value) {
+                        let instance = template.content.cloneNode(true);
 
-                            instance.querySelector('th').innerHTML = value.county + ", " + value.state;
-                            instance.querySelector('th').setAttribute('data-x', value.centroid_x);
-                            instance.querySelector('th').setAttribute('data-y', value.centroid_y);
-                            instance.querySelector('th').setAttribute('data-uid', value.uid);
-                            instance.querySelector('th').setAttribute('data-county', value.county);
-                            instance.querySelector('.confirmed').innerHTML = '<span>' + value.case + '</span><br><i class="fas fa-caret-up"></i> ' + value.new_case;
-                            instance.querySelector('.death').innerHTML = '<span>' + value.death + '</span><br><i class="fas fa-caret-up"></i> ' + value.new_death;
-                            instance.querySelector('.confirmed').setAttribute('data-order', value.case);
-                            instance.querySelector('.death').setAttribute('data-order', value.death);
-                            couneites_table.appendChild(instance);
-                        })
-                        var county_table = $('#county-table').DataTable({
-                            paging: false,
-                            ordering: true,
-                            order: [[1, "desc"]],
-                            info: false,
-                            responsive: true,
-                            dom: "t",
-                        });
+                        instance.querySelector('th').innerHTML = value.county + ", " + value.state;
+                        instance.querySelector('th').setAttribute('data-x', value.centroid_x);
+                        instance.querySelector('th').setAttribute('data-y', value.centroid_y);
+                        instance.querySelector('th').setAttribute('data-uid', value.uid);
+                        instance.querySelector('th').setAttribute('data-county', value.county);
+                        instance.querySelector('.confirmed').innerHTML = '<span>' + value.case+'</span><br><i class="fas fa-caret-up"></i> ' + value.new_case;
+                        instance.querySelector('.death').innerHTML = '<span>' + value.death + '</span><br><i class="fas fa-caret-up"></i> ' + value.new_death;
+                        instance.querySelector('.confirmed').setAttribute('data-order', value.case);
+                        instance.querySelector('.death').setAttribute('data-order', value.death);
+                        couneites_table.appendChild(instance);
+                    })
+                    var county_table = $('#county-table').DataTable({
+                        paging: false,
+                        ordering: true,
+                        order: [
+                            [1, "desc"]
+                        ],
+                        info: false,
+                        responsive: true,
+                        dom: "t",
+                    });
 
-                        $('#w-search-input').on('input', function () {
-                            console.log($('#w-search-input').val());
-                            county_table.search($('#w-search-input').val()).draw();
-                        });
+                    $('#w-search-input').on('input', function() {
+                        console.log($('#w-search-input').val());
+                        county_table.search($('#w-search-input').val()).draw();
+                    });
 
-                    }
-                );
+                });
 
             const world_query = who_world_layer.createQuery();
             const worldConfrimed = {
@@ -908,68 +906,68 @@ require([
             }
             world_query.outStatistics = [worldConfrimed, worldDeath, worldNewConfrimed, worldNewDeath];
             who_world_layer.queryFeatures(world_query)
-                .then(function (response) {
-                        let stats = response.features[0].attributes;
-                        let tab = document.getElementById('world-tab');
-                        tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(stats.Total_Cases)
-                        let case_div = document.getElementById('world_total_case_number')
-                        let death_div = document.getElementById('world_total_death_number')
-                        case_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Cases)
-                        case_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(stats.Total_New_Cases)
-                        death_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Deaths)
-                        death_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(stats.Total_New_Deaths)
-                    }
-                );
+                .then(function(response) {
+                    let stats = response.features[0].attributes;
+                    let tab = document.getElementById('world-tab');
+                    tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(stats.Total_Cases)
+                    let case_div = document.getElementById('world_total_case_number')
+                    let death_div = document.getElementById('world_total_death_number')
+                    case_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Cases)
+                    case_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(stats.Total_New_Cases)
+                    death_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.Total_Deaths)
+                    death_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(stats.Total_New_Deaths)
+                });
 
             const world_list_query = who_world_layer.createQuery();
             world_list_query.orderByFields = ['today_case DESC'];
             who_world_layer.queryFeatures(world_list_query)
-                .then(function (response) {
-                        console.log(response)
-                        let couneites_table = document.getElementById('world-table').querySelector('tbody');
-                        let template = document.querySelectorAll('template')[1]
-                        let result_list = response.features.map(function (value, index) {
-                            return {
-                                centroid_x: value.geometry.centroid.x,
-                                centroid_y: value.geometry.centroid.y,
-                                uid: value.attributes.OBJECTID,
-                                country: value.attributes.NAME,
-                                case: value.attributes.today_case,
-                                new_case: value.attributes.today_new_case,
-                                death: value.attributes.today_death,
-                                new_death: value.attributes.today_new_death,
-                            }
-                        });
-                        //result = result_list.slice(0, 100);
-                        result_list.forEach(function (value) {
-                            let instance = template.content.cloneNode(true);
+                .then(function(response) {
+                    console.log(response)
+                    let couneites_table = document.getElementById('world-table').querySelector('tbody');
+                    let template = document.querySelectorAll('template')[1]
+                    let result_list = response.features.map(function(value, index) {
+                        return {
+                            centroid_x: value.geometry.centroid.x,
+                            centroid_y: value.geometry.centroid.y,
+                            uid: value.attributes.OBJECTID,
+                            country: value.attributes.NAME,
+                            case: value.attributes.today_case,
+                            new_case: value.attributes.today_new_case,
+                            death: value.attributes.today_death,
+                            new_death: value.attributes.today_new_death,
+                        }
+                    });
+                    //result = result_list.slice(0, 100);
+                    result_list.forEach(function(value) {
+                        let instance = template.content.cloneNode(true);
 
-                            instance.querySelector('th').innerHTML = value.country;
-                            instance.querySelector('th').setAttribute('data-x', value.centroid_x);
-                            instance.querySelector('th').setAttribute('data-y', value.centroid_y);
-                            instance.querySelector('th').setAttribute('data-uid', value.uid);
-                            instance.querySelector('th').setAttribute('data-country', value.country);
-                            instance.querySelector('.confirmed').innerHTML = '<span>' + value.case + '</span><br><i class="fas fa-caret-up"></i> ' + value.new_case;
-                            instance.querySelector('.death').innerHTML = '<span>' + value.death + '</span><br><i class="fas fa-caret-up"></i> ' + value.new_death;
-                            instance.querySelector('.confirmed').setAttribute('data-order', value.case);
-                            instance.querySelector('.death').setAttribute('data-order', value.death);
-                            couneites_table.appendChild(instance);
-                        })
-                        var world_table = $('#world-table').DataTable({
-                            paging: false,
-                            ordering: true,
-                            order: [[1, "desc"]],
-                            info: false,
-                            dom: "t",
-                        });
+                        instance.querySelector('th').innerHTML = value.country;
+                        instance.querySelector('th').setAttribute('data-x', value.centroid_x);
+                        instance.querySelector('th').setAttribute('data-y', value.centroid_y);
+                        instance.querySelector('th').setAttribute('data-uid', value.uid);
+                        instance.querySelector('th').setAttribute('data-country', value.country);
+                        instance.querySelector('.confirmed').innerHTML = '<span>' + value.case+'</span><br><i class="fas fa-caret-up"></i> ' + value.new_case;
+                        instance.querySelector('.death').innerHTML = '<span>' + value.death + '</span><br><i class="fas fa-caret-up"></i> ' + value.new_death;
+                        instance.querySelector('.confirmed').setAttribute('data-order', value.case);
+                        instance.querySelector('.death').setAttribute('data-order', value.death);
+                        couneites_table.appendChild(instance);
+                    })
+                    var world_table = $('#world-table').DataTable({
+                        paging: false,
+                        ordering: true,
+                        order: [
+                            [1, "desc"]
+                        ],
+                        info: false,
+                        dom: "t",
+                    });
 
-                        $('#world-search-input').on('input', function () {
-                            console.log($('#world-search-input').val());
-                            world_table.search($('#world-search-input').val()).draw();
-                        });
+                    $('#world-search-input').on('input', function() {
+                        console.log($('#world-search-input').val());
+                        world_table.search($('#world-search-input').val()).draw();
+                    });
 
-                    }
-                );
+                });
 
         }
 
@@ -1056,7 +1054,7 @@ require([
             if (slider != null) {
                 var old_slider_value = slider.values[0];
             }            
-            
+
             //console.log(name, oldValue, value);
             // reset flag when animation layer changed
             flag_first_click_anination_per_layer = true;
@@ -1069,16 +1067,18 @@ require([
                     queryLayerDates(value).then(initSlider).then(function () {
                                                 
                         console.log(slider);
+
                         let thumb_value = slider.values[0]
-                        
+
                         if (old_dt_start != undefined) {
                             // Calculate the change of start dates for two different layers
                             var start_date_change = date.difference(old_dt_start, dt_start, dt_interval_unit);
                             // Remain on the same date while switching layers
                             // Instead of current slider value, we need to use the slider value of previous layer
                             thumb_value = old_slider_value-start_date_change;
+
                         }
-                        
+
                         if (thumb_value < slider.min) {
                             thumb_value = slider.min;
                         } else if (thumb_value > slider.max) {
@@ -1110,7 +1110,7 @@ require([
 
         // Toggle animation on/off when user
         // clicks on the play button
-        playButton.addEventListener("click", function () {
+        playButton.addEventListener("click", function() {
             if (playButton.classList.contains("toggled")) {
                 stopAnimation();
             } else {
@@ -1119,8 +1119,8 @@ require([
         });
 
         view.ui.empty("top-left");
-        view.ui.add(layerlist, "top-left");
-        //view.ui.add(titleDiv, "top-left");
+
+
 
         view.ui.add(
             new Zoom({
@@ -1134,12 +1134,24 @@ require([
             }),
             "top-right"
         );
-        view.ui.add(
-            new Legend({
-                view: view
-            }),
-            "bottom-right"
-        );
+        // view.ui.add(
+        //     new Legend({
+        //         view: view
+        //     }),
+        //     "bottom-right"
+        // );
+
+        // Make the legend widget expandable
+        // var legend = new Expand({
+        //     content: new Legend({
+        //         view: view,
+        //         style: "classic"
+        //     }),
+        //     view: view,
+        //     expanded: true
+        // });
+        // view.ui.add(legend, "bottom-right");
+
         view.ui.add(
             new Fullscreen({
                 view: view,
@@ -1151,6 +1163,82 @@ require([
         view.popup.autoOpenEnabled = true;
         view.popup.autoCloseEnabled = true;
 
+        /////////////////////////////////////////////////////////////////
+        //////////////////////////Responsive/////////////////////////////
+        /////////////////////////////////////////////////////////////////
+
+        // Desktop
+        var legend = new Legend({
+            view: view,
+            container: document.createElement("div")
+        });
+        //The Layerlist object is intialized prior to this code.
+
+        // Mobile
+        var expandLegend = new Expand({
+            view: view,
+            content: new Legend({
+                view: view,
+                container: document.createElement("div")
+            })
+        });
+        var expandLayerlist = new Expand({
+            view: view,
+            content: layerlist,
+            container: document.createElement("div")
+        });
+
+
+        // Load
+        isResponsiveSize = view.widthBreakpoint === "xsmall" || view.widthBreakpoint === "small";
+        updateView(isResponsiveSize);
+
+        // Breakpoints
+        view.watch("widthBreakpoint", function(breakpoint) {
+            switch (breakpoint) {
+                case "xsmall":
+                case "small":
+                    console.log("xsmall and small");
+                    updateView(true);
+                    break;
+                case "medium":
+                case "large":
+                case "xlarge":
+                    console.log("medium and large and Xlarge");
+                    updateView(false);
+                    break;
+                default:
+            }
+        });
+
+        function updateView(isMobile) {
+            setLegendMobile(isMobile);
+        }
+
+        function setLegendMobile(isMobile) {
+
+            view.ui.empty("bottom-right");
+
+            if (isMobile) {
+                view.ui.remove(legend, "bottom-right");
+                view.ui.add(expandLegend, "bottom-right");
+
+                view.ui.remove(layerlist, "top-left");
+                view.ui.add(expandLayerlist, "top-left");
+
+            } else {
+                view.ui.remove(expandLegend, "bottom-right");
+                view.ui.add(legend, "bottom-right");
+
+                view.ui.remove(expandLayerlist, "top-left");
+                view.ui.add(layerlist, "top-left");
+            }
+        }
+
+        /////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////
+
         // When the layerview is available, setup hovering interactivity
         //view.whenLayerView(active_animation_layer).then(setupHoverTooltip);
 
@@ -1159,7 +1247,7 @@ require([
         //setDate(dt_start, animation_type = animation_type);
         //setDate(dt_start, animation_type="first_case");
 
-        animation_dropdown.addEventListener("change", function (evt) {
+        animation_dropdown.addEventListener("change", function(evt) {
             //console.log(evt);
             animation_type = evt.target.value;
             let thumb_value = Math.ceil(slider.values[0]);
@@ -1170,50 +1258,44 @@ require([
 
         var ilZipCaseTemplate = {
             title: "{id}",
-            content: [
-                {
-                    type: "fields",
-                    fieldInfos: [
-                        {
-                            fieldName: "confirmed_cases",
-                            visible: true,
-                            label: "Confirmed Cases"
-                        },
-                        {
-                            fieldName: "total_tested",
-                            visible: true,
-                            label: "Total Tested"
-                        },
-                    ]
-                }
-            ]
+            content: [{
+                type: "fields",
+                fieldInfos: [{
+                        fieldName: "confirmed_cases",
+                        visible: true,
+                        label: "Confirmed Cases"
+                    },
+                    {
+                        fieldName: "total_tested",
+                        visible: true,
+                        label: "Total Tested"
+                    },
+                ]
+            }]
         };
         dph_illinois_zipcode.popupTemplate = ilZipCaseTemplate;
 
         var ilCountyCaseTemplate = {
             title: "{County}",
-            content: [
-                {
-                    type: "fields",
-                    fieldInfos: [
-                        {
-                            fieldName: "confirmed_cases",
-                            visible: true,
-                            label: "Confirmed Cases"
-                        },
-                        {
-                            fieldName: "deaths",
-                            visible: true,
-                            label: "Deaths"
-                        },
-                        {
-                            fieldName: "total_tested",
-                            visible: true,
-                            label: "Total Tested"
-                        },
-                    ]
-                }
-            ]
+            content: [{
+                type: "fields",
+                fieldInfos: [{
+                        fieldName: "confirmed_cases",
+                        visible: true,
+                        label: "Confirmed Cases"
+                    },
+                    {
+                        fieldName: "deaths",
+                        visible: true,
+                        label: "Deaths"
+                    },
+                    {
+                        fieldName: "total_tested",
+                        visible: true,
+                        label: "Total Tested"
+                    },
+                ]
+            }]
         };
 
         dph_illinois_county_static.popupTemplate = ilCountyCaseTemplate;
@@ -1313,16 +1395,13 @@ require([
                         label: "Deceased"
                     }
                 ]
-            }
-            ],
-            expressionInfos: [
-                {
-                    // Wed, 18 Mar 2020 00:00:00 GMT --> Wed, 18 Mar 2020
-                    name: "lab_date",
-                    title: "Lab Report Date",
-                    expression: "Replace($feature.Lab_Report_Date, ' 0:00', '')"
-                },
-            ],
+            }],
+            expressionInfos: [{
+                // Wed, 18 Mar 2020 00:00:00 GMT --> Wed, 18 Mar 2020
+                name: "lab_date",
+                title: "Lab Report Date",
+                expression: "Replace($feature.Lab_Report_Date, ' 0:00', '')"
+            }, ],
         };
 
         illinois_testing.popupTemplate = ilTestingTemplate;
@@ -1330,8 +1409,7 @@ require([
         var usStateTemplate = {
 
             title: "{NAME}",
-            expressionInfos: [
-                {
+            expressionInfos: [{
                     name: "total_cases",
                     title: "Total Confirmed Cases",
                     expression: "Round(Split($feature.cases_ts, ',')[-1])"
@@ -1348,45 +1426,43 @@ require([
                 }
 
             ],
-            content: [
-                {
-                    type: "fields", // FieldsContentElement
-                    fieldInfos: [
+            content: [{
+                type: "fields", // FieldsContentElement
+                fieldInfos: [
 
-                        {
-                            fieldName: "expression/total_cases",
-                            visible: true,
-                            label: "Confirmed Cases"
-                        },
-                        {
-                            fieldName: "expression/total_deaths",
-                            visible: true,
-                            label: "Deaths"
-                        },
-                        {
-                            fieldName: "expression/death_rate",
-                            visible: true,
-                            label: "Death Rate"
-                        },
-                        {
-                            fieldName: "dt_first_case",
-                            visible: true,
-                            label: "First Date of Confirmed Cases"
-                        },
-                        {
-                            fieldName: "dt_first_death",
-                            visible: true,
-                            label: "First Date of Deaths"
-                        },
-                        {
-                            fieldName: "population",
-                            visible: true,
-                            label: "Population"
-                        }
+                    {
+                        fieldName: "expression/total_cases",
+                        visible: true,
+                        label: "Confirmed Cases"
+                    },
+                    {
+                        fieldName: "expression/total_deaths",
+                        visible: true,
+                        label: "Deaths"
+                    },
+                    {
+                        fieldName: "expression/death_rate",
+                        visible: true,
+                        label: "Death Rate"
+                    },
+                    {
+                        fieldName: "dt_first_case",
+                        visible: true,
+                        label: "First Date of Confirmed Cases"
+                    },
+                    {
+                        fieldName: "dt_first_death",
+                        visible: true,
+                        label: "First Date of Deaths"
+                    },
+                    {
+                        fieldName: "population",
+                        visible: true,
+                        label: "Population"
+                    }
 
-                    ]
-                }
-            ]
+                ]
+            }]
         };
 
         nyt_layer_states.popupTemplate = usStateTemplate;
@@ -1413,8 +1489,7 @@ require([
             var dphDynamicPopup = {
 
                 title: "{NAME}",
-                expressionInfos: [
-                    {
+                expressionInfos: [{
                         name: "current_cases",
                         title: "Confirmed Cases",
                         expression: dynamicArcade('cases_ts', date)
@@ -1431,46 +1506,44 @@ require([
                     // }
 
                 ],
-                content: [
-                    {
-                        type: "fields", // FieldsContentElement
-                        fieldInfos: [
+                content: [{
+                    type: "fields", // FieldsContentElement
+                    fieldInfos: [
 
-                            {
-                                fieldName: "expression/current_cases",
-                                visible: true,
-                                label: "Confirmed Cases"
-                            },
-                            {
-                                fieldName: "expression/current_deaths",
-                                visible: true,
-                                label: "Deaths"
-                            },
-                            // {
-                            //     fieldName: "expression/death_rate",
-                            //     visible: true,
-                            //     label: "Death Rate"
-                            // },
-                            {
-                                fieldName: "dt_first_case",
-                                visible: true,
-                                label: "First Date of Confirmed Cases"
-                            },
-                            {
-                                fieldName: "dt_first_death",
-                                visible: true,
-                                label: "First Date of Deaths"
-                            }
-                            // },
-                            // {
-                            //     fieldName: "population",
-                            //     visible: true,
-                            //     label: "Population"
-                            // }
+                        {
+                            fieldName: "expression/current_cases",
+                            visible: true,
+                            label: "Confirmed Cases"
+                        },
+                        {
+                            fieldName: "expression/current_deaths",
+                            visible: true,
+                            label: "Deaths"
+                        },
+                        // {
+                        //     fieldName: "expression/death_rate",
+                        //     visible: true,
+                        //     label: "Death Rate"
+                        // },
+                        {
+                            fieldName: "dt_first_case",
+                            visible: true,
+                            label: "First Date of Confirmed Cases"
+                        },
+                        {
+                            fieldName: "dt_first_death",
+                            visible: true,
+                            label: "First Date of Deaths"
+                        }
+                        // },
+                        // {
+                        //     fieldName: "population",
+                        //     visible: true,
+                        //     label: "Population"
+                        // }
 
-                        ]
-                    }
-                ]
+                    ]
+                }]
             };
             return dphDynamicPopup;
         }
@@ -1479,8 +1552,7 @@ require([
 
             title: "{NAME}",
 
-            expressionInfos: [
-                {
+            expressionInfos: [{
                     name: "total_cases",
                     title: "Total Confirmed Cases",
                     expression: "Round(Split($feature.cases_ts, ',')[-1])"
@@ -1497,55 +1569,53 @@ require([
                 }
 
             ],
-            content: [
-                {
-                    type: "fields", // FieldsContentElement
-                    fieldInfos: [
+            content: [{
+                type: "fields", // FieldsContentElement
+                fieldInfos: [
 
-                        {
-                            fieldName: "fips",
-                            visible: true,
-                            label: "FIPS"
-                        },
-                        {
-                            fieldName: "state_name",
-                            visible: true,
-                            label: "State"
-                        },
-                        {
-                            fieldName: "expression/total_cases",
-                            visible: true,
-                            label: "Confirmed Cases"
-                        },
-                        {
-                            fieldName: "expression/total_deaths",
-                            visible: true,
-                            label: "Deaths"
-                        },
-                        {
-                            fieldName: "expression/death_rate",
-                            visible: true,
-                            label: "Death Rate"
-                        },
-                        {
-                            fieldName: "dt_first_case",
-                            visible: true,
-                            label: "First Date of Confirmed Cases"
-                        },
-                        {
-                            fieldName: "dt_first_death",
-                            visible: true,
-                            label: "First Date of Deaths"
-                        },
-                        {
-                            fieldName: "population",
-                            visible: true,
-                            label: "Population"
-                        }
+                    {
+                        fieldName: "fips",
+                        visible: true,
+                        label: "FIPS"
+                    },
+                    {
+                        fieldName: "state_name",
+                        visible: true,
+                        label: "State"
+                    },
+                    {
+                        fieldName: "expression/total_cases",
+                        visible: true,
+                        label: "Confirmed Cases"
+                    },
+                    {
+                        fieldName: "expression/total_deaths",
+                        visible: true,
+                        label: "Deaths"
+                    },
+                    {
+                        fieldName: "expression/death_rate",
+                        visible: true,
+                        label: "Death Rate"
+                    },
+                    {
+                        fieldName: "dt_first_case",
+                        visible: true,
+                        label: "First Date of Confirmed Cases"
+                    },
+                    {
+                        fieldName: "dt_first_death",
+                        visible: true,
+                        label: "First Date of Deaths"
+                    },
+                    {
+                        fieldName: "population",
+                        visible: true,
+                        label: "Population"
+                    }
 
-                    ]
-                }
-            ]
+                ]
+            }]
         };
 
         nyt_layer_counties.popupTemplate = usCountyTemplate;
@@ -1588,7 +1658,7 @@ require([
             }
 
             return {
-                show: function (point, text) {
+                show: function(point, text) {
                     if (!visible) {
                         x = point.x;
                         y = point.y;
@@ -1603,7 +1673,7 @@ require([
                     move();
                 },
 
-                hide: function () {
+                hide: function() {
                     style.opacity = 0;
                     visible = false;
                 }
@@ -1619,7 +1689,7 @@ require([
 
         function updateChart(graphic) {
 
-            Chart.defaults.global.defaultFontSize = 15;
+            Chart.defaults.global.defaultFontSize = 12;
             Chart.defaults.global.defaultFontColor = '#777';
 
             var datasetList = [];
@@ -1638,8 +1708,7 @@ require([
             var IncreasedCases = [];
             for (i = 1; i < CasesArray.length; i++) {
                 IncreasedCases.push(CasesArray[i] - CasesArray[i - 1])
-            }
-            ;
+            };
             IncreasedCases.unshift(0);
 
             var ExtendedCasesArray = CasesArray.slice(0);
@@ -1667,8 +1736,7 @@ require([
                 var IncreasedDeaths = [];
                 for (i = 1; i < DeathsArray.length; i++) {
                     IncreasedDeaths.push(DeathsArray[i] - DeathsArray[i - 1])
-                }
-                ;
+                };
                 IncreasedDeaths.unshift(0);
 
                 var ExtendedDeathsArray = DeathsArray.slice(0);
@@ -1698,12 +1766,12 @@ require([
             SlicedLabelDates = LabelDates.slice(firstCaseIndex);
 
             const verticalLinePlugin = {
-                getLinePosition: function (chart, pointIndex) {
+                getLinePosition: function(chart, pointIndex) {
                     const meta = chart.getDatasetMeta(0); // first dataset is used to discover X coordinate of a point
                     const data = meta.data;
                     return data[pointIndex]._model.x;
                 },
-                renderVerticalLine: function (chartInstance, pointIndex) {
+                renderVerticalLine: function(chartInstance, pointIndex) {
                     const lineLeftOffset = this.getLinePosition(chartInstance, pointIndex);
                     const scale = chartInstance.scales['y-axis-0'];
                     const context = chartInstance.chart.ctx;
@@ -1722,7 +1790,7 @@ require([
                     //context.fillText('Current Day ', lineLeftOffset, (scale.bottom - scale.top) / 2 + scale.top);
                 },
 
-                afterDatasetsDraw: function (chart, easing) {
+                afterDatasetsDraw: function(chart, easing) {
                     if (chart.config.lineAtIndex) {
                         chart.config.lineAtIndex.forEach(pointIndex => this.renderVerticalLine(chart, pointIndex));
                     }
@@ -1733,14 +1801,14 @@ require([
 
             dic1 = {
                 data: SlicedCasesArray,
-                label: "Confirmed Cases ",//+"("+graphic.getAttribute("NAME")+")",
+                label: "Confirmed Cases ", //+"("+graphic.getAttribute("NAME")+")",
                 borderColor: "#ffab24",
                 pointStyle: "circle",
                 fill: false
             };
             dic2 = {
                 data: SlicedIncreasedCases,
-                label: "Increased Cases ",//+"("+graphic.getAttribute("NAME")+")",
+                label: "Increased Cases ", //+"("+graphic.getAttribute("NAME")+")",
                 borderColor: "#f25100",
                 pointStyle: "circle",
                 fill: false
@@ -1749,14 +1817,14 @@ require([
             if (graphic.getAttribute("deaths_ts") != undefined) {
                 dic3 = {
                     data: SlicedDeathsArray,
-                    label: "Deaths ",//+"("+graphic.getAttribute("NAME")+")",
+                    label: "Deaths ", //+"("+graphic.getAttribute("NAME")+")",
                     borderColor: "#a10025",
                     pointStyle: "circle",
                     fill: false
                 };
                 dic4 = {
                     data: SlicedIncreasedDeaths,
-                    label: "Increased Deaths ",//+"("+graphic.getAttribute("NAME")+")",
+                    label: "Increased Deaths ", //+"("+graphic.getAttribute("NAME")+")",
                     borderColor: "#6a28c7",
                     pointStyle: "circle",
                     fill: false
@@ -1818,9 +1886,9 @@ require([
             activeAnimationLayerView = layerview;
 
             if (hitTest == null) {
-                hitTest = promiseUtils.debounce(function (event) {
-                    return view.hitTest(event).then(function (hit) {
-                        var results = hit.results.filter(function (result) {
+                hitTest = promiseUtils.debounce(function(event) {
+                    return view.hitTest(event).then(function(hit) {
+                        var results = hit.results.filter(function(result) {
                             return result.graphic.layer === activeAnimationLayerView.layer;
                         });
 
@@ -1837,10 +1905,10 @@ require([
             }
 
             if (hoverover_callback == null) {
-                view.on("click", function (event) {
+                view.on("click", function(event) {
                     console.log("click!")
                     return hitTest(event).then(
-                        function (hit) {
+                        function(hit) {
                             // remove current highlighted feature
                             if (highlight) {
                                 highlight.remove();
@@ -1879,8 +1947,7 @@ require([
                                 // tooltip.hide();
                             }
                         },
-                        function () {
-                        }
+                        function() {}
                     );
                 });
                 hoverover_callback = true;
@@ -1907,7 +1974,7 @@ require([
                     value.title != vulnerability_layer.title) {
                     value.popupTemplate = getDynamicPopup(_date);
                 }
-                                
+
                 if (value.visible == true && value.parent.visible == true) {
                     console.log(value.title);
                     if (value.title == nyt_layer_counties.title) {
@@ -1948,8 +2015,8 @@ require([
             // let if_log = document.querySelector('input[name="logOptions"]:checked').value;
             // let method = document.querySelector('input[name="renderOptions"]:checked').value;
             let event_type = "case"
-            // let if_log = "nolog"
-            // let method = "NaturalBreaks"
+                // let if_log = "nolog"
+                // let method = "NaturalBreaks"
 
             if (_layer == null) {
                 return;
@@ -1967,6 +2034,7 @@ require([
         function classRender(_date, _event_type = "case", _level = "county") {
             const colors = ["#fef0d9", "#fdd49e", "#fdbb84", "#fc8d59", "#e34a33", "#b30000"];
             const colors_vul = ['#199640', '#a5d96a', '#ffffbf', '#fdaf61', '#d7191c', '#8c0002']
+
             function colorPicker(level) {
                 if (level == "vulnerability") {
                     return colors_vul
@@ -1982,11 +2050,11 @@ require([
             _method = visualizationSchema[_level][_event_type]['breaks'];
             _if_log = visualizationSchema[_level][_event_type]['value'];
             // 5 Common type: Constant Classes
-            if (_event_type == "case" || _event_type == "death" || _event_type == "case_per_100k_capita"
-                || _event_type == "death_per_100k_capita" || _event_type == "death_case_ratio") {
+            if (_event_type == "case" || _event_type == "death" || _event_type == "case_per_100k_capita" ||
+                _event_type == "death_per_100k_capita" || _event_type == "death_case_ratio") {
                 source = constant_class[_level][_event_type][_if_log][_method];
                 let bins = source.bins.split(",")
-                
+
                 if (_level != "vulnerability") {
                     var stop_array = [{
                         value: -1,
@@ -2000,7 +2068,7 @@ require([
                         label: ""
                     }];
                 }
-                
+
                 // bins.length <= colors.length
                 // e.g. if only 2 classes, get [4,5] colors
                 for (let i = 0; i < bins.length; i++) {
@@ -2011,7 +2079,7 @@ require([
                         // label = parseFloat(label).toFixed(2);
                         if (i == 0) {
                             label = "Low"
-                        } else if (i == bins.length-1) {
+                        } else if (i == bins.length - 1) {
                             label = "High"
                         } else {
                             label = ""
@@ -2029,18 +2097,16 @@ require([
                     type: "simple",
                     symbol: {
                         type: "simple-fill",
-                        outline: {  // autocasts as new SimpleLineSymbol()
+                        outline: { // autocasts as new SimpleLineSymbol()
                             color: [128, 128, 128, 50],
                         }
                     },
-                    visualVariables: [
-                        {
-                            type: "color",
-                            valueExpression: classArcade(_date, _class = bins, _event_type = _event_type, _if_log = _if_log),
-                            //valueExpressionTitle: "Voter Turnout",
-                            stops: stop_array.reverse(),
-                        }
-                    ]
+                    visualVariables: [{
+                        type: "color",
+                        valueExpression: classArcade(_date, _class = bins, _event_type = _event_type, _if_log = _if_log),
+                        //valueExpressionTitle: "Voter Turnout",
+                        stops: stop_array.reverse(),
+                    }]
                 };
 
             }
@@ -2048,11 +2114,11 @@ require([
 
         function classRender_time_enabled(_date) {
             const colors = ["#eff3ff", "#c6dbef", "#9ecae1", "#6baed6", "#3182bd", "#08519c"];
-            const opacityValues = [0,1,1,1,1,1];
+            const opacityValues = [0, 1, 1, 1, 1, 1];
 
-            var stop_array_opacity =[];
-            var stop_array_color =[];
-            
+            var stop_array_opacity = [];
+            var stop_array_color = [];
+
             function labeling(value) {
                 if (value == -1) {
                     return "Low"
@@ -2066,7 +2132,7 @@ require([
             for (let i = -1; i < 5; i++) {
                 stop_array_opacity.push({
                     value: i,
-                    opacity: opacityValues[i+1],
+                    opacity: opacityValues[i + 1],
                     label: labeling(i),
                 })
             }
@@ -2074,7 +2140,7 @@ require([
             for (let i = -1; i < 5; i++) {
                 stop_array_color.push({
                     value: i,
-                    color: colors[i+1],
+                    color: colors[i + 1],
                     label: labeling(i),
                 })
             }
@@ -2084,19 +2150,18 @@ require([
                 symbol: {
                     type: "simple-fill",
                     color: "#0000FF",
-                    outline: {  // autocasts as new SimpleLineSymbol()
+                    outline: { // autocasts as new SimpleLineSymbol()
                         color: [128, 128, 128, 50],
                         width: 0
                     }
                 },
-                visualVariables: [
-                    {
+                visualVariables: [{
                         type: "opacity",
                         valueExpression: classArcade_time_enabled(_date),
                         stops: stop_array_opacity.reverse(),
                         legendOptions: {
                             showLegend: false
-                          },
+                        },
                     },
                     {
                         type: "color",
@@ -2259,19 +2324,17 @@ require([
                 type: "simple",
                 symbol: {
                     type: "simple-fill",
-                    outline: {  // autocasts as new SimpleLineSymbol()
+                    outline: { // autocasts as new SimpleLineSymbol()
                         color: [128, 128, 128, 50],
                     }
                 },
-                visualVariables: [
-                    {
-                        type: "color",
-                        valueExpression: dphStaticArcade(bins, fieldName),
-                        //valueExpressionTitle: "Voter Turnout",
-                        stops: stop_array.reverse(),
+                visualVariables: [{
+                    type: "color",
+                    valueExpression: dphStaticArcade(bins, fieldName),
+                    //valueExpressionTitle: "Voter Turnout",
+                    stops: stop_array.reverse(),
 
-                    }
-                ]
+                }]
             };
         }
 
@@ -2328,17 +2391,21 @@ require([
         function animate(startValue) {
             var animating = true;
             var value = startValue;
+            var repeat_count = 0;
 
-            var frame = function (timestamp) {
+            var frame = function(timestamp) {
                 if (!animating) {
                     return;
                 }
 
                 value += 1;
                 if (value > slider.max) {
-                    if (flag_first_click_anination_per_layer)
-                    {
+                    // if (flag_first_click_anination_per_layer) {
+                    //     value = slider.min;
+                    // }
+                    if (startValue == slider.max && repeat_count==0) {
                         value = slider.min;
+                        repeat_count += 1;
                     }
                     else {
                         animating = false;
@@ -2350,7 +2417,7 @@ require([
                 setDate(dt_thumb, animation_type = animation_type);
 
                 // Update at 30fps
-                setTimeout(function () {
+                setTimeout(function() {
                     requestAnimationFrame(frame);
                     updateChart(hitGraphic);
                 }, 1000 / 10);
@@ -2359,7 +2426,7 @@ require([
             frame();
 
             return {
-                remove: function () {
+                remove: function() {
                     animating = false;
                 }
             };
@@ -2373,7 +2440,7 @@ require([
         var highlight;
 
         /// illinois Table
-        document.querySelector("#illinois-table tbody").addEventListener("click", function (event) {
+        document.querySelector("#illinois-table tbody").addEventListener("click", function(event) {
             dph_illinois_county_dynamic.visible = true;
 
             var tr = event.target;
@@ -2393,21 +2460,23 @@ require([
 
                 // let topVisibleLayer = getTopVisibleLayer(map.layers,);
                 let topVisibleLayer = dph_illinois_county_dynamic;
-                view.whenLayerView(topVisibleLayer).then(function (layerView) {
+                view.whenLayerView(topVisibleLayer).then(function(layerView) {
                     var query = topVisibleLayer.createQuery();
                     query.where = "NAME = " + "'" + countyName + "'";
-                    topVisibleLayer.queryFeatures(query).then(function (result) {
+
+                    topVisibleLayer.queryFeatures(query).then(function(result) {
+
                         if (highlight) {
                             highlight.remove();
                         }
                         highlight = layerView.highlight(result.features);
                     })
-                }).then(function () {
+                }).then(function() {
                     view.goTo({
-                        center: [lat, long],
-                        zoom: 8,
-                    })
-                        .catch(function (error) {
+                            center: [lat, long],
+                            zoom: 8,
+                        })
+                        .catch(function(error) {
                             if (error.name != "AbortError") {
                                 console.error(error);
                             }
@@ -2418,7 +2487,7 @@ require([
         });
 
         /// US Table
-        document.querySelector("#county-table tbody").addEventListener("click", function (event) {
+        document.querySelector("#county-table tbody").addEventListener("click", function(event) {
             nyt_layer_counties.visible = true;
 
             var tr = event.target;
@@ -2438,21 +2507,23 @@ require([
 
                 // let topVisibleLayer = getTopVisibleLayer(map.layers,);
                 let topVisibleLayer = nyt_layer_counties;
-                view.whenLayerView(topVisibleLayer).then(function (layerView) {
+                view.whenLayerView(topVisibleLayer).then(function(layerView) {
                     var query = topVisibleLayer.createQuery();
                     query.where = "NAME = " + "'" + countyName + "'";
-                    topVisibleLayer.queryFeatures(query).then(function (result) {
+
+                    topVisibleLayer.queryFeatures(query).then(function(result) {
+
                         if (highlight) {
                             highlight.remove();
                         }
                         highlight = layerView.highlight(result.features);
                     })
-                }).then(function () {
+                }).then(function() {
                     view.goTo({
-                        center: [lat, long],
-                        zoom: 8,
-                    })
-                        .catch(function (error) {
+                            center: [lat, long],
+                            zoom: 8,
+                        })
+                        .catch(function(error) {
                             if (error.name != "AbortError") {
                                 console.error(error);
                             }
@@ -2462,7 +2533,7 @@ require([
         });
 
         /// World Table
-        document.querySelector("#world-table tbody").addEventListener("click", function (event) {
+        document.querySelector("#world-table tbody").addEventListener("click", function(event) {
             who_world_layer.visible = true;
 
             var tr = event.target;
@@ -2482,21 +2553,23 @@ require([
 
                 // let topVisibleLayer = getTopVisibleLayer(map.layers,);
                 let topVisibleLayer = who_world_layer;
-                view.whenLayerView(topVisibleLayer).then(function (layerView) {
+                view.whenLayerView(topVisibleLayer).then(function(layerView) {
                     var query = topVisibleLayer.createQuery();
                     query.where = "NAME = " + "'" + countryName + "'";
-                    topVisibleLayer.queryFeatures(query).then(function (result) {
+
+                    topVisibleLayer.queryFeatures(query).then(function(result) {
+
                         if (highlight) {
                             highlight.remove();
                         }
                         highlight = layerView.highlight(result.features);
                     })
-                }).then(function () {
+                }).then(function() {
                     view.goTo({
-                        center: [lat, long],
-                        zoom: 4,
-                    })
-                        .catch(function (error) {
+                            center: [lat, long],
+                            zoom: 4,
+                        })
+                        .catch(function(error) {
                             if (error.name != "AbortError") {
                                 console.error(error);
                             }
@@ -2506,55 +2579,50 @@ require([
         });
 
         //Set default layers after clicking side panels
-        document.getElementById("illinois-tab").addEventListener("click", function (event) {
+        document.getElementById("illinois-tab").addEventListener("click", function(event) {
             dph_illinois_county_dynamic.visible = true;
 
             // Bring hidden panel to display
             // To override the side effect in Layer Change event
-            view.whenLayerView(dph_illinois_county_dynamic).then(function () {
 
-                    if ($(".sidebar").hasClass("closed")) {
-                        $('#sidebar_control').removeClass("closed").addClass("open");
-                        $(".sidebar").animate({width: 'toggle'}, 10).removeClass("closed").addClass("open");
-                        // $(".sidebar").removeClass("open").hide("slide", { direction: "left" }, 1000).addClass("closed");
-                        $("main").removeClass("col-12").addClass("col-9");
-                    }
+            view.whenLayerView(dph_illinois_county_dynamic).then(function() {
+
+                if ($(".sidebar").hasClass("open")) {
+                    $('#sidebar_control').removeClass("open").addClass("closed");
+                    $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("open").addClass("closed");
+                    $("main").addClass("map-fullscreen");
                 }
-            )
+            })
         });
 
-        document.getElementById("county-tab").addEventListener("click", function (event) {
+        document.getElementById("county-tab").addEventListener("click", function(event) {
             nyt_layer_counties.visible = true;
 
             // Bring hidden panel to display
             // To override the side effect in Layer Change event
-            view.whenLayerView(nyt_layer_counties).then(function () {
+            view.whenLayerView(nyt_layer_counties).then(function() {
 
-                    if ($(".sidebar").hasClass("closed")) {
-                        $('#sidebar_control').removeClass("closed").addClass("open");
-                        $(".sidebar").animate({width: 'toggle'}, 10).removeClass("closed").addClass("open");
-                        // $(".sidebar").removeClass("open").hide("slide", { direction: "left" }, 1000).addClass("closed");
-                        $("main").removeClass("col-12").addClass("col-9");
-                    }
+                if ($(".sidebar").hasClass("open")) {
+                    $('#sidebar_control').removeClass("open").addClass("closed");
+                    $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("open").addClass("closed");
+                    $("main").addClass("map-fullscreen");
                 }
-            )
+            })
         });
 
-        document.getElementById("world-tab").addEventListener("click", function (event) {
+        document.getElementById("world-tab").addEventListener("click", function(event) {
             who_world_layer.visible = true;
 
             // Bring hidden panel to display
             // To override the side effect in Layer Change event
-            view.whenLayerView(who_world_layer).then(function () {
+            view.whenLayerView(who_world_layer).then(function() {
 
-                    if ($(".sidebar").hasClass("closed")) {
-                        $('#sidebar_control').removeClass("closed").addClass("open");
-                        $(".sidebar").animate({width: 'toggle'}, 10).removeClass("closed").addClass("open");
-                        // $(".sidebar").removeClass("open").hide("slide", { direction: "left" }, 1000).addClass("closed");
-                        $("main").removeClass("col-12").addClass("col-9");
-                    }
+                if ($(".sidebar").hasClass("open")) {
+                    $('#sidebar_control').removeClass("open").addClass("closed");
+                    $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("open").addClass("closed");
+                    $("main").addClass("map-fullscreen");
                 }
-            )
+            })
         });
 
     }; //End main
@@ -2575,10 +2643,10 @@ require([
         //     states_data_json_url = proxy_url + "https://raw.githubusercontent.com/cybergis/cybergis.github.io/master/nyt_states_data.json";
         // }
 
-        let counties_request = request(counties_data_json_url, {handleAs: "json"});
-        let states_request = request(states_data_json_url, {handleAs: "json"});
-        let classes_request = request(classes_json_url, {handleAs: "json"});
-        let dynamic_classes_request = request(dynamic_classes_json_url, {handleAs: "json"});
+        let counties_request = request(counties_data_json_url, { handleAs: "json" });
+        let states_request = request(states_data_json_url, { handleAs: "json" });
+        let classes_request = request(classes_json_url, { handleAs: "json" });
+        let dynamic_classes_request = request(dynamic_classes_json_url, { handleAs: "json" });
 
         let dl = new DeferredList([counties_request, states_request, classes_request, dynamic_classes_request]);
         return dl.then(setGlobal_JSON);
@@ -2592,7 +2660,7 @@ require([
         classes_data = res[2][1];
         dynamic_classes_data = res[3][1];
 
-        let promise = new Promise(function (resolve, reject) {
+        let promise = new Promise(function(resolve, reject) {
             // the function is executed automatically when the promise is constructed
 
             // after 1 millisecond signal that the job is done with the result "done"

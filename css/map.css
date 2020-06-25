@@ -7,6 +7,7 @@ body {
 }
 
 #applicationDiv {
+    background-color: #242424;
     position: relative;
     width: 100%;
     display: flex;
@@ -36,6 +37,7 @@ body {
     height: 100px;
     flex: 0 0 50px !important;
 }
+
 #parametersDiv {
     flex: 0 0 auto;
     order: 1;
@@ -298,7 +300,33 @@ body {
     border-radius: 0px
 }
 
-
-.esri-view-height-medium .esri-expand .esri-widget--panel, .esri-view-height-medium .esri-expand .esri-widget--panel-height-only, .esri-view-height-medium .esri-ui-corner .esri-component.esri-widget--panel, .esri-view-height-medium .esri-ui-corner .esri-component.esri-widget--panel-height-only {
+.esri-view-height-medium .esri-expand .esri-widget--panel,
+.esri-view-height-medium .esri-expand .esri-widget--panel-height-only,
+.esri-view-height-medium .esri-ui-corner .esri-component.esri-widget--panel,
+.esri-view-height-medium .esri-ui-corner .esri-component.esri-widget--panel-height-only {
     max-height: 335px !important;
+}
+
+
+/* // Extra small devices (portrait phones, less than 576px) */
+
+@media (max-width: 575.98px) {
+    #sliderInnerContainer {
+        display: none;
+    }
+    #sliderContainer {
+        margin: 0 auto;
+    }
+}
+
+
+/* // Small devices (landscape phones, 576px and up) */
+
+@media (min-width: 576px) and (max-width: 767.98px) {
+    #sliderInnerContainer {
+        display: none;
+    }
+    #sliderContainer {
+        margin: 0 auto;
+    }
 }

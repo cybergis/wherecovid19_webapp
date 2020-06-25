@@ -22,6 +22,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="js/loader.js" crossorigin="anonymous"></script>
     <script src="js/ui.js" crossorigin="anonymous"></script>
+    <script src="js/responsive.js" crossorigin="anonymous"></script>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -33,7 +34,7 @@
 
     <link rel="stylesheet" href="https://js.arcgis.com/4.15/esri/themes/dark-blue/main.css" />
 
-    <title>WhereCOVID-19 by the CyberGIS Center for Advanced Digital and Spatial Studies</title>
+    <title>WhereCOVID-19 Map by CyberGIS Center for Spatial and Digital Studies</title>
 </head>
 
 <body>
@@ -41,7 +42,7 @@
         <div class="navbar-brand">
             <img class="topic-logo" style="display: inline-block;width: 30px;" src="img/favicon.ico">
             <h1 class="header-title d-inline"><b>WhereCOVID-19</b>
-                <span style="font-size:12px;">
+                <span style="font-size:12px;" class="d-xl-inline d-none">
                     by
                     <a style="color: #00a4e4;;" href="https://cybergis.illinois.edu/" title="CyberGIS center website"
                         target="_blank">
@@ -54,11 +55,11 @@
                 </span>
             </h1>
         </div>
-        <div>
-            <a class="btn btn-dark" style="color: white;" data-toggle="modal" data-target="#aboutModal">About WhereCOVID-19</a>
-            <a class="btn btn-dark" href="http://www.cybergisx.org/" title="CyberGISX hub website" target="_blank">Go to
+        <div style="display: flex;flex-direction: row;">
+            <a class="btn btn-dark d-none d-md-block mx-1" style="color: white;" data-toggle="modal" data-target="#aboutModal">About WhereCOVID-19</a>
+            <a class="btn btn-dark d-none d-md-block mx-1" href="http://www.cybergisx.org/" title="CyberGISX hub website" target="_blank">Go to
                 CyberGISX</a>
-            <a href="http://illinois.edu/" target="_blank"><img style="width: 20px; margin-left: 15px;" class="uoi-header" src="https://cybergis.illinois.edu/wp-content/themes/cybergis-new/images/uoi.png" alt="U of I logo"></a>
+            <a href="http://illinois.edu/" target="_blank"><img style="width: 20px; margin-left: 15px;" class="uoi-header m-1" src="https://cybergis.illinois.edu/wp-content/themes/cybergis-new/images/uoi.png" alt="U of I logo"></a>
         </div>
     </nav>
 
@@ -66,7 +67,9 @@
         <!--d-flex-->
         <div class="row">
             <!--d-flex flex-row flex-nowrap-->
-            <nav class="sidebar col-6 col-sm-5 col-md-5 col-lg-4 col-xl-3 open">
+            <nav class="sidebar col-12 col-sm-12 col-md-5 col-lg-4 col-xl-4 open">
+                <a href="#" id="sidebar_control_mobile_close" class="open" role="button" aria-pressed="true" title="close the sidebar"><i class="fas fa-angle-left"></i> Show Map</a>
+
                 <div class="sidebar-sticky">
                     <ul class="nav nav-pills">
                         <li class="nav-item ">
@@ -252,7 +255,7 @@
                     </div>
             </nav>
 
-            <main role="main" class="col-9">
+            <main role="main" class="col-12 col-sm-12 col-md-7 col-lg-8 col-xl-8 ">
                 <div class="row d-flex flex-column">
                     <div class="col-12">
                         <div style="height: 60px;"></div>
@@ -262,6 +265,7 @@
                         <div class="row" style="height: calc(100vh - 60px);">
 
                             <div id="applicationDiv">
+                                <a href="#" id="sidebar_control_mobile_open" class="open" role="button" aria-pressed="true" title="close the sidebar"><i class="fas fa-angle-right"></i> Show Data</a>
 
                                 <a href="#" id="sidebar_control" class="open" role="button" aria-pressed="true" title="close the sidebar"><i class="fas fa-angle-left"></i></a>
 
@@ -343,6 +347,7 @@
                             a suite of maps representing spatial accessibility to healthcare resources based on the outcome of a recent study: <a href="
                     https://medrxiv.org/cgi/content/short/2020.05.06.20093534v1" target="_blank">
                     https://medrxiv.org/cgi/content/short/2020.05.06.20093534v1</a>. </p>
+
                         <p style="text-align: center;"><a href="data-info.html" target="_blank">WhereCOVID-19 Data Summary</a></p>
                         <p style="text-align:center;">A Quick Tutorial on the CyberGIS App of WhereCOVID-19: <a href="https://youtu.be/yKP3wYEF2Ng" target="_blank">Play Video</a></p>
                         <p style="text-align:center;">
@@ -382,4 +387,5 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js"></script>
 </body>
 
+>>>>>>> dev
 </html>
