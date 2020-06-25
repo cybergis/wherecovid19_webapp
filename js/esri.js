@@ -284,7 +284,7 @@ require([
                     color: "red",
                     size: "10px",
                     outline: {
-                        color: [ 255, 0, 0, 1],
+                        color: [255, 0, 0, 1],
                         width: "3px"
                     }
                 }
@@ -328,7 +328,7 @@ require([
                     color: "red",
                     size: "10px",
                     outline: {
-                        color: [ 255, 0, 0, 1],
+                        color: [255, 0, 0, 1],
                         width: "3px"
                     }
                 }
@@ -1053,7 +1053,7 @@ require([
             var old_dt_start = dt_start;
             if (slider != null) {
                 var old_slider_value = slider.values[0];
-            }            
+            }
 
             //console.log(name, oldValue, value);
             // reset flag when animation layer changed
