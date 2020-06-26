@@ -570,11 +570,11 @@ require([
             //spatialReference: new SpatialReference(wkid: 3857}),
             center: [-89.7, 40],
             zoom: 5.5,
-            constraints: {
-                snapToZoom: false,
-                //minScale: 72223.819286,
-                rotationEnabled: false
-            },
+            // constraints: {
+            //     snapToZoom: false,
+            //     //minScale: 72223.819286,
+            //     rotationEnabled: false
+            // },
             // This ensures that when going fullscreen
             // The top left corner of the view extent
             // stays aligned with the top left corner
@@ -615,7 +615,7 @@ require([
                             return layer;
                         } else {
                             if (filter_array.includes(layer)) {
-                                return layer
+                                return layer;
                             }
                         }
                     }
@@ -674,12 +674,12 @@ require([
                         view.goTo({
                             center: [-87.631721, 41.868428],
                             zoom: 10,
-                        })
+                        });
                     } else if (item.parent.title === us_group.title || item.title === us_group.title) {
                         view.goTo({
                             center: [-96.984300, 40.474679],
                             zoom: 3
-                        })
+                        });
                     } else if (item.parent.title === illinois_group.title || item.title === illinois_group.title) {
                         view.goTo({
                             center: [-88.984300, 40.474679],
@@ -768,9 +768,9 @@ require([
                             instance.querySelector('th').setAttribute('data-y', value.centroid_y);
                             instance.querySelector('th').setAttribute('data-uid', index);
                             instance.querySelector('th').setAttribute('data-county', value.county);
-                            instance.querySelector('.confirmed').innerHTML = value.case;
-                            instance.querySelector('.tested').innerHTML = value.tested;
-                            instance.querySelector('.death').innerHTML = value.death;
+                            instance.querySelector('.confirmed').innerHTML = numberWithCommas(value.case);
+                            instance.querySelector('.tested').innerHTML = numberWithCommas(value.tested);
+                            instance.querySelector('.death').innerHTML = numberWithCommas(value.death);
                             instance.querySelector('.confirmed').setAttribute('data-order', value.case);
                             instance.querySelector('.death').setAttribute('data-order', value.death);
                             instance.querySelector('.tested').setAttribute('data-order', value.tested);
@@ -859,8 +859,8 @@ require([
                         instance.querySelector('th').setAttribute('data-y', value.centroid_y);
                         instance.querySelector('th').setAttribute('data-uid', value.uid);
                         instance.querySelector('th').setAttribute('data-county', value.county);
-                        instance.querySelector('.confirmed').innerHTML = '<span>' + value.case+'</span><br><i class="fas fa-caret-up"></i> ' + value.new_case;
-                        instance.querySelector('.death').innerHTML = '<span>' + value.death + '</span><br><i class="fas fa-caret-up"></i> ' + value.new_death;
+                        instance.querySelector('.confirmed').innerHTML = '<span>' + numberWithCommas(value.case) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_case);
+                        instance.querySelector('.death').innerHTML = '<span>' + numberWithCommas(value.death) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_death);
                         instance.querySelector('.confirmed').setAttribute('data-order', value.case);
                         instance.querySelector('.death').setAttribute('data-order', value.death);
                         couneites_table.appendChild(instance);
@@ -946,8 +946,8 @@ require([
                         instance.querySelector('th').setAttribute('data-y', value.centroid_y);
                         instance.querySelector('th').setAttribute('data-uid', value.uid);
                         instance.querySelector('th').setAttribute('data-country', value.country);
-                        instance.querySelector('.confirmed').innerHTML = '<span>' + value.case+'</span><br><i class="fas fa-caret-up"></i> ' + value.new_case;
-                        instance.querySelector('.death').innerHTML = '<span>' + value.death + '</span><br><i class="fas fa-caret-up"></i> ' + value.new_death;
+                        instance.querySelector('.confirmed').innerHTML = '<span>' + numberWithCommas(value.case) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_case);
+                        instance.querySelector('.death').innerHTML = '<span>' + numberWithCommas(value.death) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_death);
                         instance.querySelector('.confirmed').setAttribute('data-order', value.case);
                         instance.querySelector('.death').setAttribute('data-order', value.death);
                         couneites_table.appendChild(instance);
@@ -1118,9 +1118,14 @@ require([
             }
         });
 
+        view.popup.autoOpenEnabled = true;
+        view.popup.autoCloseEnabled = true;
+
+        /////////////////////////////////////////////////////////////////
+        //////////////////////////Responsive/////////////////////////////
+        /////////////////////////////////////////////////////////////////
+
         view.ui.empty("top-left");
-
-
 
         view.ui.add(
             new Zoom({
@@ -1128,29 +1133,13 @@ require([
             }),
             "top-right"
         );
+
         view.ui.add(
             new Home({
                 view: view
             }),
             "top-right"
         );
-        // view.ui.add(
-        //     new Legend({
-        //         view: view
-        //     }),
-        //     "bottom-right"
-        // );
-
-        // Make the legend widget expandable
-        // var legend = new Expand({
-        //     content: new Legend({
-        //         view: view,
-        //         style: "classic"
-        //     }),
-        //     view: view,
-        //     expanded: true
-        // });
-        // view.ui.add(legend, "bottom-right");
 
         view.ui.add(
             new Fullscreen({
@@ -1160,12 +1149,7 @@ require([
             "top-right"
         );
 
-        view.popup.autoOpenEnabled = true;
-        view.popup.autoCloseEnabled = true;
-
-        /////////////////////////////////////////////////////////////////
-        //////////////////////////Responsive/////////////////////////////
-        /////////////////////////////////////////////////////////////////
+        var zoom = new Zoom({ view: view });
 
         // Desktop
         var legend = new Legend({
@@ -1212,12 +1196,8 @@ require([
         });
 
         function updateView(isMobile) {
-            setLegendMobile(isMobile);
-        }
 
-        function setLegendMobile(isMobile) {
-
-            view.ui.empty("bottom-right");
+            // view.ui.empty("bottom-right");
 
             if (isMobile) {
                 view.ui.remove(legend, "bottom-right");
@@ -1225,8 +1205,8 @@ require([
 
                 view.ui.remove(layerlist, "top-left");
                 view.ui.add(expandLayerlist, "top-left");
-
             } else {
+
                 view.ui.remove(expandLegend, "bottom-right");
                 view.ui.add(legend, "bottom-right");
 
