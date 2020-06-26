@@ -694,13 +694,16 @@ require([
                 } // if(visible === true){
                 setActiveAnimationLayer(item);
 
-
-                // close the side bar when the layer is changed 
-                if ($(".sidebar").hasClass("open")) {
-                    $('#sidebar_control').removeClass("open").addClass("closed");
-                    $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("open").addClass("closed");
-                    // $(".sidebar").removeClass("open").hide("slide", { direction: "left" }, 1000).addClass("closed");
-                    $("main").addClass("map-fullscreen");
+                isResponsiveSize = view.widthBreakpoint === "xsmall" || view.widthBreakpoint === "small";
+                console.log(isResponsiveSize);
+                if (!isResponsiveSize) {
+                    // close the side bar when the layer is changed 
+                    if ($(".sidebar").hasClass("open")) {
+                        $('#sidebar_control').removeClass("open").addClass("closed");
+                        $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("open").addClass("closed");
+                        // $(".sidebar").removeClass("open").hide("slide", { direction: "left" }, 1000).addClass("closed");
+                        $("main").addClass("map-fullscreen");
+                    }
                 }
             });
         });
@@ -1205,7 +1208,6 @@ require([
 
                 view.ui.remove(layerlist, "top-left");
                 view.ui.add(expandLayerlist, "top-left");
-                
                 view.popup.autoOpenEnabled = false;
             } else {
 
@@ -1214,7 +1216,6 @@ require([
 
                 view.ui.remove(expandLayerlist, "top-left");
                 view.ui.add(layerlist, "top-left");
-
                 view.popup.autoOpenEnabled = true;
             }
         }
@@ -2571,10 +2572,14 @@ require([
 
             view.whenLayerView(dph_illinois_county_dynamic).then(function() {
 
-                if ($(".sidebar").hasClass("open")) {
-                    $('#sidebar_control').removeClass("open").addClass("closed");
-                    $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("open").addClass("closed");
-                    $("main").addClass("map-fullscreen");
+                isResponsiveSize = view.widthBreakpoint === "xsmall" || view.widthBreakpoint === "small";
+                console.log(isResponsiveSize);
+                if (!isResponsiveSize) {
+                    if ($(".sidebar").hasClass("open")) {
+                        $('#sidebar_control').removeClass("open").addClass("closed");
+                        $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("open").addClass("closed");
+                        $("main").addClass("map-fullscreen");
+                    }
                 }
             })
         });
@@ -2585,11 +2590,14 @@ require([
             // Bring hidden panel to display
             // To override the side effect in Layer Change event
             view.whenLayerView(nyt_layer_counties).then(function() {
-
-                if ($(".sidebar").hasClass("open")) {
-                    $('#sidebar_control').removeClass("open").addClass("closed");
-                    $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("open").addClass("closed");
-                    $("main").addClass("map-fullscreen");
+                isResponsiveSize = view.widthBreakpoint === "xsmall" || view.widthBreakpoint === "small";
+                console.log(isResponsiveSize);
+                if (!isResponsiveSize) {
+                    if ($(".sidebar").hasClass("open")) {
+                        $('#sidebar_control').removeClass("open").addClass("closed");
+                        $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("open").addClass("closed");
+                        $("main").addClass("map-fullscreen");
+                    }
                 }
             })
         });
@@ -2600,11 +2608,14 @@ require([
             // Bring hidden panel to display
             // To override the side effect in Layer Change event
             view.whenLayerView(who_world_layer).then(function() {
-
-                if ($(".sidebar").hasClass("open")) {
-                    $('#sidebar_control').removeClass("open").addClass("closed");
-                    $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("open").addClass("closed");
-                    $("main").addClass("map-fullscreen");
+                isResponsiveSize = view.widthBreakpoint === "xsmall" || view.widthBreakpoint === "small";
+                console.log(isResponsiveSize);
+                if (!isResponsiveSize) {
+                    if ($(".sidebar").hasClass("open")) {
+                        $('#sidebar_control').removeClass("open").addClass("closed");
+                        $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("open").addClass("closed");
+                        $("main").addClass("map-fullscreen");
+                    }
                 }
             })
         });
