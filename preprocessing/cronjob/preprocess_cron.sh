@@ -28,8 +28,10 @@ make_copy_data(){
 	# IL Aaccessibility
 	mkdir -p ./illinois
 	mkdir -p ./illinois/Accessibility_Dissolve_Animation
-	cp ./illinois/Chicago_ACC_dissolve.geojson ./illinois/Chicago_ACC_dissolve-tmp.geojson
-	cp ./illinois/Illinois_ACC_dissolve.geojson ./illinois/Illinois_ACC_dissolve-tmp.geojson
+	cp ./illinois/Chicago_ACC_i.geojson ./illinois/Chicago_ACC_i-tmp.geojson
+	cp ./illinois/Illinois_ACC_i.geojson ./illinois/Illinois_ACC_i-tmp.geojson
+        cp ./illinois/Chicago_ACC_v.geojson ./illinois/Chicago_ACC_v-tmp.geojson
+        cp ./illinois/Illinois_ACC_v.geojson ./illinois/Illinois_ACC_v-tmp.geojson
 	cp ./illinois/Accessibility_Dissolve_Animation/updates.txt ./illinois/Accessibility_Dissolve_Animation/updates-tmp.txt
 	#IL Vulnerability
 	mkdir -p ./illinois
@@ -229,9 +231,11 @@ restore_data(){
 	cp ./worldwide/who_world_data-tmp.geojson ./worldwide/who_world_data.geojson
 	cp ./worldwide/global-covid19-who-gis-tmp.json ./worldwide/global-covid19-who-gis.json
         
-	cp ./illinois/Chicago_ACC_dissolve-tmp.geojson ./illinois/Chicago_ACC_dissolve.geojson
-	cp ./illinois/Illinois_ACC_dissolve-tmp.geojson ./illinois/Illinois_ACC_dissolve.geojson
-	
+	cp ./illinois/Chicago_ACC_i-tmp.geojson ./illinois/Chicago_ACC_i.geojson
+	cp ./illinois/Illinois_ACC_i-tmp.geojson ./illinois/Illinois_ACC_i.geojson
+        cp ./illinois/Chicago_ACC_v-tmp.geojson ./illinois/Chicago_ACC_v.geojson
+        cp ./illinois/Illinois_ACC_v-tmp.geojson ./illinois/Illinois_ACC_v.geojson	
+
 	cp ./illinois/vulnerability-tmp.geojson ./illinois/vulnerability.geojson #5
   
         destroy_env
@@ -250,8 +254,8 @@ copy_back_results_webfolder(){
   cp ./illinois/dph_*_data.geojson ../illinois/
   cp ./worldwide/who_world_data.geojson ../worldwide/
   cp ./worldwide/global-covid19-who-gis.json ../worldwide/
-  cp ./illinois/Chicago_ACC_dissolve.geojson ../illinois/
-  cp ./illinois/Illinois_ACC_dissolve.geojson ../illinois/
+  cp ./illinois/Chicago_ACC_?.geojson ../illinois/
+  cp ./illinois/Illinois_ACC_?.geojson ../illinois/
   cp ./illinois/vulnerability.geojson ../illinois/ #6
 }
 
