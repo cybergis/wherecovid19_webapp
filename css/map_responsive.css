@@ -311,11 +311,39 @@ main,
 /* // Extra small devices (portrait phones, less than 576px) */
 
 @media (max-width: 575.98px) {
+    /* .esri-ui-inner-container {
+        position: absolute;
+        left: 0 !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        right: 0 !important;
+    } */
+    .esri-view-width-xsmall .esri-expand--auto .esri-expand__container--expanded {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        margin: 0;
+        height: 100%;
+        background: #242424;
+        z-index: 1;
+        overflow: auto;
+        width: 93%;
+    }
     #sliderInnerContainer {
         display: none;
     }
     #sliderContainer {
         margin: 0 auto;
+    }
+    .esri-view-width-less-than-small .esri-zoom .esri-widget--button {
+        display: block;
+    }
+    .esri-icon.esri-icon-plus,
+    .esri-icon.esri-icon-minus {
+        padding-top: 8px;
+    }
+    .esri-view-width-xsmall .esri-expand--auto .esri-expand__mask--expanded {
+        /* display: none; */
     }
 }
 
@@ -323,10 +351,38 @@ main,
 /* // Small devices (landscape phones, 576px and up) */
 
 @media (min-width: 576px) and (max-width: 767.98px) {
+    /* .esri-ui-inner-container {
+        position: absolute;
+        left: 0 !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        right: 0 !important;
+    } */
+    .esri-view-width-xsmall .esri-expand--auto .esri-expand__container--expanded {
+        position: fixed;
+        /* top: 0; */
+        /* bottom: 0; */
+        margin: 0;
+        height: 100%;
+        background: #242424;
+        z-index: 1;
+        overflow: auto;
+        width: 93%;
+    }
     #sliderInnerContainer {
         display: none;
     }
     #sliderContainer {
         margin: 0 auto;
+    }
+    .esri-view-width-less-than-small .esri-zoom .esri-widget--button {
+        display: block;
+    }
+    .esri-icon.esri-icon-plus,
+    .esri-icon.esri-icon-minus {
+        padding-top: 8px;
+    }
+    .esri-view-width-xsmall .esri-expand--auto .esri-expand__mask--expanded {
+        /* display: none; */
     }
 }
