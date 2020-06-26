@@ -36,13 +36,16 @@ body {
     }
 }
 
-@media screen and (min-width:0\0) {
+
+/* @media screen and (min-width:0\0) {
     .outter-wrap {
-        max-height: calc(100vh - 300px);
+        max-height: calc(100vh - 300px); 
     }
-}
+}*/
 
 .content-section {
+    flex-direction: row;
+    flex-grow: 1;
     margin: 0;
     background: #2196F3;
     -webkit-box-flex: 1;
@@ -61,6 +64,12 @@ body {
     -webkit-transition: all .5s;
     -o-transition: all .5s;
     transition: all .5s;
+}
+
+@media screen and (min-width:0\0) {
+    .content-section {
+        max-height: 80%;
+    }
 }
 
 .about-screen {
