@@ -509,11 +509,11 @@ require([
             //spatialReference: new SpatialReference(wkid: 3857}),
             center: [-89.7, 40],
             zoom: 5.5,
-            constraints: {
-                snapToZoom: false,
-                //minScale: 72223.819286,
-                rotationEnabled: false
-            },
+            // constraints: {
+            //     snapToZoom: false,
+            //     //minScale: 72223.819286,
+            //     rotationEnabled: false
+            // },
             // This ensures that when going fullscreen
             // The top left corner of the view extent
             // stays aligned with the top left corner
@@ -1042,9 +1042,14 @@ require([
             }
         });
 
+        view.popup.autoOpenEnabled = true;
+        view.popup.autoCloseEnabled = true;
+
+        /////////////////////////////////////////////////////////////////
+        //////////////////////////Responsive/////////////////////////////
+        /////////////////////////////////////////////////////////////////
+
         view.ui.empty("top-left");
-
-
 
         view.ui.add(
             new Zoom({
@@ -1052,29 +1057,13 @@ require([
             }),
             "top-right"
         );
+
         view.ui.add(
             new Home({
                 view: view
             }),
             "top-right"
         );
-        // view.ui.add(
-        //     new Legend({
-        //         view: view
-        //     }),
-        //     "bottom-right"
-        // );
-
-        // Make the legend widget expandable
-        // var legend = new Expand({
-        //     content: new Legend({
-        //         view: view,
-        //         style: "classic"
-        //     }),
-        //     view: view,
-        //     expanded: true
-        // });
-        // view.ui.add(legend, "bottom-right");
 
         view.ui.add(
             new Fullscreen({
@@ -1084,12 +1073,7 @@ require([
             "top-right"
         );
 
-        view.popup.autoOpenEnabled = true;
-        view.popup.autoCloseEnabled = true;
-
-        /////////////////////////////////////////////////////////////////
-        //////////////////////////Responsive/////////////////////////////
-        /////////////////////////////////////////////////////////////////
+        var zoom = new Zoom({ view: view });
 
         // Desktop
         var legend = new Legend({
@@ -1136,12 +1120,8 @@ require([
         });
 
         function updateView(isMobile) {
-            setLegendMobile(isMobile);
-        }
 
-        function setLegendMobile(isMobile) {
-
-            view.ui.empty("bottom-right");
+            // view.ui.empty("bottom-right");
 
             if (isMobile) {
                 view.ui.remove(legend, "bottom-right");
@@ -1149,8 +1129,8 @@ require([
 
                 view.ui.remove(layerlist, "top-left");
                 view.ui.add(expandLayerlist, "top-left");
-
             } else {
+
                 view.ui.remove(expandLegend, "bottom-right");
                 view.ui.add(legend, "bottom-right");
 

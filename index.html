@@ -17,7 +17,7 @@
     </script>
     <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <link rel="stylesheet" href="css/loader.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="js/loader.js" crossorigin="anonymous"></script>
@@ -38,7 +38,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-dark fixed-top flex-nowrap p-2 px-3 d-flex justify-content-between">
+    <nav class="navbar navbar-dark  flex-nowrap p-2 px-3 d-flex justify-content-between">
         <div class="navbar-brand">
             <img class="topic-logo" style="display: inline-block;width: 30px;" src="img/favicon.ico">
             <h1 class="header-title d-inline"><b>WhereCOVID-19</b>
@@ -67,7 +67,7 @@
         <!--d-flex-->
         <div class="row">
             <!--d-flex flex-row flex-nowrap-->
-            <nav class="sidebar col-12 col-sm-12 col-md-5 col-lg-4 col-xl-4 open">
+            <nav class="sidebar col-12 col-sm-12 col-md-5 col-lg-4 col-xl-4 order-sm-2 open">
                 <a href="#" id="sidebar_control_mobile_close" class="open" role="button" aria-pressed="true" title="close the sidebar"><i class="fas fa-angle-left"></i> Show Map</a>
 
                 <div class="sidebar-sticky">
@@ -255,14 +255,11 @@
                     </div>
             </nav>
 
-            <main role="main" class="col-12 col-sm-12 col-md-7 col-lg-8 col-xl-8 ">
+            <main role="main" class="col-12 col-sm-12 col-md-7 col-lg-8 col-xl-8  order-sm-1">
                 <div class="row d-flex flex-column">
-                    <div class="col-12">
-                        <div style="height: 60px;"></div>
-                    </div>
 
                     <div class="col-12">
-                        <div class="row" style="height: calc(100vh - 60px);">
+                        <div class="row" id="app-wrap">
 
                             <div id="applicationDiv">
                                 <a href="#" id="sidebar_control_mobile_open" class="open" role="button" aria-pressed="true" title="close the sidebar"><i class="fas fa-angle-right"></i> Show Data</a>
@@ -312,9 +309,21 @@
                 </div>
             </main>
 
+            <div class="col-12 d-block d-md-none d-lg-none d-xl-none">
+                <!-- d-md-none d-lg-none d-xl-none -->
+                <div class="row">
+                    <div class="col">
+                        One of three columns
+                    </div>
+                    <div class="col">
+                        One of three columns
+                    </div>
+                </div>
+            </div>
             </div>
 
         </div>
+
         <!-- Modal -->
         <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
@@ -324,8 +333,8 @@
                             WhereCOVID-19: Mapping Multi-Scale Spread and Impacts <br>of COVID-19 for Spatial Decision Support
                         </h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <span aria-hidden="true">&times;</span>
+                </button>
                     </div>
                     <div class="modal-body" style="color:black;">
                         <p> The ongoing COVID-19 pandemic has put the world into an unprecedented situation causing massive impacts on populations and businesses. While there exist numerous geospatial data portals and resources for fighting against the COVID
@@ -345,8 +354,8 @@
                         <p>Currently, WhereCOVID-19 provides a collection of static and dynamic maps for estimating the spread and exposure risk of COVID-19 at various spatial and temporal scales. For example, a set of vulnerability maps synthesize information
                             of confirmed COVID-19 cases, tested cases, population density, social vulnerability index based on CDC data, people living with HIV, and spatial accessibility to hospital resources based on a linear model. Another example is
                             a suite of maps representing spatial accessibility to healthcare resources based on the outcome of a recent study: <a href="
-                    https://medrxiv.org/cgi/content/short/2020.05.06.20093534v1" target="_blank">
-                    https://medrxiv.org/cgi/content/short/2020.05.06.20093534v1</a>. </p>
+                https://medrxiv.org/cgi/content/short/2020.05.06.20093534v1" target="_blank">
+                https://medrxiv.org/cgi/content/short/2020.05.06.20093534v1</a>. </p>
 
                         <p style="text-align: center;"><a href="data-info.html" target="_blank">WhereCOVID-19 Data Summary</a></p>
                         <p style="text-align:center;">A Quick Tutorial on the CyberGIS App of WhereCOVID-19: <a href="https://youtu.be/yKP3wYEF2Ng" target="_blank">Play Video</a></p>
@@ -356,12 +365,11 @@
                         </p>
                     </div>
                     <!-- <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div> -->
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div> -->
                 </div>
             </div>
         </div>
-
         <!-- Optional JavaScript -->
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -371,17 +379,13 @@
         <!--Datatable Jquery plugin-->
         <link rel="stylesheet " type="text/css " href="https://cdn.datatables.net/v/bs4/dt-1.10.20/fh-3.1.6/sc-2.0.1/sp-1.0.1/datatables.min.css " />
         <script type="text/javascript " src="https://cdn.datatables.net/v/bs4/dt-1.10.20/fh-3.1.6/sc-2.0.1/sp-1.0.1/datatables.min.js "></script>
-        <!-- <link rel="stylesheet " type="text/css "
-    href="https://cdn.datatables.net/responsive/2.2.4/css/responsive.dataTables.min.css" />
-    <script type="text/javascript "
-        src="https://cdn.datatables.net/responsive/2.2.4/js/dataTables.responsive.min.js "></script> -->
-
+        <!-- <link rel="stylesheet " type="text/css " href="https://cdn.datatables.net/responsive/2.2.4/css/responsive.dataTables.min.css" />
+            <script type="text/javascript " src="https://cdn.datatables.net/responsive/2.2.4/js/dataTables.responsive.min.js "></script> -->
 
         <!-- Load ESRI.js -->
         <script defer src="https://js.arcgis.com/4.15/"></script>
         <script defer src="js/esri.js"></script>
         <script src="js/app.js "></script>
-
 
         <!-- include chart script -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js"></script>

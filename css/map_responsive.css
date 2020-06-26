@@ -1,0 +1,332 @@
+main,
+#app-wrap {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+#applicationDiv {
+    background-color: #242424;
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex-grow: 1;
+}
+
+#viewDiv {
+    width: 100%;
+    height: 100%;
+    flex: 1 1 auto;
+    order: 1;
+}
+
+#titleDiv {
+    font-weight: 400;
+    font-style: normal;
+    font-size: 1.2019rem;
+    padding: 10px;
+}
+
+#sliderContainer {
+    order: 0;
+    display: flex;
+    flex-flow: row;
+    padding: 0 12px;
+    height: 100px;
+    flex: 0 0 50px !important;
+}
+
+#parametersDiv {
+    flex: 0 0 auto;
+    order: 1;
+}
+
+#sliderValue {
+    flex: 0 0 40px;
+    order: 4;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    font-size: 170%;
+    padding: 0 20px;
+    margin: 10px;
+    height: 30px;
+}
+
+#sliderInnerContainer {
+    flex: 1 1 auto;
+    order: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 50px;
+}
+
+#slider {
+    width: 100%;
+}
+
+.chart-wrap {
+    width: 100%;
+    order: 3;
+}
+
+#myChart {
+    display: none;
+    z-index: 1000;
+    left: 15px;
+    top: 500px;
+    width: 100% !important;
+    height: 200px !important;
+    background: #242424;
+}
+
+.disabledbutton {
+    pointer-events: none;
+    opacity: 0.4;
+}
+
+.hideDiv {
+    display: none !important;
+}
+
+
+/**
+  * Play/Stop toggle button
+  */
+
+#playButton {
+    flex: 0 0 100px;
+    order: 2;
+    margin: 10px;
+}
+
+.toggle-button {
+    display: flex;
+}
+
+.toggle-button.toggled .toggle-button-icon {
+    color: #cc1b1b;
+}
+
+.toggle-button .toggle-button-icon {
+    color: #1bcc1b;
+}
+
+.toggle-button> :nth-child(2) {
+    display: none;
+}
+
+.toggle-button.toggled> :nth-child(1) {
+    display: none;
+}
+
+.toggle-button.toggled> :nth-child(2) {
+    display: block;
+}
+
+
+/**
+    * Hover tooltip
+    */
+
+.tooltip {
+    position: absolute;
+    pointer-events: none;
+    transition: opacity 200ms;
+}
+
+.tooltip>div {
+    margin: 0 auto;
+    padding: 12px;
+    border-radius: 4px;
+    box-shadow: 0px 0px 4px rgba(255, 255, 255, 0.75);
+    transform: translate3d(-50%, -125%, 0);
+}
+
+.map-title {
+    z-index: 1000;
+    left: 10px;
+    top: 15px;
+    display: block;
+    position: absolute;
+    height: 64px;
+    color: white;
+}
+
+.map-title h1 {
+    font-size: 25px;
+    padding: 0;
+    margin: 0;
+    line-height: unset;
+}
+
+.sidebar-left {
+    z-index: 1000;
+    display: block;
+    position: absolute;
+    left: 10px;
+    top: 90px;
+    height: calc(100% - 120px);
+    width: 15%;
+    min-width: 300px;
+    /* background-color: #242424; */
+}
+
+.sidebar-lowerleft {
+    z-index: 1000;
+    display: block;
+    position: absolute;
+    left: 10px;
+    top: 350px;
+    height: 200px;
+    width: 15%;
+    min-width: 300px;
+    /* background-color: #242424; */
+}
+
+.myChart {
+    position: absolute;
+    right: 0;
+    top: 30%;
+    width: 300px !important;
+    height: 200px !important;
+    /* background:black; */
+    /* position: fixed; */
+}
+
+
+/* .sidebar-right {
+    z-index: 1000;
+    display: block;
+    position: absolute;
+    right: 20px;
+    bottom: 80px;
+    height: calc(100% - 260px);
+    width: 15%;
+    min-width: 300px;
+    background-color: #242424;
+} */
+
+.bordered-box {
+    background-color: #242424;
+    border: 1px solid #363636;
+    /* border-radius: 5px; */
+    overflow: hidden;
+}
+
+.bordered-box h2 {
+    font-size: 20px;
+}
+
+.sidebar-left .total {
+    /* height: 20%; */
+    margin-bottom: 10px;
+    position: relative;
+    color: white;
+}
+
+.sidebar-left .total h3 {
+    font-size: 65px;
+    font-family: 'Open Sans', sans-serif !important;
+}
+
+.confirmed {
+    color: orange;
+}
+
+.deaths {
+    color: red;
+}
+
+.recovered {
+    color: rgb(112, 168, 0);
+}
+
+.sidebar-left i {
+    z-index: 10000;
+    color: white;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    cursor: pointer;
+}
+
+.cases {
+    position: relative;
+    color: white;
+    overflow: hidden;
+    max-height: 290px;
+}
+
+.cases .title {
+    border-bottom: #363636 solid 1px;
+}
+
+.cases .title p {
+    margin: 0;
+}
+
+.cases .case-list {
+    height: 100%;
+    overflow-y: scroll;
+    padding: 0;
+    margin: 0;
+}
+
+.case-list .case {
+    border-bottom: #363636 solid 1px;
+}
+
+.case-list .case p {
+    margin: 0;
+    padding: 5px 0;
+}
+
+::-webkit-scrollbar {
+    width: 10px
+}
+
+::-webkit-scrollbar-track {
+    background: #353535;
+    border-radius: 0px
+}
+
+::-webkit-scrollbar-thumb {
+    background: #9d9d9d;
+    border-radius: 0px
+}
+
+.esri-view-height-medium .esri-expand .esri-widget--panel,
+.esri-view-height-medium .esri-expand .esri-widget--panel-height-only,
+.esri-view-height-medium .esri-ui-corner .esri-component.esri-widget--panel,
+.esri-view-height-medium .esri-ui-corner .esri-component.esri-widget--panel-height-only {
+    max-height: 335px !important;
+}
+
+
+/* // Extra small devices (portrait phones, less than 576px) */
+
+@media (max-width: 575.98px) {
+    #sliderInnerContainer {
+        display: none;
+    }
+    #sliderContainer {
+        margin: 0 auto;
+    }
+}
+
+
+/* // Small devices (landscape phones, 576px and up) */
+
+@media (min-width: 576px) and (max-width: 767.98px) {
+    #sliderInnerContainer {
+        display: none;
+    }
+    #sliderContainer {
+        margin: 0 auto;
+    }
+}

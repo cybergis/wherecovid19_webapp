@@ -3,6 +3,79 @@ body {
     color: #b3b3b3;
 }
 
+.outter-wrap {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100vh;
+    /* give the outermost container a predefined size */
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.content-section {
+    margin: 0;
+    background: #2196F3;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    /* for Firefox */
+    min-height: 0;
+    transition: all .5s;
+}
+
+.about-screen {
+    overflow: auto;
+    background-color: #303030;
+    padding: 15px;
+    font-size: 13px;
+    color: white;
+    text-align: justify;
+}
+
+.about-screen h1 {
+    text-align: center;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.about-screen img {
+    width: 100% !important;
+    height: auto;
+}
+
+.about-screen a,
+.about-screen a:focus {
+    color: #1cd5ee;
+}
+
+.mobile-button {
+    border-top: #3c3c3c 1px solid;
+}
+
+.screen-btn {
+    padding: 5px 0;
+    text-align: center;
+    border-left: #3c3c3c 1px solid;
+    font-size: 11px;
+    color: white;
+}
+
+screen-btn:first {
+    border: none;
+}
+
+#about-screen-btn.active,
+#map-screen-btn.active,
+#table-screen-btn.active {
+    background-color: #00cc29;
+}
+
 .feather {
     width: 16px;
     height: 16px;
@@ -23,7 +96,7 @@ body {
     /* background-color: #ffffff; */
     /* min-width: 1080px; */
     height: 60px;
-    /* color: #000; */
+    width: 100%;
     background-color: #303030;
     border-bottom: #404040 solid 1px;
 }
@@ -42,39 +115,24 @@ body {
  * Sidebar
  */
 
-.sidebar,
-.sidebar.open {
+.sidebar {
+    flex-grow: 1;
     z-index: 100;
     padding: 0;
     background-color: #363636;
     /* max-width: 550px; */
     border-right: #404040 solid 1px;
-    display: block;
+    display: flex;
+    flex-direction: column;
 }
 
 .sidebar.closed {
     display: none;
 }
 
-.sidebar-sticky {
-    position: relative;
-    top: 0;
-    padding-top: 0;
-    overflow-x: hidden;
-    overflow-y: hidden;
-    /* Scrollable contents if viewport is shorter than content. */
-}
-
-@supports ((position: -webkit-sticky) or (position: sticky)) {
-    .sidebar-sticky {
-        position: -webkit-sticky;
-        position: sticky;
-    }
-}
-
 .sidebar .nav-item {
     width: 33.3333333%;
-    min-height: 70px;
+    /* min-height: 70px; */
 }
 
 .sidebar .nav-link {
@@ -170,23 +228,6 @@ body {
 
 
 /*
-* Sidebar tabs control
-*/
-
-.tab-content {
-    background-color: #5d5d5d;
-}
-
-.tab-content>div {
-    display: none;
-}
-
-.tab-content>.active {
-    display: block;
-}
-
-
-/*
 * Sidebar Search
 */
 
@@ -213,10 +254,42 @@ body {
 * Sidebar tables
 */
 
-.content-wrap {
+.tabs-wrap {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    /* height: calc(100vh - 191px); */
+    /* for Firefox */
+    min-height: 0;
+}
+
+.tabs-wrap .tab {
+    flex-grow: 1;
+    /* for Firefox */
+    min-height: 0;
+    display: none;
+}
+
+.tabs-wrap .tab.active {
+    display: flex;
+    flex-grow: 1;
+}
+
+.tab-header {
+    background-color: #5d5d5d;
+}
+
+.tab-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.tab-table {
+    background: black;
+    flex-grow: 1;
+    overflow: auto;
+    /* for Firefox */
+    min-height: 0;
 }
 
 .table-wrap {
@@ -224,8 +297,15 @@ body {
     overflow: auto;
 }
 
+.tab-table {
+    text-align: center;
+    font-size: 13px;
+    margin-top: 0 !important;
+}
+
 #illinois-table,
-#county-table {
+#county-table,
+#world-table {
     margin: 0 !important;
     padding: 0 !important;
 }
@@ -235,18 +315,7 @@ body {
 }
 
 .dataTables_wrapper {
-    /* overflow-y: scroll; */
-    /* overflow-x: hidden; */
     color: #b3b3b3;
-}
-
-#county-table_wrapper,
-#world-table_wrapper {
-    /* height: calc(100vh - 307px); */
-}
-
-#illinois-table_wrapper {
-    /* height: calc(100vh - 280px); */
 }
 
 .table thead th,
@@ -267,11 +336,6 @@ body {
     border-top: none;
     border-bottom: #414141 solid 1px;
     color: #b3b3b3;
-}
-
-table td {
-    text-align: center;
-    font-size: 13px;
 }
 
 #sidebar_control,
@@ -348,70 +412,67 @@ table td {
 /* // Extra small devices (portrait phones, less than 576px) */
 
 @media (max-width: 575.98px) {
-    #sidebar_control_mobile_close,
-    #sidebar_control_mobile_open {
-        display: block;
-    }
-    #sliderInnerContainer {
-        display: none;
-    }
     .sidebar {
-        position: absolute;
+        position: relative;
+        top: 0;
+        left: 0;
+        z-index: 0;
     }
-    #sidebar_control_mobile {
+    main {
+        position: relative;
+        z-index: 100;
+        top: 0;
+        left: 0;
+    }
+    .content-section {
+        transform: translateX(-100%);
+    }
+    .tab-table {
+        font-size: 12px;
+        line-height: 1.2;
+    }
+    .search-wrap .form-control {
         display: block;
+        width: 100%;
+        height: calc(1.5em + .75rem + 2px);
+        padding: 5px;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1;
     }
-    .sidebar .nav-link {
-        font-size: 13px;
-    }
-    #sidebar_control,
-    #sidebar_control:focus {
+    #sidebar_control {
         display: none;
     }
-    .highlight .case-number {
-        font-size: 13px;
-        font-weight: bold;
-    }
-    /* .sidebar,
-    .sidebar.open,
-    #app-wrap {
-        height: calc(100vh - 120px);
-    } */
 }
 
 
 /* // Small devices (landscape phones, 576px and up) */
 
 @media (min-width: 576px) and (max-width: 767.98px) {
-    #sidebar_control_mobile_close,
-    #sidebar_control_mobile_open {
-        display: block;
-    }
-    #sliderInnerContainer {
-        display: none;
-    }
     .sidebar {
-        position: absolute;
+        position: relative;
+        top: 0;
+        left: 0;
+        z-index: 0;
+        display: none;
+        border-right: none;
     }
-    #sidebar_control_mobile {
-        display: block;
+    main {
+        position: relative;
+        z-index: 100;
+        top: 0;
+        left: 0;
     }
-    #sidebar_control,
-    #sidebar_control:focus {
+    .content-section {
+        transform: translateX(-100%);
+    }
+    .tab-table {
+        font-size: 12px;
+        line-height: 1.2;
+    }
+    #sidebar_control {
         display: none;
     }
-    .sidebar .nav-link {
-        font-size: 15px;
-    }
-    .highlight .case-number {
-        font-size: 17px;
-        font-weight: bold;
-    }
-    /* .sidebar,
-    .sidebar.open,
-    #app-wrap {
-        height: calc(100vh - 120px);
-    } */
 }
 
 
