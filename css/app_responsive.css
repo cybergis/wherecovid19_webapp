@@ -461,7 +461,6 @@ screen-btn:first {
         top: 0;
         left: 0;
         z-index: 0;
-        display: none;
         border-right: none;
     }
     main {
