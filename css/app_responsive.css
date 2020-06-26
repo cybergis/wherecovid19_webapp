@@ -30,11 +30,13 @@ body {
     overflow: hidden;
 }
 
+
+/* 
 @supports (-webkit-appearance:none) {
     .outter-wrap {
         min-height: calc(100vh - 250px);
     }
-}
+} */
 
 
 /* @media screen and (min-width:0\0) {
@@ -66,12 +68,6 @@ body {
     transition: all .5s;
 }
 
-@media screen and (min-width:0\0) {
-    .content-section {
-        max-height: 80%;
-    }
-}
-
 .about-screen {
     overflow: auto;
     background-color: #303030;
@@ -99,6 +95,8 @@ body {
 
 .mobile-button {
     border-top: #3c3c3c 1px solid;
+    height: 42px;
+    min-height: 42px;
 }
 
 .screen-btn {
@@ -140,6 +138,7 @@ screen-btn:first {
     /* background-color: #ffffff; */
     /* min-width: 1080px; */
     height: 60px;
+    min-height: 60px;
     width: 100%;
     background-color: #303030;
     border-bottom: #404040 solid 1px;
