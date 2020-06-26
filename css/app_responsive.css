@@ -20,7 +20,7 @@ body {
 
 @supports (-webkit-appearance:none) {
     .outter-wrap {
-        min-height: calc(100vh - 150px);
+        min-height: calc(100vh - 250px);
     }
 }
 

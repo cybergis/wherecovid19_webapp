@@ -658,12 +658,12 @@ require([
                                 } else {
                                     val.visible = false;
                                 }
-                            })
+                            });
                         } else {
                             value.visible = false;
                             value.layers.forEach(function(val) {
                                 val.visible = false;
-                            })
+                            });
                         }
                     });
 
