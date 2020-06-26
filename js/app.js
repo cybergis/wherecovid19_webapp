@@ -1,4 +1,9 @@
 $(function() {
+
+    var isChrome = !!window.chrome && !!window.chrome.webstore;
+
+    console.log(isChrome);
+
     $('.nav.nav-pills a').on('click', function(e) {
         e.preventDefault();
         $(this).tab('show');
@@ -14,19 +19,6 @@ $(function() {
             $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("closed").addClass("open");
             $("main").removeClass("map-fullscreen");
         }
-    });
-
-    $('#sidebar_control_mobile_close').on('click', function(e) {
-        $('#sidebar_control').removeClass("open").addClass("closed");
-        $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("open").addClass("closed");
-        $("main").addClass("map-fullscreen");
-        $("#sidebar_control_mobile_open").addClass("d-block");
-    });
-
-    $('#sidebar_control_mobile_open').on('click', function(e) {
-        $('#sidebar_control').removeClass("closed").addClass("open");
-        $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("closed").addClass("open");
-        $("main").removeClass("map-fullscreen");
     });
 
     $('#table-screen-btn').on('click', function(e) {
