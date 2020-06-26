@@ -1205,6 +1205,8 @@ require([
 
                 view.ui.remove(layerlist, "top-left");
                 view.ui.add(expandLayerlist, "top-left");
+                
+                view.popup.autoOpenEnabled = false;
             } else {
 
                 view.ui.remove(expandLegend, "bottom-right");
@@ -1212,6 +1214,8 @@ require([
 
                 view.ui.remove(expandLayerlist, "top-left");
                 view.ui.add(layerlist, "top-left");
+
+                view.popup.autoOpenEnabled = true;
             }
         }
 
