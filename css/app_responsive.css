@@ -73,7 +73,7 @@ screen-btn:first {
 #about-screen-btn.active,
 #map-screen-btn.active,
 #table-screen-btn.active {
-    background-color: #00cc29;
+    background-color: #00a4e4;
 }
 
 .feather {
