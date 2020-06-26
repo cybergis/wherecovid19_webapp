@@ -24,6 +24,12 @@ body {
     }
 }
 
+@media screen and (min-width:0\0) {
+    .outter-wrap {
+        max-height: calc(100vh - 300px);
+    }
+}
+
 .content-section {
     margin: 0;
     background: #2196F3;
