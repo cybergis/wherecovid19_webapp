@@ -137,14 +137,13 @@ main,
     position: relative;
 }
 
-.close_chart {
+#close_chart {
     position: absolute;
     top: 10px;
     right: 10px;
     z-index: 100000;
     color: white;
     font-size: 15px;
-    display: none;
 }
 
 #myChart {
@@ -430,11 +429,6 @@ main,
         right: 0;
         left: 100%;
     }
-    .esri-view-width-xsmall .esri-ui-top-right .esri-expand--auto .esri-expand__container--expanded,
-    .esri-view-width-xsmall .esri-ui-bottom-right .esri-expand--auto .esri-expand__container--expanded {
-        width: 100% !important;
-        max-width: 100% !important;
-    }
 }
 
 
@@ -476,10 +470,5 @@ main,
         overflow: auto;
         right: 0;
         left: 100%;
-    }
-    .esri-view-width-xsmall .esri-ui-top-right .esri-expand--auto .esri-expand__container--expanded,
-    .esri-view-width-xsmall .esri-ui-bottom-right .esri-expand--auto .esri-expand__container--expanded {
-        width: 100% !important;
-        max-width: 100% !important;
     }
 }

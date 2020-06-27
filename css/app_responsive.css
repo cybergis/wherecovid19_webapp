@@ -490,13 +490,6 @@ screen-btn:first {
     padding: 0 !important;
 }
 
-.esri-view-height-small .esri-expand .esri-widget--panel,
-.esri-view-height-small .esri-expand .esri-widget--panel-height-only,
-.esri-view-height-small .esri-ui-corner .esri-component.esri-widget--panel,
-.esri-view-height-small .esri-ui-corner .esri-component.esri-widget--panel-height-only {
-    max-height: 350px !important;
-}
-
 
 /* // Extra small devices (portrait phones, less than 576px) */
 
