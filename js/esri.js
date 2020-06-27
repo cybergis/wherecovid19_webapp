@@ -2580,7 +2580,7 @@ require([
                     if ($(".sidebar").hasClass("closed")) {
                         $('#sidebar_control').removeClass("closed").addClass("open");
                         $(".sidebar").css('display','block').removeClass("closed").addClass("open");
-                        $("main").addClass("map-fullscreen");
+                        $("main").removeClass("map-fullscreen");
                     }
                 }
             })
@@ -2598,7 +2598,7 @@ require([
                     if ($(".sidebar").hasClass("closed")) {
                         $('#sidebar_control').removeClass("closed").addClass("open");
                         $(".sidebar").css('display','block').removeClass("closed").addClass("open");
-                        $("main").addClass("map-fullscreen");
+                        $("main").removeClass("map-fullscreen");
                     }
                 }
             })
@@ -2616,7 +2616,7 @@ require([
                     if ($(".sidebar").hasClass("closed")) {
                         $('#sidebar_control').removeClass("closed").addClass("open");
                         $(".sidebar").css('display','block').removeClass("closed").addClass("open");
-                        $("main").addClass("map-fullscreen");
+                        $("main").removeClass("map-fullscreen");                        
                     }
                 }
             })
