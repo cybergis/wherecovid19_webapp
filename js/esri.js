@@ -698,7 +698,7 @@ require([
                 // close the side bar when the layer is changed 
                 if ($(".sidebar").hasClass("open")) {
                     $('#sidebar_control').removeClass("open").addClass("closed");
-                    $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("open").addClass("closed");
+                    $(".sidebar").css('display','none').removeClass("open").addClass("closed");
                     // $(".sidebar").removeClass("open").hide("slide", { direction: "left" }, 1000).addClass("closed");
                     $("main").addClass("map-fullscreen");
                 }
@@ -2571,9 +2571,9 @@ require([
 
             view.whenLayerView(dph_illinois_county_dynamic).then(function() {
 
-                if ($(".sidebar").hasClass("open")) {
-                    $('#sidebar_control').removeClass("open").addClass("closed");
-                    $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("open").addClass("closed");
+                if ($(".sidebar").hasClass("closed")) {
+                    $('#sidebar_control').removeClass("closed").addClass("open");
+                    $(".sidebar").css('display','block').removeClass("closed").addClass("open");
                     $("main").addClass("map-fullscreen");
                 }
             })
@@ -2586,9 +2586,9 @@ require([
             // To override the side effect in Layer Change event
             view.whenLayerView(nyt_layer_counties).then(function() {
 
-                if ($(".sidebar").hasClass("open")) {
-                    $('#sidebar_control').removeClass("open").addClass("closed");
-                    $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("open").addClass("closed");
+                if ($(".sidebar").hasClass("closed")) {
+                    $('#sidebar_control').removeClass("closed").addClass("open");
+                    $(".sidebar").css('display','block').removeClass("closed").addClass("open");
                     $("main").addClass("map-fullscreen");
                 }
             })
@@ -2601,9 +2601,9 @@ require([
             // To override the side effect in Layer Change event
             view.whenLayerView(who_world_layer).then(function() {
 
-                if ($(".sidebar").hasClass("open")) {
-                    $('#sidebar_control').removeClass("open").addClass("closed");
-                    $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("open").addClass("closed");
+                if ($(".sidebar").hasClass("closed")) {
+                    $('#sidebar_control').removeClass("closed").addClass("open");
+                    $(".sidebar").css('display','block').removeClass("closed").addClass("open");
                     $("main").addClass("map-fullscreen");
                 }
             })
