@@ -700,7 +700,7 @@ require([
                     // close the side bar when the layer is changed 
                     if ($(".sidebar").hasClass("open")) {
                         $('#sidebar_control').removeClass("open").addClass("closed");
-                        $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("open").addClass("closed");
+                        $(".sidebar").css('display','none').removeClass("open").addClass("closed");
                         // $(".sidebar").removeClass("open").hide("slide", { direction: "left" }, 1000).addClass("closed");
                         $("main").addClass("map-fullscreen");
                     }
@@ -1208,6 +1208,7 @@ require([
 
                 view.ui.remove(layerlist, "top-left");
                 view.ui.add(expandLayerlist, "top-left");
+                
                 view.popup.autoOpenEnabled = false;
             } else {
 
@@ -1216,6 +1217,7 @@ require([
 
                 view.ui.remove(expandLayerlist, "top-left");
                 view.ui.add(layerlist, "top-left");
+
                 view.popup.autoOpenEnabled = true;
             }
         }
@@ -2575,9 +2577,9 @@ require([
                 isResponsiveSize = view.widthBreakpoint === "xsmall" || view.widthBreakpoint === "small";
                 console.log(isResponsiveSize);
                 if (!isResponsiveSize) {
-                    if ($(".sidebar").hasClass("open")) {
-                        $('#sidebar_control').removeClass("open").addClass("closed");
-                        $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("open").addClass("closed");
+                    if ($(".sidebar").hasClass("closed")) {
+                        $('#sidebar_control').removeClass("closed").addClass("open");
+                        $(".sidebar").css('display','block').removeClass("closed").addClass("open");
                         $("main").addClass("map-fullscreen");
                     }
                 }
@@ -2593,9 +2595,9 @@ require([
                 isResponsiveSize = view.widthBreakpoint === "xsmall" || view.widthBreakpoint === "small";
                 console.log(isResponsiveSize);
                 if (!isResponsiveSize) {
-                    if ($(".sidebar").hasClass("open")) {
-                        $('#sidebar_control').removeClass("open").addClass("closed");
-                        $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("open").addClass("closed");
+                    if ($(".sidebar").hasClass("closed")) {
+                        $('#sidebar_control').removeClass("closed").addClass("open");
+                        $(".sidebar").css('display','block').removeClass("closed").addClass("open");
                         $("main").addClass("map-fullscreen");
                     }
                 }
@@ -2611,9 +2613,9 @@ require([
                 isResponsiveSize = view.widthBreakpoint === "xsmall" || view.widthBreakpoint === "small";
                 console.log(isResponsiveSize);
                 if (!isResponsiveSize) {
-                    if ($(".sidebar").hasClass("open")) {
-                        $('#sidebar_control').removeClass("open").addClass("closed");
-                        $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("open").addClass("closed");
+                    if ($(".sidebar").hasClass("closed")) {
+                        $('#sidebar_control').removeClass("closed").addClass("open");
+                        $(".sidebar").css('display','block').removeClass("closed").addClass("open");
                         $("main").addClass("map-fullscreen");
                     }
                 }
