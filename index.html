@@ -2,38 +2,39 @@
 <html lang="en">
 
 <head>
+
+    <!-- New tracking code for lab.cigi account -->
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=UA-162446800-1"></script> -->
-    <!-- <script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-120549188-5"></script>
+    <script>
         window.dataLayer = window.dataLayer || [];
 
         function gtag() {
             dataLayer.push(arguments);
         }
-
         gtag('js', new Date());
 
-        gtag('config', 'UA-162446800-1');
-    </script> -->
-    <!-- Required meta tags -->
+        gtag('config', 'UA-120549188-5');
+    </script>
+
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="css/loader.css">
+    <link rel="stylesheet" href="css/app_responsive.css">
+    <link rel="stylesheet" href="css/map_responsive.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/4.15/esri/themes/dark-blue/main.css" />
+
+    <!-- JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- <script src="js/loader.js" crossorigin="anonymous"></script> -->
+    <script src="js/loader.js" crossorigin="anonymous"></script>
     <script src="js/ui.js" crossorigin="anonymous"></script>
     <script src="js/responsive.js" crossorigin="anonymous"></script>
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://kit.fontawesome.com/83341c3e60.js" crossorigin="anonymous"></script>
 
 
-    <link rel="stylesheet" href="css/app_responsive.css">
-    <link rel="stylesheet" href="css/map_responsive.css">
-    <link rel="stylesheet" href="css/responsive.css">
-
-    <link rel="stylesheet" href="https://js.arcgis.com/4.15/esri/themes/dark-blue/main.css" />
 
     <title>WhereCOVID-19 Map by CyberGIS Center for Spatial and Digital Studies</title>
 </head>
@@ -67,7 +68,7 @@
             </div>
         </nav>
 
-        <div class="content-section" style="background-color: #00a4e4;flex-grow: 20; display: flex; flex-direction: row;">
+        <div class="content-section" style="flex-grow: 1; display: flex; flex-direction: row;">
 
             <nav class="sidebar col-12 col-sm-12 col-md-5 col-lg-4 col-xl-4 open">
 
@@ -293,7 +294,10 @@
                         </div>
 
                         <div class="chart-wrap">
-                            <canvas id="myChart"></canvas>
+                            <div id="close_chart"><i class="fas fa-times"></i></div>
+                            <canvas id="myChart">
+                                
+                            </canvas>
                         </div>
                         <div>
                             <select name="select" id="animation_dropdown" style="display: none">
@@ -350,7 +354,7 @@
                 <i class="fas fa-table"></i>
                 <br>Data Table
             </div>
-            <div id="map-screen-btn" class="col screen-btn">
+            <div id="map-screen-btn" class="col screen-btn active">
                 <i class="fas fa-map-marked-alt"></i>
                 <br>Map
             </div>
@@ -435,4 +439,5 @@
     <!-- include chart script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js "></script>
 </body>
+
 </html>

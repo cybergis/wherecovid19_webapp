@@ -1,3 +1,10 @@
+/*
+* Prefixed by https://autoprefixer.github.io
+* PostCSS: v7.0.29,
+* Autoprefixer: v9.7.6
+* Browsers: last 4 version
+*/
+
 body {
     font-size: .875rem;
     color: #b3b3b3;
@@ -7,25 +14,57 @@ body {
     margin: 0;
     padding: 0;
     width: 100%;
-    height: 100vh;
     /* give the outermost container a predefined size */
     position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
+    /* NEW */
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
     overflow: hidden;
 }
 
+
+/* 
+@supports (-webkit-appearance:none) {
+    .outter-wrap {
+        min-height: calc(100vh - 250px);
+    }
+} */
+
+
+/* @media screen and (min-width:0\0) {
+    .outter-wrap {
+        max-height: calc(100vh - 300px); 
+    }
+}*/
+
 .content-section {
+    flex-direction: row;
+    flex-grow: 1;
     margin: 0;
     background: #2196F3;
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
     flex-grow: 1;
+    /* NEW */
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
     /* for Firefox */
     min-height: 0;
+    -webkit-transition: all .5s;
+    -o-transition: all .5s;
     transition: all .5s;
 }
 
@@ -56,6 +95,8 @@ body {
 
 .mobile-button {
     border-top: #3c3c3c 1px solid;
+    height: 42px;
+    min-height: 42px;
 }
 
 .screen-btn {
@@ -64,6 +105,7 @@ body {
     border-left: #3c3c3c 1px solid;
     font-size: 11px;
     color: white;
+    background-color: #303030;
 }
 
 screen-btn:first {
@@ -96,6 +138,7 @@ screen-btn:first {
     /* background-color: #ffffff; */
     /* min-width: 1080px; */
     height: 60px;
+    min-height: 60px;
     width: 100%;
     background-color: #303030;
     border-bottom: #404040 solid 1px;
@@ -116,13 +159,21 @@ screen-btn:first {
  */
 
 .sidebar {
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
     flex-grow: 1;
     z-index: 100;
     padding: 0;
     background-color: #363636;
     /* max-width: 550px; */
     border-right: #404040 solid 1px;
+    /* NEW */
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
 }
 
@@ -255,14 +306,24 @@ screen-btn:first {
 */
 
 .tabs-wrap {
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
     flex: 1;
+    /* NEW */
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
     /* for Firefox */
     min-height: 0;
 }
 
 .tabs-wrap .tab {
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
     flex-grow: 1;
     /* for Firefox */
     min-height: 0;
@@ -270,7 +331,12 @@ screen-btn:first {
 }
 
 .tabs-wrap .tab.active {
+    /* NEW */
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
     flex-grow: 1;
 }
 
@@ -279,13 +345,23 @@ screen-btn:first {
 }
 
 .tab-content {
+    /* NEW */
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
     flex: 1;
 }
 
 .tab-table {
     background: black;
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
     flex-grow: 1;
     overflow: auto;
     /* for Firefox */
@@ -293,6 +369,8 @@ screen-btn:first {
 }
 
 .table-wrap {
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
     flex: 1;
     overflow: auto;
 }
@@ -349,12 +427,21 @@ screen-btn:first {
     height: 52px;
     padding: 10px;
     line-height: 2rem;
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 30px;
     flex: 0 0 30px;
+    -webkit-box-ordinal-group: 3;
+    -ms-flex-order: 2;
     order: 2;
     margin: 0 auto;
     text-decoration: none;
     color: #FFFFFF;
+    /* NEW */
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
     text-align: center;
 }
@@ -389,6 +476,8 @@ screen-btn:first {
 }
 
 #sidebar_control.closed i {
+    -webkit-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
     transform: rotate(180deg);
     /* Equal to rotateZ(45deg) */
 }
@@ -399,13 +488,6 @@ screen-btn:first {
 
 #sliderContainer {
     padding: 0 !important;
-}
-
-.esri-view-height-small .esri-expand .esri-widget--panel,
-.esri-view-height-small .esri-expand .esri-widget--panel-height-only,
-.esri-view-height-small .esri-ui-corner .esri-component.esri-widget--panel,
-.esri-view-height-small .esri-ui-corner .esri-component.esri-widget--panel-height-only {
-    max-height: 350px !important;
 }
 
 
@@ -425,6 +507,8 @@ screen-btn:first {
         left: 0;
     }
     .content-section {
+        -webkit-transform: translateX(-100%);
+        -ms-transform: translateX(-100%);
         transform: translateX(-100%);
     }
     .tab-table {
@@ -454,7 +538,6 @@ screen-btn:first {
         top: 0;
         left: 0;
         z-index: 0;
-        display: none;
         border-right: none;
     }
     main {
@@ -464,6 +547,8 @@ screen-btn:first {
         left: 0;
     }
     .content-section {
+        -webkit-transform: translateX(-100%);
+        -ms-transform: translateX(-100%);
         transform: translateX(-100%);
     }
     .tab-table {
@@ -508,6 +593,8 @@ screen-btn:first {
 .map-fullscreen {
     width: 100% !important;
     max-width: 100%;
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 100%;
     flex: 0 0 100%;
 }
 
@@ -516,6 +603,7 @@ screen-btn:first {
 }
 
 .esri-expand .esri-expand__content {
+    -webkit-box-shadow: none;
     box-shadow: none;
 }
 
