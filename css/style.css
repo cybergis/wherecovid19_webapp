@@ -34,13 +34,17 @@ body {
     display: flex;
     flex-flow: row;
     padding: 0 12px;
-    height: 50px;
+    height: 100px;
     flex: 0 0 50px !important;
+}
+#parametersDiv {
+    flex: 0 0 auto;
+    order: 1;
 }
 
 #sliderValue {
     flex: 0 0 40px;
-    order: 3;
+    order: 4;
     display: flex;
     justify-content: center;
     flex-direction: column;
@@ -53,7 +57,7 @@ body {
 
 #sliderInnerContainer {
     flex: 1 1 auto;
-    order: 2;
+    order: 3;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -95,7 +99,7 @@ body {
 
 #playButton {
     flex: 0 0 100px;
-    order: 1;
+    order: 2;
     margin: 10px 0;
 }
 
@@ -282,7 +286,8 @@ body {
 }
 
 ::-webkit-scrollbar {
-    width: 10px
+    width: 10px;
+    height:10px;
 }
 
 ::-webkit-scrollbar-track {

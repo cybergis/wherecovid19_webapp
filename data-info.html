@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-162446800-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'UA-162446800-1');
+    </script>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/83341c3e60.js" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="css/app.css">
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.15/esri/themes/dark-blue/main.css" />
+
+    <title>WhereCOVID-19 Map by CyberGIS Center for Spatial and Digital Studies</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-dark flex-nowrap p-2 px-3 d-flex justify-content-between">
+        <div class="navbar-brand">
+            <img class="topic-logo" style="display: inline-block;width: 30px;" src="img/favicon.ico">
+            <h1 class="header-title d-inline"><b>WhereCOVID-19</b>
+                <span style="font-size:12px;">
+                    by
+                    <a style="color: #00a4e4;;" href="https://cybergis.illinois.edu/" title="CyberGIS center website"
+                        target="_blank">
+                        CyberGIS Center for Advanced Digital and Spatial Studies
+                    </a> at
+                    <a style="color: #00a4e4;;" href="https://www.illinois.edu/"
+                        title="University of Illinois at Urbana-Champaign website" target="_blank">
+                        University of Illinois at Urbana-Champaign
+                    </a>
+                </span>
+            </h1>
+        </div>
+        <div>
+            <a class="btn btn-dark" href="http://www.cybergisx.org/" title="CyberGISX hub website" target="_blank">Go to
+                CyberGISX</a>
+            <a href="http://illinois.edu/" target="_blank"><img style="width: 20px; margin-left: 15px;" class="uoi-header" src="https://cybergis.illinois.edu/wp-content/themes/cybergis-new/images/uoi.png" alt="U of I logo"></a>
+        </div>
+    </nav>
+
+
+    <div class="container-fluid" style="color: black;">
+        <!--d-flex-->
+        <div class="row">
+            <div class="container">
+                <p>
+                    <h1 style="text-align: center;">WhereCOVID-19 Data Summary</h1>
+                </p>
+                <ul style="list-style: none; padding-left: 0;">
+                    <li>
+                        <p>
+                            <h2>1. Illinois Data</h2>
+                            <span>
+                                <b>COVID-19 data</b> from the <a href="http://www.dph.illinois.gov" target="_blank" alt="Illinois Department of Public Health website">Illinois Department of Public Health (IDPH)</a>
+                            </span>
+                        </p>
+                        <ul>
+                            <li>
+                                County-level data (cumulative, in JSON format) with attributes of county name, confirmed cases, total tested cases, and demographic breakdown by age<br> <b>source:</b>
+                                <a href="http://www.dph.illinois.gov/sitefiles/CountyDemos.json?nocache=1" target="_blank" alt="Link to the JSON file of the county-level data">http://www.dph.illinois.gov/sitefiles/CountyDemos.json?nocache=1</a>
+                            </li>
+
+                            <li>
+                                Zip-code-level data (cumulative, in JSON format) with attributes of zip code, confirmed cases, total tested cases, and demographic breakdown by age <br> <b>source:</b>
+                                <a href="http://www.dph.illinois.gov/sitefiles/COVIDZip.json?nocache=1" target="_blank" alt="Link to the JSON file of the zipcode-leve ldata">http://www.dph.illinois.gov/sitefiles/COVIDZip.json?nocache=1</a>
+                            </li>
+
+                            <li>
+                                Historical testing results
+                                <ul>
+                                    <li>Cumulative characteristics of counties; (county, confirmed_cases, total_tested, deaths, latitude, and longitude)
+                                    </li>
+
+                                    <li>State-level testing results by date (testDate, total_tested, confirmed cases, and deaths)
+                                    </li>
+
+                                    <li>State-level demographics by age (age_group, count, tested, deaths, and demographics_by_race)
+                                    </li>
+
+                                    <li>State-level demographics by race (race_description, count, tested, and deaths)
+                                    </li>
+
+                                    <li>State-level recovery data (updated weekly) (report_date, recovered_cases, recovered_and_deceased_cases, and recovery_rates)
+                                    </li>
+                                    <li>Historical daily characteristics of counties (county, confirmed_cases, total_tested, deaths, latitude, and longitude)</li>
+
+                                </ul>
+
+                                <b>source:</b> <a href="http://www.dph.illinois.gov/sitefiles/COVIDHistoricalTestResults.json?nocache=1" target="_blank" alt="Link to the JSON file of the historical data">http://www.dph.illinois.gov/sitefiles/COVIDHistoricalTestResults.json?nocache=1</a>
+
+                            </li>
+                        </ul>
+                        <p>
+                            <br>
+                            <b>Other datasets</b>
+                        </p>
+                        <ul>
+                            <li>
+                                Social Vulnerability Index from CDC <br> <b>source:</b> <a href="https://svi.cdc.gov/data-and-tools-download.html" target="_blank" alt="Link to the Social Vulnerability Index from CDC">https://svi.cdc.gov/data-and-tools-download.html</a>
+                            </li>
+
+                            <li>
+                                HIV Carrier Density: AIDSVu <br> <b>source:</b> <a href="https://aidsvu.org/" target="_blank" alt=" Link to HIV Carrier Density: AIDSVu data">https://aidsvu.org/</a>
+                            </li>
+
+                            <li>
+                                Spatial accessibility measurement from Kang et al. (2020)<br> <b>source:</b> <a alt="Link to Spatial accessibility measurement from Kang et al (2020) data" target="_blank" href="https://medrxiv.org/cgi/content/short/2020.05.06.20093534v1">https://medrxiv.org/cgi/content/short/2020.05.06.20093534v1</a>
+                            </li>
+                        </ul>
+
+                    </li>
+                    <li>
+                        <p>
+                            <h2>2. United States</h2>
+                            <span>
+                                Data for all of the US states and counties provided by <a target="_blank" href="https://github.com/nytimes/covid-19-data" alt="Link to New York Times data">New York Times</a> which is updated daily
+                            </span>
+                        </p>
+                        <ul>
+                            <li>US state-level data including attributes of date, state, fips, cases, and deaths<br> <b>source:</b>
+                                <a target="_blank" href="https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv" alt="Link to US state-level data"> https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv </a>
+                            </li>
+                            <li>US county-level data including attibutes of date, county, state, fips, cases, and deaths<br> <b>source:</b>
+                                <a target="_blank" href="https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv" alt="Link to county-level data">
+                                https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv</a>
+                            </li>
+                        </ul>
+
+                    </li>
+
+                    <li>
+                        <p>
+                            <h2>3. World</h2>
+                            <span>
+                             Data provided by the <a target="_blank" href="https://covid19.who.int/" alt="link to World Health Organization website">World Health Organization</a> 
+                            </span>
+                        </p>
+                        <ul>
+                            <li>Global data updated daily with attributes of day, country, region, and metrics (deaths, cumulative deaths, confirmed, and cumulative confirmed) including historical data <br> <b>source:</b>
+                                <a target="_blank" href="https://dashboards-dev.sprinklr.com/data/9043/global-covid19-who-gis.json" alt="Link to JSON file of the Global data">
+                                https://dashboards-dev.sprinklr.com/data/9043/global-covid19-who-gis.json</a>
+                            </li>
+                        </ul>
+
+                    </li>
+                </ul>
+                <br>
+            </div>
+        </div>
+</body>
+
+</html>
