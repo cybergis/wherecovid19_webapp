@@ -12,11 +12,11 @@ $(function() {
     $('#sidebar_control').on('click', function(e) {
         if ($(".sidebar").hasClass("open")) {
             $('#sidebar_control').removeClass("open").addClass("closed");
-            $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("open").addClass("closed");
+            $(".sidebar").css('display', 'none').removeClass("open").addClass("closed");
             $("main").addClass("map-fullscreen");
         } else {
             $('#sidebar_control').removeClass("closed").addClass("open");
-            $(".sidebar").animate({ width: 'toggle' }, 10).removeClass("closed").addClass("open");
+            $(".sidebar").css('display', 'block').removeClass("closed").addClass("open");
             $("main").removeClass("map-fullscreen");
         }
     });
@@ -36,6 +36,11 @@ $(function() {
         $('.content-section').css("transform", "translateX(-200%)");
         $('.screen-btn').removeClass('active');
         $(this).addClass('active');
+    });
+
+    $('#close_chart').on('click', function(e) {
+        document.getElementById('myChart').classList.add("d-none");
+        document.getElementById('myChart').classList.remove("d-block");
     });
 
 });

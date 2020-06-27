@@ -68,7 +68,7 @@
             </div>
         </nav>
 
-        <div class="content-section" style="background-color: #00a4e4;flex-grow: 20; display: flex; flex-direction: row;">
+        <div class="content-section" style="flex-grow: 1; display: flex; flex-direction: row;">
 
             <nav class="sidebar col-12 col-sm-12 col-md-5 col-lg-4 col-xl-4 open">
 
@@ -294,7 +294,10 @@
                         </div>
 
                         <div class="chart-wrap">
-                            <canvas id="myChart"></canvas>
+                            <div id="close_chart"><i class="fas fa-times"></i></div>
+                            <canvas id="myChart">
+                                
+                            </canvas>
                         </div>
                         <div>
                             <select name="select" id="animation_dropdown" style="display: none">
@@ -436,4 +439,5 @@
     <!-- include chart script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js "></script>
 </body>
+
 </html>
