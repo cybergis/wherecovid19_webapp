@@ -345,7 +345,7 @@ require([
             visible: false,
             renderer: default_polygon_renderer,
         })
-        
+
         var chicago_acc_v_layer = new GeoJSONLayer({
             url: chicago_acc_v_url,
             outFields: ["*"],
@@ -363,13 +363,13 @@ require([
         })
 
         var illinois_acc_v_layer = new GeoJSONLayer({
-            url: illinois_acc_v_url,
-            outFields: ["*"],
-            title: "Accessibility (Ventilators-State)",
-            visible: false,
-            renderer: default_polygon_renderer,
-        })
-        //who worldwide
+                url: illinois_acc_v_url,
+                outFields: ["*"],
+                title: "Accessibility (Ventilators-State)",
+                visible: false,
+                renderer: default_polygon_renderer,
+            })
+            //who worldwide
         var who_world_layer = new GeoJSONLayer({
             url: who_world_layer_url,
             outFields: ["*"],
@@ -496,11 +496,13 @@ require([
 
         // order matters! last layer is at top
         var animation_layers = [who_world_layer, nyt_layer_states, nyt_layer_counties,
-            dph_illinois_county_dynamic, chicago_acc_i_layer, chicago_acc_v_layer, 
-            illinois_acc_i_layer, illinois_acc_v_layer, vulnerability_layer];
-        var static_layers = [chicago_acc_hospitals_i, chicago_acc_hospitals_v, 
+            dph_illinois_county_dynamic, chicago_acc_i_layer, chicago_acc_v_layer,
+            illinois_acc_i_layer, illinois_acc_v_layer, vulnerability_layer
+        ];
+        var static_layers = [chicago_acc_hospitals_i, chicago_acc_hospitals_v,
             illinois_acc_hospitals_i, illinois_acc_hospitals_v, illinois_hospitals, illinois_testing,
-            dph_illinois_zipcode, dph_illinois_county_static, hiv_layer, svi_layer, testing_sites_layer];
+            dph_illinois_zipcode, dph_illinois_county_static, hiv_layer, svi_layer, testing_sites_layer
+        ];
 
         var world_group = new GroupLayer({
             title: "World",
@@ -526,7 +528,8 @@ require([
                 dph_illinois_zipcode, dph_illinois_county_static, dph_illinois_county_dynamic,
                 chicago_acc_i_layer, chicago_acc_v_layer, chicago_acc_hospitals_i, chicago_acc_hospitals_v,
                 illinois_acc_i_layer, illinois_acc_v_layer, illinois_acc_hospitals_i, illinois_acc_hospitals_v,
-                vulnerability_layer],
+                vulnerability_layer
+            ],
             opacity: 0.75
         });
 
@@ -631,10 +634,10 @@ require([
             let topVisibleLayer = getTopVisibleLayer(map.layers, animation_layers);
             mywatcher.set("active_animation_layer", topVisibleLayer);
             //Setup hover effects
-            if (topVisibleLayer != chicago_acc_i_layer && 
-                topVisibleLayer != chicago_acc_v_layer && 
-                topVisibleLayer != illinois_acc_i_layer && 
-                topVisibleLayer != illinois_acc_v_layer && 
+            if (topVisibleLayer != chicago_acc_i_layer &&
+                topVisibleLayer != chicago_acc_v_layer &&
+                topVisibleLayer != illinois_acc_i_layer &&
+                topVisibleLayer != illinois_acc_v_layer &&
                 topVisibleLayer != vulnerability_layer) {
                 view.whenLayerView(topVisibleLayer).then(setupHoverTooltip);
             }
@@ -668,8 +671,8 @@ require([
                     });
 
                     if (item.title === chicago_acc_i_layer.title ||
-                        item.title === chicago_acc_v_layer.title || 
-                        item.title === chicago_acc_hospitals_i.title || 
+                        item.title === chicago_acc_v_layer.title ||
+                        item.title === chicago_acc_hospitals_i.title ||
                         item.title === chicago_acc_hospitals_v) {
                         view.goTo({
                             center: [-87.631721, 41.868428],
@@ -700,7 +703,7 @@ require([
                     // close the side bar when the layer is changed 
                     if ($(".sidebar").hasClass("open")) {
                         $('#sidebar_control').removeClass("open").addClass("closed");
-                        $(".sidebar").css('display','none').removeClass("open").addClass("closed");
+                        $(".sidebar").css('display', 'none').removeClass("open").addClass("closed");
                         // $(".sidebar").removeClass("open").hide("slide", { direction: "left" }, 1000).addClass("closed");
                         $("main").addClass("map-fullscreen");
                     }
@@ -1067,8 +1070,8 @@ require([
                 if (value != oldValue) {
                     // enable slider div
                     addClass2Elem(sliderDiv, false, "hideDiv");
-                    queryLayerDates(value).then(initSlider).then(function () {
-                                                
+                    queryLayerDates(value).then(initSlider).then(function() {
+
                         console.log(slider);
 
                         let thumb_value = slider.values[0]
@@ -1078,7 +1081,7 @@ require([
                             var start_date_change = date.difference(old_dt_start, dt_start, dt_interval_unit);
                             // Remain on the same date while switching layers
                             // Instead of current slider value, we need to use the slider value of previous layer
-                            thumb_value = old_slider_value-start_date_change;
+                            thumb_value = old_slider_value - start_date_change;
 
                         }
 
@@ -1208,7 +1211,7 @@ require([
 
                 view.ui.remove(layerlist, "top-left");
                 view.ui.add(expandLayerlist, "top-left");
-                
+
                 view.popup.autoOpenEnabled = false;
             } else {
 
@@ -1953,11 +1956,11 @@ require([
          */
         function setDate(_date, animation_type = "case") {
             let level = null;
-            animation_layers.forEach(function (value) {
-                if (value.title != chicago_acc_i_layer.title && 
-                    value.title != chicago_acc_v_layer.title && 
-                    value.title != illinois_acc_i_layer.title && 
-                    value.title != illinois_acc_v_layer.title && 
+            animation_layers.forEach(function(value) {
+                if (value.title != chicago_acc_i_layer.title &&
+                    value.title != chicago_acc_v_layer.title &&
+                    value.title != illinois_acc_i_layer.title &&
+                    value.title != illinois_acc_v_layer.title &&
                     value.title != vulnerability_layer.title) {
                     value.popupTemplate = getDynamicPopup(_date);
                 }
@@ -2008,9 +2011,9 @@ require([
             if (_layer == null) {
                 return;
             }
-            if (_layer == chicago_acc_i_layer || 
-                _layer == chicago_acc_v_layer || 
-                _layer == illinois_acc_i_layer || 
+            if (_layer == chicago_acc_i_layer ||
+                _layer == chicago_acc_v_layer ||
+                _layer == illinois_acc_i_layer ||
                 _layer == illinois_acc_v_layer) {
                 _layer.renderer = classRender_time_enabled(_date);
             } else {
@@ -2390,11 +2393,10 @@ require([
                     // if (flag_first_click_anination_per_layer) {
                     //     value = slider.min;
                     // }
-                    if (startValue == slider.max && repeat_count==0) {
+                    if (startValue == slider.max && repeat_count == 0) {
                         value = slider.min;
                         repeat_count += 1;
-                    }
-                    else {
+                    } else {
                         animating = false;
                         stopAnimation();
                         return;
@@ -2579,8 +2581,8 @@ require([
                 if (!isResponsiveSize) {
                     if ($(".sidebar").hasClass("closed")) {
                         $('#sidebar_control').removeClass("closed").addClass("open");
-                        $(".sidebar").css('display','block').removeClass("closed").addClass("open");
-                        $("main").removeClass("map-fullscreen");
+                        $(".sidebar").css('display', 'flex').removeClass("closed").addClass("open");
+                        $("main").addClass("map-fullscreen");
                     }
                 }
             })
@@ -2597,8 +2599,8 @@ require([
                 if (!isResponsiveSize) {
                     if ($(".sidebar").hasClass("closed")) {
                         $('#sidebar_control').removeClass("closed").addClass("open");
-                        $(".sidebar").css('display','block').removeClass("closed").addClass("open");
-                        $("main").removeClass("map-fullscreen");
+                        $(".sidebar").css('display', 'flex').removeClass("closed").addClass("open");
+                        $("main").addClass("map-fullscreen");
                     }
                 }
             })
@@ -2615,8 +2617,8 @@ require([
                 if (!isResponsiveSize) {
                     if ($(".sidebar").hasClass("closed")) {
                         $('#sidebar_control').removeClass("closed").addClass("open");
-                        $(".sidebar").css('display','block').removeClass("closed").addClass("open");
-                        $("main").removeClass("map-fullscreen");                        
+                        $(".sidebar").css('display', 'flex').removeClass("closed").addClass("open");
+                        $("main").addClass("map-fullscreen");
                     }
                 }
             })

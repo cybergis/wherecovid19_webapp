@@ -16,7 +16,7 @@ $(function() {
             $("main").addClass("map-fullscreen");
         } else {
             $('#sidebar_control').removeClass("closed").addClass("open");
-            $(".sidebar").css('display', 'block').removeClass("closed").addClass("open");
+            $(".sidebar").css('display', 'flex').removeClass("closed").addClass("open");
             $("main").removeClass("map-fullscreen");
         }
     });
