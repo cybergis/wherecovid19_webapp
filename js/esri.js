@@ -1793,14 +1793,16 @@ require([
                 label: "Total Cases ", //+"("+graphic.getAttribute("NAME")+")",
                 borderColor: "#ffab24",
                 pointStyle: "circle",
-                fill: false
+                fill: false,
+                hidden: true
             };
             dic2 = {
                 data: SlicedIncreasedCases,
                 label: "Daily Cases ", //+"("+graphic.getAttribute("NAME")+")",
                 borderColor: "#f25100",
                 pointStyle: "circle",
-                fill: false
+                fill: false,
+                hidden: false
             };
 
             if (graphic.getAttribute("deaths_ts") != undefined) {
@@ -1809,14 +1811,16 @@ require([
                     label: "Total Deaths ", //+"("+graphic.getAttribute("NAME")+")",
                     borderColor: "#a10025",
                     pointStyle: "circle",
-                    fill: false
+                    fill: false,
+                    hidden: true
                 };
                 dic4 = {
                     data: SlicedIncreasedDeaths,
                     label: "Daily Deaths ", //+"("+graphic.getAttribute("NAME")+")",
                     borderColor: "#6a28c7",
                     pointStyle: "circle",
-                    fill: false
+                    fill: false,
+                    hidden: true
                 };
             }
 
