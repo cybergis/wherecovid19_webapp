@@ -785,7 +785,7 @@ require([
 
                     var illini_table = $('#illinois-table').DataTable({
                         paging: true,
-                        pagingType: "full_numbers",
+                        pagingType: "simple_numbers",
                         pageLength: 50,
                         ordering: true,
                         order: [
@@ -874,7 +874,7 @@ require([
                     })
                     var county_table = $('#county-table').DataTable({
                         paging: true,
-                        pagingType: "full_numbers",
+                        pagingType: "simple_numbers",
                         pageLength: 50,
                         ordering: true,
                         order: [
@@ -963,7 +963,7 @@ require([
                     })
                     var world_table = $('#world-table').DataTable({
                         paging: true,
-                        pagingType: "full_numbers",
+                        pagingType: "simple_numbers",
                         pageLength: 50,
                         ordering: true,
                         order: [
