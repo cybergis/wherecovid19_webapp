@@ -1264,7 +1264,7 @@ require([
                 fieldInfos: [{
                         fieldName: "confirmed_cases",
                         visible: true,
-                        label: "Confirmed Cases"
+                        label: "Total Cases"
                     },
                     {
                         fieldName: "total_tested",
@@ -1283,12 +1283,12 @@ require([
                 fieldInfos: [{
                         fieldName: "confirmed_cases",
                         visible: true,
-                        label: "Confirmed Cases"
+                        label: "Total Cases"
                     },
                     {
                         fieldName: "deaths",
                         visible: true,
-                        label: "Deaths"
+                        label: "Total Deaths"
                     },
                     {
                         fieldName: "total_tested",
@@ -1412,7 +1412,7 @@ require([
             title: "{NAME}",
             expressionInfos: [{
                     name: "total_cases",
-                    title: "Total Confirmed Cases",
+                    title: "Total Cases",
                     expression: "Round(Split($feature.cases_ts, ',')[-1])"
                 },
                 {
@@ -1434,12 +1434,12 @@ require([
                     {
                         fieldName: "expression/total_cases",
                         visible: true,
-                        label: "Confirmed Cases"
+                        label: "Total Cases"
                     },
                     {
                         fieldName: "expression/total_deaths",
                         visible: true,
-                        label: "Deaths"
+                        label: "Total Deaths"
                     },
                     {
                         fieldName: "expression/death_rate",
@@ -1492,12 +1492,12 @@ require([
                 title: "{NAME}",
                 expressionInfos: [{
                         name: "current_cases",
-                        title: "Confirmed Cases",
+                        title: "Total Cases",
                         expression: dynamicArcade('cases_ts', date)
                     },
                     {
                         name: "current_deaths",
-                        title: "Deaths",
+                        title: "Total Deaths",
                         expression: dynamicArcade('deaths_ts', date)
                     },
                     // {
@@ -1514,12 +1514,12 @@ require([
                         {
                             fieldName: "expression/current_cases",
                             visible: true,
-                            label: "Confirmed Cases"
+                            label: "Total Cases"
                         },
                         {
                             fieldName: "expression/current_deaths",
                             visible: true,
-                            label: "Deaths"
+                            label: "Total Deaths"
                         },
                         // {
                         //     fieldName: "expression/death_rate",
@@ -1555,7 +1555,7 @@ require([
 
             expressionInfos: [{
                     name: "total_cases",
-                    title: "Total Confirmed Cases",
+                    title: "Total Cases",
                     expression: "Round(Split($feature.cases_ts, ',')[-1])"
                 },
                 {
@@ -1587,12 +1587,12 @@ require([
                     {
                         fieldName: "expression/total_cases",
                         visible: true,
-                        label: "Confirmed Cases"
+                        label: "Total Cases"
                     },
                     {
                         fieldName: "expression/total_deaths",
                         visible: true,
-                        label: "Deaths"
+                        label: "Total Deaths"
                     },
                     {
                         fieldName: "expression/death_rate",
@@ -1802,33 +1802,37 @@ require([
 
             dic1 = {
                 data: SlicedCasesArray,
-                label: "Confirmed Cases ", //+"("+graphic.getAttribute("NAME")+")",
+                label: "Total Cases ", //+"("+graphic.getAttribute("NAME")+")",
                 borderColor: "#ffab24",
                 pointStyle: "circle",
-                fill: false
+                fill: false,
+                hidden: true
             };
             dic2 = {
                 data: SlicedIncreasedCases,
-                label: "Increased Cases ", //+"("+graphic.getAttribute("NAME")+")",
+                label: "Daily Cases ", //+"("+graphic.getAttribute("NAME")+")",
                 borderColor: "#f25100",
                 pointStyle: "circle",
-                fill: false
+                fill: false,
+                hidden: false
             };
 
             if (graphic.getAttribute("deaths_ts") != undefined) {
                 dic3 = {
                     data: SlicedDeathsArray,
-                    label: "Deaths ", //+"("+graphic.getAttribute("NAME")+")",
+                    label: "Total Deaths ", //+"("+graphic.getAttribute("NAME")+")",
                     borderColor: "#a10025",
                     pointStyle: "circle",
-                    fill: false
+                    fill: false,
+                    hidden: true
                 };
                 dic4 = {
                     data: SlicedIncreasedDeaths,
-                    label: "Increased Deaths ", //+"("+graphic.getAttribute("NAME")+")",
+                    label: "Daily Deaths ", //+"("+graphic.getAttribute("NAME")+")",
                     borderColor: "#6a28c7",
                     pointStyle: "circle",
-                    fill: false
+                    fill: false,
+                    hidden: true
                 };
             }
 
