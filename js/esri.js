@@ -794,7 +794,7 @@ require([
                         ],
                         info: false,
                         responsive: true,
-                        dom: "t",
+                        dom: "pt",
                     });
 
                     $('#il-search-input').on('input', function() {
@@ -883,7 +883,7 @@ require([
                         ],
                         info: false,
                         responsive: true,
-                        dom: "t",
+                        dom: "pt",
                     });
 
                     $('#w-search-input').on('input', function() {
@@ -971,7 +971,7 @@ require([
                             [1, "desc"]
                         ],
                         info: false,
-                        dom: "t",
+                        dom: "pt",
                     });
 
                     $('#world-search-input').on('input', function() {
