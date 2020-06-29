@@ -704,7 +704,6 @@ require([
                     if ($(".sidebar").hasClass("open")) {
                         $('#sidebar_control').removeClass("open").addClass("closed");
                         $(".sidebar").css('display', 'none').removeClass("open").addClass("closed");
-                        // $(".sidebar").removeClass("open").hide("slide", { direction: "left" }, 1000).addClass("closed");
                         $("main").addClass("map-fullscreen");
                     }
                 }
@@ -2588,7 +2587,7 @@ require([
                     if ($(".sidebar").hasClass("closed")) {
                         $('#sidebar_control').removeClass("closed").addClass("open");
                         $(".sidebar").css('display', 'flex').removeClass("closed").addClass("open");
-                        $("main").addClass("map-fullscreen");
+                        $("main").removeClass("map-fullscreen");
                     }
                 }
             })
@@ -2606,7 +2605,7 @@ require([
                     if ($(".sidebar").hasClass("closed")) {
                         $('#sidebar_control').removeClass("closed").addClass("open");
                         $(".sidebar").css('display', 'flex').removeClass("closed").addClass("open");
-                        $("main").addClass("map-fullscreen");
+                        $("main").removeClass("map-fullscreen");
                     }
                 }
             })
@@ -2624,7 +2623,7 @@ require([
                     if ($(".sidebar").hasClass("closed")) {
                         $('#sidebar_control').removeClass("closed").addClass("open");
                         $(".sidebar").css('display', 'flex').removeClass("closed").addClass("open");
-                        $("main").addClass("map-fullscreen");
+                        $("main").removeClass("map-fullscreen");
                     }
                 }
             })
