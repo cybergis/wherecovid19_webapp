@@ -344,7 +344,7 @@ require([
             title: "Accessibility (ICU Beds-Chicago)",
             visible: false,
             renderer: default_polygon_renderer,
-        })
+        });
 
         var chicago_acc_v_layer = new GeoJSONLayer({
             url: chicago_acc_v_url,
@@ -352,7 +352,7 @@ require([
             title: "Accessibility (Ventilators-Chicago)",
             visible: false,
             renderer: default_polygon_renderer,
-        })
+        });
 
         var illinois_acc_i_layer = new GeoJSONLayer({
             url: illinois_acc_i_url,
@@ -360,7 +360,7 @@ require([
             title: "Accessibility (ICU Beds-State)",
             visible: false,
             renderer: default_polygon_renderer,
-        })
+        });
 
         var illinois_acc_v_layer = new GeoJSONLayer({
                 url: illinois_acc_v_url,
@@ -368,8 +368,14 @@ require([
                 title: "Accessibility (Ventilators-State)",
                 visible: false,
                 renderer: default_polygon_renderer,
-            })
             //who worldwide
+            url: illinois_acc_v_url,
+            outFields: ["*"],
+            title: "Accessibility (Ventilators-State)",
+            visible: false,
+            renderer: default_polygon_renderer,
+        });
+        //who worldwide
         var who_world_layer = new GeoJSONLayer({
             url: who_world_layer_url,
             outFields: ["*"],
@@ -571,8 +577,8 @@ require([
             map: map,
             container: "viewDiv",
             //spatialReference: new SpatialReference(wkid: 3857}),
-            center: [-89.7, 40],
-            zoom: 5.5,
+            center: [-89.2158, 39.7],
+            zoom: 6,
             // constraints: {
             //     snapToZoom: false,
             //     //minScale: 72223.819286,
@@ -675,22 +681,22 @@ require([
                         item.title === chicago_acc_hospitals_i.title ||
                         item.title === chicago_acc_hospitals_v) {
                         view.goTo({
-                            center: [-87.631721, 41.868428],
+                            center: [-87.7267278, 41.844135],
                             zoom: 10,
                         });
                     } else if (item.parent.title === us_group.title || item.title === us_group.title) {
                         view.goTo({
-                            center: [-96.984300, 40.474679],
-                            zoom: 3
+                            center: [-101.6555157, 37.2756983],
+                            zoom: 4
                         });
                     } else if (item.parent.title === illinois_group.title || item.title === illinois_group.title) {
                         view.goTo({
-                            center: [-88.984300, 40.474679],
+                            center: [-89.2158, 39.700],
                             zoom: 6
                         });
                     } else if (item.parent.title === world_group.title || item.title === world_group.title) {
                         view.goTo({
-                            center: [-60, 20],
+                            center: [20.5442115, 7.9482022],
                             zoom: 2
                         });
                     }
@@ -784,14 +790,16 @@ require([
                     })
 
                     var illini_table = $('#illinois-table').DataTable({
-                        paging: false,
+                        paging: true,
+                        pagingType: "simple_numbers",
+                        pageLength: 50,
                         ordering: true,
                         order: [
                             [1, "desc"]
                         ],
                         info: false,
                         responsive: true,
-                        dom: "t",
+                        dom: "pt",
                     });
 
                     $('#il-search-input').on('input', function() {
@@ -871,14 +879,16 @@ require([
                         couneites_table.appendChild(instance);
                     })
                     var county_table = $('#county-table').DataTable({
-                        paging: false,
+                        paging: true,
+                        pagingType: "simple_numbers",
+                        pageLength: 50,
                         ordering: true,
                         order: [
                             [1, "desc"]
                         ],
                         info: false,
                         responsive: true,
-                        dom: "t",
+                        dom: "pt",
                     });
 
                     $('#w-search-input').on('input', function() {
@@ -958,13 +968,15 @@ require([
                         couneites_table.appendChild(instance);
                     })
                     var world_table = $('#world-table').DataTable({
-                        paging: false,
+                        paging: true,
+                        pagingType: "simple_numbers",
+                        pageLength: 50,
                         ordering: true,
                         order: [
                             [1, "desc"]
                         ],
                         info: false,
-                        dom: "t",
+                        dom: "pt",
                     });
 
                     $('#world-search-input').on('input', function() {
