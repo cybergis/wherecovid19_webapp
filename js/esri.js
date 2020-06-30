@@ -245,7 +245,8 @@ require([
                 type: "simple-fill",
                 color: [0, 0, 0, 0.1],
                 outline: { // autocasts as new SimpleLineSymbol()
-                    color: [128, 128, 128, 0.2],
+                    color: [128, 128, 128, 0.3],
+                    width: "1px"
                 }
             }
         };
@@ -344,7 +345,7 @@ require([
             title: "Accessibility (ICU Beds-Chicago)",
             visible: false,
             renderer: default_polygon_renderer,
-        })
+        });
 
         var chicago_acc_v_layer = new GeoJSONLayer({
             url: chicago_acc_v_url,
@@ -352,7 +353,7 @@ require([
             title: "Accessibility (Ventilators-Chicago)",
             visible: false,
             renderer: default_polygon_renderer,
-        })
+        });
 
         var illinois_acc_i_layer = new GeoJSONLayer({
             url: illinois_acc_i_url,
@@ -360,7 +361,7 @@ require([
             title: "Accessibility (ICU Beds-State)",
             visible: false,
             renderer: default_polygon_renderer,
-        })
+        });
 
         var illinois_acc_v_layer = new GeoJSONLayer({
                 url: illinois_acc_v_url,
@@ -368,8 +369,14 @@ require([
                 title: "Accessibility (Ventilators-State)",
                 visible: false,
                 renderer: default_polygon_renderer,
-            })
             //who worldwide
+            url: illinois_acc_v_url,
+            outFields: ["*"],
+            title: "Accessibility (Ventilators-State)",
+            visible: false,
+            renderer: default_polygon_renderer,
+        });
+        //who worldwide
         var who_world_layer = new GeoJSONLayer({
             url: who_world_layer_url,
             outFields: ["*"],
@@ -572,7 +579,7 @@ require([
             container: "viewDiv",
             //spatialReference: new SpatialReference(wkid: 3857}),
             center: [-89.7, 40],
-            zoom: 5.5,
+            zoom: 6,
             // constraints: {
             //     snapToZoom: false,
             //     //minScale: 72223.819286,
@@ -675,22 +682,22 @@ require([
                         item.title === chicago_acc_hospitals_i.title ||
                         item.title === chicago_acc_hospitals_v) {
                         view.goTo({
-                            center: [-87.631721, 41.868428],
+                            center: [-87.631721, 41.835428],
                             zoom: 10,
                         });
                     } else if (item.parent.title === us_group.title || item.title === us_group.title) {
                         view.goTo({
-                            center: [-96.984300, 40.474679],
-                            zoom: 3
+                            center: [-101.6555157, 37.2756983],
+                            zoom: 4
                         });
                     } else if (item.parent.title === illinois_group.title || item.title === illinois_group.title) {
                         view.goTo({
-                            center: [-88.984300, 40.474679],
+                            center: [-89.7, 40],
                             zoom: 6
                         });
                     } else if (item.parent.title === world_group.title || item.title === world_group.title) {
                         view.goTo({
-                            center: [-60, 20],
+                            center: [20.5442115, 7.9482022],
                             zoom: 2
                         });
                     }
@@ -811,6 +818,7 @@ require([
                     let tab = document.getElementById('illinois-tab');
                     tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(stats.today_case)
                     let case_div = document.getElementById('illinois_total_case_number')
+                    let test_div = document.getElementById('illinois_total_test_number')
                     let death_div = document.getElementById('illinois_total_death_number')
                     let test_div = document.getElementById('illinois_total_test_number')
                     case_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.today_case)
@@ -866,14 +874,16 @@ require([
                     })
 
                     var illini_table = $('#illinois-table').DataTable({
-                        paging: false,
+                        paging: true,
+                        pagingType: "simple_numbers",
+                        pageLength: 50,
                         ordering: true,
                         order: [
                             [1, "desc"]
                         ],
                         info: false,
                         responsive: true,
-                        dom: "t",
+                        dom: "pt",
                     });
 
                     $('#il-search-input').on('input', function() {
@@ -954,14 +964,16 @@ require([
                         counties_table.appendChild(instance);
                     })
                     var county_table = $('#county-table').DataTable({
-                        paging: false,
+                        paging: true,
+                        pagingType: "simple_numbers",
+                        pageLength: 50,
                         ordering: true,
                         order: [
                             [1, "desc"]
                         ],
                         info: false,
                         responsive: true,
-                        dom: "t",
+                        dom: "pt",
                     });
 
                     $('#w-search-input').on('input', function() {
@@ -1041,13 +1053,15 @@ require([
                         counties_table.appendChild(instance);
                     })
                     var world_table = $('#world-table').DataTable({
-                        paging: false,
+                        paging: true,
+                        pagingType: "simple_numbers",
+                        pageLength: 50,
                         ordering: true,
                         order: [
                             [1, "desc"]
                         ],
                         info: false,
-                        dom: "t",
+                        dom: "pt",
                     });
 
                     $('#world-search-input').on('input', function() {
@@ -2174,7 +2188,8 @@ require([
                     symbol: {
                         type: "simple-fill",
                         outline: { // autocasts as new SimpleLineSymbol()
-                            color: [128, 128, 128, 50],
+                            color: [128, 128, 128, 0.3],
+                            width: "1px"
                         }
                     },
                     visualVariables: [{
@@ -2227,8 +2242,8 @@ require([
                     type: "simple-fill",
                     color: "#0000FF",
                     outline: { // autocasts as new SimpleLineSymbol()
-                        color: [128, 128, 128, 50],
-                        width: 0
+                        color: [128, 128, 128, 0.3],
+                        width: "1px"
                     }
                 },
                 visualVariables: [{
@@ -2333,8 +2348,8 @@ require([
                 type: "simple-fill", // autocasts as new SimpleFillSymbol()
                 outline: {
                     // autocasts as new SimpleLineSymbol()
-                    color: [128, 128, 128, 0.8],
-                    width: "0.5px"
+                    color: [128, 128, 128, 0.3],
+                    width: "1px"
                 }
             };
             const renderer = {
@@ -2401,7 +2416,8 @@ require([
                 symbol: {
                     type: "simple-fill",
                     outline: { // autocasts as new SimpleLineSymbol()
-                        color: [128, 128, 128, 50],
+                        color: [128, 128, 128, 0.3],
+                        width: "1px"
                     }
                 },
                 visualVariables: [{

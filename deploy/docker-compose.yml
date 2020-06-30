@@ -7,7 +7,9 @@ services:
     image: linuxserver/letsencrypt
     volumes:
       # If spawn this container on a specific worker node, this file should already exist on that node 
-      - /var/covid19_project/wherecovid19_webapp/deploy/nginx.conf:/config/nginx/site-confs/default
+      - /var/covid19_project/wherecovid19_webapp/deploy/nginx_sitedefault.conf:/config/nginx/site-confs/default
+      - /var/covid19_project/wherecovid19_webapp/deploy/nginx_gzip.conf:/config/nginx/nginx.conf
+      - /var/covid19_project/wherecovid19_webapp/deploy/mime.types:/etc/nginx/mime.types
       - nginx_volume:/config
       - /var/covid19_project/wherecovid19_webapp:/var/www/covid19_app
     ports:
