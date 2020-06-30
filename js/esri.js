@@ -245,7 +245,8 @@ require([
                 type: "simple-fill",
                 color: [0, 0, 0, 0.1],
                 outline: { // autocasts as new SimpleLineSymbol()
-                    color: [128, 128, 128, 0.2],
+                    color: [128, 128, 128, 0.3],
+                    width: "1px"
                 }
             }
         };
@@ -577,7 +578,7 @@ require([
             map: map,
             container: "viewDiv",
             //spatialReference: new SpatialReference(wkid: 3857}),
-            center: [-89.2158, 39.7],
+            center: [-89.7, 40],
             zoom: 6,
             // constraints: {
             //     snapToZoom: false,
@@ -681,7 +682,7 @@ require([
                         item.title === chicago_acc_hospitals_i.title ||
                         item.title === chicago_acc_hospitals_v) {
                         view.goTo({
-                            center: [-87.7267278, 41.844135],
+                            center: [-87.631721, 41.835428],
                             zoom: 10,
                         });
                     } else if (item.parent.title === us_group.title || item.title === us_group.title) {
@@ -691,7 +692,7 @@ require([
                         });
                     } else if (item.parent.title === illinois_group.title || item.title === illinois_group.title) {
                         view.goTo({
-                            center: [-89.2158, 39.700],
+                            center: [-89.7, 40],
                             zoom: 6
                         });
                     } else if (item.parent.title === world_group.title || item.title === world_group.title) {
@@ -744,7 +745,6 @@ require([
                     let tab = document.getElementById('illinois-tab');
                     tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(stats.confirmed_cases)
                     let case_div = document.getElementById('illinois_total_case_number')
-                        // console.log(case_div.querySelector('.case-number').innerHTML)
                     let test_div = document.getElementById('illinois_total_test_number')
                     let death_div = document.getElementById('illinois_total_death_number')
                     case_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.confirmed_cases)
@@ -2103,7 +2103,8 @@ require([
                     symbol: {
                         type: "simple-fill",
                         outline: { // autocasts as new SimpleLineSymbol()
-                            color: [128, 128, 128, 50],
+                            color: [128, 128, 128, 0.3],
+                            width: "1px"
                         }
                     },
                     visualVariables: [{
@@ -2156,8 +2157,8 @@ require([
                     type: "simple-fill",
                     color: "#0000FF",
                     outline: { // autocasts as new SimpleLineSymbol()
-                        color: [128, 128, 128, 50],
-                        width: 0
+                        color: [128, 128, 128, 0.3],
+                        width: "1px"
                     }
                 },
                 visualVariables: [{
@@ -2262,8 +2263,8 @@ require([
                 type: "simple-fill", // autocasts as new SimpleFillSymbol()
                 outline: {
                     // autocasts as new SimpleLineSymbol()
-                    color: [128, 128, 128, 0.8],
-                    width: "0.5px"
+                    color: [128, 128, 128, 0.3],
+                    width: "1px"
                 }
             };
             const renderer = {
@@ -2330,7 +2331,8 @@ require([
                 symbol: {
                     type: "simple-fill",
                     outline: { // autocasts as new SimpleLineSymbol()
-                        color: [128, 128, 128, 50],
+                        color: [128, 128, 128, 0.3],
+                        width: "1px"
                     }
                 },
                 visualVariables: [{
