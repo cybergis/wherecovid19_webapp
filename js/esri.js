@@ -1,73 +1,45 @@
 require([
     "esri/Map",
-    "esri/layers/FeatureLayer",
     "esri/views/MapView",
     "esri/core/promiseUtils",
     "esri/widgets/Legend",
     "esri/widgets/Home",
     "esri/widgets/Slider",
     "esri/widgets/Fullscreen",
-    "esri/geometry/SpatialReference",
-    "esri/geometry/Point",
-    "esri/Basemap",
     "esri/layers/MapImageLayer",
-    "esri/symbols/SimpleFillSymbol",
     "esri/layers/GroupLayer",
     "esri/widgets/LayerList",
-    "esri/widgets/BasemapGallery",
     "esri/widgets/Expand",
     "esri/layers/GeoJSONLayer",
-    "esri/tasks/support/Query",
-    "esri/geometry/geometryEngine",
-    "esri/layers/support/LabelClass",
     "esri/widgets/Zoom",
-    "dojo/dom",
-    "dojo/on",
-    "dojo/Evented",
     "dojo/date",
     "dojo/date/locale",
-    "dojox/data/CsvStore",
     "dojo/request",
     "dojo/DeferredList",
     "dojo/Stateful",
     "dojo/_base/declare",
-    "dojo/query",
     "dojo",
     "dojo/domReady!"
 ], function(
     Map,
-    FeatureLayer,
     MapView,
     promiseUtils,
     Legend,
     Home,
     Slider,
     Fullscreen,
-    SpatialReference,
-    Point,
-    Basemap,
     MapImageLayer,
-    SimpleFillSymbol,
     GroupLayer,
     LayerList,
-    BasemapGallery,
     Expand,
     GeoJSONLayer,
-    Query,
-    geometryEngine,
-    LabelClass,
     Zoom,
-    dom,
-    on,
-    Evented,
     date,
     locale,
-    CsvStore,
     request,
     DeferredList,
     Stateful,
     declare,
-    query,
     dojo,
 ) {
 
@@ -733,79 +705,6 @@ require([
         setListview();
 
         function setListview() {
-
-            // const illinois_query = dph_illinois_county_static.createQuery();
-
-            // illinois_query.where = "NAME = 'Illinois'";
-            // illinois_query.outFields = ["confirmed_cases", "total_tested", "deaths"];
-
-            // dph_illinois_county_static.queryFeatures(illinois_query)
-            //     .then(function(response) {
-            //         let stats = response.features[0].attributes;
-            //         let tab = document.getElementById('illinois-tab');
-            //         tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(stats.confirmed_cases)
-            //         let case_div = document.getElementById('illinois_total_case_number')
-            //             // console.log(case_div.querySelector('.case-number').innerHTML)
-            //         let test_div = document.getElementById('illinois_total_test_number')
-            //         let death_div = document.getElementById('illinois_total_death_number')
-            //         case_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.confirmed_cases)
-            //         death_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.deaths)
-            //         test_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.total_tested)
-            //     });
-
-            // const illinois_list_query = dph_illinois_county_static.createQuery();
-            // illinois_list_query.orderByFields = ['confirmed_cases DESC'];
-
-            // dph_illinois_county_static.queryFeatures(illinois_list_query)
-            //     .then(function(response) {
-            //         console.log(response);
-            //         let illinois_table = document.getElementById('illinois-table').querySelector('tbody');
-            //         let template = document.querySelector('template')
-            //         let result_list = response.features.map(function(value) {
-            //             return {
-            //                 centroid_x: value.geometry.centroid.x,
-            //                 centroid_y: value.geometry.centroid.y,
-            //                 uid: value.attributes.OBJECTID,
-            //                 county: value.attributes.County,
-            //                 case: value.attributes.confirmed_cases,
-            //                 death: value.attributes.deaths,
-            //                 tested: value.attributes.total_tested
-            //             }
-            //         });
-            //         result_list.forEach(function(value, index) {
-            //             if (value.county !== "Illinois") {
-            //                 let instance = template.content.cloneNode(true);
-            //                 instance.querySelector('th').innerHTML = value.county;
-            //                 instance.querySelector('th').setAttribute('data-x', value.centroid_x);
-            //                 instance.querySelector('th').setAttribute('data-y', value.centroid_y);
-            //                 instance.querySelector('th').setAttribute('data-uid', index);
-            //                 instance.querySelector('th').setAttribute('data-county', value.county);
-            //                 instance.querySelector('.confirmed').innerHTML = numberWithCommas(value.case);
-            //                 instance.querySelector('.tested').innerHTML = numberWithCommas(value.tested);
-            //                 instance.querySelector('.death').innerHTML = numberWithCommas(value.death);
-            //                 instance.querySelector('.confirmed').setAttribute('data-order', value.case);
-            //                 instance.querySelector('.death').setAttribute('data-order', value.death);
-            //                 instance.querySelector('.tested').setAttribute('data-order', value.tested);
-            //                 illinois_table.appendChild(instance);
-            //             }
-            //         })
-
-            //         var illini_table = $('#illinois-table').DataTable({
-            //             paging: false,
-            //             ordering: true,
-            //             order: [
-            //                 [1, "desc"]
-            //             ],
-            //             info: false,
-            //             responsive: true,
-            //             dom: "t",
-            //         });
-
-            //         $('#il-search-input').on('input', function() {
-            //             console.log($('#il-search-input').val());
-            //             illini_table.search($('#il-search-input').val()).draw();
-            //         });
-            //     });
 
             const illinois_change_query = dph_illinois_county_dynamic.createQuery();
 
