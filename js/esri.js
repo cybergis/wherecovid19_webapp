@@ -818,7 +818,6 @@ require([
                     let tab = document.getElementById('illinois-tab');
                     tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(stats.today_case)
                     let case_div = document.getElementById('illinois_total_case_number')
-                    let test_div = document.getElementById('illinois_total_test_number')
                     let death_div = document.getElementById('illinois_total_death_number')
                     let test_div = document.getElementById('illinois_total_test_number')
                     case_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.today_case)
