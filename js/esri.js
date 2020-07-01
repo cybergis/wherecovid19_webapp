@@ -363,11 +363,11 @@ require([
         });
 
         var illinois_acc_v_layer = new GeoJSONLayer({
-                url: illinois_acc_v_url,
-                outFields: ["*"],
-                title: "Accessibility (Ventilators-State)",
-                visible: false,
-                renderer: default_polygon_renderer,
+            url: illinois_acc_v_url,
+            outFields: ["*"],
+            title: "Accessibility (Ventilators-State)",
+            visible: false,
+            renderer: default_polygon_renderer,
             //who worldwide
             url: illinois_acc_v_url,
             outFields: ["*"],
@@ -704,7 +704,7 @@ require([
                 setActiveAnimationLayer(item);
 
                 isResponsiveSize = view.widthBreakpoint === "xsmall" || view.widthBreakpoint === "small";
-                console.log(isResponsiveSize);
+                //console.log(isResponsiveSize);
                 if (!isResponsiveSize) {
                     // close the side bar when the layer is changed 
                     if ($(".sidebar").hasClass("open")) {
@@ -757,7 +757,7 @@ require([
 
             dph_illinois_county_static.queryFeatures(illinois_list_query)
                 .then(function(response) {
-                    console.log(response);
+                    //console.log(response);
                     let illinois_table = document.getElementById('illinois-table').querySelector('tbody');
                     let template = document.querySelector('template')
                     let result_list = response.features.map(function(value) {
@@ -803,7 +803,7 @@ require([
                     });
 
                     $('#il-search-input').on('input', function() {
-                        console.log($('#il-search-input').val());
+                        //console.log($('#il-search-input').val());
                         illini_table.search($('#il-search-input').val()).draw();
                     });
                 });
@@ -847,7 +847,7 @@ require([
             counties_list_query.orderByFields = ['today_case DESC'];
             nyt_layer_counties.queryFeatures(counties_list_query)
                 .then(function(response) {
-                    console.log(response)
+                    //console.log(response)
                     let couneites_table = document.getElementById('county-table').querySelector('tbody');
                     let template = document.querySelectorAll('template')[1]
                     let result_list = response.features.map(function(value, index) {
@@ -892,7 +892,7 @@ require([
                     });
 
                     $('#w-search-input').on('input', function() {
-                        console.log($('#w-search-input').val());
+                        //console.log($('#w-search-input').val());
                         county_table.search($('#w-search-input').val()).draw();
                     });
 
@@ -937,7 +937,7 @@ require([
             world_list_query.orderByFields = ['today_case DESC'];
             who_world_layer.queryFeatures(world_list_query)
                 .then(function(response) {
-                    console.log(response)
+                    //console.log(response)
                     let couneites_table = document.getElementById('world-table').querySelector('tbody');
                     let template = document.querySelectorAll('template')[1]
                     let result_list = response.features.map(function(value, index) {
@@ -980,7 +980,7 @@ require([
                     });
 
                     $('#world-search-input').on('input', function() {
-                        console.log($('#world-search-input').val());
+                        //console.log($('#world-search-input').val());
                         world_table.search($('#world-search-input').val()).draw();
                     });
 
@@ -1083,7 +1083,7 @@ require([
                     addClass2Elem(sliderDiv, false, "hideDiv");
                     queryLayerDates(value).then(initSlider).then(function() {
 
-                        console.log(slider);
+                        //console.log(slider);
 
                         let thumb_value = slider.values[0]
 
@@ -1911,7 +1911,7 @@ require([
 
             if (hoverover_callback == null) {
                 view.on("click", function(event) {
-                    console.log("click!")
+                    //console.log("click!")
                     return hitTest(event).then(
                         function(hit) {
                             // remove current highlighted feature
@@ -1981,7 +1981,7 @@ require([
                 }
 
                 if (value.visible == true && value.parent.visible == true) {
-                    console.log(value.title);
+                    //console.log(value.title);
                     if (value.title == nyt_layer_counties.title) {
                         level = "county";
                     } else if (value.title == nyt_layer_states.title) {
@@ -2460,7 +2460,7 @@ require([
                 objID = parseFloat(tr.firstElementChild.dataset.uid);
                 countyName = tr.firstElementChild.dataset.county;
 
-                console.log(countyName);
+                //console.log(countyName);
 
                 // let topVisibleLayer = getTopVisibleLayer(map.layers,);
                 let topVisibleLayer = dph_illinois_county_dynamic;
@@ -2507,7 +2507,7 @@ require([
                 objID = parseFloat(tr.firstElementChild.dataset.uid);
                 countyName = tr.firstElementChild.dataset.county;
 
-                console.log(countyName);
+                //console.log(countyName);
 
                 // let topVisibleLayer = getTopVisibleLayer(map.layers,);
                 let topVisibleLayer = nyt_layer_counties;
@@ -2545,7 +2545,7 @@ require([
                 tr = tr.parentNode;
             }
             if (tr === this) {
-                console.log("No table cell found");
+                //console.log("No table cell found");
             } else {
 
                 lat = parseFloat(tr.firstElementChild.dataset.x);
@@ -2553,7 +2553,7 @@ require([
                 objID = parseFloat(tr.firstElementChild.dataset.uid);
                 countryName = tr.firstElementChild.dataset.country;
 
-                console.log(countryName);
+                //console.log(countryName);
 
                 // let topVisibleLayer = getTopVisibleLayer(map.layers,);
                 let topVisibleLayer = who_world_layer;
@@ -2592,7 +2592,7 @@ require([
             view.whenLayerView(dph_illinois_county_dynamic).then(function() {
 
                 isResponsiveSize = view.widthBreakpoint === "xsmall" || view.widthBreakpoint === "small";
-                console.log(isResponsiveSize);
+                //console.log(isResponsiveSize);
                 if (!isResponsiveSize) {
                     if ($(".sidebar").hasClass("closed")) {
                         $('#sidebar_control').removeClass("closed").addClass("open");
@@ -2610,7 +2610,7 @@ require([
             // To override the side effect in Layer Change event
             view.whenLayerView(nyt_layer_counties).then(function() {
                 isResponsiveSize = view.widthBreakpoint === "xsmall" || view.widthBreakpoint === "small";
-                console.log(isResponsiveSize);
+                //console.log(isResponsiveSize);
                 if (!isResponsiveSize) {
                     if ($(".sidebar").hasClass("closed")) {
                         $('#sidebar_control').removeClass("closed").addClass("open");
@@ -2628,7 +2628,7 @@ require([
             // To override the side effect in Layer Change event
             view.whenLayerView(who_world_layer).then(function() {
                 isResponsiveSize = view.widthBreakpoint === "xsmall" || view.widthBreakpoint === "small";
-                console.log(isResponsiveSize);
+                //console.log(isResponsiveSize);
                 if (!isResponsiveSize) {
                     if ($(".sidebar").hasClass("closed")) {
                         $('#sidebar_control').removeClass("closed").addClass("open");
