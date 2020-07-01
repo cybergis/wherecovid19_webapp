@@ -1,73 +1,45 @@
 require([
     "esri/Map",
-    "esri/layers/FeatureLayer",
     "esri/views/MapView",
     "esri/core/promiseUtils",
     "esri/widgets/Legend",
     "esri/widgets/Home",
     "esri/widgets/Slider",
     "esri/widgets/Fullscreen",
-    "esri/geometry/SpatialReference",
-    "esri/geometry/Point",
-    "esri/Basemap",
     "esri/layers/MapImageLayer",
-    "esri/symbols/SimpleFillSymbol",
     "esri/layers/GroupLayer",
     "esri/widgets/LayerList",
-    "esri/widgets/BasemapGallery",
     "esri/widgets/Expand",
     "esri/layers/GeoJSONLayer",
-    "esri/tasks/support/Query",
-    "esri/geometry/geometryEngine",
-    "esri/layers/support/LabelClass",
     "esri/widgets/Zoom",
-    "dojo/dom",
-    "dojo/on",
-    "dojo/Evented",
     "dojo/date",
     "dojo/date/locale",
-    "dojox/data/CsvStore",
     "dojo/request",
     "dojo/DeferredList",
     "dojo/Stateful",
     "dojo/_base/declare",
-    "dojo/query",
     "dojo",
     "dojo/domReady!"
 ], function(
     Map,
-    FeatureLayer,
     MapView,
     promiseUtils,
     Legend,
     Home,
     Slider,
     Fullscreen,
-    SpatialReference,
-    Point,
-    Basemap,
     MapImageLayer,
-    SimpleFillSymbol,
     GroupLayer,
     LayerList,
-    BasemapGallery,
     Expand,
     GeoJSONLayer,
-    Query,
-    geometryEngine,
-    LabelClass,
     Zoom,
-    dom,
-    on,
-    Evented,
     date,
     locale,
-    CsvStore,
     request,
     DeferredList,
     Stateful,
     declare,
-    query,
     dojo,
 ) {
 
@@ -245,7 +217,8 @@ require([
                 type: "simple-fill",
                 color: [0, 0, 0, 0.1],
                 outline: { // autocasts as new SimpleLineSymbol()
-                    color: [128, 128, 128, 0.2],
+                    color: [128, 128, 128, 0.3],
+                    width: "1px"
                 }
             }
         };
@@ -344,7 +317,7 @@ require([
             title: "Accessibility (ICU Beds-Chicago)",
             visible: false,
             renderer: default_polygon_renderer,
-        })
+        });
 
         var chicago_acc_v_layer = new GeoJSONLayer({
             url: chicago_acc_v_url,
@@ -352,7 +325,7 @@ require([
             title: "Accessibility (Ventilators-Chicago)",
             visible: false,
             renderer: default_polygon_renderer,
-        })
+        });
 
         var illinois_acc_i_layer = new GeoJSONLayer({
             url: illinois_acc_i_url,
@@ -360,7 +333,7 @@ require([
             title: "Accessibility (ICU Beds-State)",
             visible: false,
             renderer: default_polygon_renderer,
-        })
+        });
 
         var illinois_acc_v_layer = new GeoJSONLayer({
                 url: illinois_acc_v_url,
@@ -368,8 +341,14 @@ require([
                 title: "Accessibility (Ventilators-State)",
                 visible: false,
                 renderer: default_polygon_renderer,
-            })
             //who worldwide
+            url: illinois_acc_v_url,
+            outFields: ["*"],
+            title: "Accessibility (Ventilators-State)",
+            visible: false,
+            renderer: default_polygon_renderer,
+        });
+        //who worldwide
         var who_world_layer = new GeoJSONLayer({
             url: who_world_layer_url,
             outFields: ["*"],
@@ -572,7 +551,7 @@ require([
             container: "viewDiv",
             //spatialReference: new SpatialReference(wkid: 3857}),
             center: [-89.7, 40],
-            zoom: 5.5,
+            zoom: 6,
             // constraints: {
             //     snapToZoom: false,
             //     //minScale: 72223.819286,
@@ -675,22 +654,22 @@ require([
                         item.title === chicago_acc_hospitals_i.title ||
                         item.title === chicago_acc_hospitals_v) {
                         view.goTo({
-                            center: [-87.631721, 41.868428],
+                            center: [-87.631721, 41.835428],
                             zoom: 10,
                         });
                     } else if (item.parent.title === us_group.title || item.title === us_group.title) {
                         view.goTo({
-                            center: [-96.984300, 40.474679],
-                            zoom: 3
+                            center: [-101.6555157, 37.2756983],
+                            zoom: 4
                         });
                     } else if (item.parent.title === illinois_group.title || item.title === illinois_group.title) {
                         view.goTo({
-                            center: [-88.984300, 40.474679],
+                            center: [-89.7, 40],
                             zoom: 6
                         });
                     } else if (item.parent.title === world_group.title || item.title === world_group.title) {
                         view.goTo({
-                            center: [-60, 20],
+                            center: [20.5442115, 7.9482022],
                             zoom: 2
                         });
                     }
@@ -704,7 +683,6 @@ require([
                     if ($(".sidebar").hasClass("open")) {
                         $('#sidebar_control').removeClass("open").addClass("closed");
                         $(".sidebar").css('display', 'none').removeClass("open").addClass("closed");
-                        // $(".sidebar").removeClass("open").hide("slide", { direction: "left" }, 1000).addClass("closed");
                         $("main").addClass("map-fullscreen");
                     }
                 }
@@ -728,31 +706,32 @@ require([
 
         function setListview() {
 
-            const illinois_query = dph_illinois_county_static.createQuery();
+            const illinois_change_query = dph_illinois_county_dynamic.createQuery();
 
-            illinois_query.where = "NAME = 'Illinois'";
-            illinois_query.outFields = ["confirmed_cases", "total_tested", "deaths"];
+            illinois_change_query.where = "NAME = 'Illinois'";
+            illinois_change_query.outFields = ["today_case", "today_new_case", "today_death", "today_new_death", "today_tested", "today_new_tested"];
 
-            dph_illinois_county_static.queryFeatures(illinois_query)
+            dph_illinois_county_dynamic.queryFeatures(illinois_change_query)
                 .then(function(response) {
                     let stats = response.features[0].attributes;
                     let tab = document.getElementById('illinois-tab');
-                    tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(stats.confirmed_cases)
+                    tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(stats.today_case)
                     let case_div = document.getElementById('illinois_total_case_number')
-                        // console.log(case_div.querySelector('.case-number').innerHTML)
-                    let test_div = document.getElementById('illinois_total_test_number')
                     let death_div = document.getElementById('illinois_total_death_number')
-                    case_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.confirmed_cases)
-                    death_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.deaths)
-                    test_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.total_tested)
+                    let test_div = document.getElementById('illinois_total_test_number')
+                    case_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.today_case)
+                    case_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(stats.today_new_case)
+                    death_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.today_death)
+                    death_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(stats.today_new_death)
+                    test_div.querySelector('.case-number').innerHTML = numberWithCommas(stats.today_tested)
+                    test_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(stats.today_new_tested)
                 });
 
-            const illinois_list_query = dph_illinois_county_static.createQuery();
-            illinois_list_query.orderByFields = ['confirmed_cases DESC'];
-
-            dph_illinois_county_static.queryFeatures(illinois_list_query)
+            const illinois_change_list_query = dph_illinois_county_dynamic.createQuery();
+            illinois_change_list_query.orderByFields = ['today_case DESC'];
+            dph_illinois_county_dynamic.queryFeatures(illinois_change_list_query)
                 .then(function(response) {
-                    console.log(response);
+                    console.log(response)
                     let illinois_table = document.getElementById('illinois-table').querySelector('tbody');
                     let template = document.querySelector('template')
                     let result_list = response.features.map(function(value) {
@@ -760,45 +739,56 @@ require([
                             centroid_x: value.geometry.centroid.x,
                             centroid_y: value.geometry.centroid.y,
                             uid: value.attributes.OBJECTID,
-                            county: value.attributes.County,
-                            case: value.attributes.confirmed_cases,
-                            death: value.attributes.deaths,
-                            tested: value.attributes.total_tested
+                            county: value.attributes.NAME,
+                            state: value.attributes.state_name,
+                            case: value.attributes.today_case,
+                            new_case: value.attributes.today_new_case,
+                            death: value.attributes.today_death,
+                            new_death: value.attributes.today_new_death,
+                            tested: value.attributes.today_tested,
+                            new_tested: value.attributes.today_new_tested
                         }
                     });
+                    //result = result_list.slice(0, 100);
                     result_list.forEach(function(value, index) {
                         if (value.county !== "Illinois") {
                             let instance = template.content.cloneNode(true);
+
                             instance.querySelector('th').innerHTML = value.county;
                             instance.querySelector('th').setAttribute('data-x', value.centroid_x);
                             instance.querySelector('th').setAttribute('data-y', value.centroid_y);
                             instance.querySelector('th').setAttribute('data-uid', index);
                             instance.querySelector('th').setAttribute('data-county', value.county);
-                            instance.querySelector('.confirmed').innerHTML = numberWithCommas(value.case);
-                            instance.querySelector('.tested').innerHTML = numberWithCommas(value.tested);
-                            instance.querySelector('.death').innerHTML = numberWithCommas(value.death);
+
+                            instance.querySelector('.confirmed').innerHTML = '<span>' + numberWithCommas(value.case) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_case);
+                            instance.querySelector('.death').innerHTML = '<span>' + numberWithCommas(value.death) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_death);
+                            instance.querySelector('.tested').innerHTML = '<span>' + numberWithCommas(value.tested)+ '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_tested);
                             instance.querySelector('.confirmed').setAttribute('data-order', value.case);
                             instance.querySelector('.death').setAttribute('data-order', value.death);
                             instance.querySelector('.tested').setAttribute('data-order', value.tested);
+                            
                             illinois_table.appendChild(instance);
                         }
                     })
 
                     var illini_table = $('#illinois-table').DataTable({
-                        paging: false,
+                        paging: true,
+                        pagingType: "simple_numbers",
+                        pageLength: 50,
                         ordering: true,
                         order: [
                             [1, "desc"]
                         ],
                         info: false,
                         responsive: true,
-                        dom: "t",
+                        dom: "pt",
                     });
 
                     $('#il-search-input').on('input', function() {
                         console.log($('#il-search-input').val());
                         illini_table.search($('#il-search-input').val()).draw();
                     });
+
                 });
 
             const counties_query = nyt_layer_counties.createQuery();
@@ -841,7 +831,7 @@ require([
             nyt_layer_counties.queryFeatures(counties_list_query)
                 .then(function(response) {
                     console.log(response)
-                    let couneites_table = document.getElementById('county-table').querySelector('tbody');
+                    let counties_table = document.getElementById('county-table').querySelector('tbody');
                     let template = document.querySelectorAll('template')[1]
                     let result_list = response.features.map(function(value, index) {
                         return {
@@ -869,17 +859,19 @@ require([
                         instance.querySelector('.death').innerHTML = '<span>' + numberWithCommas(value.death) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_death);
                         instance.querySelector('.confirmed').setAttribute('data-order', value.case);
                         instance.querySelector('.death').setAttribute('data-order', value.death);
-                        couneites_table.appendChild(instance);
+                        counties_table.appendChild(instance);
                     })
                     var county_table = $('#county-table').DataTable({
-                        paging: false,
+                        paging: true,
+                        pagingType: "simple_numbers",
+                        pageLength: 50,
                         ordering: true,
                         order: [
                             [1, "desc"]
                         ],
                         info: false,
                         responsive: true,
-                        dom: "t",
+                        dom: "pt",
                     });
 
                     $('#w-search-input').on('input', function() {
@@ -929,7 +921,7 @@ require([
             who_world_layer.queryFeatures(world_list_query)
                 .then(function(response) {
                     console.log(response)
-                    let couneites_table = document.getElementById('world-table').querySelector('tbody');
+                    let counties_table = document.getElementById('world-table').querySelector('tbody');
                     let template = document.querySelectorAll('template')[1]
                     let result_list = response.features.map(function(value, index) {
                         return {
@@ -956,16 +948,18 @@ require([
                         instance.querySelector('.death').innerHTML = '<span>' + numberWithCommas(value.death) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_death);
                         instance.querySelector('.confirmed').setAttribute('data-order', value.case);
                         instance.querySelector('.death').setAttribute('data-order', value.death);
-                        couneites_table.appendChild(instance);
+                        counties_table.appendChild(instance);
                     })
                     var world_table = $('#world-table').DataTable({
-                        paging: false,
+                        paging: true,
+                        pagingType: "simple_numbers",
+                        pageLength: 50,
                         ordering: true,
                         order: [
                             [1, "desc"]
                         ],
                         info: false,
-                        dom: "t",
+                        dom: "pt",
                     });
 
                     $('#world-search-input').on('input', function() {
@@ -1253,7 +1247,7 @@ require([
                 fieldInfos: [{
                         fieldName: "confirmed_cases",
                         visible: true,
-                        label: "Confirmed Cases"
+                        label: "Total Cases"
                     },
                     {
                         fieldName: "total_tested",
@@ -1272,12 +1266,12 @@ require([
                 fieldInfos: [{
                         fieldName: "confirmed_cases",
                         visible: true,
-                        label: "Confirmed Cases"
+                        label: "Total Cases"
                     },
                     {
                         fieldName: "deaths",
                         visible: true,
-                        label: "Deaths"
+                        label: "Total Deaths"
                     },
                     {
                         fieldName: "total_tested",
@@ -1401,7 +1395,7 @@ require([
             title: "{NAME}",
             expressionInfos: [{
                     name: "total_cases",
-                    title: "Total Confirmed Cases",
+                    title: "Total Cases",
                     expression: "Round(Split($feature.cases_ts, ',')[-1])"
                 },
                 {
@@ -1423,12 +1417,12 @@ require([
                     {
                         fieldName: "expression/total_cases",
                         visible: true,
-                        label: "Confirmed Cases"
+                        label: "Total Cases"
                     },
                     {
                         fieldName: "expression/total_deaths",
                         visible: true,
-                        label: "Deaths"
+                        label: "Total Deaths"
                     },
                     {
                         fieldName: "expression/death_rate",
@@ -1481,12 +1475,12 @@ require([
                 title: "{NAME}",
                 expressionInfos: [{
                         name: "current_cases",
-                        title: "Confirmed Cases",
+                        title: "Total Cases",
                         expression: dynamicArcade('cases_ts', date)
                     },
                     {
                         name: "current_deaths",
-                        title: "Deaths",
+                        title: "Total Deaths",
                         expression: dynamicArcade('deaths_ts', date)
                     },
                     // {
@@ -1503,12 +1497,12 @@ require([
                         {
                             fieldName: "expression/current_cases",
                             visible: true,
-                            label: "Confirmed Cases"
+                            label: "Total Cases"
                         },
                         {
                             fieldName: "expression/current_deaths",
                             visible: true,
-                            label: "Deaths"
+                            label: "Total Deaths"
                         },
                         // {
                         //     fieldName: "expression/death_rate",
@@ -1544,7 +1538,7 @@ require([
 
             expressionInfos: [{
                     name: "total_cases",
-                    title: "Total Confirmed Cases",
+                    title: "Total Cases",
                     expression: "Round(Split($feature.cases_ts, ',')[-1])"
                 },
                 {
@@ -1576,12 +1570,12 @@ require([
                     {
                         fieldName: "expression/total_cases",
                         visible: true,
-                        label: "Confirmed Cases"
+                        label: "Total Cases"
                     },
                     {
                         fieldName: "expression/total_deaths",
                         visible: true,
-                        label: "Deaths"
+                        label: "Total Deaths"
                     },
                     {
                         fieldName: "expression/death_rate",
@@ -1791,33 +1785,37 @@ require([
 
             dic1 = {
                 data: SlicedCasesArray,
-                label: "Confirmed Cases ", //+"("+graphic.getAttribute("NAME")+")",
+                label: "Total Cases ", //+"("+graphic.getAttribute("NAME")+")",
                 borderColor: "#ffab24",
                 pointStyle: "circle",
-                fill: false
+                fill: false,
+                hidden: true
             };
             dic2 = {
                 data: SlicedIncreasedCases,
-                label: "Increased Cases ", //+"("+graphic.getAttribute("NAME")+")",
+                label: "Daily Cases ", //+"("+graphic.getAttribute("NAME")+")",
                 borderColor: "#f25100",
                 pointStyle: "circle",
-                fill: false
+                fill: false,
+                hidden: false
             };
 
             if (graphic.getAttribute("deaths_ts") != undefined) {
                 dic3 = {
                     data: SlicedDeathsArray,
-                    label: "Deaths ", //+"("+graphic.getAttribute("NAME")+")",
+                    label: "Total Deaths ", //+"("+graphic.getAttribute("NAME")+")",
                     borderColor: "#a10025",
                     pointStyle: "circle",
-                    fill: false
+                    fill: false,
+                    hidden: true
                 };
                 dic4 = {
                     data: SlicedIncreasedDeaths,
-                    label: "Increased Deaths ", //+"("+graphic.getAttribute("NAME")+")",
+                    label: "Daily Deaths ", //+"("+graphic.getAttribute("NAME")+")",
                     borderColor: "#6a28c7",
                     pointStyle: "circle",
-                    fill: false
+                    fill: false,
+                    hidden: true
                 };
             }
 
@@ -2088,7 +2086,8 @@ require([
                     symbol: {
                         type: "simple-fill",
                         outline: { // autocasts as new SimpleLineSymbol()
-                            color: [128, 128, 128, 50],
+                            color: [128, 128, 128, 0.3],
+                            width: "1px"
                         }
                     },
                     visualVariables: [{
@@ -2141,8 +2140,8 @@ require([
                     type: "simple-fill",
                     color: "#0000FF",
                     outline: { // autocasts as new SimpleLineSymbol()
-                        color: [128, 128, 128, 50],
-                        width: 0
+                        color: [128, 128, 128, 0.3],
+                        width: "1px"
                     }
                 },
                 visualVariables: [{
@@ -2247,8 +2246,8 @@ require([
                 type: "simple-fill", // autocasts as new SimpleFillSymbol()
                 outline: {
                     // autocasts as new SimpleLineSymbol()
-                    color: [128, 128, 128, 0.8],
-                    width: "0.5px"
+                    color: [128, 128, 128, 0.3],
+                    width: "1px"
                 }
             };
             const renderer = {
@@ -2315,7 +2314,8 @@ require([
                 symbol: {
                     type: "simple-fill",
                     outline: { // autocasts as new SimpleLineSymbol()
-                        color: [128, 128, 128, 50],
+                        color: [128, 128, 128, 0.3],
+                        width: "1px"
                     }
                 },
                 visualVariables: [{
@@ -2582,7 +2582,7 @@ require([
                     if ($(".sidebar").hasClass("closed")) {
                         $('#sidebar_control').removeClass("closed").addClass("open");
                         $(".sidebar").css('display', 'flex').removeClass("closed").addClass("open");
-                        $("main").addClass("map-fullscreen");
+                        $("main").removeClass("map-fullscreen");
                     }
                 }
             })
@@ -2600,7 +2600,7 @@ require([
                     if ($(".sidebar").hasClass("closed")) {
                         $('#sidebar_control').removeClass("closed").addClass("open");
                         $(".sidebar").css('display', 'flex').removeClass("closed").addClass("open");
-                        $("main").addClass("map-fullscreen");
+                        $("main").removeClass("map-fullscreen");
                     }
                 }
             })
@@ -2618,7 +2618,7 @@ require([
                     if ($(".sidebar").hasClass("closed")) {
                         $('#sidebar_control').removeClass("closed").addClass("open");
                         $(".sidebar").css('display', 'flex').removeClass("closed").addClass("open");
-                        $("main").addClass("map-fullscreen");
+                        $("main").removeClass("map-fullscreen");
                     }
                 }
             })
