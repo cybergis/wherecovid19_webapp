@@ -223,6 +223,18 @@ require([
             }
         };
 
+        const default_polygon_renderer_no_outline = {
+            type: "simple",
+            symbol: {
+                type: "simple-fill",
+                color: [0, 0, 0, 0.1],
+                outline: { // autocasts as new SimpleLineSymbol()
+                    color: [128, 128, 128, 0.3],
+                    width: "0px"
+                }
+            }
+        };
+
         var chicago_acc_hospitals_i = new GeoJSONLayer({
             url: chicago_hospitals_url,
             outFields: ["*"],
@@ -316,7 +328,7 @@ require([
             outFields: ["*"],
             title: "Accessibility (ICU Beds-Chicago)",
             visible: false,
-            renderer: default_polygon_renderer,
+            renderer: default_polygon_renderer_no_outline,
         });
 
         var chicago_acc_v_layer = new GeoJSONLayer({
@@ -324,7 +336,7 @@ require([
             outFields: ["*"],
             title: "Accessibility (Ventilators-Chicago)",
             visible: false,
-            renderer: default_polygon_renderer,
+            renderer: default_polygon_renderer_no_outline,
         });
 
         var illinois_acc_i_layer = new GeoJSONLayer({
@@ -332,22 +344,17 @@ require([
             outFields: ["*"],
             title: "Accessibility (ICU Beds-State)",
             visible: false,
-            renderer: default_polygon_renderer,
+            renderer: default_polygon_renderer_no_outline,
         });
 
         var illinois_acc_v_layer = new GeoJSONLayer({
-                url: illinois_acc_v_url,
-                outFields: ["*"],
-                title: "Accessibility (Ventilators-State)",
-                visible: false,
-                renderer: default_polygon_renderer,
-            //who worldwide
             url: illinois_acc_v_url,
             outFields: ["*"],
             title: "Accessibility (Ventilators-State)",
             visible: false,
-            renderer: default_polygon_renderer,
+            renderer: default_polygon_renderer_no_outline,
         });
+
         //who worldwide
         var who_world_layer = new GeoJSONLayer({
             url: who_world_layer_url,
@@ -2141,7 +2148,7 @@ require([
                     color: "#0000FF",
                     outline: { // autocasts as new SimpleLineSymbol()
                         color: [128, 128, 128, 0.3],
-                        width: "1px"
+                        width: "0px"
                     }
                 },
                 visualVariables: [{
