@@ -838,7 +838,7 @@ require([
             nyt_layer_counties.queryFeatures(counties_list_query)
                 .then(function(response) {
                     //console.log(response)
-                    let couneites_table = document.getElementById('county-table').querySelector('tbody');
+                    let counties_table = document.getElementById('county-table').querySelector('tbody');
                     let template = document.querySelectorAll('template')[1]
                     let result_list = response.features.map(function(value, index) {
                         return {
