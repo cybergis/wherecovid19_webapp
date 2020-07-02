@@ -9,15 +9,15 @@ make_copy_data(){
 	cp ./nyt_states_data.geojson nyt_states_data-tmp.geojson
 	cp ./classes.json classes-tmp.json
 	#Copy needed datasets from parent directory
-	cp ./counties_update_new.geojson .
-	cp ./states_update.geojson .
+	cp ../counties_update_new.geojson .
+	cp ../states_update.geojson .
 	mkdir -p illinois
 	cp ./illinois/nyt_illinois_counties_data.geojson ./illinois/nyt_illinois_counties_data-tmp.geojson
 
 	cp ./illinois/idph_CountyDemos.json ./illinois/idph_CountyDemos-tmp.json
 	cp ./illinois/idph_COVIDZip.json ./illinois/idph_COVIDZip-tmp.json
 	cp ./illinois/idph_COVIDHistoricalTestResults.json ./illinois/idph_COVIDHistoricalTestResults-tmp.json
-	cp ../illinois/dph_county_data.geojson ./illinois/dph_county_data-tmp.geojson
+	cp ./illinois/dph_county_data.geojson ./illinois/dph_county_data-tmp.geojson
  	cp ./illinois/dph_county_static_data.geojson ./illinois/dph_county_static_data-tmp.geojson
 	cp ./illinois/dph_zipcode_data.geojson ./illinois/ph_zipcode_data-tmp.geojson
 	# WHO
@@ -245,18 +245,22 @@ destroy_env(){
 }
 copy_back_results_webfolder(){
   #Copy needed datasets from parent dir
-  cp us-states.csv ..
-  cp us-counties.csv ..
-  cp nyt_counties_data.geojson ..
-  cp nyt_states_data.geojson ..
-  cp classes.json ..
+  cp us-states.csv ../
+  cp us-counties.csv ../
+  cp nyt_counties_data.geojson ../
+  cp nyt_states_data.geojson ../
+  cp classes.json ../
   cp ./illinois/nyt_illinois_counties_data.geojson ../illinois/
   cp ./illinois/dph_*_data.geojson ../illinois/
+  cp ./illinois/idph_CountyDemos.json ../illinois/
+  cp ./illinois/idph_COVIDZip.json ../illinois/
+  cp ./illinois/idph_COVIDHistoricalTestResults.json ../illinois/
+
   cp ./worldwide/who_world_data.geojson ../worldwide/
   cp ./worldwide/global-covid19-who-gis.json ../worldwide/
   cp ./illinois/Chicago_ACC_?.geojson ../illinois/
   cp ./illinois/Illinois_ACC_?.geojson ../illinois/
-  cp ./illinois/vulnerability.geojson ../illinois/ #6
+  cp ./illinois/vulnerability.geojson ../illinois/
 }
 
 setup_env
