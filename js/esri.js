@@ -2193,17 +2193,18 @@ require([
                     
                 if(event_type == "case" || event_type == "case_per_100k_capita"){
                     var case_ts = Split($feature['cases_ts'],',');
-                    val = case_ts[index];
+                    // Must convert string to number
+                    val = Number(case_ts[index]);
                     if(event_type == "case_per_100k_capita"){
                         val = val/population;
                     }
                     if(if_log == "log"){
-                        val = Log(val + 1);
+                        val = Log(val + 1.0);
                     }
                 }
                 else if(event_type == "death" || event_type == "death_per_100k_capita"){
                     var death_ts = Split($feature['deaths_ts'],',');
-                    val = death_ts[index];
+                    val = Number(death_ts[index]);
                     if(event_type == "death_per_100k_capita"){
                         val = val/population;
                     }
