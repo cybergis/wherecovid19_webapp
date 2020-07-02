@@ -147,7 +147,7 @@ require([
                 'breaks': 'NaturalBreaks',
             },
             'case_per_100k_capita': {
-                'value': 'nolog',
+                'value': 'log',
                 'breaks': 'NaturalBreaks',
             },
             'death_per_100k_capita': {
