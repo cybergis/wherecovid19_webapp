@@ -368,7 +368,7 @@ require([
         var nyt_layer_states = new GeoJSONLayer({
             url: nyt_layer_states_url,
             outFields: ["*"],
-            title: "Cases per capita (state level)",
+            title: "Cases per 100k population (state level)",
             visible: false,
             renderer: default_polygon_renderer,
         });
@@ -377,7 +377,7 @@ require([
         var nyt_layer_counties = new GeoJSONLayer({
             url: nyt_layer_counties_url,
             outFields: ["*"],
-            title: "Cases per capita (county level)",
+            title: "Cases per 100k population (county level)",
             visible: false,
             renderer: default_polygon_renderer,
         });
