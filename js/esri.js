@@ -147,8 +147,8 @@ require([
                 'breaks': 'NaturalBreaks',
             },
             'case_per_100k_capita': {
-                'value': 'nolog',
-                'breaks': 'Quantiles',
+                'value': 'log',
+                'breaks': 'NaturalBreaks',
             },
             'death_per_100k_capita': {
                 'value': 'nolog',
@@ -368,7 +368,7 @@ require([
         var nyt_layer_states = new GeoJSONLayer({
             url: nyt_layer_states_url,
             outFields: ["*"],
-            title: "US States (New York Times)",
+            title: "Cases per 100k population (state level)",
             visible: false,
             renderer: default_polygon_renderer,
         });
@@ -377,7 +377,7 @@ require([
         var nyt_layer_counties = new GeoJSONLayer({
             url: nyt_layer_counties_url,
             outFields: ["*"],
-            title: "US Counties (New York Times)",
+            title: "Cases per 100k population (county level)",
             visible: false,
             renderer: default_polygon_renderer,
         });
@@ -1970,20 +1970,20 @@ require([
                     value.popupTemplate = getDynamicPopup(_date);
                 }
 
-                if (value.visible == true && value.parent.visible == true) {
-                    console.log(value.title);
-                    if (value.title == nyt_layer_counties.title) {
-                        level = "county";
-                    } else if (value.title == nyt_layer_states.title) {
-                        level = "state";
-                    } else if (value.title == dph_illinois_county_dynamic.title) {
-                        level = "dph_illinois";
-                    } else if (value.title == who_world_layer.title) {
-                        level = "who_world";
-                    } else if (value.title == vulnerability_layer.title) {
-                        level = "vulnerability";
-                    }
-                }
+                // if (value.visible == true && value.parent.visible == true) {
+                //     console.log(value.title);
+                //     if (value.title == nyt_layer_counties.title) {
+                //         level = "county";
+                //     } else if (value.title == nyt_layer_states.title) {
+                //         level = "state";
+                //     } else if (value.title == dph_illinois_county_dynamic.title) {
+                //         level = "dph_illinois";
+                //     } else if (value.title == who_world_layer.title) {
+                //         level = "who_world";
+                //     } else if (value.title == vulnerability_layer.title) {
+                //         level = "vulnerability";
+                //     }
+                // }
             })
             if (dt_interval_unit == "week") {
                 dt_week_end = date.add(_date, "week", 1);
@@ -2006,12 +2006,28 @@ require([
             slider.viewModel.setValue(0, thumb_value);
             let _layer = mywatcher.get("active_animation_layer");
 
+            let event_type = "case"
+
+            if (_layer.title == nyt_layer_counties.title) {
+                level = "county";
+                event_type = 'case_per_100k_capita';
+            } else if (_layer.title == nyt_layer_states.title) {
+                level = "state";
+                event_type = 'case_per_100k_capita';
+            } else if (_layer.title == dph_illinois_county_dynamic.title) {
+                level = "dph_illinois";
+            } else if (_layer.title == who_world_layer.title) {
+                level = "who_world";
+            } else if (_layer.title == vulnerability_layer.title) {
+                level = "vulnerability";
+            }
+
             // let event_type = document.querySelector('input[name="dataOptions"]:checked').value;
             // let if_log = document.querySelector('input[name="logOptions"]:checked').value;
             // let method = document.querySelector('input[name="renderOptions"]:checked').value;
-            let event_type = "case"
-                // let if_log = "nolog"
-                // let method = "NaturalBreaks"
+            
+            // let if_log = "nolog"
+            // let method = "NaturalBreaks"
 
             if (_layer == null) {
                 return;
@@ -2070,6 +2086,8 @@ require([
                     var label = bins[i];
                     if (_if_log == "log") {
                         label = Math.ceil(Math.pow(2.71828, label));
+                    } else if (_event_type == 'case_per_100k_capita') {
+                        label = Math.ceil(label);
                     } else if (parseFloat(label) % 1 != 0) {
                         // label = parseFloat(label).toFixed(2);
                         if (i == 0) {
@@ -2197,6 +2215,10 @@ require([
                     val = Number(case_ts[index]);
                     if(event_type == "case_per_100k_capita"){
                         val = val/population;
+                        if (val >= 5000) {
+                            Console("------------------------------------");
+                            Console($feature);
+                        }
                     }
                     if(if_log == "log"){
                         val = Log(val + 1.0);
