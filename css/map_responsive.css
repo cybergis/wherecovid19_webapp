@@ -36,7 +36,7 @@ main,
     flex-grow: 1;
 }
 
-#viewDiv {
+#map {
     width: 100%;
     height: 100%;
     -webkit-box-flex: 1;
@@ -45,6 +45,17 @@ main,
     -webkit-box-ordinal-group: 2;
     -ms-flex-order: 1;
     order: 1;
+}
+
+.leaflet-bottom.leaflet-left{
+    width: 100%;
+}
+
+.leaflet-control-container .leaflet-timeline-controls{
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    margin-bottom: 15px;
 }
 
 #titleDiv {
