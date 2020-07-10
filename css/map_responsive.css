@@ -58,6 +58,19 @@ main,
     margin-bottom: 15px;
 }
 
+.legend {
+    line-height: 18px;
+    color: #555;
+}
+
+.legend i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+}
+
 #titleDiv {
     font-weight: 400;
     font-style: normal;
