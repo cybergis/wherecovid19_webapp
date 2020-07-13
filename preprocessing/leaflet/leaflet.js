@@ -74,7 +74,8 @@
         return new Date(date).toLocaleDateString();
       },
       steps:150,
-      position: 'bottomleft'
+      position: 'bottomleft',
+      showTicks: false
     });
     map.addControl(slider);
 
