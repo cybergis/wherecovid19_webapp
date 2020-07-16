@@ -187,14 +187,22 @@
     function onEachFeature_illinois_counties(feature, layer) {
         if (feature.properties) {
             layer.bindPopup(" " +feature.properties.NAME + " "  + "<br>Total cases : " + feature.properties.today_case + " ");
-            layer.on({click: onMapClick});        
+            layer.on("click", function(e){
+                index = Math.floor((illinois_counties_ts.time-illinois_counties_ts.start)/DayInMilSec);
+                illinois_counties_ts.setStyle(styleFunc);
+                onMapClick(e);
+            });         
         }
     };
 
     function onEachFeature_us_counties(feature, layer) {
         if (feature.properties) {
             layer.bindPopup(" " +feature.properties.NAME + " "  + "<br>Total cases : " + feature.properties.today_case + " ");
-            layer.on({click: onMapClick});       
+            layer.on("click", function(e){
+                index = Math.floor((us_counties_ts.time-us_counties_ts.start)/DayInMilSec);
+                us_counties_ts.setStyle(styleFunc);
+                onMapClick(e);
+            });    
         }
     };   
     // Need to make it changable with time (use index of cases_ts)
@@ -202,14 +210,22 @@
     function onEachFeature_us_states(feature, layer) {
         if (feature.properties) {
             layer.bindPopup(" " +feature.properties.NAME + " "  + "<br>Total cases : " + feature.properties.today_case + " ");
-            layer.on({click: onMapClick});         
+            layer.on("click", function(e){
+                index = Math.floor((us_states_ts.time-us_states_ts.start)/DayInMilSec);
+                us_states_ts.setStyle(styleFunc);
+                onMapClick(e);
+            });        
         }
     };
 
     function onEachFeature_world(feature, layer) {
         if (feature.properties) {
             layer.bindPopup(" " +feature.properties.NAME + " "  + "<br>Total cases : " + feature.properties.today_case + " ");
-            layer.on({click: onMapClick});
+            layer.on("click", function(e){
+                index = Math.floor((world_ts.time-world_ts.start)/DayInMilSec);
+                world_ts.setStyle(styleFunc);
+                onMapClick(e);
+            });
                   
         }
     };
