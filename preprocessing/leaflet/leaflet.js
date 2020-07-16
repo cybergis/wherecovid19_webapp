@@ -79,8 +79,18 @@
     });
     map.addControl(slider);
 
+    
+  var illinois_counties_ts = L.timeline(illinois_counties,{style: styleFunc,
+    waitToUpdateMap: true, onEachFeature: onEachFeature_illinois_counties});
+  illinois_counties_ts.addTo(map);
+  
+  illinois_counties_ts.on('change', function(){
+    index = Math.floor((this.time-this.start)/DayInMilSec);
+    this.setStyle(styleFunc);		 
+      });
+
   var us_states_ts = L.timeline(us_states,{style: styleFunc,
-      waitToUpdateMap: true, onEachFeature: onEachFeature});
+      waitToUpdateMap: true, onEachFeature: onEachFeature_us_states});
   us_states_ts.addTo(map);
   
   us_states_ts.on('change', function(){
@@ -89,7 +99,7 @@
       });
 
   var us_counties_ts = L.timeline(us_counties,{style: styleFunc,
-      waitToUpdateMap: true, onEachFeature: onEachFeature});
+      waitToUpdateMap: true, onEachFeature: onEachFeature_us_counties});
   us_counties_ts.addTo(map);
   
   us_counties_ts.on('change', function(){
@@ -98,7 +108,7 @@
       });
 
   var world_ts = L.timeline(world,{style: styleFunc,
-      waitToUpdateMap: true, onEachFeature: onEachFeature});
+      waitToUpdateMap: true, onEachFeature: onEachFeature_world});
   world_ts.addTo(map);
   
   world_ts.on('change', function(){
@@ -143,7 +153,7 @@
       });
   
   // slider.addTimelines(us_counties_ts);
-  slider.addTimelines(us_counties_ts, us_states_ts, world_ts, 
+  slider.addTimelines(illinois_counties_ts, us_counties_ts, us_states_ts, world_ts, 
   chicago_acc_i_ts, chicago_acc_v_ts, illinois_acc_i_ts, illinois_acc_v_ts);
 
   ///////////////////////////////////////////////////////////////////////////////////////////
@@ -174,13 +184,35 @@
   ////////////////////////////////////// Create Popup ///////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////
 
-    function onEachFeature(feature, layer) {
+    function onEachFeature_illinois_counties(feature, layer) {
         if (feature.properties) {
             layer.bindPopup(" " +feature.properties.NAME + " "  + "<br>Total cases : " + feature.properties.today_case + " ");
-            layer.on({click: onMapClick});
+            layer.on({click: onMapClick});        
+        }
+    };
+
+    function onEachFeature_us_counties(feature, layer) {
+        if (feature.properties) {
+            layer.bindPopup(" " +feature.properties.NAME + " "  + "<br>Total cases : " + feature.properties.today_case + " ");
+            layer.on({click: onMapClick});       
         }
     };   
     // Need to make it changable with time (use index of cases_ts)
+
+    function onEachFeature_us_states(feature, layer) {
+        if (feature.properties) {
+            layer.bindPopup(" " +feature.properties.NAME + " "  + "<br>Total cases : " + feature.properties.today_case + " ");
+            layer.on({click: onMapClick});         
+        }
+    };
+
+    function onEachFeature_world(feature, layer) {
+        if (feature.properties) {
+            layer.bindPopup(" " +feature.properties.NAME + " "  + "<br>Total cases : " + feature.properties.today_case + " ");
+            layer.on({click: onMapClick});
+                  
+        }
+    };
 
   ///////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////// Highlight when clicking /////////////////////////////////
@@ -212,6 +244,7 @@
 
     var groupedOverlays = {
         "Illinois":{
+            "IDPH County-level Cases": illinois_counties_ts,
             "Accessibility (ICU Beds-Chicago)": chicago_acc_i_ts,
             "Accessibility (Ventilators-Chicago)": chicago_acc_v_ts,
             "Accessibility (ICU Beds-State)": illinois_acc_i_ts,
@@ -248,12 +281,219 @@
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
-    setListview();
+    map.whenReady(function() {
 
-    function setListview() {
+        let tab = document.getElementById('illinois-tab');
 
-    }
-    
+        let illinois_table = document.getElementById('illinois-table').querySelector('tbody');
+        let template = document.querySelector('template')
+
+        let result_list = illinois_counties.features.map(function(value, index) {
+            return {
+                uid: value.properties.OBJECTID,
+                county: value.properties.NAME,
+                case: value.properties.today_case,
+                new_case: value.properties.today_new_case,
+                death: value.properties.today_death,
+                new_death: value.properties.today_new_death,
+                tested: value.properties.today_tested,
+                new_tested: value.properties.today_new_tested
+            }
+        });
+
+        //console.log(result_list);
+
+        result_list.forEach(function(value) {
+
+            let instance = template.content.cloneNode(true);
+
+            if (value.county == "Illinois") {
+                tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(value.case)
+                let case_div = document.getElementById('illinois_total_case_number')
+                let death_div = document.getElementById('illinois_total_death_number')
+                let test_div = document.getElementById('illinois_total_test_number')
+                case_div.querySelector('.case-number').innerHTML = numberWithCommas(value.case)
+                case_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(value.new_case)
+                death_div.querySelector('.case-number').innerHTML = numberWithCommas(value.death)
+                death_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(value.new_death)
+                test_div.querySelector('.case-number').innerHTML = numberWithCommas(value.tested)
+                test_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(value.new_tested)
+            }
+            else {
+                instance.querySelector('th').innerHTML = value.county;
+                instance.querySelector('th').setAttribute('data-uid', value.uid);
+                instance.querySelector('th').setAttribute('data-county', value.county);
+
+                instance.querySelector('.confirmed').innerHTML = '<span>' + numberWithCommas(value.case) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_case);
+                instance.querySelector('.death').innerHTML = '<span>' + numberWithCommas(value.death) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_death);
+                instance.querySelector('.tested').innerHTML = '<span>' + numberWithCommas(value.tested)+ '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_tested);
+                instance.querySelector('.confirmed').setAttribute('data-order', value.case);
+                instance.querySelector('.death').setAttribute('data-order', value.death);
+                instance.querySelector('.tested').setAttribute('data-order', value.tested);
+                illinois_table.appendChild(instance);
+            }            
+        })
+
+        var il_table = $('#illinois-table').DataTable({
+            paging: true,
+            pagingType: "simple_numbers",
+            pageLength: 50,
+            ordering: true,
+            order: [
+                [1, "desc"]
+            ],
+            info: false,
+            responsive: true,
+            dom: "pt",
+        });
+
+        $('#il-search-input').on('input', function() {
+            console.log($('#il-search-input').val());
+            il_table.search($('#il-search-input').val()).draw();
+        });
+
+    });
+
+    var sum_us_counties_today_case = 0;
+    var sum_us_counties_today_death = 0;
+    var sum_us_counties_today_new_case = 0;
+    var sum_us_counties_today_new_death = 0;
+
+    map.whenReady(function() {
+        
+        let counties_table = document.getElementById('county-table').querySelector('tbody');
+        let template = document.querySelectorAll('template')[1]
+
+        let result_list = us_counties.features.map(function(value, index) {
+            return {
+                uid: value.properties.OBJECTID,
+                county: value.properties.NAME,
+                state: value.properties.state_name,
+                case: value.properties.today_case,
+                new_case: value.properties.today_new_case,
+                death: value.properties.today_death,
+                new_death: value.properties.today_new_death,
+            }
+        });
+
+        //console.log(result_list);
+
+        result_list.forEach(function(value) {
+            let instance = template.content.cloneNode(true);
+
+            instance.querySelector('th').innerHTML = value.county + ", " + value.state;
+            instance.querySelector('th').setAttribute('data-uid', value.uid);
+            instance.querySelector('th').setAttribute('data-county', value.county);
+            instance.querySelector('.confirmed').innerHTML = '<span>' + numberWithCommas(value.case) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_case);
+            instance.querySelector('.death').innerHTML = '<span>' + numberWithCommas(value.death) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_death);
+            instance.querySelector('.confirmed').setAttribute('data-order', value.case);
+            instance.querySelector('.death').setAttribute('data-order', value.death);
+            counties_table.appendChild(instance);
+
+            sum_us_counties_today_case += value.case;
+            sum_us_counties_today_death += value.death;
+            sum_us_counties_today_new_case += value.new_case;
+            sum_us_counties_today_new_death += value.new_death;
+        })
+
+        let tab = document.getElementById('county-tab');
+        tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(sum_us_counties_today_case)
+        let case_div = document.getElementById('counties_total_case_number')
+        let death_div = document.getElementById('counties_total_death_number')
+        case_div.querySelector('.case-number').innerHTML = numberWithCommas(sum_us_counties_today_case)
+        case_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(sum_us_counties_today_new_case)
+        death_div.querySelector('.case-number').innerHTML = numberWithCommas(sum_us_counties_today_death)
+        death_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(sum_us_counties_today_new_death)
+
+        var county_table = $('#county-table').DataTable({
+            paging: true,
+            pagingType: "simple_numbers",
+            pageLength: 50,
+            ordering: true,
+            order: [
+                [1, "desc"]
+            ],
+            info: false,
+            responsive: true,
+            dom: "pt",
+        });
+
+        $('#w-search-input').on('input', function() {
+            console.log($('#w-search-input').val());
+            county_table.search($('#w-search-input').val()).draw();
+        });
+
+    });
+
+    var sum_world_today_case = 0;
+    var sum_world_today_death = 0;
+    var sum_world_today_new_case = 0;
+    var sum_world_today_new_death = 0;
+
+    map.whenReady(function() {       
+
+        let worlds_table = document.getElementById('world-table').querySelector('tbody');
+        let template = document.querySelectorAll('template')[1]
+
+        let result_list = world.features.map(function(value, index) {
+            return {
+                uid: value.properties.OBJECTID,
+                country: value.properties.NAME,
+                case: value.properties.today_case,
+                new_case: value.properties.today_new_case,
+                death: value.properties.today_death,
+                new_death: value.properties.today_new_death,
+            }
+        });
+
+        //console.log(result_list);
+
+        result_list.forEach(function(value) {
+            let instance = template.content.cloneNode(true);
+
+            instance.querySelector('th').innerHTML = value.country;
+            instance.querySelector('.confirmed').innerHTML = '<span>' + numberWithCommas(value.case) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_case);
+            instance.querySelector('.death').innerHTML = '<span>' + numberWithCommas(value.death) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_death);
+            instance.querySelector('.confirmed').setAttribute('data-order', value.case);
+            instance.querySelector('.death').setAttribute('data-order', value.death);
+            worlds_table.appendChild(instance);
+
+            sum_world_today_case += value.case;
+            sum_world_today_death += value.death;
+            sum_world_today_new_case += value.new_case;
+            sum_world_today_new_death += value.new_death;    
+        })
+
+        let tab = document.getElementById('world-tab');
+        tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(sum_world_today_case)
+        let case_div = document.getElementById('world_total_case_number')
+        let death_div = document.getElementById('world_total_death_number')
+        case_div.querySelector('.case-number').innerHTML = numberWithCommas(sum_world_today_case)
+        case_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(sum_world_today_new_case)
+        death_div.querySelector('.case-number').innerHTML = numberWithCommas(sum_world_today_death)
+        death_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(sum_world_today_new_death)
+
+        var world_table = $('#world-table').DataTable({
+            paging: true,
+            pagingType: "simple_numbers",
+            pageLength: 50,
+            ordering: true,
+            order: [
+                [1, "desc"]
+            ],
+            info: false,
+            responsive: true,
+            dom: "pt",
+        });
+
+        $('#world-search-input').on('input', function() {
+            console.log($('#world-search-input').val());
+            world_table.search($('#world-search-input').val()).draw();
+        });
+
+    });
+
+
     ///////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////// Handle chart update //////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////
