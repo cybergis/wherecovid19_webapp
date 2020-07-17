@@ -3,10 +3,10 @@
 
 <head>
     <!-- COMMON TAGS -->
-
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <title>WhereCOVID-19 by CyberGIS Center for Advanced Digital and Spatial Studies</title>
+
     <!-- Search Engine -->
     <meta name="description" content="WhereCOVID-19 platform produced by CyberGIS Center provides users with interactive ways to study the coronavirus pandemic">
     <meta name="image" content="https://cybergis.illinois.edu/wp-content/uploads/2020/06/whereCOVID_19.jpg">
@@ -38,18 +38,17 @@
 
     <!-- New tracking code for lab.cigi account -->
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-120549188-5"></script>
+    <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=UA-120549188-5"></script> -->
     <script>
-        window.dataLayer = window.dataLayer || [];
-
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag('js', new Date());
-
-        gtag('config', 'UA-120549188-5');
+           if (window.location.host==="wherecovid19.cigi.illinois.edu" || window.location.host==="wherecovid19.cigi.illinois.edu") {
+                window.dataLayer = window.dataLayer || [];
+                function gtag() {
+                    dataLayer.push(arguments);
+                }
+                gtag('js', new Date());
+                gtag('config', 'UA-120549188-5');
+            }
     </script>
-
 
     <!-- CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -62,7 +61,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="js/loader.js" crossorigin="anonymous"></script>
     <script src="js/ui.js" crossorigin="anonymous"></script>
-    <script src="js/responsive.js" crossorigin="anonymous"></script>
     <script src="https://kit.fontawesome.com/83341c3e60.js" crossorigin="anonymous"></script>
     
 </head>
@@ -391,6 +389,8 @@
 
                 </div>
             </main>
+
+            
 
             <div class="about-screen col-12 d-md-none d-lg-none d-xl-none">
                 <h1><span style="font-size: 20px;">
