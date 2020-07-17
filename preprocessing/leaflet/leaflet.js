@@ -30,6 +30,47 @@
       attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
   });
 
+//     function loadJson(json_url) {
+//         return new Promise((resolve, reject) => {
+//           $.ajax({
+//             url: json_url,
+//             type: 'GET',
+//             dataType: 'json',
+//             success: function (data) {
+//               resolve(data)
+//             },
+//             error: function (error) {
+//               reject(error)
+//             },
+//           })
+//         })
+//     }
+
+//     Promise.all([promise1, promise2, promise3]).then((values) => {
+//         console.log(values);
+//       });
+    
+//     // function pre_main(){
+//     //     loadJson("preprocessing/illinois/dph_county_data_leaflet.geojson");
+//     //     loadJson("preprocessing/illinois/dph_county_data_leaflet.geojson");
+
+//     // }
+    
+//     pre_main().then(function(data) {
+//         console.log(data);
+//     })
+//     console.log("--------------------------------------");
+//  // $.ajax({
+//     //     type: "GET",
+//     //     url: "preprocessing/illinois/dph_county_data_leaflet.geojson",
+//     //     dataType: 'json',
+//     //     success: function (response) {
+//     //         console.log(response);
+//     //     }
+//     // });   
+  
+//   console.log(illinois_counties);
+
   var map = L.map('map', {layers: [osm, Stadia_AlidadeSmoothDark], center: new L.LatLng(37,-96), zoom: 4 });
   var timeline;
   var timelineControl;
@@ -276,7 +317,7 @@
     };
 
     var options = {
-    // Make the "Landmarks" group exclusive (use radio inputs)
+    // Make the groups exclusive (use radio inputs)
     exclusiveGroups: ["Illinois","US","World"],
     // Show a checkbox next to non-exclusive group labels for toggling all
     groupCheckboxes: true
