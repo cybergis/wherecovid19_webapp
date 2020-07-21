@@ -333,11 +333,23 @@ L.Control.GroupedLayers = L.Control.extend({
       input = inputs[i];
       if (input.className === 'leaflet-control-layers-selector') {
         obj = this._getLayer(input.layerId);
+        console.log(obj);
+        console.log("--------------------------------------");
 
         if (input.checked && !this._map.hasLayer(obj.layer)) {
           this._map.addLayer(obj.layer);
-        } else if (!input.checked && this._map.hasLayer(obj.layer)) {
+          for (j = 0; j < inputsLen; j++) {
+            if (this._getLayer(inputs[j].layerId).overlay == true && j != i) {
+              inputs[j].checked = false;
+            }
+          }
+          console.log(obj);
+          console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+        } 
+        if (!input.checked && this._map.hasLayer(obj.layer)) {
           this._map.removeLayer(obj.layer);
+          console.log(obj);
+          console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
         }
       }
     }
