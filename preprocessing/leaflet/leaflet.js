@@ -72,48 +72,7 @@ Promise.allSettled([promise0, promise1, promise2, promise3, promise4, promise5, 
     console.log("done");
   });
 
-//     function loadJson(json_url) {
-//         return new Promise((resolve, reject) => {
-//           $.ajax({
-//             url: json_url,
-//             type: 'GET',
-//             dataType: 'json',
-//             success: function (data) {
-//               resolve(data)
-//             },
-//             error: function (error) {
-//               reject(error)
-//             },
-//           })
-//         })
-//     }
-
-//     Promise.all([promise1, promise2, promise3]).then((values) => {
-//         console.log(values);
-//       });
-    
-//     // function pre_main(){
-//     //     loadJson("preprocessing/illinois/dph_county_data_leaflet.geojson");
-//     //     loadJson("preprocessing/illinois/dph_county_data_leaflet.geojson");
-
-//     // }
-    
-//     pre_main().then(function(data) {
-//         console.log(data);
-//     })
-//     console.log("--------------------------------------");
-//  // $.ajax({
-//     //     type: "GET",
-//     //     url: "preprocessing/illinois/dph_county_data_leaflet.geojson",
-//     //     dataType: 'json',
-//     //     success: function (response) {
-//     //         console.log(response);
-//     //     }
-//     // });   
-  
-//   console.log(illinois_counties);
-
-var map = L.map('map', {layers: [osm, Stadia_AlidadeSmoothDark], center: new L.LatLng(37,-96), zoom: 4 });
+var map = L.map('map', {layers: [osm, Stadia_AlidadeSmoothDark], center: new L.LatLng(40, -89), zoom: 7 });
     var timeline;
     var timelineControl;
     var index = 0;
@@ -265,7 +224,7 @@ function main(){
         position: 'bottomleft',
         showTicks: false
         });
-        map.addControl(slider);
+    map.addControl(slider);
 
         
     var illinois_counties_ts = L.timeline(illinois_counties,{style: styleFunc,
@@ -279,7 +238,7 @@ function main(){
 
     var us_states_ts = L.timeline(us_states,{style: styleFunc,
         waitToUpdateMap: true, onEachFeature: onEachFeature_us_states});
-    us_states_ts.addTo(map);
+    //us_states_ts.addTo(map);
     
     us_states_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
@@ -288,7 +247,7 @@ function main(){
 
     var us_counties_ts = L.timeline(us_counties,{style: styleFunc,
         waitToUpdateMap: true, onEachFeature: onEachFeature_us_counties});
-    us_counties_ts.addTo(map);
+    //us_counties_ts.addTo(map);
     
     us_counties_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
@@ -297,7 +256,7 @@ function main(){
 
     var world_ts = L.timeline(world,{style: styleFunc,
         waitToUpdateMap: true, onEachFeature: onEachFeature_world});
-    world_ts.addTo(map);
+    //world_ts.addTo(map);
     
     world_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
@@ -306,7 +265,7 @@ function main(){
 
     var chicago_acc_i_ts = L.timeline(chicago_acc_i,{style: styleAccI,
         waitToUpdateMap: true,});
-    chicago_acc_i_ts.addTo(map);
+    //chicago_acc_i_ts.addTo(map);
     
     chicago_acc_i_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
@@ -315,7 +274,7 @@ function main(){
 
     var chicago_acc_v_ts = L.timeline(chicago_acc_v,{style: styleAccV,
         waitToUpdateMap: true,});
-    chicago_acc_v_ts.addTo(map);
+    //chicago_acc_v_ts.addTo(map);
     
     chicago_acc_v_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
@@ -324,7 +283,7 @@ function main(){
 
     var illinois_acc_i_ts = L.timeline(illinois_acc_i,{style: styleAccI,
         waitToUpdateMap: true,});
-    illinois_acc_i_ts.addTo(map);
+    //illinois_acc_i_ts.addTo(map);
     
     illinois_acc_i_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
@@ -333,16 +292,71 @@ function main(){
 
     var illinois_acc_v_ts = L.timeline(illinois_acc_v,{style: styleAccV,
         waitToUpdateMap: true,});
-    illinois_acc_v_ts.addTo(map);
+    //illinois_acc_v_ts.addTo(map);
     
     illinois_acc_v_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
         this.setStyle(styleAccV);		 
         });
     
-    // slider.addTimelines(us_counties_ts);
-    slider.addTimelines(illinois_counties_ts, us_counties_ts, us_states_ts, world_ts, 
-    chicago_acc_i_ts, chicago_acc_v_ts, illinois_acc_i_ts, illinois_acc_v_ts);
+    slider.addTimelines(illinois_counties_ts);
+    // slider.addTimelines(illinois_counties_ts, us_counties_ts, us_states_ts, world_ts, 
+    // chicago_acc_i_ts, chicago_acc_v_ts, illinois_acc_i_ts, illinois_acc_v_ts);
+
+    var timelineList = [];
+
+    function onOverlayAdd(e){
+
+        // In case of duplicate layers we also need to remove previous timelines
+        //console.log(map);
+        // map.eachLayer(function (layer) {
+        //     map.removeLayer(layer);
+        // });
+        slider.addTimelines(e.layer);
+        //console.log(e);
+        if (e.group.name == "Illinois") {
+            map.setView([40, -89], 7)
+        }else if (e.group.name == "US"){
+            map.setView([37, -96], 4)
+        }else if (e.group.name == "World"){
+            map.setView([0, 0], 2)
+        }
+        // timelineList.push(e.layer);
+    }
+
+    Array.prototype.indexOf = function(val) {
+        for (var i = 0; i < this.length; i++) {
+        if (this[i] == val) return i;
+        }
+        return -1;
+    };
+
+    Array.prototype.remove = function(val) {
+        var index = this.indexOf(val);
+        if (index > -1) {
+        this.splice(index, 1);
+        }
+    };
+
+    // function onOverlayRemove(e){
+    //     timelineList.remove(e.layer);
+    //     slider = L.timelineSliderControl({
+    //         formatOutput: function(date){
+    //             return new Date(date).toLocaleDateString();
+    //         },
+    //         steps:150,
+    //         position: 'bottomleft',
+    //         showTicks: false
+    //     });
+    //     if (timelineList != []) {
+    //         for (i = 0; i < timelineList.length; i++){
+    //             slider.addTimelines(timelineList[i]);
+    //         }  
+    //     }              
+    // }
+
+    map.on('overlayadd', onOverlayAdd);
+    // map.on('overlayremove', onOverlayRemove);
 
     ///////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////// Create Legend ///////////////////////////////////////
