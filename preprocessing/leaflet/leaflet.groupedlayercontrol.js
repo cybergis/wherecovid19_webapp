@@ -333,8 +333,8 @@ L.Control.GroupedLayers = L.Control.extend({
       input = inputs[i];
       if (input.className === 'leaflet-control-layers-selector') {
         obj = this._getLayer(input.layerId);
-        console.log(obj);
-        console.log("--------------------------------------");
+        // console.log(obj);
+        // console.log("--------------------------------------");
 
         if (input.checked && !this._map.hasLayer(obj.layer)) {
           this._map.addLayer(obj.layer);
@@ -343,13 +343,13 @@ L.Control.GroupedLayers = L.Control.extend({
               inputs[j].checked = false;
             }
           }
-          console.log(obj);
-          console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+          // console.log(obj);
+          // console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
         } 
         if (!input.checked && this._map.hasLayer(obj.layer)) {
           this._map.removeLayer(obj.layer);
-          console.log(obj);
-          console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
+          // console.log(obj);
+          // console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
         }
       }
     }

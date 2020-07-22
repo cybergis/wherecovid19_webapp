@@ -1,38 +1,24 @@
-  function getColorFor(d) {
-    return d > 100000 ? '#800026' :
-    d > 50000 ? '#BD0026' :
-    d > 10000 ? '#E31A1C' :
-    d > 5000 ? '#FC4E2A' :
-    d > 1000 ? '#FD8D3C' :
-    d > 100 ? '#FEB24C' :
-    d > 10 ? '#FED976' :
-    '#FFEDA0';
-  }
+  ///////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////// Set up Basemaps /////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////////
 
-  function getAccColor(d) {
-    return d > 0.9 ? '#800026' :
-    d > 0.8 ? '#BD0026' :
-    d > 0.6 ? '#E31A1C' :
-    d > 0.4 ? '#FC4E2A' :
-    d > 0.3 ? '#FD8D3C' :
-    d > 0.2 ? '#FEB24C' :
-    d > 0.1 ? '#FED976' :
-    '#FFEDA0';
-  }
-  
-  var osm = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 18, 
-      attribution: '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  });
+var osm = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18, 
+    attribution: '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+});
 
-  var Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
-      maxZoom: 20,
-      attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
-  });
+var Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
+    maxZoom: 20,
+    attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+});
 
-  function loadJson(json_url) {
+  ///////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////// Load GeoJSON File ////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////////
+
+function loadJson(json_url) {
     return new Promise((resolve, reject) => {
-      $.ajax({
+        $.ajax({
         url: json_url,
         type: 'GET',
         dataType: 'json',
@@ -41,12 +27,13 @@
             resolve(data);
         },
         error: function (error) {
-          reject(error);
+            reject(error);
         },
-      })
+        })
     })
 }
 
+var promise=loadJson("preprocessing/classes.json");
 var promise0=loadJson("preprocessing/worldwide/who_world_data_leaflet.geojson");
 var promise1=loadJson("preprocessing/nyt_states_data_leaflet.geojson");
 var promise2=loadJson("preprocessing/nyt_counties_data_leaflet.geojson");
@@ -56,16 +43,17 @@ var promise5=loadJson("preprocessing/illinois/Illinois_ACC_v_leaflet.geojson");
 var promise6=loadJson("preprocessing/illinois/Chicago_ACC_i_leaflet.geojson");
 var promise7=loadJson("preprocessing/illinois/Chicago_ACC_v_leaflet.geojson");
 
-Promise.allSettled([promise0, promise1, promise2, promise3, promise4, promise5, promise6, promise7]).then((values) => {
+Promise.allSettled([promise, promise0, promise1, promise2, promise3, promise4, promise5, promise6, promise7]).then((values) => {
     //console.log(values[0].value);
-    world = values[0].value;
-    us_states = values[1].value;
-    us_counties = values[2].value;
-    illinois_counties = values[3].value;
-    illinois_acc_i = values[4].value;
-    illinois_acc_v = values[5].value;
-    chicago_acc_i = values[6].value;
-    chicago_acc_v = values[7].value;
+    colorClass = values[0].value;
+    world = values[1].value;
+    us_states = values[2].value;
+    us_counties = values[3].value;
+    illinois_counties = values[4].value;
+    illinois_acc_i = values[5].value;
+    illinois_acc_v = values[6].value;
+    chicago_acc_i = values[7].value;
+    chicago_acc_v = values[8].value;
 
     main();
     console.log("---------------------------------------------");
@@ -80,118 +68,45 @@ var map = L.map('map', {layers: [osm, Stadia_AlidadeSmoothDark], center: new L.L
 
 function main(){
 
-    var visualizationSchema = {
-        'dph_illinois': {
-            'case': {
-                'value': 'nolog',
-                'breaks': 'NaturalBreaks',
-            },
-            'death': {
-                'value': 'nolog',
-                'breaks': 'NaturalBreaks',
-            },
-            'case_per_100k_capita': {
-                'value': 'nolog',
-                'breaks': 'NaturalBreaks',
-            },
-            'death_per_100k_capita': {
-                'value': 'nolog',
-                'breaks': 'NaturalBreaks',
-            },
-            'tested': {
-                'value': 'nolog',
-                'breaks': 'NaturalBreaks'
-            },
-            'zipcode_case': {
-                'value': 'nolog',
-                'breaks': 'NaturalBreaks'
-            },
-            'zipcode_tested': {
-                'value': 'nolog',
-                'breaks': 'NaturalBreaks'
-            },
-        },
-        'illinois': {
-            'case': {
-                'value': 'nolog',
-                'breaks': 'NaturalBreaks',
-            },
-            'death': {
-                'value': 'nolog',
-                'breaks': 'NaturalBreaks',
-            },
-            'case_per_100k_capita': {
-                'value': 'nolog',
-                'breaks': 'NaturalBreaks',
-            },
-            'death_per_100k_capita': {
-                'value': 'nolog',
-                'breaks': 'NaturalBreaks',
-            }
-        },
-        'state': {
-            'case': {
-                'value': 'nolog',
-                'breaks': 'NaturalBreaks',
-            },
-            'death': {
-                'value': 'nolog',
-                'breaks': 'NaturalBreaks',
-            },
-            'case_per_100k_capita': {
-                'value': 'nolog',
-                'breaks': 'NaturalBreaks',
-            },
-            'death_per_100k_capita': {
-                'value': 'nolog',
-                'breaks': 'NaturalBreaks',
-            }
-        },
-        'county': {
-            'case': {
-                'value': 'log',
-                'breaks': 'NaturalBreaks',
-            },
-            'death': {
-                'value': 'nolog',
-                'breaks': 'NaturalBreaks',
-            },
-            'case_per_100k_capita': {
-                'value': 'log',
-                'breaks': 'NaturalBreaks',
-            },
-            'death_per_100k_capita': {
-                'value': 'nolog',
-                'breaks': 'NaturalBreaks',
-            }
-        },
-        'who_world': {
-            'case': {
-                'value': 'nolog',
-                'breaks': 'NaturalBreaks',
-            },
-            'death': {
-                'value': 'nolog',
-                'breaks': 'NaturalBreaks',
-            }
-        },
-        'vulnerability': {
-            'case': {
-                'value': 'nolog',
-                'breaks': 'NaturalBreaks',
-            },
-        }
+    ///////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////// Define Color Scheme ///////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////
+    
+    function getAccColor(d) {
+        return d > 0.9 ? '#800026' :
+        d > 0.8 ? '#BD0026' :
+        d > 0.6 ? '#E31A1C' :
+        d > 0.4 ? '#FC4E2A' :
+        d > 0.3 ? '#FD8D3C' :
+        d > 0.2 ? '#FEB24C' :
+        d > 0.1 ? '#FED976' :
+        '#FFEDA0';
     }
     
     function splitStr(str,num) {
     var newStr = str.split(",")
     return parseInt(newStr[num])
     }
-    
+
+    var bins = colorClass.dph_illinois.case.nolog.NaturalBreaks.bins.split(",").map(function(item) {
+        return parseInt(item, 10);
+    });
+
+    function getColorFor(_num,_bins) {
+        return _num > _bins[5] ? '#800026' :
+        _num > _bins[4] ? '#BD0026' :
+        _num > _bins[3] ? '#E31A1C' :
+        _num > _bins[2] ? '#FC4E2A' :
+        _num > _bins[1] ? '#FD8D3C' :
+        _num > _bins[0] ? '#FEB24C' :
+        '#FFEDA0';
+    }
+
     var styleFunc = function(_data){
         return {
-        stroke: false,
-        color: getColorFor(splitStr(_data.properties.cases_ts, index)),
+        stroke: true,
+        weight: 1,
+        color: getColorFor(splitStr(_data.properties.cases_ts, index),bins),
         fillOpacity: 0.5
         }
     }
@@ -230,38 +145,62 @@ function main(){
     var illinois_counties_ts = L.timeline(illinois_counties,{style: styleFunc,
         waitToUpdateMap: true, onEachFeature: onEachFeature_illinois_counties});
     illinois_counties_ts.addTo(map);
+
+    illinois_counties_ts.on('add', function(){
+        bins = colorClass.dph_illinois.case.nolog.NaturalBreaks.bins.split(",").map(function(item) {
+            return parseInt(item, 10);
+        });		 
+    });
     
     illinois_counties_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
         this.setStyle(styleFunc);		 
-        });
+    });
 
     var us_states_ts = L.timeline(us_states,{style: styleFunc,
         waitToUpdateMap: true, onEachFeature: onEachFeature_us_states});
     //us_states_ts.addTo(map);
+
+    us_states_ts.on('add', function(){
+        bins = colorClass.state.case.nolog.NaturalBreaks.bins.split(",").map(function(item) {
+            return parseInt(item, 10);
+        });		 
+    });
     
     us_states_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
         this.setStyle(styleFunc);		 
-        });
+    });
 
     var us_counties_ts = L.timeline(us_counties,{style: styleFunc,
         waitToUpdateMap: true, onEachFeature: onEachFeature_us_counties});
     //us_counties_ts.addTo(map);
+
+    us_counties_ts.on('add', function(){
+        bins = colorClass.county.case.nolog.NaturalBreaks.bins.split(",").map(function(item) {
+            return parseInt(item, 10);
+        });		 
+    });
     
     us_counties_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
         this.setStyle(styleFunc);		 
-        });
+    });
 
     var world_ts = L.timeline(world,{style: styleFunc,
         waitToUpdateMap: true, onEachFeature: onEachFeature_world});
     //world_ts.addTo(map);
+
+    world_ts.on('add', function(){
+        bins = colorClass.who_world.case.nolog.NaturalBreaks.bins.split(",").map(function(item) {
+            return parseInt(item, 10);
+        });		 
+    });
     
     world_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
         this.setStyle(styleFunc);		 
-        });
+    });
 
     var chicago_acc_i_ts = L.timeline(chicago_acc_i,{style: styleAccI,
         waitToUpdateMap: true,});
@@ -322,6 +261,8 @@ function main(){
             map.setView([0, 0], 2)
         }
         // timelineList.push(e.layer);
+
+        refreshLegend();
     }
 
     Array.prototype.indexOf = function(val) {
@@ -362,25 +303,39 @@ function main(){
     ///////////////////////////////////// Create Legend ///////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////
 
-    var legend = L.control({position: 'bottomright'});
+    var legend = null;
 
-    legend.onAdd = function (map) {
-
-        var div = L.DomUtil.create('div', 'info legend'),
-            grades = [10,100,1000,5000,10000,50000,100000],
-            labels = [];
-
-        // loop through our density intervals and generate a label with a colored square for each interval
-        for (var i = 0; i < grades.length; i++) {
-            div.innerHTML +=
-                '<i style="background:' + getColorFor(grades[i] + 1) + '"></i> ' +
-                grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+') +'<br>';
+    function refreshLegend() {
+        
+        if (legend != null) {
+            map.removeControl(legend)
         }
 
-        return div;
-    };
+        legend = L.control({position: 'bottomright'});
 
-    legend.addTo(map);
+        legend.onAdd = function (map) {
+
+            var div = L.DomUtil.create('div', 'info legend'),
+            grades = bins,
+            labels = [];
+    
+            // Changing the grades using unshift somehow also changes bins?
+            //grades.unshift(0);
+    
+            // loop through our density intervals and generate a label with a colored square for each interval
+            for (var i = 0; i < grades.length; i++) {
+                div.innerHTML +=
+                    '<i style="background:' + getColorFor((grades[i] + 1),bins) + '"></i> ' +
+                    grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+') +'<br>';
+            }
+    
+            return div;
+        };
+    
+        legend.addTo(map);
+    }
+
+    refreshLegend();    
 
     ///////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////// Create Popup ///////////////////////////////////////
