@@ -437,7 +437,8 @@ function main(){
 
         function onMapClick(e) {
             e.target.setStyle(highlight);
-            console.log(e);
+            // console.log(e.target);
+            // console.log(e);
             updateChart(e.target.feature);
         };
 
@@ -505,6 +506,8 @@ function main(){
 
             let result_list = illinois_counties.features.map(function(value, index) {
                 return {
+                    centroid_x: turf.centroid(value.geometry).geometry.coordinates[0],
+                    centroid_y: turf.centroid(value.geometry).geometry.coordinates[1],
                     uid: value.properties.OBJECTID,
                     county: value.properties.NAME,
                     case: value.properties.today_case,
@@ -536,6 +539,8 @@ function main(){
                 }
                 else {
                     instance.querySelector('th').innerHTML = value.county;
+                    instance.querySelector('th').setAttribute('data-x', value.centroid_x);
+                    instance.querySelector('th').setAttribute('data-y', value.centroid_y);
                     instance.querySelector('th').setAttribute('data-uid', value.uid);
                     instance.querySelector('th').setAttribute('data-county', value.county);
 
@@ -581,6 +586,8 @@ function main(){
 
             let result_list = us_counties.features.map(function(value, index) {
                 return {
+                    centroid_x: turf.centroid(value.geometry).geometry.coordinates[0],
+                    centroid_y: turf.centroid(value.geometry).geometry.coordinates[1],
                     uid: value.properties.OBJECTID,
                     county: value.properties.NAME,
                     state: value.properties.state_name,
@@ -597,8 +604,11 @@ function main(){
                 let instance = template.content.cloneNode(true);
 
                 instance.querySelector('th').innerHTML = value.county + ", " + value.state;
+                instance.querySelector('th').setAttribute('data-x', value.centroid_x);
+                instance.querySelector('th').setAttribute('data-y', value.centroid_y);
                 instance.querySelector('th').setAttribute('data-uid', value.uid);
                 instance.querySelector('th').setAttribute('data-county', value.county);
+                instance.querySelector('th').setAttribute('data-state', value.state);
                 instance.querySelector('.confirmed').innerHTML = '<span>' + numberWithCommas(value.case) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_case);
                 instance.querySelector('.death').innerHTML = '<span>' + numberWithCommas(value.death) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_death);
                 instance.querySelector('.confirmed').setAttribute('data-order', value.case);
@@ -652,6 +662,8 @@ function main(){
 
             let result_list = world.features.map(function(value, index) {
                 return {
+                    centroid_x: turf.centroid(value.geometry).geometry.coordinates[0],
+                    centroid_y: turf.centroid(value.geometry).geometry.coordinates[1],
                     uid: value.properties.OBJECTID,
                     country: value.properties.NAME,
                     case: value.properties.today_case,
@@ -667,6 +679,9 @@ function main(){
                 let instance = template.content.cloneNode(true);
 
                 instance.querySelector('th').innerHTML = value.country;
+                instance.querySelector('th').setAttribute('data-x', value.centroid_x);
+                instance.querySelector('th').setAttribute('data-y', value.centroid_y);
+                instance.querySelector('th').setAttribute('data-country', value.country);
                 instance.querySelector('.confirmed').innerHTML = '<span>' + numberWithCommas(value.case) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_case);
                 instance.querySelector('.death').innerHTML = '<span>' + numberWithCommas(value.death) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_death);
                 instance.querySelector('.confirmed').setAttribute('data-order', value.case);
@@ -713,7 +728,89 @@ function main(){
         ////////////////////////////////////Handle Table clicking//////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////
 
+        var highlight;
 
+        /// illinois Table
+        document.querySelector("#illinois-table tbody").addEventListener("click", function(event) {
+            //dph_illinois_county_dynamic.visible = true;
+
+            var tr = event.target;
+            while (tr !== this && !tr.matches("tr")) {
+                tr = tr.parentNode;
+            }
+            if (tr === this) {
+                console.log("No table cell found");
+            } else {
+
+                long = parseFloat(tr.firstElementChild.dataset.x);
+                lat = parseFloat(tr.firstElementChild.dataset.y);
+                objID = parseFloat(tr.firstElementChild.dataset.uid);
+                countyName = tr.firstElementChild.dataset.county;
+
+                illinois_counties_ts.eachLayer(function(value){
+                    if (value.feature.properties.NAME == countyName) {
+                        illinois_counties_ts.setStyle(styleFunc);
+                        value.setStyle(highlight);
+                        map.setView([lat,long], 9);
+                    }
+                })
+            }
+        });
+
+        /// US Table
+        document.querySelector("#county-table tbody").addEventListener("click", function(event) {
+            // nyt_layer_counties.visible = true;
+
+            var tr = event.target;
+            while (tr !== this && !tr.matches("tr")) {
+                tr = tr.parentNode;
+            }
+            if (tr === this) {
+                console.log("No table cell found");
+            } else {
+
+                long = parseFloat(tr.firstElementChild.dataset.x);
+                lat = parseFloat(tr.firstElementChild.dataset.y);
+                objID = parseFloat(tr.firstElementChild.dataset.uid);
+                countyName = tr.firstElementChild.dataset.county;
+                stateName = tr.firstElementChild.dataset.state;
+
+                us_counties_ts.eachLayer(function(value){
+                    if (value.feature.properties.NAME == countyName && value.feature.properties.state_name == stateName) {
+                        us_counties_ts.setStyle(styleFunc);
+                        value.setStyle(highlight);
+                        map.setView([lat,long], 9);
+                    }
+                })
+            }
+        });
+
+        /// World Table
+        document.querySelector("#world-table tbody").addEventListener("click", function(event) {
+            // who_world_layer.visible = true;
+
+            var tr = event.target;
+            while (tr !== this && !tr.matches("tr")) {
+                tr = tr.parentNode;
+            }
+            if (tr === this) {
+                console.log("No table cell found");
+            } else {
+
+                long = parseFloat(tr.firstElementChild.dataset.x);
+                lat = parseFloat(tr.firstElementChild.dataset.y);
+                objID = parseFloat(tr.firstElementChild.dataset.uid);
+                countryName = tr.firstElementChild.dataset.country;
+
+                world_ts.eachLayer(function(value){
+                    if (value.feature.properties.NAME == countryName) {
+                        world_ts.setStyle(styleFunc);
+                        value.setStyle(highlight);
+                        map.setView([lat,long], 4);
+                    }
+                })
+            }
+        });
         ///////////////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////// Handle chart update //////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////
