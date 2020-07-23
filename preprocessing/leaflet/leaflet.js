@@ -42,8 +42,10 @@ var promise4=loadJson("preprocessing/illinois/Illinois_ACC_i_leaflet.geojson");
 var promise5=loadJson("preprocessing/illinois/Illinois_ACC_v_leaflet.geojson");
 var promise6=loadJson("preprocessing/illinois/Chicago_ACC_i_leaflet.geojson");
 var promise7=loadJson("preprocessing/illinois/Chicago_ACC_v_leaflet.geojson");
+//var promise8=loadJson("preprocessing/illinois/vulnerability_leaflet.geojson");
+var promise9=loadJson("preprocessing/illinois/dph_zipcode_data.geojson");
 
-Promise.allSettled([promise, promise0, promise1, promise2, promise3, promise4, promise5, promise6, promise7]).then((values) => {
+Promise.allSettled([promise, promise0, promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise9]).then((values) => {
     //console.log(values[0].value);
     colorClass = values[0].value;
     world = values[1].value;
@@ -54,6 +56,7 @@ Promise.allSettled([promise, promise0, promise1, promise2, promise3, promise4, p
     illinois_acc_v = values[6].value;
     chicago_acc_i = values[7].value;
     chicago_acc_v = values[8].value;
+    illinois_zipcode = values[9].value;
 
     main();
     console.log("---------------------------------------------");
@@ -107,7 +110,7 @@ function main(){
         stroke: true,
         weight: 1,
         color: getColorFor(splitStr(_data.properties.cases_ts, index),bins),
-        fillOpacity: 0.5
+        fillOpacity: 0.7
         }
     }
     
@@ -115,7 +118,7 @@ function main(){
         return {
         stroke: false,
         color: getAccColor(_data.properties.hospital_i),
-        fillOpacity: 0.5
+        fillOpacity: 0.7
         }
     }
 
@@ -123,7 +126,7 @@ function main(){
         return {
         stroke: false,
         color: getAccColor(_data.properties.hospital_v),
-        fillOpacity: 0.5
+        fillOpacity: 0.7
         }
     }
 
@@ -242,6 +245,20 @@ function main(){
     // slider.addTimelines(illinois_counties_ts, us_counties_ts, us_states_ts, world_ts, 
     // chicago_acc_i_ts, chicago_acc_v_ts, illinois_acc_i_ts, illinois_acc_v_ts);
 
+    var illinois_zipcode_static = L.geoJSON(illinois_counties,{style: styleFunc});
+
+    var hiv_layer = L.esri.dynamicMapLayer({
+        url: 'https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/HIV_Map/MapServer'
+    });
+
+    var svi_layer = L.esri.dynamicMapLayer({
+        url: 'https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/SVI_2018/MapServer'
+    })
+
+    var testing_sites = L.esri.dynamicMapLayer({
+        url: 'https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Testing_Sites/MapServer'
+    })
+    
     var timelineList = [];
 
     function onOverlayAdd(e){
@@ -421,7 +438,11 @@ function main(){
                 "Accessibility (ICU Beds-Chicago)": chicago_acc_i_ts,
                 "Accessibility (Ventilators-Chicago)": chicago_acc_v_ts,
                 "Accessibility (ICU Beds-State)": illinois_acc_i_ts,
-                "Accessibility (Ventilators-State)": illinois_acc_v_ts
+                "Accessibility (Ventilators-State)": illinois_acc_v_ts,
+                // "IDPH Zipcode-level Cases": illinois_zipcode_static,
+                // "Density of PLWH (Persons Living with HIV)": hiv_layer,
+                // "CDC Social Vulnerability Index": svi_layer,
+                // "Testing Sites":testing_sites
             },
             "US":{
                 "US States": us_states_ts,
