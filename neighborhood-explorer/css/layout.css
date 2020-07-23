@@ -117,14 +117,8 @@ body {
 }
 
 .right-sidebar.closed {
-    /* display: none; */
+    display: none;
 }
-
-
-
-
-
-
 
 /******* About Screen ******/
 
