@@ -237,12 +237,6 @@ screen-btn:first {
     font-weight: bold;
 }
 
-
-/* .highlight:nth-child(2) {
-    border-left: #404040 solid 1px;
-    border-right: #404040 solid 1px;
-} */
-
 .highlight.death .case-number,
 .highlight.death .change,
 .death {

@@ -63,7 +63,24 @@ Promise.allSettled([promise, promise0, promise1, promise2, promise3, promise4, p
     console.log("done");
   });
 
-var map = L.map('map', {layers: [osm, Stadia_AlidadeSmoothDark], center: new L.LatLng(40, -89), zoom: 7 });
+var map = L.map('map', {
+    layers: [osm, Stadia_AlidadeSmoothDark], 
+    center: new L.LatLng(40, -89), 
+    zoom: 7, 
+    //Remove Zoom Control from the map
+    zoomControl: false,
+    //Disable snap to zoom level
+    zoomSnap: 0,
+    //Remove the attribution from the right hand side
+    //We will add it back later to the left side
+    attributionControl: false
+});
+
+// Add the attribution of the base mapo to the left side
+L.control.attribution({
+    position: 'bottomleft'
+}).addTo(map);
+
     var timeline;
     var timelineControl;
     var index = 0;
@@ -139,7 +156,7 @@ function main(){
             return new Date(date).toLocaleDateString();
         },
         steps:150,
-        position: 'bottomleft',
+        position: 'topleft',
         showTicks: false
         });
     map.addControl(slider);
