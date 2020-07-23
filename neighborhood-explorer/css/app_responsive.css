@@ -53,6 +53,17 @@ body {
     transition: all .5s;
 }
 
+#results {
+    flex: 1;
+    background-color: white;
+}
+
+#results iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
 .about-screen {
     overflow: auto;
     background-color: #303030;
@@ -160,291 +171,11 @@ screen-btn:first {
     -webkit-box-direction: normal;
     -ms-flex-direction: column;
     flex-direction: column;
+    overflow-y: auto;
 }
 
 .sidebar.closed {
     display: none;
-}
-
-.sidebar .nav-item {
-    width: 33.3333333%;
-    /* min-height: 70px; */
-}
-
-.sidebar .nav-link {
-    font-weight: 500;
-    color: #FFF;
-    border-radius: 0;
-    text-align: center;
-    font-size: 17px;
-}
-
-.sidebar .nav-link.active {
-    color: #FFFFFF;
-    background-color: #5d5d5d;
-}
-
-.sidebar .nav-link {
-    color: #666666;
-    background-color: #303030;
-}
-
-.sidebar .nav-link span {
-    display: block;
-    color: #666666;
-    font-weight: bold;
-}
-
-.sidebar .nav-link.active span {
-    display: block;
-    color: #eabf00;
-    font-weight: bold;
-}
-
-
-/*
-* Sidebar content
-*/
-
-.highlight {
-    text-align: left;
-    font-size: 15px;
-    color: #b3b3b3;
-    line-height: 1.5rem;
-}
-
-.highlight .label {
-    font-weight: normal;
-}
-
-.highlight .case-number {
-    font-size: 20px;
-    font-weight: bold;
-}
-
-
-/* .highlight:nth-child(2) {
-    border-left: #404040 solid 1px;
-    border-right: #404040 solid 1px;
-} */
-
-.highlight.death .case-number,
-.highlight.death .change,
-.death {
-    color: #ff4c4c !important;
-}
-
-.highlight.recovered .case-number,
-.highlight.recovered .change,
-.recovered {
-    color: #00cc29 !important;
-}
-
-.highlight.tested .case-number,
-.highlight.tested .change,
-.tested {
-    color: #1cd5ee !important;
-}
-
-.highlight.confirmed .case-number,
-.highlight.confirmed .change,
-.confirmed {
-    color: #eabf00 !important;
-}
-
-.highlight .change {
-    font-weight: bold;
-    font-size: 12px;
-    line-height: 1.5rem;
-}
-
-.highlight .change i {
-    padding-right: 5px;
-}
-
-
-/*
-* Sidebar Search
-*/
-
-.form-control,
-.input-group>.input-group-prepend>.input-group-text {
-    border-radius: 0;
-}
-
-.input-group>.input-group-prepend>.input-group-text {
-    background-color: #303030;
-    border: #414141 1px solid;
-    color: #646464;
-}
-
-.input-group input,
-.input-group input:focus {
-    background-color: #303030;
-    border: #414141 1px solid;
-    color: #646464;
-}
-
-.form-control::placeholder {
-    color: #5d5d5d !important;
-    opacity: 1;
-    /* Firefox */
-}
-
-
-/*
-* Sidebar tables
-*/
-
-.tabs-wrap {
-    -webkit-box-flex: 1;
-    -ms-flex: 1;
-    flex: 1;
-    /* NEW */
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    /* for Firefox */
-    min-height: 0;
-}
-
-.tabs-wrap .tab {
-    -webkit-box-flex: 1;
-    -ms-flex-positive: 1;
-    flex-grow: 1;
-    /* for Firefox */
-    min-height: 0;
-    display: none;
-}
-
-.tabs-wrap .tab.active {
-    /* NEW */
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-flex: 1;
-    -ms-flex-positive: 1;
-    flex-grow: 1;
-}
-
-.tab-header {
-    background-color: #5d5d5d;
-}
-
-.tab-content {
-    /* NEW */
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    -webkit-box-flex: 1;
-    -ms-flex: 1;
-    flex: 1;
-}
-
-.tab-table {
-    background-color: #303030;
-    -webkit-box-flex: 1;
-    -ms-flex-positive: 1;
-    flex-grow: 1;
-    overflow: auto;
-    /* for Firefox */
-    min-height: 0;
-}
-
-.table-wrap {
-    -webkit-box-flex: 1;
-    -ms-flex: 1;
-    flex: 1;
-    overflow: auto;
-}
-
-.tab-table {
-    text-align: center;
-    font-size: 13px;
-    margin-top: 0 !important;
-}
-
-.dataTables_paginate,
-.dataTables_paginate .pagination {
-    display: flex;
-    flex: 1;
-    /* height: 40px; */
-    justify-content: space-evenly !important;
-    background-color: #303030;
-    margin: 0 !important;
-}
-
-.dataTables_paginate .pagination {
-    border-bottom: #414141 1px solid;
-}
-
-.paginate_button,
-.page-link {
-    border: none;
-    color: white;
-    cursor: pointer;
-    background-color: #303030;
-    border-color: #dee2e6;
-    flex: 1;
-    border-radius: 0 !important;
-    text-align: center;
-}
-
-.page-item.active .page-link {
-    background-color: #00a4e4;
-    border-color: #00a4e4;
-    text-align: center;
-}
-
-.page-item.disabled .page-link {
-    color: #4f555b;
-    pointer-events: none;
-    cursor: auto;
-    background-color: #303030;
-    border-color: #dee2e6;
-}
-
-#illinois-table,
-#county-table,
-#world-table {
-    margin: 0 !important;
-    padding: 0 !important;
-}
-
-.dataTables_filter {
-    width: 100%;
-}
-
-.dataTables_wrapper {
-    color: #b3b3b3;
-}
-
-.table thead th,
-.table {
-    background-color: #303030;
-}
-
-.table thead th {
-    border-top: none;
-    border-bottom: #414141 1px solid;
-    text-align: center;
-}
-
-.table td,
-.table th {
-    padding: .75rem;
-    vertical-align: top;
-    border-top: none;
-    border-bottom: #414141 solid 1px;
-    color: #b3b3b3;
 }
 
 #sidebar_control,
@@ -538,9 +269,9 @@ screen-btn:first {
         left: 0;
     }
     .content-section {
-        -webkit-transform: translateX(-100%);
-        -ms-transform: translateX(-100%);
-        transform: translateX(-100%);
+        -webkit-transform: translateX(0%);
+        -ms-transform: translateX(0%);
+        transform: translateX(0%);
     }
     .tab-table {
         font-size: 12px;
@@ -578,9 +309,9 @@ screen-btn:first {
         left: 0;
     }
     .content-section {
-        -webkit-transform: translateX(-100%);
-        -ms-transform: translateX(-100%);
-        transform: translateX(-100%);
+        -webkit-transform: translateX(0%);
+        -ms-transform: translateX(0%);
+        transform: translateX(0%);
     }
     .tab-table {
         font-size: 12px;

@@ -4,20 +4,24 @@ $(function() {
 
     console.log(isChrome);
 
-    $('.nav.nav-pills a').on('click', function(e) {
-        e.preventDefault();
-        $(this).tab('show');
-    });
+    var close_sidebar = function(){
+        $('#sidebar_control').removeClass("open").addClass("closed");
+        $(".sidebar").css('display', 'none').removeClass("open").addClass("closed");
+        $("main").addClass("map-fullscreen");
+      }
 
+      var open_sidebar = function(){
+        $('#sidebar_control').removeClass("closed").addClass("open");
+        $(".sidebar").css('display', 'flex').removeClass("closed").addClass("open");
+        $("main").removeClass("map-fullscreen");
+      }
+
+      
     $('#sidebar_control').on('click', function(e) {
         if ($(".sidebar").hasClass("open")) {
-            $('#sidebar_control').removeClass("open").addClass("closed");
-            $(".sidebar").css('display', 'none').removeClass("open").addClass("closed");
-            $("main").addClass("map-fullscreen");
+            close_sidebar();
         } else {
-            $('#sidebar_control').removeClass("closed").addClass("open");
-            $(".sidebar").css('display', 'flex').removeClass("closed").addClass("open");
-            $("main").removeClass("map-fullscreen");
+           open_sidebar();
         }
     });
 
@@ -26,6 +30,7 @@ $(function() {
         $('.screen-btn').removeClass('active');
         $(this).addClass('active');
     });
+
     $('#map-screen-btn').on('click', function(e) {
         $('.content-section').css("transform", "translateX(-100%)");
         $('.screen-btn').removeClass('active');
@@ -38,9 +43,80 @@ $(function() {
         $(this).addClass('active');
     });
 
-    $('#close_chart').on('click', function(e) {
-        document.getElementById('myChart').classList.add("d-none");
-        document.getElementById('myChart').classList.remove("d-block");
+    $(".app-drawer").on('click',function(){
+        if($(this).hasClass('opened')){
+            $(this).removeClass('opened');
+        } else {
+            $(this).addClass("opened");
+        }
     });
+
+    $( "#variables_form" ).submit(function( event ) {
+        // close_sidebar();
+        // alert( "Handler for .submit() called." );
+        event.preventDefault();
+
+        var formEl = $(this);
+        var submitButton = $('#variables_form_submit_btn');
+
+        //console.log(submitButton);
+
+        $.ajax({
+            type: 'POST',
+            url: "http://hsjp10.cigi.illinois.edu:8000/vne",
+            accept: {
+                javascript: 'application/javascript'
+            },
+            data: formEl.serialize(), 
+            dataType : 'json', // what type of data do we expect back from the server
+            encode : true,
+            beforeSend: function() {
+                submitButton.prop( "disabled", true );
+            }
+        })
+        .done(function(data){
+            // log data to the console so we can see
+            //console.log(data);
+                // here we will handle errors and validation messages
+            if (data.job_id) {
+                console.log(data.job_id);
+                check_jobstatus(data.job_id, submitButton)
+            }
+        })// using the fail promise callback
+        .fail(function(data) {
+            console.log("Error 1");
+        });
+    });
+
+    var check_jobstatus = function(job_id, submitButton){
+        //console.log(job_id);
+        var check_url = 'http://hsjp10.cigi.illinois.edu:8000/check/'+job_id;
+        
+        $.ajax({
+            type: 'GET',
+            url: check_url,
+            success: function(data){
+                // log data to the console so we can see
+                console.log(data.status);
+                    // here we will handle errors and validation messages
+                if("SUCCESS" == data.status){
+                    submitButton.prop( "disabled", false );
+                    close_sidebar();
+                    var generated_results = "http://hsjp10.cigi.illinois.edu:8000/job_outputs/"+data.job_id+"/index.html"
+                    $('<iframe>', {
+                        src: generated_results,
+                        id:  'vne',
+                        frameborder: 0,
+                        scrolling: 'yes'
+                        }).appendTo('#results');
+
+                } else {
+                    // Schedule the next
+                    setTimeout(check_jobstatus, 3000, data.job_id, submitButton);
+                }
+            }
+        });
+    }
+
 
 });
