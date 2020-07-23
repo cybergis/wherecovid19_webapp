@@ -104,9 +104,6 @@ body {
 
 /******* End of Left sidebar ******/
 
-
-
-
 .right-sidebar, .right-sidebar.open {
     flex-direction: row;
     flex-grow: 1;
@@ -115,10 +112,12 @@ body {
     height: 100%;
     background-color: #363636;
     border-left: #404040 solid 1px;
+    height: 100%;
+    position: absolute;
 }
 
 .right-sidebar.closed {
-    display: none;
+    /* display: none; */
 }
 
 
