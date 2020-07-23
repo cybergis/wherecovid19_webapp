@@ -126,7 +126,8 @@ function main(){
         return {
         stroke: true,
         weight: 1,
-        color: getColorFor(splitStr(_data.properties.cases_ts, index),bins),
+        color: "gray",
+        fillColor: getColorFor(splitStr(_data.properties.cases_ts, index),bins),
         fillOpacity: 0.7
         }
     }
@@ -134,7 +135,8 @@ function main(){
     var styleAccI = function(_data){
         return {
         stroke: false,
-        color: getAccColor(_data.properties.hospital_i),
+        color:  "gray",
+        fillColor: getAccColor(_data.properties.hospital_i),
         fillOpacity: 0.7
         }
     }
@@ -142,7 +144,8 @@ function main(){
     var styleAccV = function(_data){
         return {
         stroke: false,
-        color: getAccColor(_data.properties.hospital_v),
+        color:  "gray",
+        fillColor: getAccColor(_data.properties.hospital_v),
         fillOpacity: 0.7
         }
     }
@@ -426,9 +429,10 @@ function main(){
     ///////////////////////////////////////////////////////////////////////////////////////////
 
         var highlight = {
-            'color': '#00fbff',
+            //'color': '#00fbff',
+            'fillColor': '#00fbff',
             'weight': 2,
-            'opacity': 0.5
+            'fillOpacity': 0.7
         };
 
         function onMapClick(e) {
@@ -706,15 +710,13 @@ function main(){
 
 
         ///////////////////////////////////////////////////////////////////////////////////////////
-        //////////////////////////////////// Handle chart update //////////////////////////////////
+        ////////////////////////////////////Handle Table clicking//////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////
 
 
-        var tooltip = null;
-        var hitTest = null;
-        var hoverover_callback = null;
-        var activeAnimationLayerView = null;
-        var hitGraphic = null;
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////// Handle chart update //////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////
 
         function updateChart(graphic) {
 
@@ -735,10 +737,21 @@ function main(){
             }
 
             var IncreasedCases = [];
+            var averageWeeklyCases = [];
+            
             for (i = 1; i < CasesArray.length; i++) {
-                IncreasedCases.push(CasesArray[i] - CasesArray[i - 1])
-            };
+                IncreasedCases.push(CasesArray[i] - CasesArray[i - 1]);
+            }
             IncreasedCases.unshift(0);
+
+            for (i = 0; i < IncreasedCases.length; i++) {
+                if (i < 6) {
+                    averageWeeklyCases.push(IncreasedCases[i]);
+                } else {
+                    averageWeeklyCases.push(Math.round((IncreasedCases[i] + IncreasedCases[i - 1] + IncreasedCases[i - 2] 
+                        + IncreasedCases[i - 3] + IncreasedCases[i - 4] + IncreasedCases[i - 5] + IncreasedCases[i - 6])/7));
+                }
+            }
 
             var ExtendedCasesArray = CasesArray.slice(0);
             ExtendedCasesArray.unshift(0, 0, 0, 0, 0, 0, 0);
@@ -746,9 +759,13 @@ function main(){
             var ExtendedIncreasedCases = IncreasedCases.slice(0);
             ExtendedIncreasedCases.unshift(0, 0, 0, 0, 0, 0, 0);
 
+            var ExtendedAverageWeeklyCases = averageWeeklyCases.slice(0);
+            ExtendedAverageWeeklyCases.unshift(0, 0, 0, 0, 0, 0, 0);
+
             var firstCaseIndex = ExtendedCasesArray.findIndex(val => val > 0);
             SlicedCasesArray = ExtendedCasesArray.slice(firstCaseIndex);
             SlicedIncreasedCases = ExtendedIncreasedCases.slice(firstCaseIndex);
+            SlicedAverageWeeklyCases = ExtendedAverageWeeklyCases.slice(firstCaseIndex);
 
             if (graphic.properties.deaths_ts != undefined) {
                 var DeathsArrayStr = (graphic.properties.deaths_ts).split(",");
@@ -831,17 +848,17 @@ function main(){
             dic1 = {
                 data: SlicedCasesArray,
                 label: "Total Cases ", 
+                backgroundColor: "#ffab24",
                 borderColor: "#ffab24",
-                pointStyle: "circle",
-                fill: false,
+                fill: true,
                 hidden: true
             };
             dic2 = {
                 data: SlicedIncreasedCases,
                 label: "Daily Cases ", 
+                backgroundColor: "#f25100",
                 borderColor: "#f25100",
-                pointStyle: "circle",
-                fill: false,
+                fill: true,
                 hidden: false
             };
 
@@ -849,29 +866,40 @@ function main(){
                 dic3 = {
                     data: SlicedDeathsArray,
                     label: "Total Deaths ", 
+                    backgroundColor: "#a10025",
                     borderColor: "#a10025",
-                    pointStyle: "circle",
-                    fill: false,
+                    fill: true,
                     hidden: true
                 };
                 dic4 = {
                     data: SlicedIncreasedDeaths,
                     label: "Daily Deaths ", 
+                    backgroundColor: "#6a28c7",
                     borderColor: "#6a28c7",
-                    pointStyle: "circle",
-                    fill: false,
+                    fill: true,
                     hidden: true
                 };
             }
 
+            dic5 = {
+                data: SlicedAverageWeeklyCases,
+                label: "7-Day Average New Cases ", 
+                type: 'line',
+                borderColor: "#fed8b1",
+                pointStyle: "circle",
+                fill: false,
+                hidden: false,
+            };
+
             if (graphic.properties.cases_ts != undefined) {
-                datasetList.push(dic1)
+                datasetList.push(dic5)
                 datasetList.push(dic2)
+                datasetList.push(dic1)
             }
 
             if (graphic.properties.deaths_ts != undefined) {
-                datasetList.push(dic3)
                 datasetList.push(dic4)
+                datasetList.push(dic3)
             }
 
             if (window.bar != undefined) {
@@ -879,7 +907,7 @@ function main(){
             }
 
             window.bar = new Chart(myChart, {
-                type: 'line',
+                type: 'bar',
                 data: {
                     labels: SlicedLabelDates,
                     datasets: datasetList
