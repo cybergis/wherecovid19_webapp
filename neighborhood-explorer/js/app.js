@@ -51,6 +51,10 @@ $(function() {
         }
     });
 
+    ////////////////////////////
+    // Handle Form submission///
+    ////////////////////////////
+
     $( "#variables_form" ).submit(function( event ) {
         // close_sidebar();
         // alert( "Handler for .submit() called." );
@@ -71,13 +75,15 @@ $(function() {
             dataType : 'json', // what type of data do we expect back from the server
             encode : true,
             beforeSend: function() {
+                $('.overlay-loading ').removeClass('d-none').addClass('d-flex');
                 submitButton.prop( "disabled", true );
+
             }
         })
         .done(function(data){
             // log data to the console so we can see
             //console.log(data);
-                // here we will handle errors and validation messages
+            // here we will handle errors and validation messages
             if (data.job_id) {
                 console.log(data.job_id);
                 check_jobstatus(data.job_id, submitButton)
@@ -100,6 +106,7 @@ $(function() {
                 console.log(data.status);
                     // here we will handle errors and validation messages
                 if("SUCCESS" == data.status){
+                    $('.overlay-loading ').removeClass('d-flex').addClass('d-none');
                     submitButton.prop( "disabled", false );
                     close_sidebar();
                     var generated_results = "http://hsjp10.cigi.illinois.edu:8000/job_outputs/"+data.job_id+"/index.html"

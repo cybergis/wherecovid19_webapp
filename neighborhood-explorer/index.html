@@ -135,8 +135,15 @@
 
         <div class="content-section" style="flex-grow: 1; display: flex; flex-direction: row;">
 
-            <nav class="sidebar col-12 col-sm-12 col-md-5 col-lg-4 col-xl-4 open flex-column p-3" style="color:white;">
-                <form id="variables_form" class="d-flex flex-column">
+            <nav class="sidebar col-12 col-sm-12 col-md-5 col-lg-4 col-xl-4 open flex-column " style="color:white;">
+                <div class="overlay-loading d-none justify-content-center">
+                    <span class="spinner-border spinner-border-sm" role="status"  
+                    style="width: 3rem; height: 3rem;position:absolute;top: 50%;" 
+                    aria-hidden="true">
+                        <span class="sr-only">Loading...</span>
+                    </span>
+                </div>
+                <form id="variables_form" class="d-flex flex-column p-3">
                     <div class="form-group">
                         <label for="region_selectoin">Select Region:</label>
                         <select name="region" class="form-control selectpicker" id="region_selectoin" data-live-search="true">
@@ -147,11 +154,10 @@
                           <option value="option5">Area 3</option>
                         </select>
                         <br>
-                        <br>
-                        <h4>Select Variabes of Neighborhood Creation:</h4>
                     </div>
 
                     <div class="variables_selections">
+                        <h4>Select Variabes of Neighborhood Creation:</h4>
                     <div class="form-group">
                         <label for="region_selectoin">Races</label>
                         <select name="races" class="form-control selectpicker" id="region_selectoin" multiple data-live-search="true">
