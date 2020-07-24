@@ -79,12 +79,7 @@ var map = L.map('map', {
 // Add the attribution of the base mapo to the left side
 L.control.attribution({
     position: 'bottomleft'
-}).addTo(map);
-
-    var timeline;
-    var timelineControl;
-    var index = 0;
-    const DayInMilSec = 60*60*24*1000;
+}).addTo(map);   
 
 function main(){
 
@@ -151,8 +146,11 @@ function main(){
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////// Add Timeline ///////////////////////////////////////
+    ///////////////////////////////////// Setup Timeline //////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////
+
+    var index = 0;
+    const DayInMilSec = 60*60*24*1000;
     
     var slider = L.timelineSliderControl({
         formatOutput: function(date){
@@ -161,12 +159,12 @@ function main(){
         steps:150,
         position: 'topleft',
         showTicks: false
-        });
+    });
     map.addControl(slider);
-
-        
+            
     var illinois_counties_ts = L.timeline(illinois_counties,{style: styleFunc,
-        waitToUpdateMap: true, onEachFeature: onEachFeature_illinois_counties});
+        waitToUpdateMap: true, onEachFeature: onEachFeature_illinois_counties, drawOnSetTime: true});
+    //slider.setTime("05-05-2020");
     illinois_counties_ts.addTo(map);
 
     illinois_counties_ts.on('add', function(){
@@ -265,7 +263,7 @@ function main(){
     // slider.addTimelines(illinois_counties_ts, us_counties_ts, us_states_ts, world_ts, 
     // chicago_acc_i_ts, chicago_acc_v_ts, illinois_acc_i_ts, illinois_acc_v_ts);
 
-    var illinois_zipcode_static = L.geoJSON(illinois_counties,{style: styleFunc});
+    // var illinois_zipcode_static = L.geoJSON(illinois_zipcode,{style: styleFunc});
 
     var hiv_layer = L.esri.dynamicMapLayer({
         url: 'https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/HIV_Map/MapServer'
@@ -278,17 +276,43 @@ function main(){
     var testing_sites = L.esri.dynamicMapLayer({
         url: 'https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Testing_Sites/MapServer'
     })
+
+    // if (map.hasLayer(hiv_layer, svi_layer, testing_sites)){
+    //     if (slider._map != undefined) {
+    //         map.removeControl(slider);
+    //     }
+    //     if (legend != null) {
+    //         map.removeControl(legend);
+    //     }
+    // }
     
     var timelineList = [];
 
     function onOverlayAdd(e){
 
         // In case of duplicate layers we also need to remove previous timelines
-        //console.log(map);
+        // console.log(map);
         // map.eachLayer(function (layer) {
         //     map.removeLayer(layer);
         // });
-        slider.addTimelines(e.layer);
+        if (e.name == "World" || "US States" || "US Counties" || 
+        "IDPH County-level Cases" ||
+        "Accessibility (ICU Beds-Chicago)" ||
+        "Accessibility (Ventilators-Chicago)" ||
+        "Accessibility (ICU Beds-State)" ||
+        "Accessibility (Ventilators-State)") {
+            // if (slider._map == undefined) {
+            //     map.addControl(slider);
+            // }
+            map.eachLayer(function(layer){
+                if (layer != e.layer) {
+                    slider.removeTimelines(layer);
+                }
+            })
+            slider.addTimelines(e.layer);
+            refreshLegend();
+        }
+        
         //console.log(e);
         if (e.group.name == "Illinois") {
             map.setView([40, -89], 7)
@@ -297,11 +321,9 @@ function main(){
         }else if (e.group.name == "World"){
             map.setView([0, 0], 2)
         }
-        // timelineList.push(e.layer);
-
-        refreshLegend();
+        // timelineList.push(e.layer);        
     }
-
+    
     Array.prototype.indexOf = function(val) {
         for (var i = 0; i < this.length; i++) {
         if (this[i] == val) return i;
@@ -752,6 +774,7 @@ function main(){
                         illinois_counties_ts.setStyle(styleFunc);
                         value.setStyle(highlight);
                         map.setView([lat,long], 9);
+                        updateChart(value.feature);
                     }
                 })
             }
@@ -780,6 +803,7 @@ function main(){
                         us_counties_ts.setStyle(styleFunc);
                         value.setStyle(highlight);
                         map.setView([lat,long], 9);
+                        updateChart(value.feature);
                     }
                 })
             }
@@ -807,6 +831,7 @@ function main(){
                         world_ts.setStyle(styleFunc);
                         value.setStyle(highlight);
                         map.setView([lat,long], 4);
+                        updateChart(value.feature);
                     }
                 })
             }
