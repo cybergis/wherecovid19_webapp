@@ -259,9 +259,13 @@ function main(){
         this.setStyle(styleAccV);		 
         });
     
-    slider.addTimelines(illinois_counties_ts);
+    var activeAnimationLayer = illinois_counties_ts;    
+    slider.addTimelines(activeAnimationLayer);
     // slider.addTimelines(illinois_counties_ts, us_counties_ts, us_states_ts, world_ts, 
     // chicago_acc_i_ts, chicago_acc_v_ts, illinois_acc_i_ts, illinois_acc_v_ts);
+
+    var animationLayerList = [illinois_counties_ts, chicago_acc_i_ts, chicago_acc_v_ts, 
+        illinois_acc_i_ts, illinois_acc_v_ts, us_counties_ts, us_states_ts, world_ts];
 
     // var illinois_zipcode_static = L.geoJSON(illinois_zipcode,{style: styleFunc});
 
@@ -277,41 +281,22 @@ function main(){
         url: 'https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Testing_Sites/MapServer'
     })
 
-    // if (map.hasLayer(hiv_layer, svi_layer, testing_sites)){
-    //     if (slider._map != undefined) {
-    //         map.removeControl(slider);
-    //     }
-    //     if (legend != null) {
-    //         map.removeControl(legend);
-    //     }
-    // }
-    
-    var timelineList = [];
-
     function onOverlayAdd(e){
 
-        // In case of duplicate layers we also need to remove previous timelines
-        // console.log(map);
-        // map.eachLayer(function (layer) {
-        //     map.removeLayer(layer);
-        // });
-        if (e.name == "World" || "US States" || "US Counties" || 
-        "IDPH County-level Cases" ||
-        "Accessibility (ICU Beds-Chicago)" ||
-        "Accessibility (Ventilators-Chicago)" ||
-        "Accessibility (ICU Beds-State)" ||
-        "Accessibility (Ventilators-State)") {
-            // if (slider._map == undefined) {
-            //     map.addControl(slider);
-            // }
-            map.eachLayer(function(layer){
-                if (layer != e.layer) {
-                    slider.removeTimelines(layer);
-                }
-            })
-            slider.addTimelines(e.layer);
-            refreshLegend();
-        }
+        // Remove all previous timelines and the slider itself
+        slider.removeTimelines(activeAnimationLayer);
+        slider.remove();
+        map.removeControl(legend);        
+        
+        // Add back slider with right timeline and legend if it's animation layer
+        animationLayerList.forEach(function(layer) {
+            if (e.layer == layer) {
+                slider.addTo(map);
+                slider.addTimelines(e.layer);
+                activeAnimationLayer = e.layer;
+                refreshLegend();
+            }            
+        })
         
         //console.log(e);
         if (e.group.name == "Illinois") {
@@ -321,7 +306,7 @@ function main(){
         }else if (e.group.name == "World"){
             map.setView([0, 0], 2)
         }
-        // timelineList.push(e.layer);        
+        // timelineList.push(e.layer);       
     }
     
     Array.prototype.indexOf = function(val) {
@@ -337,23 +322,6 @@ function main(){
         this.splice(index, 1);
         }
     };
-
-    // function onOverlayRemove(e){
-    //     timelineList.remove(e.layer);
-    //     slider = L.timelineSliderControl({
-    //         formatOutput: function(date){
-    //             return new Date(date).toLocaleDateString();
-    //         },
-    //         steps:150,
-    //         position: 'bottomleft',
-    //         showTicks: false
-    //     });
-    //     if (timelineList != []) {
-    //         for (i = 0; i < timelineList.length; i++){
-    //             slider.addTimelines(timelineList[i]);
-    //         }  
-    //     }              
-    // }
 
     map.on('overlayadd', onOverlayAdd);
     // map.on('overlayremove', onOverlayRemove);
@@ -484,9 +452,9 @@ function main(){
                 "Accessibility (ICU Beds-State)": illinois_acc_i_ts,
                 "Accessibility (Ventilators-State)": illinois_acc_v_ts,
                 // "IDPH Zipcode-level Cases": illinois_zipcode_static,
-                // "Density of PLWH (Persons Living with HIV)": hiv_layer,
-                // "CDC Social Vulnerability Index": svi_layer,
-                // "Testing Sites":testing_sites
+                "Density of PLWH (Persons Living with HIV)": hiv_layer,
+                "CDC Social Vulnerability Index": svi_layer,
+                "Testing Sites":testing_sites
             },
             "US":{
                 "US States": us_states_ts,
@@ -754,7 +722,14 @@ function main(){
 
         /// illinois Table
         document.querySelector("#illinois-table tbody").addEventListener("click", function(event) {
-            //dph_illinois_county_dynamic.visible = true;
+            if (map.hasLayer(illinois_counties_ts) != true){
+                map.eachLayer(function (layer) {
+                    if (layer._url == undefined) {
+                        map.removeLayer(layer);
+                    }                
+                });
+                map.addLayer(illinois_counties_ts);
+            }                        
 
             var tr = event.target;
             while (tr !== this && !tr.matches("tr")) {
@@ -782,7 +757,14 @@ function main(){
 
         /// US Table
         document.querySelector("#county-table tbody").addEventListener("click", function(event) {
-            // nyt_layer_counties.visible = true;
+            if (map.hasLayer(us_counties_ts) != true){
+                map.eachLayer(function (layer) {
+                    if (layer._url == undefined) {
+                        map.removeLayer(layer);
+                    }                
+                });
+                map.addLayer(us_counties_ts);
+            }    
 
             var tr = event.target;
             while (tr !== this && !tr.matches("tr")) {
@@ -811,7 +793,14 @@ function main(){
 
         /// World Table
         document.querySelector("#world-table tbody").addEventListener("click", function(event) {
-            // who_world_layer.visible = true;
+            if (map.hasLayer(world_ts) != true){
+                map.eachLayer(function (layer) {
+                    if (layer._url == undefined) {
+                        map.removeLayer(layer);
+                    }                
+                });
+                map.addLayer(world_ts);
+            }    
 
             var tr = event.target;
             while (tr !== this && !tr.matches("tr")) {
@@ -834,6 +823,40 @@ function main(){
                         updateChart(value.feature);
                     }
                 })
+            }
+        });
+
+        //Set default layers after clicking side panels
+        document.getElementById("illinois-tab").addEventListener("click", function(event) {
+            if (map.hasLayer(illinois_counties_ts) != true){
+                map.eachLayer(function (layer) {
+                    if (layer._url == undefined) {
+                        map.removeLayer(layer);
+                    }                
+                });
+                map.addLayer(illinois_counties_ts);
+            }
+        });
+
+        document.getElementById("county-tab").addEventListener("click", function(event) {
+            if (map.hasLayer(us_counties_ts) != true){
+                map.eachLayer(function (layer) {
+                    if (layer._url == undefined) {
+                        map.removeLayer(layer);
+                    }                
+                });
+                map.addLayer(us_counties_ts);
+            }
+        });
+
+        document.getElementById("world-tab").addEventListener("click", function(event) {
+            if (map.hasLayer(world_ts) != true){
+                map.eachLayer(function (layer) {
+                    if (layer._url == undefined) {
+                        map.removeLayer(layer);
+                    }                
+                });
+                map.addLayer(world_ts);
             }
         });
         ///////////////////////////////////////////////////////////////////////////////////////////
