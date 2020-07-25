@@ -261,8 +261,9 @@ function main(){
     
     var activeAnimationLayer = illinois_counties_ts;    
     slider.addTimelines(activeAnimationLayer);
-    // slider.addTimelines(illinois_counties_ts, us_counties_ts, us_states_ts, world_ts, 
-    // chicago_acc_i_ts, chicago_acc_v_ts, illinois_acc_i_ts, illinois_acc_v_ts);
+    
+    // Get the most recent map
+    slider.setTime(slider.end);
 
     var animationLayerList = [illinois_counties_ts, chicago_acc_i_ts, chicago_acc_v_ts, 
         illinois_acc_i_ts, illinois_acc_v_ts, us_counties_ts, us_states_ts, world_ts];
@@ -293,6 +294,7 @@ function main(){
             if (e.layer == layer) {
                 slider.addTo(map);
                 slider.addTimelines(e.layer);
+                slider.setTime(slider.end);
                 activeAnimationLayer = e.layer;
                 refreshLegend();
             }            
