@@ -20,11 +20,14 @@ make_copy_data(){
 	cp ./illinois/dph_county_data.geojson ./illinois/dph_county_data-tmp.geojson
  	cp ./illinois/dph_county_static_data.geojson ./illinois/dph_county_static_data-tmp.geojson
 	cp ./illinois/dph_zipcode_data.geojson ./illinois/ph_zipcode_data-tmp.geojson
-	# WHO
+	cp ../illinois/illinois_county_population.txt ./illinois/ 
+        # WHO
 	mkdir -p worldwide
 	cp ./worldwide/World_Countries_Boundaries_new.geojson ./worldwide/World_Countries_Boundaries_new.geojson
 	cp ./worldwide/who_world_data.geojson ./worldwide/who_world_data-tmp.geojson
 	cp ./worldwide/global-covid19-who-gis.json ./worldwide/global-covid19-who-gis-tmp.json
+        cp ../worldwide/world_population.csv ./worldwide/
+
 	# IL Aaccessibility
 	mkdir -p ./illinois
 	mkdir -p ./illinois/Accessibility_Dissolve_Animation
