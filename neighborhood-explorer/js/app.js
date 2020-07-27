@@ -61,7 +61,6 @@ $(function() {
         event.preventDefault();
 
         var formEl = $(this);
-        console.log(JSON.stringify(formEl.serializeArray()));
         var submitButton = $('#variables_form_submit_btn');
 
         //console.log(submitButton);
@@ -69,14 +68,17 @@ $(function() {
         $.ajax({
             type: 'POST',
             url: "http://hsjp10.cigi.illinois.edu:8000/vne",
-            contentType: 'application/json',
-            processData: false,
+            // accept: {
+            //     javascript: 'application/javascript'
+            // },
+            // contentType: 'application/json',
             data: JSON.stringify(formEl.serializeArray()), 
             dataType : 'json', // what type of data do we expect back from the server
-            encode : true,
+            // encode : true,
             beforeSend: function() {
                 $('.overlay-loading ').removeClass('d-none').addClass('d-flex');
                 submitButton.prop( "disabled", true );
+
             }
         })
         .done(function(data){
