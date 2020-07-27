@@ -48,10 +48,10 @@ var promise4=loadJson("preprocessing/illinois/Illinois_ACC_i.geojson");
 var promise5=loadJson("preprocessing/illinois/Illinois_ACC_v.geojson");
 var promise6=loadJson("preprocessing/illinois/Chicago_ACC_i.geojson");
 var promise7=loadJson("preprocessing/illinois/Chicago_ACC_v.geojson");
-//var promise8=loadJson("preprocessing/illinois/vulnerability.geojson");
+var promise8=loadJson("preprocessing/illinois/vulnerability.geojson");
 var promise9=loadJson("preprocessing/illinois/dph_zipcode_data.geojson");
 
-Promise.allSettled([promise, promise0, promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise9]).then((values) => {
+Promise.allSettled([promise, promise0, promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise8, promise9]).then((values) => {
     //console.log(values[0].value);
     colorClass = values[0].value;
     world = values[1].value;
@@ -62,7 +62,8 @@ Promise.allSettled([promise, promise0, promise1, promise2, promise3, promise4, p
     illinois_acc_v = values[6].value;
     chicago_acc_i = values[7].value;
     chicago_acc_v = values[8].value;
-    illinois_zipcode = values[9].value;
+    illinois_vulnerability = values[9].value;
+    illinois_zipcode = values[10].value;
 
     main();
     console.log("---------------------------------------------");
@@ -93,24 +94,18 @@ function main(){
     /////////////////////////////////// Define Color Scheme ///////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////
     
-    function getAccColor(d) {
-        return d > 0.9 ? '#800026' :
-        d > 0.8 ? '#BD0026' :
-        d > 0.6 ? '#E31A1C' :
-        d > 0.4 ? '#FC4E2A' :
-        d > 0.3 ? '#FD8D3C' :
-        d > 0.2 ? '#FEB24C' :
-        d > 0.1 ? '#FED976' :
-        '#FFEDA0';
-    }
-    
-    function splitStr(str,num) {
+    function splitStrInt(str,num) {
     var newStr = str.split(",")
     return parseInt(newStr[num])
     }
 
-    var bins = colorClass.dph_illinois.case_per_100k_capita.nolog.NaturalBreaks.bins.split(",").map(function(item) {
-        return parseInt(item, 10);
+    function splitStrFloat(str,num) {
+        var newStr = str.split(",")
+        return parseFloat(newStr[num])
+    }
+
+    var bins = colorClass.vulnerability.case.nolog.NaturalBreaks.bins.split(",").map(function(item) {
+        return parseFloat(parseFloat(item).toFixed(2));
     });
 
     function getColorFor(_num,_bins) {
@@ -123,12 +118,33 @@ function main(){
         '#FFEDA0';
     }
 
+    function getAccColor(d) {
+        return d > 0.9 ? '#800026' :
+        d > 0.8 ? '#BD0026' :
+        d > 0.6 ? '#E31A1C' :
+        d > 0.4 ? '#FC4E2A' :
+        d > 0.3 ? '#FD8D3C' :
+        d > 0.2 ? '#FEB24C' :
+        d > 0.1 ? '#FED976' :
+        '#FFEDA0';
+    }
+
+    function getVulColor(_num,_bins) {
+        return _num > _bins[5] ? '#301934' :
+        _num > _bins[4] ? '#8c0002' :
+        _num > _bins[3] ? '#d7191c' :
+        _num > _bins[2] ? '#fdaf61' :
+        _num > _bins[1] ? '#ffffbf' :
+        _num > _bins[0] ? '#a5d96a' :
+        '#199640';
+    }
+
     var styleFunc = function(_data){
         return {
         stroke: true,
         weight: 1,
         color: "gray",
-        fillColor: getColorFor(splitStr(_data.properties.cases_ts, index),bins),
+        fillColor: getColorFor(splitStrInt(_data.properties.cases_ts, index),bins),
         fillOpacity: 0.7
         }
     }
@@ -147,6 +163,16 @@ function main(){
         stroke: false,
         color:  "gray",
         fillColor: getAccColor(_data.properties.hospital_v),
+        fillOpacity: 0.7
+        }
+    }
+
+    var styleVul = function(_data){
+        return {
+        stroke: true,
+        weight: 0.8,
+        color:  "gray",
+        fillColor: getVulColor(splitStrFloat(_data.properties.cases_ts, index),bins),
         fillOpacity: 0.7
         }
     }
@@ -170,7 +196,7 @@ function main(){
             
     var illinois_counties_ts = L.timeline(illinois_counties,{style: styleFunc,
         waitToUpdateMap: true, onEachFeature: onEachFeature_illinois_counties, drawOnSetTime: true});
-    illinois_counties_ts.addTo(map);
+    //illinois_counties_ts.addTo(map);
 
     illinois_counties_ts.on('add', function(){
         bins = colorClass.dph_illinois.case_per_100k_capita.nolog.NaturalBreaks.bins.split(",").map(function(item) {
@@ -229,49 +255,64 @@ function main(){
     });
 
     var chicago_acc_i_ts = L.timeline(chicago_acc_i,{style: styleAccI,
-        waitToUpdateMap: true,});
+        waitToUpdateMap: true});
     //chicago_acc_i_ts.addTo(map);
     
     chicago_acc_i_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
         this.setStyle(styleAccI);		 
-        });
+    });
 
     var chicago_acc_v_ts = L.timeline(chicago_acc_v,{style: styleAccV,
-        waitToUpdateMap: true,});
+        waitToUpdateMap: true});
     //chicago_acc_v_ts.addTo(map);
     
     chicago_acc_v_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
         this.setStyle(styleAccV);		 
-        });
+    });
 
     var illinois_acc_i_ts = L.timeline(illinois_acc_i,{style: styleAccI,
-        waitToUpdateMap: true,});
+        waitToUpdateMap: true});
     //illinois_acc_i_ts.addTo(map);
     
     illinois_acc_i_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
         this.setStyle(styleAccI);		 
-        });
+    });
 
     var illinois_acc_v_ts = L.timeline(illinois_acc_v,{style: styleAccV,
-        waitToUpdateMap: true,});
+        waitToUpdateMap: true});
     //illinois_acc_v_ts.addTo(map);
     
     illinois_acc_v_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
         this.setStyle(styleAccV);		 
-        });
+    });
+
+    var illinois_vul_ts = L.timeline(illinois_vulnerability,{style: styleVul,
+        waitToUpdateMap: true});
+    illinois_vul_ts.addTo(map);
+
+    illinois_vul_ts.on('add', function(){
+        bins = colorClass.vulnerability.case.nolog.NaturalBreaks.bins.split(",").map(function(item) {
+            return parseFloat(parseFloat(item).toFixed(2));
+        });	 
+    });
     
-    var activeAnimationLayer = illinois_counties_ts;    
+    illinois_vul_ts.on('change', function(){
+        index = Math.floor((this.time-this.start)/DayInMilSec);
+        this.setStyle(styleVul);		 
+    });
+    
+    var activeAnimationLayer = illinois_vul_ts;    
     slider.addTimelines(activeAnimationLayer);
     
     // Get the most recent map
     slider.setTime(slider.end);
 
     var animationLayerList = [illinois_counties_ts, chicago_acc_i_ts, chicago_acc_v_ts, 
-        illinois_acc_i_ts, illinois_acc_v_ts, us_counties_ts, us_states_ts, world_ts];
+        illinois_acc_i_ts, illinois_acc_v_ts, illinois_vul_ts, us_counties_ts, us_states_ts, world_ts];
 
     // var illinois_zipcode_static = L.geoJSON(illinois_zipcode,{style: styleFunc});
 
@@ -301,7 +342,7 @@ function main(){
                 slider.addTimelines(e.layer);
                 slider.setTime(slider.end);
                 activeAnimationLayer = e.layer;
-                refreshLegend();
+                refreshLegend(layer);
             }            
         })
         
@@ -339,7 +380,7 @@ function main(){
 
     var legend = null;
 
-    function refreshLegend() {
+    function refreshLegend(_layer) {
         
         if (legend != null) {
             map.removeControl(legend)
@@ -358,19 +399,26 @@ function main(){
             //grades.unshift(0);
     
             // loop through our density intervals and generate a label with a colored square for each interval
-            for (var i = 0; i < grades.length; i++) {
-                div.innerHTML +=
-                    '<i style="background:' + getColorFor((grades[i] + 1),bins) + '"></i> ' +
-                    grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+') +'<br>';
-            }
-    
+            if (_layer == illinois_counties_ts || _layer == us_counties_ts || _layer == us_states_ts || _layer == world_ts) {
+                for (var i = 0; i < grades.length; i++) {
+                    div.innerHTML +=
+                        '<i style="background:' + getColorFor((grades[i] + 0.000001),bins) + '"></i> ' +
+                        grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+') +'<br>';
+                }
+            } else if (_layer == illinois_vul_ts) {
+                for (var i = 0; i < grades.length; i++) {
+                    div.innerHTML +=
+                        '<i style="background:' + getVulColor((grades[i] + 0.000001),bins) + '"></i> ' +
+                        grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+') +'<br>';
+                }
+            }                
             return div;
         };
     
         legend.addTo(map);
     }
 
-    refreshLegend();    
+    refreshLegend(illinois_vul_ts);    
 
     ///////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////// Create Popup ///////////////////////////////////////
@@ -459,6 +507,7 @@ function main(){
 
         var groupedOverlays = {
             "Illinois":{
+                "Vulnerability": illinois_vul_ts,
                 "IDPH County-level Cases": illinois_counties_ts,
                 "Accessibility (ICU Beds-Chicago)": chicago_acc_i_ts,
                 "Accessibility (Ventilators-Chicago)": chicago_acc_v_ts,
