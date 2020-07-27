@@ -34,15 +34,15 @@ function loadJson(json_url) {
 }
 
 var promise=loadJson("preprocessing/classes.json");
-var promise0=loadJson("preprocessing/worldwide/who_world_data_leaflet.geojson");
-var promise1=loadJson("preprocessing/nyt_states_data_leaflet.geojson");
-var promise2=loadJson("preprocessing/nyt_counties_data_leaflet.geojson");
-var promise3=loadJson("preprocessing/illinois/dph_county_data_leaflet.geojson");
-var promise4=loadJson("preprocessing/illinois/Illinois_ACC_i_leaflet.geojson");
-var promise5=loadJson("preprocessing/illinois/Illinois_ACC_v_leaflet.geojson");
-var promise6=loadJson("preprocessing/illinois/Chicago_ACC_i_leaflet.geojson");
-var promise7=loadJson("preprocessing/illinois/Chicago_ACC_v_leaflet.geojson");
-//var promise8=loadJson("preprocessing/illinois/vulnerability_leaflet.geojson");
+var promise0=loadJson("preprocessing/worldwide/who_world_data.geojson");
+var promise1=loadJson("preprocessing/nyt_states_data.geojson");
+var promise2=loadJson("preprocessing/nyt_counties_data.geojson");
+var promise3=loadJson("preprocessing/illinois/dph_county_data.geojson");
+var promise4=loadJson("preprocessing/illinois/Illinois_ACC_i.geojson");
+var promise5=loadJson("preprocessing/illinois/Illinois_ACC_v.geojson");
+var promise6=loadJson("preprocessing/illinois/Chicago_ACC_i.geojson");
+var promise7=loadJson("preprocessing/illinois/Chicago_ACC_v.geojson");
+//var promise8=loadJson("preprocessing/illinois/vulnerability.geojson");
 var promise9=loadJson("preprocessing/illinois/dph_zipcode_data.geojson");
 
 Promise.allSettled([promise, promise0, promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise9]).then((values) => {
@@ -103,7 +103,7 @@ function main(){
     return parseInt(newStr[num])
     }
 
-    var bins = colorClass.dph_illinois.case.nolog.NaturalBreaks.bins.split(",").map(function(item) {
+    var bins = colorClass.dph_illinois.case_per_100k_capita.nolog.NaturalBreaks.bins.split(",").map(function(item) {
         return parseInt(item, 10);
     });
 
@@ -168,7 +168,7 @@ function main(){
     illinois_counties_ts.addTo(map);
 
     illinois_counties_ts.on('add', function(){
-        bins = colorClass.dph_illinois.case.nolog.NaturalBreaks.bins.split(",").map(function(item) {
+        bins = colorClass.dph_illinois.case_per_100k_capita.nolog.NaturalBreaks.bins.split(",").map(function(item) {
             return parseInt(item, 10);
         });		 
     });
@@ -183,7 +183,7 @@ function main(){
     //us_states_ts.addTo(map);
 
     us_states_ts.on('add', function(){
-        bins = colorClass.state.case.nolog.NaturalBreaks.bins.split(",").map(function(item) {
+        bins = colorClass.state.case_per_100k_capita.nolog.NaturalBreaks.bins.split(",").map(function(item) {
             return parseInt(item, 10);
         });		 
     });
@@ -198,7 +198,7 @@ function main(){
     //us_counties_ts.addTo(map);
 
     us_counties_ts.on('add', function(){
-        bins = colorClass.county.case.nolog.NaturalBreaks.bins.split(",").map(function(item) {
+        bins = colorClass.county.case_per_100k_capita.nolog.NaturalBreaks.bins.split(",").map(function(item) {
             return parseInt(item, 10);
         });		 
     });

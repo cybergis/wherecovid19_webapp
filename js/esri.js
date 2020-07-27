@@ -990,14 +990,14 @@ require([
             //list_query.orderByFields = ['population DESC'];
             list_query.returnGeometry = false;
             list_query.num = 1;
-            list_query.outFields = ["dt_start", "dt_end", "dt_unit"];
+            list_query.outFields = ["start", "end", "dt_unit"];
             return _layer.queryFeatures(list_query);
         }
 
         function initSlider(response) {
             let feature0_attrs = response.features[0].attributes;
-            let _dt_start_str = feature0_attrs["dt_start"];
-            let _dt_end_str = feature0_attrs["dt_end"];
+            let _dt_start_str = feature0_attrs["start"];
+            let _dt_end_str = feature0_attrs["end"];
 
             if (feature0_attrs.hasOwnProperty("dt_unit")) {
                 dt_interval_unit = feature0_attrs["dt_unit"];
@@ -1464,7 +1464,7 @@ require([
 
                 var dt_thumb = Date(${_date.getFullYear()}, ${_date.getMonth()}, ${_date.getDate()});
                 var ts = Split($feature['${_column}'],',');
-                var dt_start_array = Split($feature.dt_start, '-');
+                var dt_start_array = Split($feature.start, '-');
                 var dt_start = Date(Number(dt_start_array[0]), Number(dt_start_array[1])-1, Number(dt_start_array[2]));
                 if(dt_thumb < dt_start){
                     return '0';
@@ -1741,9 +1741,9 @@ require([
             }
 
             var LabelDates = [];
-            if (graphic.getAttribute("dt_start") == "2020-03-17") {
+            if (graphic.getAttribute("start") == "2020-03-17") {
                 var LabelDate = new Date(2020, 2, 9);
-            } else if (graphic.getAttribute("dt_start") == "2020-01-11") {
+            } else if (graphic.getAttribute("start") == "2020-01-11") {
                 var LabelDate = new Date(2020, 0, 3);
             } else {
                 var LabelDate = new Date(2020, 0, 13);
@@ -2199,7 +2199,7 @@ require([
                 var class = 0;
                 var bins = [${_class}];
                 var population = Number($feature['population'])/100000;
-                var dt_start_array = Split($feature.dt_start, '-');
+                var dt_start_array = Split($feature.start, '-');
                 var dt_start = Date(Number(dt_start_array[0]), Number(dt_start_array[1])-1, Number(dt_start_array[2]));
                 if(dt_thumb < dt_start){
                     class = -1;
