@@ -160,7 +160,7 @@ function main(){
     
     var slider = L.timelineSliderControl({
         formatOutput: function(date){
-            return new Date(date).toLocaleDateString();
+            return new Date(date).toLocaleDateString('en-GB', { timeZone: 'UTC' })
         },
         steps:150,
         position: 'topleft',
@@ -170,7 +170,6 @@ function main(){
             
     var illinois_counties_ts = L.timeline(illinois_counties,{style: styleFunc,
         waitToUpdateMap: true, onEachFeature: onEachFeature_illinois_counties, drawOnSetTime: true});
-    //slider.setTime("05-05-2020");
     illinois_counties_ts.addTo(map);
 
     illinois_counties_ts.on('add', function(){
@@ -352,6 +351,7 @@ function main(){
 
             var div = L.DomUtil.create('div', 'info legend'),
             grades = bins,
+            // labelName = "Cases per 100k Population"
             labels = [];
     
             // Changing the grades using unshift somehow also changes bins?
@@ -435,8 +435,13 @@ function main(){
 
         function onMapClick(e) {
             e.target.setStyle(highlight);
-            // console.log(e.target);
-            // console.log(e);
+            
+            // Add d-block class and remove d-none to display the chart
+            if (window.bar != undefined) {
+                window.bar.destroy();
+            }            
+            document.getElementById('myChart').classList.add("d-block");
+            document.getElementById('myChart').classList.remove("d-none");
             updateChart(e.target.feature);
         };
 
@@ -949,9 +954,9 @@ function main(){
             }
 
             var LabelDates = [];
-            if (graphic.properties.dt_start == "2020-03-17") {
+            if (graphic.properties.start == "2020-03-17") {
                 var LabelDate = new Date(2020, 2, 9);
-            } else if (graphic.properties.dt_start == "2020-01-11") {
+            } else if (graphic.properties.start == "2020-01-11") {
                 var LabelDate = new Date(2020, 0, 3);
             } else {
                 var LabelDate = new Date(2020, 0, 13);
