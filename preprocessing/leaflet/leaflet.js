@@ -7,9 +7,15 @@ var osm = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 });
 
-var Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
-    maxZoom: 20,
-    attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+// var Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
+//     maxZoom: 20,
+//     attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+// });
+
+var CartoDB_DarkMatter = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+	subdomains: 'abcd',
+	maxZoom: 19
 });
 
   ///////////////////////////////////////////////////////////////////////////////////////////
@@ -64,7 +70,7 @@ Promise.allSettled([promise, promise0, promise1, promise2, promise3, promise4, p
   });
 
 var map = L.map('map', {
-    layers: [osm, Stadia_AlidadeSmoothDark], 
+    layers: [osm, CartoDB_DarkMatter], 
     center: new L.LatLng(40, -89), 
     zoom: 7, 
     //Remove Zoom Control from the map
@@ -443,7 +449,7 @@ function main(){
 
         var baseMaps = {
             "OSM": osm,
-            "Dark Mode": Stadia_AlidadeSmoothDark,
+            "Dark Mode": CartoDB_DarkMatter,
         };
 
         var groupedOverlays = {
