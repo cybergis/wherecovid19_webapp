@@ -340,11 +340,11 @@ function main(){
                 slider.addTo(map);
                 slider.addTimelines(e.layer);
                 slider.setTime(slider.end);
-                activeAnimationLayer = e.layer;
-                refreshLegend(layer);
+                activeAnimationLayer = e.layer;                
             }            
         })
         
+        refreshLegend(e.layer);
         //console.log(e);
         if (e.name == "Accessibility (ICU Beds-Chicago)" || e.name == "Accessibility (Ventilators-Chicago)") {
             map.setView([41.87, -87.62], 10)
@@ -375,12 +375,17 @@ function main(){
 
         legend = L.control({position: 'bottomright'});
 
+        binsAcc = ["low","","","","","high"];
+
         legend.onAdd = function (map) {
 
-            var div = L.DomUtil.create('div', 'info legend'),
-                grades = bins,
-                label1 = ['<strong> Cases per 100k Population </strong>'];
-                label2 = ['<strong> Vulnerability </strong>']
+            var div = L.DomUtil.create('div', 'info legend');
+
+            label1 = ['<strong> Cases per 100k Population </strong>'];
+            label2 = ['<strong> Vulnerability </strong>'];
+            label3 = ['<strong> Accessibility </strong>'];
+            label4 = ['<strong> Density </strong>'];
+            label5 = ['<strong> Social Vulnerability Index </strong>'];
     
             // Changing the grades using unshift somehow also changes bins?
             //grades.unshift(0);
@@ -388,7 +393,7 @@ function main(){
     
             // loop through our density intervals and generate a label with a colored square for each interval
             if (_layer == illinois_counties_ts || _layer == us_counties_ts || _layer == us_states_ts || _layer == world_ts) {
-                
+                grades = bins;
                 for (var i = 0; i < grades.length; i++) {
                     legendContent +=
                         '<i style="background:' + getColorFor((grades[i] + 0.000001),bins) + '"></i> ' +
@@ -398,6 +403,7 @@ function main(){
             div.innerHTML = label1.join('<br><br><br>');
             } 
             else if (_layer == illinois_vul_ts) {
+                grades = bins;
                 for (var i = 0; i < grades.length; i++) {
                     legendContent +=
                         '<i style="background:' + getVulColor((grades[i] + 0.000001),bins) + '"></i> ' +
@@ -405,7 +411,38 @@ function main(){
                 }
             label2.push(legendContent);
             div.innerHTML = label2.join('<br><br><br>');
-            }                
+            }
+            else if (_layer == chicago_acc_i_ts || _layer == chicago_acc_v_ts || _layer == illinois_acc_i_ts || _layer == illinois_acc_v_ts  ) {
+                grades = binsAcc;
+                for (var i = 0; i < grades.length; i++) {
+                    legendContent +=
+                        '<i style="background:' + getAccColor(i-0.1) + '"></i> ' +
+                        grades[i] + (grades[i + 1] != undefined ? '<br>' : '')+'<br>';
+                }
+            label3.push(legendContent);
+            div.innerHTML = label3.join('<br><br><br>');  
+            }
+            else if (_layer == hiv_layer) {
+                grades = binsAcc;
+                for (var i = 0; i < grades.length; i++) {
+                    legendContent +=
+                        '<i style="background:' + getAccColor(i-0.1) + '"></i> ' +
+                        grades[i] + (grades[i + 1] != undefined ? '<br>' : '')+'<br>';
+                }
+            label4.push(legendContent);
+            div.innerHTML = label4.join('<br><br><br>');  
+            }
+            else if (_layer == svi_layer) {
+                grades = binsAcc;
+                for (var i = 0; i < grades.length; i++) {
+                    legendContent +=
+                        '<i style="background:' + getAccColor(i-0.1) + '"></i> ' +
+                        grades[i] + (grades[i + 1] != undefined ? '<br>' : '')+'<br>';
+                }
+            label5.push(legendContent);
+            div.innerHTML = label5.join('<br><br><br>');  
+            }
+
             return div;
         };
     
