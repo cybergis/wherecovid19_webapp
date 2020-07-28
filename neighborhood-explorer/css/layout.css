@@ -66,6 +66,10 @@ body {
     border-bottom: #404040 solid 1px;
 }
 
+.dropdown-menu.show {
+    width: 100%;
+}
+
 
 /* App drawer */
 .navbar .app-drawer {
@@ -73,7 +77,6 @@ body {
     border-radius: 5px;
     margin-right: 10px;
     position: relative;
-    cursor: pointer;
 }
 
 .navbar .app-drawer:hover, .navbar .app-drawer.opened {
@@ -84,6 +87,7 @@ body {
     font-size: 18px;
     line-height: 1;
     padding: 8px;
+    cursor: pointer;
 }
 
 .navbar .app-drawer.opened .drawer-panel {
@@ -111,6 +115,7 @@ body {
     width: 100%;
     display: flex;
     flex: 1;
+    cursor: pointer;
 }
 
 .navbar .app-drawer .drawer-panel .app-icon {
@@ -120,13 +125,49 @@ body {
     display: inline-block;
     background-size: cover;
     color: black;
+    border-radius: 5px;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
 }
+.navbar .app-drawer .drawer-panel .app-icon::after {
+        content: '';
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(0deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+        position: absolute;
+        z-index: 15;
+        transition: all .5s;
+        top: 0;
+}
+.navbar .app-drawer .drawer-panel .app-icon:hover::after {
+    background: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.2) 100%);
+}
+
+.navbar .app-drawer .drawer-panel .app-icon .app-desc {
+    position: absolute;
+    padding: 10px;
+    transition: all .5s;
+    transform: translatey(65px);
+    z-index: 1000;
+    color: white !important;
+}
+
+.navbar .app-drawer .drawer-panel .app-icon:hover .app-desc {
+    /* top:0px; */
+    transform: translatey(0%);
+}
+
 
 .navbar .app-drawer .drawer-panel .app-icon h3 {
-
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 0;
 }
 .navbar .app-drawer .drawer-panel .app-icon p {
-
+    text-decoration: none;
+    font-size: 13px;
+    margin-bottom: 0;
 }
 
 /* End of App drawer */
