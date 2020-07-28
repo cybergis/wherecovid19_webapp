@@ -102,6 +102,11 @@ $(function() {
                 console.log(data.status);
                     // here we will handle errors and validation messages
                 if("SUCCESS" == data.status){
+
+                    if($('#vne').length) {
+                        $("#vne").remove();
+                    } 
+                    
                     $('.overlay-loading ').removeClass('d-flex').addClass('d-none');
                     submitButton.prop( "disabled", false );
                     close_sidebar();
@@ -112,7 +117,7 @@ $(function() {
                         frameborder: 0,
                         scrolling: 'yes'
                         }).appendTo('#results');
-
+                    
                 } else {
                     // Schedule the next
                     setTimeout(check_jobstatus, 3000, data.job_id, submitButton);
