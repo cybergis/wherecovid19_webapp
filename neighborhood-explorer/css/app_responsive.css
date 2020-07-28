@@ -265,11 +265,12 @@ screen-btn:first {
 #variables_form {
     height: 100%;
 }
-.variables_selections {
+/* .variables_selections {
     flex: 1;
     overflow-y: auto;
     margin-bottom: 15px;
-}
+    max-height: 625px;
+} */
 
 /* // Extra small devices (portrait phones, less than 576px) */
 

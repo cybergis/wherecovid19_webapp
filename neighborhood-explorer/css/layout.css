@@ -66,6 +66,8 @@ body {
     border-bottom: #404040 solid 1px;
 }
 
+
+/* App drawer */
 .navbar .app-drawer {
     color: white;
     border-radius: 5px;
@@ -105,8 +107,29 @@ body {
     box-shadow: 0 1px 2px 0 rgba(60,64,67,.30),0 2px 6px 2px rgba(60,64,67,.15);
 }
 
-.navbar .app-drawer .drawer-panel .app-icon {
+.navbar .app-drawer .drawer-panel .app-icon-wrap {
+    width: 100%;
+    display: flex;
+    flex: 1;
 }
+
+.navbar .app-drawer .drawer-panel .app-icon {
+    background-color: yellowgreen;
+    width: 100%;
+    height: 100px;
+    display: inline-block;
+    background-size: cover;
+    color: black;
+}
+
+.navbar .app-drawer .drawer-panel .app-icon h3 {
+
+}
+.navbar .app-drawer .drawer-panel .app-icon p {
+
+}
+
+/* End of App drawer */
 
 .navbar h1 a:hover {
     text-decoration: none;
