@@ -238,19 +238,19 @@ function main(){
         this.setStyle(styleFunc);		 
     });
 
-    var world_ts = L.timeline(world,{style: styleFuncWorld,
+    var world_ts = L.timeline(world,{style: styleFunc,
         waitToUpdateMap: true, onEachFeature: onEachFeature_world});
     //world_ts.addTo(map);
 
     world_ts.on('add', function(){
-        bins = colorClass.who_world.case.nolog.NaturalBreaks.bins.split(",").map(function(item) {
+        bins = colorClass.who_world.case_per_100k_capita.nolog.NaturalBreaks.bins.split(",").map(function(item) {
             return parseInt(item, 10);
         });		 
     });
     
     world_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
-        this.setStyle(styleFuncWorld);		 
+        this.setStyle(styleFunc);		 
     });
 
     var chicago_acc_i_ts = L.timeline(chicago_acc_i,{style: styleAcc,
