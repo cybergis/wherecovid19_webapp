@@ -106,7 +106,7 @@ $(function() {
                     if($('#vne').length) {
                         $("#vne").remove();
                     } 
-                    
+
                     $('.overlay-loading ').removeClass('d-flex').addClass('d-none');
                     submitButton.prop( "disabled", false );
                     close_sidebar();
@@ -118,9 +118,15 @@ $(function() {
                         scrolling: 'yes'
                         }).appendTo('#results');
                     
+                } else if ( "FAILURE" == data.status ) {
+                    $('#resultsFailed').modal('show')
+                    $('.overlay-loading ').removeClass('d-flex').addClass('d-none');
+                    submitButton.prop( "disabled", false );
                 } else {
                     // Schedule the next
-                    setTimeout(check_jobstatus, 3000, data.job_id, submitButton);
+                    //vne-20200728-204118-33f51508 Failed
+                    // setTimeout(check_jobstatus, 3000, data.job_id, submitButton);
+                    setTimeout(check_jobstatus, 3000, "vne-20200728-204118-33f51508", submitButton);
                 }
             }
         });
