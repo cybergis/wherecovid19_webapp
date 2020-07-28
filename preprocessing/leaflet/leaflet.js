@@ -119,14 +119,12 @@ function main(){
     }
 
     function getAccColor(d) {
-        return d > 0.9 ? '#800026' :
-        d > 0.8 ? '#BD0026' :
-        d > 0.6 ? '#E31A1C' :
-        d > 0.4 ? '#FC4E2A' :
-        d > 0.3 ? '#FD8D3C' :
-        d > 0.2 ? '#FEB24C' :
-        d > 0.1 ? '#FED976' :
-        '#FFEDA0';
+        return d > 4 ? '#08519c' :
+        d > 3 ? '#3182bd' :
+        d > 2 ? '#6baed6' :
+        d > 1 ? '#9ecae1' :
+        d > 0 ? '#c6dbef' :
+        '#eff3ff';
     }
 
     function getVulColor(_num,_bins) {
@@ -149,20 +147,11 @@ function main(){
         }
     }
     
-    var styleAccI = function(_data){
+    var styleAcc = function(_data){
         return {
         stroke: false,
-        color:  "gray",
-        fillColor: getAccColor(_data.properties.hospital_i),
-        fillOpacity: 0.7
-        }
-    }
-
-    var styleAccV = function(_data){
-        return {
-        stroke: false,
-        color:  "gray",
-        fillColor: getAccColor(_data.properties.hospital_v),
+        //color:  "gray",
+        fillColor: getAccColor(_data.properties.category),
         fillOpacity: 0.7
         }
     }
@@ -186,7 +175,7 @@ function main(){
     
     var slider = L.timelineSliderControl({
         formatOutput: function(date){
-            return new Date(date).toLocaleDateString('en-GB', { timeZone: 'UTC' })
+            return new Date(date).toLocaleDateString('en-US', { timeZone: 'UTC' })
         },
         steps:150,
         position: 'topleft',
@@ -254,40 +243,40 @@ function main(){
         this.setStyle(styleFunc);		 
     });
 
-    var chicago_acc_i_ts = L.timeline(chicago_acc_i,{style: styleAccI,
+    var chicago_acc_i_ts = L.timeline(chicago_acc_i,{style: styleAcc,
         waitToUpdateMap: true});
     //chicago_acc_i_ts.addTo(map);
     
     chicago_acc_i_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
-        this.setStyle(styleAccI);		 
+        this.setStyle(styleAcc);		 
     });
 
-    var chicago_acc_v_ts = L.timeline(chicago_acc_v,{style: styleAccV,
+    var chicago_acc_v_ts = L.timeline(chicago_acc_v,{style: styleAcc,
         waitToUpdateMap: true});
     //chicago_acc_v_ts.addTo(map);
     
     chicago_acc_v_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
-        this.setStyle(styleAccV);		 
+        this.setStyle(styleAcc);		 
     });
 
-    var illinois_acc_i_ts = L.timeline(illinois_acc_i,{style: styleAccI,
+    var illinois_acc_i_ts = L.timeline(illinois_acc_i,{style: styleAcc,
         waitToUpdateMap: true});
     //illinois_acc_i_ts.addTo(map);
     
     illinois_acc_i_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
-        this.setStyle(styleAccI);		 
+        this.setStyle(styleAcc);		 
     });
 
-    var illinois_acc_v_ts = L.timeline(illinois_acc_v,{style: styleAccV,
+    var illinois_acc_v_ts = L.timeline(illinois_acc_v,{style: styleAcc,
         waitToUpdateMap: true});
     //illinois_acc_v_ts.addTo(map);
     
     illinois_acc_v_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
-        this.setStyle(styleAccV);		 
+        this.setStyle(styleAcc);		 
     });
 
     var illinois_vul_ts = L.timeline(illinois_vulnerability,{style: styleVul,
