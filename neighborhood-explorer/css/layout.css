@@ -69,9 +69,19 @@ body {
 .dropdown-menu.show {
     width: 100%;
 }
+.navbar h1 a:hover {
+    text-decoration: none;
+}
+
+.header-title {
+    font-size: 20px;
+    color: #FFFFFF;
+}
+
+/******* End of Top bar ******/
 
 
-/* App drawer */
+/******* App drawer ******/
 .navbar .app-drawer {
     color: white;
     border-radius: 5px;
@@ -96,7 +106,8 @@ body {
 .navbar .app-drawer .drawer-panel {
     display: none;
     width: 350px;
-    height: 300px;
+    min-width: 250px;
+    max-width: 480px;
     position: absolute;
     background-color: violet;
     overflow-y: auto;
@@ -169,19 +180,7 @@ body {
     font-size: 13px;
     margin-bottom: 0;
 }
-
-/* End of App drawer */
-
-.navbar h1 a:hover {
-    text-decoration: none;
-}
-
-.header-title {
-    font-size: 20px;
-    color: #FFFFFF;
-}
-
-/******* End of Top bar ******/
+/******* End of App drawer ******/
 
 /******* Left sidebar ******/
 

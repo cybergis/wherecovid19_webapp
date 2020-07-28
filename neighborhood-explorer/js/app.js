@@ -69,7 +69,7 @@ $(function() {
         $.ajax({
             type: 'POST',
             url: "http://hsjp10.cigi.illinois.edu:8000/vne",
-            data: JSON.stringify(formEl.serializeArray()), 
+            data: formEl.serializeArray(), 
             dataType : 'json', // what type of data do we expect back from the server
             beforeSend: function() {
                 $('.overlay-loading ').removeClass('d-none').addClass('d-flex');
