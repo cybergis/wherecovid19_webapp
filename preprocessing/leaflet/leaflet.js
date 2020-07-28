@@ -142,6 +142,16 @@ function main(){
         stroke: true,
         weight: 1,
         color: "gray",
+        fillColor: getColorFor(100000*splitStrInt(_data.properties.cases_ts, index)/_data.properties.population,bins),
+        fillOpacity: 0.7
+        }
+    }
+
+    var styleFuncWorld = function(_data){
+        return {
+        stroke: true,
+        weight: 1,
+        color: "gray",
         fillColor: getColorFor(splitStrInt(_data.properties.cases_ts, index),bins),
         fillOpacity: 0.7
         }
@@ -228,7 +238,7 @@ function main(){
         this.setStyle(styleFunc);		 
     });
 
-    var world_ts = L.timeline(world,{style: styleFunc,
+    var world_ts = L.timeline(world,{style: styleFuncWorld,
         waitToUpdateMap: true, onEachFeature: onEachFeature_world});
     //world_ts.addTo(map);
 
@@ -240,7 +250,7 @@ function main(){
     
     world_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
-        this.setStyle(styleFunc);		 
+        this.setStyle(styleFuncWorld);		 
     });
 
     var chicago_acc_i_ts = L.timeline(chicago_acc_i,{style: styleAcc,
@@ -380,26 +390,33 @@ function main(){
         legend.onAdd = function (map) {
 
             var div = L.DomUtil.create('div', 'info legend'),
-            grades = bins,
-            // labelName = "Cases per 100k Population"
-            labels = [];
+                grades = bins,
+                label1 = ['<strong> Cases per 100k Population </strong>'];
+                label2 = ['<strong> Vulnerability </strong>']
     
             // Changing the grades using unshift somehow also changes bins?
             //grades.unshift(0);
+            var legendContent = "";
     
             // loop through our density intervals and generate a label with a colored square for each interval
             if (_layer == illinois_counties_ts || _layer == us_counties_ts || _layer == us_states_ts || _layer == world_ts) {
+                
                 for (var i = 0; i < grades.length; i++) {
-                    div.innerHTML +=
+                    legendContent +=
                         '<i style="background:' + getColorFor((grades[i] + 0.000001),bins) + '"></i> ' +
                         grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+') +'<br>';
                 }
-            } else if (_layer == illinois_vul_ts) {
+            label1.push(legendContent);
+            div.innerHTML = label1.join('<br><br><br>');
+            } 
+            else if (_layer == illinois_vul_ts) {
                 for (var i = 0; i < grades.length; i++) {
-                    div.innerHTML +=
+                    legendContent +=
                         '<i style="background:' + getVulColor((grades[i] + 0.000001),bins) + '"></i> ' +
                         grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+') +'<br>';
                 }
+            label2.push(legendContent);
+            div.innerHTML = label2.join('<br><br><br>');
             }                
             return div;
         };
@@ -413,51 +430,65 @@ function main(){
     ////////////////////////////////////// Create Popup ///////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////
 
-        function onEachFeature_illinois_counties(feature, layer) {
-            if (feature.properties) {
-                layer.bindPopup(" " +feature.properties.NAME + " "  + "<br>Total cases : " + feature.properties.today_case + " ");
-                layer.on("click", function(e){
-                    index = Math.floor((illinois_counties_ts.time-illinois_counties_ts.start)/DayInMilSec);
-                    illinois_counties_ts.setStyle(styleFunc);
-                    onMapClick(e);
-                });         
-            }
-        };
+    var template = '<form id="popup-form">\
+    <table class="popup-table">\
+        <tr class="popup-table-row">\
+        <th class="popup-table-header">Arc numer:</th>\
+        <td id="value-arc" class="popup-table-data"></td>\
+        </tr>\
+        <tr class="popup-table-row">\
+        <th class="popup-table-header">Current speed:</th>\
+        <td id="value-speed" class="popup-table-data"></td>\
+        </tr>\
+    </table>\
+    <button id="button-submit" type="button">Save Changes</button>\
+    </form>';
 
-        function onEachFeature_us_counties(feature, layer) {
-            if (feature.properties) {
-                layer.bindPopup(" " +feature.properties.NAME + " "  + "<br>Total cases : " + feature.properties.today_case + " ");
-                layer.on("click", function(e){
-                    index = Math.floor((us_counties_ts.time-us_counties_ts.start)/DayInMilSec);
-                    us_counties_ts.setStyle(styleFunc);
-                    onMapClick(e);
-                });    
-            }
-        };   
-        // Need to make it changable with time (use index of cases_ts)
+    function onEachFeature_illinois_counties(feature, layer) {
+        if (feature.properties) {
+            layer.bindPopup(" " +feature.properties.NAME + " "  + "<br>Total cases : " + feature.properties.today_case + " ");
+            layer.on("click", function(e){
+                index = Math.floor((illinois_counties_ts.time-illinois_counties_ts.start)/DayInMilSec);
+                illinois_counties_ts.setStyle(styleFunc);
+                onMapClick(e);
+            });         
+        }
+    };
 
-        function onEachFeature_us_states(feature, layer) {
-            if (feature.properties) {
-                layer.bindPopup(" " +feature.properties.NAME + " "  + "<br>Total cases : " + feature.properties.today_case + " ");
-                layer.on("click", function(e){
-                    index = Math.floor((us_states_ts.time-us_states_ts.start)/DayInMilSec);
-                    us_states_ts.setStyle(styleFunc);
-                    onMapClick(e);
-                });        
-            }
-        };
+    function onEachFeature_us_counties(feature, layer) {
+        if (feature.properties) {
+            layer.bindPopup(" " +feature.properties.NAME + " "  + "<br>Total cases : " + feature.properties.today_case + " ");
+            layer.on("click", function(e){
+                index = Math.floor((us_counties_ts.time-us_counties_ts.start)/DayInMilSec);
+                us_counties_ts.setStyle(styleFunc);
+                onMapClick(e);
+            });    
+        }
+    };   
+    // Need to make it changable with time (use index of cases_ts)
 
-        function onEachFeature_world(feature, layer) {
-            if (feature.properties) {
-                layer.bindPopup(" " +feature.properties.NAME + " "  + "<br>Total cases : " + feature.properties.today_case + " ");
-                layer.on("click", function(e){
-                    index = Math.floor((world_ts.time-world_ts.start)/DayInMilSec);
-                    world_ts.setStyle(styleFunc);
-                    onMapClick(e);
-                });
-                    
-            }
-        };
+    function onEachFeature_us_states(feature, layer) {
+        if (feature.properties) {
+            layer.bindPopup(" " +feature.properties.NAME + " "  + "<br>Total cases : " + feature.properties.today_case + " ");
+            layer.on("click", function(e){
+                index = Math.floor((us_states_ts.time-us_states_ts.start)/DayInMilSec);
+                us_states_ts.setStyle(styleFunc);
+                onMapClick(e);
+            });        
+        }
+    };
+
+    function onEachFeature_world(feature, layer) {
+        if (feature.properties) {
+            layer.bindPopup(" " +feature.properties.NAME + " "  + "<br>Total cases : " + feature.properties.today_case + " ");
+            layer.on("click", function(e){
+                index = Math.floor((world_ts.time-world_ts.start)/DayInMilSec);
+                world_ts.setStyle(styleFunc);
+                onMapClick(e);
+            });
+                
+        }
+    };
 
     ///////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////// Highlight when clicking /////////////////////////////////
