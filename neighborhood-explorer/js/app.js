@@ -124,9 +124,10 @@ $(function() {
                     submitButton.prop( "disabled", false );
                 } else {
                     // Schedule the next
+                    setTimeout(check_jobstatus, 3000, data.job_id, submitButton);
+                    //FAiled case
                     //vne-20200728-204118-33f51508 Failed
-                    // setTimeout(check_jobstatus, 3000, data.job_id, submitButton);
-                    setTimeout(check_jobstatus, 3000, "vne-20200728-204118-33f51508", submitButton);
+                    // setTimeout(check_jobstatus, 3000, "vne-20200728-204118-33f51508", submitButton);
                 }
             }
         });
