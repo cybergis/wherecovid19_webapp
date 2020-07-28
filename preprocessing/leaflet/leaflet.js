@@ -346,7 +346,9 @@ function main(){
         })
         
         //console.log(e);
-        if (e.group.name == "Illinois") {
+        if (e.name == "Accessibility (ICU Beds-Chicago)" || e.name == "Accessibility (Ventilators-Chicago)") {
+            map.setView([41.87, -87.62], 10)
+        }else if (e.group.name == "Illinois") {
             map.setView([40, -89], 7)
         }else if (e.group.name == "US"){
             map.setView([37, -96], 4)
@@ -355,20 +357,6 @@ function main(){
         }
         // timelineList.push(e.layer);       
     }
-    
-    Array.prototype.indexOf = function(val) {
-        for (var i = 0; i < this.length; i++) {
-        if (this[i] == val) return i;
-        }
-        return -1;
-    };
-
-    Array.prototype.remove = function(val) {
-        var index = this.indexOf(val);
-        if (index > -1) {
-        this.splice(index, 1);
-        }
-    };
 
     map.on('overlayadd', onOverlayAdd);
     // map.on('overlayremove', onOverlayRemove);
@@ -521,7 +509,7 @@ function main(){
     /////////////////////////////////////////////////////////////////////////////////////////// 
 
         var baseMaps = {
-            "OSM": osm,
+            "Light Mode": osm,
             "Dark Mode": CartoDB_DarkMatter,
         };
 

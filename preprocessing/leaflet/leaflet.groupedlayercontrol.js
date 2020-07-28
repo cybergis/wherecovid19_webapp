@@ -336,13 +336,18 @@ L.Control.GroupedLayers = L.Control.extend({
 
         if (input.checked && !this._map.hasLayer(obj.layer)) {
           this._map.addLayer(obj.layer);
-          for (j = 0; j < inputsLen; j++) {
-            if (this._getLayer(inputs[j].layerId).overlay == true && j != i) {
-              // Uncheck and remove all layers except current layer
-              inputs[j].checked = false;
-              this._map.removeLayer(this._getLayer(inputs[j].layerId).layer);
+          
+          // Only when it's overlay layer will other overlay layers be removed 
+          if (obj.overlay == true) {
+            for (j = 0; j < inputsLen; j++) {
+              // Uncheck and remove all overlay layers except current layer
+              if (this._getLayer(inputs[j].layerId).overlay == true && j != i) {
+                inputs[j].checked = false;
+                this._map.removeLayer(this._getLayer(inputs[j].layerId).layer);
+              }
             }
           }
+          
         } 
         if (!input.checked && this._map.hasLayer(obj.layer)) {
           this._map.removeLayer(obj.layer);
