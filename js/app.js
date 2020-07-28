@@ -14,10 +14,12 @@ $(function() {
             $('#sidebar_control').removeClass("open").addClass("closed");
             $(".sidebar").css('display', 'none').removeClass("open").addClass("closed");
             $("main").addClass("map-fullscreen");
+            window.map.invalidateSize();
         } else {
             $('#sidebar_control').removeClass("closed").addClass("open");
             $(".sidebar").css('display', 'flex').removeClass("closed").addClass("open");
             $("main").removeClass("map-fullscreen");
+            window.map.invalidateSize();
         }
     });
 
