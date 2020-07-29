@@ -451,8 +451,13 @@ function main(){
     ///////////////////////////////////////////////////////////////////////////////////////////
     
     function createPopup(_feature,_layer) {
+        if (_feature.properties.state_name != undefined) {
+            var popupName = _feature.properties.NAME + ", " + _feature.properties.state_name
+        } else {
+            var popupName = _feature.properties.NAME
+        }
         _layer.bindPopup('<form id="popup-form">\
-        <label id="name">'+ _feature.properties.NAME +'</label>\
+        <label id="name">'+ popupName +'</label>\
         <table class="popup-table">\
             <tr class="popup-table-row">\
             <th class="popup-table-header">Total Cases:</th>\
