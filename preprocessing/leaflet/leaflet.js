@@ -320,6 +320,10 @@ function main(){
 
     function onOverlayAdd(e){
 
+        // Remove the chart if it exists
+        document.getElementById('myChart').classList.add("d-none");
+        document.getElementById('myChart').classList.remove("d-block");
+
         // Remove all previous timelines and the slider itself
         slider.removeTimelines(activeAnimationLayer);
         slider.remove();
