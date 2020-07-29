@@ -115,7 +115,8 @@ function main(){
         _num > _bins[2] ? '#FC4E2A' :
         _num > _bins[1] ? '#FD8D3C' :
         _num > _bins[0] ? '#FEB24C' :
-        '#FFEDA0';
+        _num > 0 ? '#FFEDA0' :
+        '#000000';
     }
 
     function getAccColor(d) {
