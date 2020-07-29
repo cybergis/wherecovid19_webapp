@@ -146,16 +146,6 @@ function main(){
         fillOpacity: 0.7
         }
     }
-
-    var styleFuncWorld = function(_data){
-        return {
-        stroke: true,
-        weight: 1,
-        color: "gray",
-        fillColor: getColorFor(splitStrInt(_data.properties.cases_ts, index),bins),
-        fillOpacity: 0.7
-        }
-    }
     
     var styleAcc = function(_data){
         return {
@@ -454,24 +444,38 @@ function main(){
     ///////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////// Create Popup ///////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////
-
-    var template = '<form id="popup-form">\
-    <table class="popup-table">\
-        <tr class="popup-table-row">\
-        <th class="popup-table-header">Arc numer:</th>\
-        <td id="value-arc" class="popup-table-data"></td>\
-        </tr>\
-        <tr class="popup-table-row">\
-        <th class="popup-table-header">Current speed:</th>\
-        <td id="value-speed" class="popup-table-data"></td>\
-        </tr>\
-    </table>\
-    <button id="button-submit" type="button">Save Changes</button>\
-    </form>';
+    
+    function createPopup(_feature,_layer) {
+        _layer.bindPopup('<form id="popup-form">\
+        <label id="name">'+ _feature.properties.NAME +'</label>\
+        <table class="popup-table">\
+            <tr class="popup-table-row">\
+            <th class="popup-table-header">Total Cases:</th>\
+            <td id="total_cases" class="popup-table-data">'+ _feature.properties.today_case +'</td>\
+            </tr>\
+            <tr class="popup-table-row">\
+            <th class="popup-table-header">Total Deaths:</th>\
+            <td id="total_deaths" class="popup-table-data">'+ _feature.properties.today_death +'</td>\
+            </tr>\
+            <tr class="popup-table-row">\
+            <th class="popup-table-header">Population:</th>\
+            <td id="population" class="popup-table-data">'+ _feature.properties.population +'</td>\
+            </tr>\
+            <tr class="popup-table-row">\
+            <th class="popup-table-header">First Date of Confirmed Cases</th>\
+            <td id="first_date_case" class="popup-table-data">'+ _feature.properties.dt_first_case +'</td>\
+            </tr>\
+            <tr class="popup-table-row">\
+            <th class="popup-table-header">First Date of Deaths</th>\
+            <td id="first_date_death" class="popup-table-data">'+ _feature.properties.dt_first_death +'</td>\
+            </tr>\
+        </table>\
+        </form>')
+    }
 
     function onEachFeature_illinois_counties(feature, layer) {
         if (feature.properties) {
-            layer.bindPopup(" " +feature.properties.NAME + " "  + "<br>Total cases : " + feature.properties.today_case + " ");
+            createPopup(feature,layer);
             layer.on("click", function(e){
                 index = Math.floor((illinois_counties_ts.time-illinois_counties_ts.start)/DayInMilSec);
                 illinois_counties_ts.setStyle(styleFunc);
@@ -482,7 +486,7 @@ function main(){
 
     function onEachFeature_us_counties(feature, layer) {
         if (feature.properties) {
-            layer.bindPopup(" " +feature.properties.NAME + " "  + "<br>Total cases : " + feature.properties.today_case + " ");
+            createPopup(feature,layer);
             layer.on("click", function(e){
                 index = Math.floor((us_counties_ts.time-us_counties_ts.start)/DayInMilSec);
                 us_counties_ts.setStyle(styleFunc);
@@ -494,7 +498,7 @@ function main(){
 
     function onEachFeature_us_states(feature, layer) {
         if (feature.properties) {
-            layer.bindPopup(" " +feature.properties.NAME + " "  + "<br>Total cases : " + feature.properties.today_case + " ");
+            createPopup(feature,layer);
             layer.on("click", function(e){
                 index = Math.floor((us_states_ts.time-us_states_ts.start)/DayInMilSec);
                 us_states_ts.setStyle(styleFunc);
@@ -505,7 +509,7 @@ function main(){
 
     function onEachFeature_world(feature, layer) {
         if (feature.properties) {
-            layer.bindPopup(" " +feature.properties.NAME + " "  + "<br>Total cases : " + feature.properties.today_case + " ");
+            createPopup(feature,layer);
             layer.on("click", function(e){
                 index = Math.floor((world_ts.time-world_ts.start)/DayInMilSec);
                 world_ts.setStyle(styleFunc);

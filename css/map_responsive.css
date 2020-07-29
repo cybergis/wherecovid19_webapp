@@ -48,9 +48,68 @@ main,
     z-index: 0;
 }
 
-/* 
-* Timeline controller  
-*/
+
+/* Layer Control */
+  
+.leaflet-control-layers-group-name {
+    font-weight: bold;
+    margin-bottom: .2em;
+    margin-left: 3px;
+}
+
+.leaflet-control-layers-group {
+    margin-bottom: .5em;
+}
+
+.leaflet-control-layers-scrollbar {
+    overflow-y: scroll;
+    padding-right: 10px;
+}
+
+
+/* Popup Window */
+
+.popup-table {
+    width: 100%;
+}
+
+.popup-table-row {
+    background-color: lightgrey;
+}
+
+
+/* Legend */
+
+.info {
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: grey;
+    /* background: rgba(255,255,255,0.3); */
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+
+.legend {
+    line-height: 15px;
+    color: white;
+}
+
+.legend i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+}
+
+.leaflet-container .leaflet-control-attribution {
+    background: rgba(255, 255, 255, 0.3);
+    margin: 0;
+}
+
+
+/* Timeline Controller */
+
 .leaflet-top.leaflet-left{
     width: 100%;
 }
@@ -72,33 +131,6 @@ main,
     float: left;
     width: 13%;
     box-sizing: border-box;
-}
-
-.info {
-    padding: 6px 8px;
-    font: 14px/16px Arial, Helvetica, sans-serif;
-    background: white;
-    background: rgba(255,255,255,0.3);
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    border-radius: 5px;
-}
-
-.legend {
-    line-height: 15px;
-    color: white;
-}
-
-.legend i {
-    width: 18px;
-    height: 18px;
-    float: left;
-    margin-right: 8px;
-    opacity: 0.7;
-}
-
-.leaflet-container .leaflet-control-attribution {
-    background: rgba(255, 255, 255, 0.3);
-    margin: 0;
 }
 
 #titleDiv {
@@ -221,9 +253,7 @@ main,
 }
 
 
-/**
-  * Play/Stop toggle button
-  */
+/* Play/Stop toggle button */
 
 #playButton {
     -webkit-box-flex: 0;
@@ -262,9 +292,7 @@ main,
 }
 
 
-/**
-    * Hover tooltip
-    */
+/* Hover tooltip */
 
 .tooltip {
     position: absolute;
