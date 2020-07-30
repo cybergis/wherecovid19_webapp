@@ -110,6 +110,50 @@ main,
 
 /* Timeline Controller */
 
+.button-container .prev,
+.button-container .next {
+    display: none;
+}
+.button-container button {
+  border: none;
+  color: white;
+  padding: 10px 27px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+.button-container .play {
+    background-color: gray; /* Green */
+}
+.button-container .pause {
+    background-color: gray; /* Green */
+}
+
+.leaflet-control.leaflet-timeline-control .button-container button.play::before {
+    border: 7px solid transparent;
+    border-width: 5px 0 5px 8px;
+    border-left-color: black;
+    margin-top: -5px;
+    background: transparent;
+    margin-left: -5px;
+}
+
+.leaflet-control.leaflet-timeline-control .button-container button.pause::before {
+    width: 4px;
+    height: 11px;
+    border: 2px solid black;
+    border-width: 0 4px;
+    margin-top: -6px;
+    margin-left: -6px;
+    background: transparent;
+}
+
+.leaflet-control-layers-toggle {
+    width: 48px !important;
+    height: 48px !important;
+}
+
 .leaflet-top.leaflet-left{
     width: 100%;
 }
@@ -123,10 +167,10 @@ main,
 }
 
 .leaflet-control.leaflet-timeline-control input[type="range"] {
-    width: 85%;
-    margin-top: 5px;
+    width: calc( 100% - 130px );
+    margin: auto;
+    margin-top: 9px;
 }
-
 .leaflet-control.leaflet-timeline-control .sldr-ctrl-container {
     float: left;
     width: 13%;
