@@ -157,7 +157,7 @@
 
         <div class="content-section" style="flex-grow: 1; display: flex; flex-direction: row;">
 
-            <nav class="sidebar col-12 col-sm-12 col-md-5 col-lg-4 col-xl-4 open flex-column " style="color:white;">
+            <nav class="sidebar col-12 col-sm-12 col-md-5 col-lg-4 col-xl-4 closed flex-column " style="color:white;">
                 <div class="overlay-loading d-none justify-content-center">
                     <span class="spinner-border spinner-border-sm" role="status"
                         style="width: 3rem; height: 3rem;position:absolute;top: 50%;" aria-hidden="true">
@@ -308,11 +308,22 @@
                 </form>
             </nav><!-- End sidebar -->
 
-            <main role="main" class="col-12 col-sm-12 col-md-7 col-lg-8 col-xl-8" style="background-color: azure;">
+            <main role="main" class="col-12 col-sm-12 col-md-7 col-lg-8 col-xl-8 map-fullscreen" style="background-color: azure;">
                 <div class="row d-flex" style="flex: 1;">
-                    <a href="#" id="sidebar_control" class="open" role="button" aria-pressed="true"
-                        title="close the sidebar"><i class="fas fa-angle-left"></i></a>
+                    <div class="loadLayover">   
+                        <div class="loadbarWrap">
+                            <div id="loading_bar" class="progress">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#" id="sidebar_control" class="closed" role="button" aria-pressed="true"
+                        title="close the sidebar"><i class="fas fa-angle-left"></i>
+                    </a>
                     <div id="results">
+                        <div id="vne">
+                            
+                        </div>
                     </div>
                 </div>
                 <div class="right-sidebar closed col-12 col-sm-12 col-md-5 col-lg-4 col-xl-4 open flex-column p-3">
@@ -370,6 +381,10 @@
 
     <!-- JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script
+  src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+  integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+  crossorigin="anonymous"></script>
     <script src="https://kit.fontawesome.com/83341c3e60.js" crossorigin="anonymous"></script>
     <script src="js/loader.js" crossorigin="anonymous"></script>
     <script src="js/app.js" crossorigin="anonymous"></script>
@@ -377,9 +392,7 @@
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js "></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js "
-        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo "
-        crossorigin="anonymous "></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js "
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6 "
         crossorigin="anonymous "></script>

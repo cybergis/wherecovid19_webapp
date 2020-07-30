@@ -54,16 +54,18 @@ $(function() {
     ////////////////////////////
     // Handle Form submission///
     ////////////////////////////
-
+ 
     $( "#variables_form" ).submit(function( event ) {
         // close_sidebar();
         // alert( "Handler for .submit() called." );
+        fakeLoading();
         event.preventDefault();
 
         var formEl = $(this);
 
         var submitButton = $('#variables_form_submit_btn');
 
+        var coutner = 0;
         //console.log(submitButton);
 
         $.ajax({
@@ -103,13 +105,29 @@ $(function() {
                     // here we will handle errors and validation messages
                 if("SUCCESS" == data.status){
 
+                    //Remove the previous results
                     if($('#vne').length) {
                         $("#vne").remove();
                     } 
 
+                    //Set loading progress bar to 100% 
+                    $('#loading_bar .progress-bar').css('width', '100%');
+                    
+                    //Delay removing the progress bar for 2 seconds 
+                    setTimeout(() => {
+                        $('.loadLayover').hide()
+                    }, 2000);
+                    
+                    //Remove the loading overlay
                     $('.overlay-loading ').removeClass('d-flex').addClass('d-none');
+                    
+                    //Enable the submit button again
                     submitButton.prop( "disabled", false );
+
+                    //Close sidebar
                     close_sidebar();
+
+                    //Add iframe top the right sidebar
                     var generated_results = "http://hsjp10.cigi.illinois.edu:8000/job_outputs/"+data.job_id+"/index.html"
                     $('<iframe>', {
                         src: generated_results,
@@ -119,18 +137,52 @@ $(function() {
                         }).appendTo('#results');
                     
                 } else if ( "FAILURE" == data.status ) {
+
+                    // If fails, Show error message modal 
                     $('#resultsFailed').modal('show')
+
+                    //Set loading progress bar to 100% 
+                    $('#loading_bar .progress-bar').css('width', '100%');
+                    
+                    //Delay removing the progress bar for 2 seconds 
+                    setTimeout(() => {
+                        $('.loadLayover').hide()
+                    }, 2000);
+                    
+                    //Remove the loading overlay
                     $('.overlay-loading ').removeClass('d-flex').addClass('d-none');
+
+                    //Enable the submit button again
                     submitButton.prop( "disabled", false );
+
                 } else {
-                    // Schedule the next
+
+                    //Recursively call check status anbd pass the coutner for the progress bar
                     setTimeout(check_jobstatus, 3000, data.job_id, submitButton);
-                    //FAiled case
+
+                    //Test for FAiled case
+                    // Comment the line above and uncomment the setTimout below
                     //vne-20200728-204118-33f51508 Failed
                     // setTimeout(check_jobstatus, 3000, "vne-20200728-204118-33f51508", submitButton);
                 }
             }
         });
+    }
+
+    function fakeLoading() {
+
+        //Show the loading overlay 
+        $('.loadLayover').show();
+
+        //init the progress bar
+        $('#loading_bar .progress-bar').css('width', '0%');
+        $('#loading_bar .progress-bar').addClass('active');
+
+        //unset the transition css of progress bar to get ready for animation
+        $('.progress-bar').css('transition','unset');
+
+        //The progress bar run from 0% - 95% in 5 second
+        $('#loading_bar .progress-bar').animate( {width: "95%"} , 5000);
     }
 
 
