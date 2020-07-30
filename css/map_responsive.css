@@ -81,10 +81,11 @@ main,
 /* Legend */
 
 .info {
+    max-width: 120px;
     padding: 6px 8px;
     font: 14px/16px Arial, Helvetica, sans-serif;
-    background: grey;
-    /* background: rgba(255,255,255,0.3); */
+    /* background: grey; */
+    background: rgba(0,0,0,0,0.5);
     box-shadow: 0 0 15px rgba(0,0,0,0.2);
     border-radius: 5px;
 }
@@ -151,7 +152,7 @@ main,
 
 .leaflet-control-layers-toggle {
     width: 48px !important;
-    height: 48px !important;
+    height: 48px;
 }
 
 .leaflet-top.leaflet-left{
