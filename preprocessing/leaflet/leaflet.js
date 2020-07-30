@@ -138,6 +138,14 @@ function main(){
         '#199640';
     }
 
+    function getChangeColor(d) {
+        return d > 0.5 ? '#d7191c' :
+        d > 0.1 ? '#fd9861' :
+        d > -0.1 ? '#ffffbf' :
+        d > -0.5 ? '#a5d96a' :
+        '#199640';
+    }
+
     var styleFunc = function(_data){
         return {
         stroke: true,
@@ -163,6 +171,16 @@ function main(){
         weight: 0.8,
         color:  "gray",
         fillColor: getVulColor(splitStrFloat(_data.properties.cases_ts, index),bins),
+        fillOpacity: 0.7
+        }
+    }
+
+    var styleChange = function(_data){
+        return {
+        stroke: true,
+        weight: 1,
+        color:  "gray",
+        fillColor: getChangeColor(splitStrFloat(_data.properties.change_ts, index),bins),
         fillOpacity: 0.7
         }
     }
@@ -199,6 +217,15 @@ function main(){
         this.setStyle(styleFunc);		 
     });
 
+    var illinois_change_ts = L.timeline(illinois_counties,{style: styleChange,
+        waitToUpdateMap: true});
+    //illinois_change_ts.addTo(map);
+    
+    illinois_change_ts.on('change', function(){
+        index = Math.floor((this.time-this.start)/DayInMilSec);
+        this.setStyle(styleChange);		 
+    });
+
     var us_states_ts = L.timeline(us_states,{style: styleFunc,
         waitToUpdateMap: true, onEachFeature: onEachFeature_us_states});
     //us_states_ts.addTo(map);
@@ -212,6 +239,15 @@ function main(){
     us_states_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
         this.setStyle(styleFunc);		 
+    });
+
+    var us_states_change_ts = L.timeline(us_states,{style: styleChange,
+        waitToUpdateMap: true});
+    //us_states_change_ts.addTo(map);
+    
+    us_states_change_ts.on('change', function(){
+        index = Math.floor((this.time-this.start)/DayInMilSec);
+        this.setStyle(styleChange);		 
     });
 
     var us_counties_ts = L.timeline(us_counties,{style: styleFunc,
@@ -229,6 +265,15 @@ function main(){
         this.setStyle(styleFunc);		 
     });
 
+    var us_counties_change_ts = L.timeline(us_counties,{style: styleChange,
+        waitToUpdateMap: true});
+    //us_counties_change_ts.addTo(map);
+    
+    us_counties_change_ts.on('change', function(){
+        index = Math.floor((this.time-this.start)/DayInMilSec);
+        this.setStyle(styleChange);		 
+    });
+
     var world_ts = L.timeline(world,{style: styleFunc,
         waitToUpdateMap: true, onEachFeature: onEachFeature_world});
     //world_ts.addTo(map);
@@ -242,6 +287,15 @@ function main(){
     world_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
         this.setStyle(styleFunc);		 
+    });
+
+    var world_change_ts = L.timeline(world,{style: styleChange,
+        waitToUpdateMap: true});
+    //world_change_ts.addTo(map);
+    
+    world_change_ts.on('change', function(){
+        index = Math.floor((this.time-this.start)/DayInMilSec);
+        this.setStyle(styleChange);		 
     });
 
     var chicago_acc_i_ts = L.timeline(chicago_acc_i,{style: styleAcc,
@@ -301,8 +355,9 @@ function main(){
     // Get the most recent map
     slider.setTime(slider.end);
 
-    var animationLayerList = [illinois_counties_ts, chicago_acc_i_ts, chicago_acc_v_ts, 
-        illinois_acc_i_ts, illinois_acc_v_ts, illinois_vul_ts, us_counties_ts, us_states_ts, world_ts];
+    var animationLayerList = [illinois_counties_ts, illinois_change_ts, chicago_acc_i_ts, chicago_acc_v_ts, 
+        illinois_acc_i_ts, illinois_acc_v_ts, illinois_vul_ts, us_counties_ts, us_counties_change_ts, 
+        us_states_ts, us_states_change_ts, world_ts, world_change_ts];
 
     // var illinois_zipcode_static = L.geoJSON(illinois_zipcode,{style: styleFunc});
 
@@ -371,6 +426,7 @@ function main(){
         legend = L.control({position: 'bottomright'});
 
         binsAcc = ["low","","","","","high"];
+        binsChange = ["-50%","-10%~-50%","Steady (-10%~10%)","+10%~+50%","+50%"];
 
         legend.onAdd = function (map) {
 
@@ -381,13 +437,15 @@ function main(){
             label3 = ['<strong> Accessibility </strong>'];
             label4 = ['<strong> Density </strong>'];
             label5 = ['<strong> Social Vulnerability Index </strong>'];
+            label6 = ['<strong> Weekly Increase Rate of New Cases </strong>']
     
             // Changing the grades using unshift somehow also changes bins?
             //grades.unshift(0);
             var legendContent = "";
     
             // loop through our density intervals and generate a label with a colored square for each interval
-            if (_layer == illinois_counties_ts || _layer == us_counties_ts || _layer == us_states_ts || _layer == world_ts) {
+            if (_layer == illinois_counties_ts || _layer == us_counties_ts 
+                || _layer == us_states_ts || _layer == world_ts) {
                 grades = bins;
                 for (var i = 0; i < grades.length; i++) {
                     legendContent +=
@@ -407,7 +465,8 @@ function main(){
             label2.push(legendContent);
             div.innerHTML = label2.join('<br><br><br>');
             }
-            else if (_layer == chicago_acc_i_ts || _layer == chicago_acc_v_ts || _layer == illinois_acc_i_ts || _layer == illinois_acc_v_ts  ) {
+            else if (_layer == chicago_acc_i_ts || _layer == chicago_acc_v_ts || 
+                _layer == illinois_acc_i_ts || _layer == illinois_acc_v_ts) {
                 grades = binsAcc;
                 for (var i = 0; i < grades.length; i++) {
                     legendContent +=
@@ -436,6 +495,18 @@ function main(){
                 }
             label5.push(legendContent);
             div.innerHTML = label5.join('<br><br><br>');  
+            }
+            else if (_layer == illinois_change_ts || _layer == us_counties_change_ts ||
+                _layer == us_states_change_ts || _layer == world_change_ts) {
+                grades = binsChange;
+                var binsChangeValue = [-1,-0.4,0,0.4,1];
+                for (var i = 0; i < grades.length; i++) {
+                    legendContent +=
+                        '<i style="background:' + getChangeColor(binsChangeValue[i]) + '"></i> ' +
+                        grades[i] + (grades[i + 1] != undefined ? '<br>' : '')+'<br>';
+                }
+            label6.push(legendContent);
+            div.innerHTML = label6.join('<br><br><br>');  
             }
 
             return div;
@@ -568,6 +639,7 @@ function main(){
             "Illinois":{
                 "Vulnerability": illinois_vul_ts,
                 "IDPH County-level Cases": illinois_counties_ts,
+                "Illinois Weekly Average Change": illinois_change_ts,
                 "Accessibility (ICU Beds-Chicago)": chicago_acc_i_ts,
                 "Accessibility (Ventilators-Chicago)": chicago_acc_v_ts,
                 "Accessibility (ICU Beds-State)": illinois_acc_i_ts,
@@ -579,10 +651,13 @@ function main(){
             },
             "US":{
                 "US States": us_states_ts,
+                "US State-level Weekly Average Change": us_states_change_ts,
                 "US Counties": us_counties_ts,
+                "US County-level Weekly Average Change": us_counties_change_ts,
             },
             "World":{
                 "World": world_ts,
+                "World Weekly Average Change": world_change_ts
             }
         };
 

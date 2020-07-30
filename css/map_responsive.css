@@ -50,6 +50,11 @@ main,
 
 
 /* Layer Control */
+
+.leaflet-control-layers-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
   
 .leaflet-control-layers-group-name {
     font-weight: bold;
@@ -81,7 +86,7 @@ main,
 /* Legend */
 
 .info {
-    max-width: 120px;
+    /* max-width: 120px; */
     padding: 6px 8px;
     font: 14px/16px Arial, Helvetica, sans-serif;
     /* background: grey; */
