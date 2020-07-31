@@ -1,4 +1,43 @@
   ///////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////// Get User Location ////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////////
+
+var userLat;
+var userLng;
+var userState;
+var userCountry;
+
+function getLocation(){
+    return new Promise((resolve, reject) => {
+
+    //Get the latitude and the longitude;
+    function successFunction(position) {
+        // userLat = position.coords.latitude;
+        // userLng = position.coords.longitude;
+        // userLat = '36.2048';
+        // userLng = '138.2529';
+        userLat = '36.7783';
+        userLng = '-119.4179';
+        $.ajax({
+            url: 'http://api.geonames.org/countrySubdivision?lat='+userLat+'&lng='+userLng+'&username=register2020',
+            type: 'GET',
+            dataType: 'xml',
+            success: function(res) {
+                userState = res.getElementsByTagName("adminName1")[0].childNodes[0].nodeValue;
+                userCountry = res.getElementsByTagName("countryName")[0].childNodes[0].nodeValue;
+                resolve();
+            }
+        });
+    }
+
+    function errorFunction(){
+        alert("Geocoder failed!");
+    }
+
+    navigator.geolocation.getCurrentPosition(successFunction, errorFunction);})
+}
+
+  ///////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////// Set up Basemaps /////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -39,6 +78,7 @@ function loadJson(json_url) {
     })
 }
 
+var promise_user=getLocation();
 var promise=loadJson("preprocessing/classes.json");
 var promise0=loadJson("preprocessing/worldwide/who_world_data.geojson");
 var promise1=loadJson("preprocessing/nyt_states_data.geojson");
@@ -51,7 +91,7 @@ var promise7=loadJson("preprocessing/illinois/Chicago_ACC_v.geojson");
 var promise8=loadJson("preprocessing/illinois/vulnerability.geojson");
 var promise9=loadJson("preprocessing/illinois/dph_zipcode_data.geojson");
 
-Promise.allSettled([promise, promise0, promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise8, promise9]).then((values) => {
+Promise.allSettled([promise, promise0, promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise8, promise9, promise_user]).then((values) => {
     //console.log(values[0].value);
     colorClass = values[0].value;
     world = values[1].value;
@@ -104,9 +144,9 @@ function main(){
         return parseFloat(newStr[num])
     }
 
-    var bins = colorClass.vulnerability.case.nolog.NaturalBreaks.bins.split(",").map(function(item) {
-        return parseFloat(parseFloat(item).toFixed(2));
-    });
+    // var bins = colorClass.vulnerability.case.nolog.NaturalBreaks.bins.split(",").map(function(item) {
+    //     return parseFloat(parseFloat(item).toFixed(2));
+    // });
 
     function getColorFor(_num,_bins) {
         return _num > _bins[5] ? '#800026' :
@@ -336,7 +376,7 @@ function main(){
 
     var illinois_vul_ts = L.timeline(illinois_vulnerability,{style: styleVul,
         waitToUpdateMap: true});
-    illinois_vul_ts.addTo(map);
+    //illinois_vul_ts.addTo(map);
 
     illinois_vul_ts.on('add', function(){
         bins = colorClass.vulnerability.case.nolog.NaturalBreaks.bins.split(",").map(function(item) {
@@ -348,8 +388,43 @@ function main(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
         this.setStyle(styleVul);		 
     });
+
+    var activeAnimationLayer;
+    var bins;
+    var legend;
     
-    var activeAnimationLayer = illinois_vul_ts;    
+    console.log(userState);
+    console.log(userCountry);
+
+    if (userState == 'Illinois') {
+        illinois_counties_ts.addTo(map);
+        activeAnimationLayer = illinois_counties_ts;
+        bins = colorClass.dph_illinois.case_per_100k_capita.nolog.NaturalBreaks.bins.split(",").map(function(item) {
+            return parseInt(item, 10);
+        });
+        refreshLegend(illinois_counties_ts);
+        map.setView([userLat, userLng], 8);
+    } 
+    else if (userCountry == 'United States') {
+        us_counties_ts.addTo(map);
+        activeAnimationLayer = us_counties_ts;
+        bins = colorClass.county.case_per_100k_capita.nolog.NaturalBreaks.bins.split(",").map(function(item) {
+            return parseInt(item, 10);
+        });
+        refreshLegend(us_counties_ts);
+        map.setView([userLat, userLng], 6);
+    } 
+    else {
+        world_ts.addTo(map);
+        activeAnimationLayer = world_ts;
+        bins = colorClass.who_world.case_per_100k_capita.nolog.NaturalBreaks.bins.split(",").map(function(item) {
+            return parseInt(item, 10);
+        });
+        refreshLegend(world_ts);
+        map.setView([userLat, userLng], 4);
+    }
+    
+    // var activeAnimationLayer = illinois_vul_ts;    
     slider.addTimelines(activeAnimationLayer);
     
     // Get the most recent map
@@ -414,8 +489,6 @@ function main(){
     ///////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////// Create Legend ///////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////
-
-    var legend = null;
 
     function refreshLegend(_layer) {
         
@@ -514,8 +587,6 @@ function main(){
     
         legend.addTo(map);
     }
-
-    refreshLegend(illinois_vul_ts);    
 
     ///////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////// Create Popup ///////////////////////////////////////
