@@ -101,8 +101,6 @@ var layer_info_list = [
         "color_class": ["who_world", "case_per_100k_capita", "nolog", "NaturalBreaks", "int"],
         "tab_page_id": "world-tab",
     },
-
-
 ];
 
 
