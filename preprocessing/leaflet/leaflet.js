@@ -18,16 +18,17 @@ function getLocation(){
         // userLng = '138.2529';
         // userLat = '36.7783';
         // userLng = '-119.4179';
-        $.ajax({
-            url: 'http://api.geonames.org/countrySubdivision?lat='+userLat+'&lng='+userLng+'&username=register2020',
-            type: 'GET',
-            dataType: 'xml',
-            success: function(res) {
-                userState = res.getElementsByTagName("adminName1")[0].childNodes[0].nodeValue;
-                userCountry = res.getElementsByTagName("countryName")[0].childNodes[0].nodeValue;
-                resolve();
-            }
-        });
+        // $.ajax({
+        //     url: 'http://api.geonames.org/countrySubdivision?lat='+userLat+'&lng='+userLng+'&username=register2020',
+        //     type: 'GET',
+        //     dataType: 'xml',
+        //     success: function(res) {
+        //         userState = res.getElementsByTagName("adminName1")[0].childNodes[0].nodeValue;
+        //         userCountry = res.getElementsByTagName("countryName")[0].childNodes[0].nodeValue;
+        //         resolve();
+        //     }
+        // });
+        resolve();
     }
 
     function errorFunction(){
@@ -393,19 +394,31 @@ function main(){
     var bins;
     var legend;
     
-    console.log(userState);
-    console.log(userCountry);
+    var boundaryIllinois = 
+    [[-90.54179687500002, 42.43051037801457],
+    [-90.54179687500002, 37.30787664699351],
+    [-87.50957031250002, 37.30787664699351],
+    [-87.50957031250002, 42.43051037801457]]
 
-    if (userState == 'Illinois') {
+    var boundaryUS = 
+    [[-127.52638302724817, 49.02551219307651],
+    [-127.52638302724817, 25.148115576371765],
+    [-66.35450802724817, 25.148115576371765],
+    [-66.35450802724817, 49.02551219307651]]
+
+    // if (userState == 'Illinois')
+    if (userLat < boundaryIllinois[0][1] && userLat > boundaryIllinois[1][1] &&
+        userLng < boundaryIllinois[2][0] && userLng > boundaryIllinois[0][0]) {
         illinois_counties_ts.addTo(map);
         activeAnimationLayer = illinois_counties_ts;
         bins = colorClass.dph_illinois.case_per_100k_capita.nolog.NaturalBreaks.bins.split(",").map(function(item) {
             return parseInt(item, 10);
         });
         refreshLegend(illinois_counties_ts);
-        map.setView([userLat, userLng], 8);
+        map.setView([userLat, userLng], 9);
     } 
-    else if (userCountry == 'United States') {
+    else if (userLat < boundaryUS[0][1] && userLat > boundaryUS[1][1] &&
+        userLng < boundaryUS[2][0] && userLng > boundaryUS[0][0]) {
         us_counties_ts.addTo(map);
         activeAnimationLayer = us_counties_ts;
         bins = colorClass.county.case_per_100k_capita.nolog.NaturalBreaks.bins.split(",").map(function(item) {
