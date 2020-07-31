@@ -1,49 +1,9 @@
   ///////////////////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////// Get User Location ////////////////////////////////////
-  ///////////////////////////////////////////////////////////////////////////////////////////
-
-var userLat;
-var userLng;
-var userState;
-var userCountry;
-
-function getLocation(){
-    return new Promise((resolve, reject) => {
-
-    //Get the latitude and the longitude;
-    function successFunction(position) {
-        userLat = position.coords.latitude;
-        userLng = position.coords.longitude;
-        // userLat = '36.2048';
-        // userLng = '138.2529';
-        // userLat = '36.7783';
-        // userLng = '-119.4179';
-        // $.ajax({
-        //     url: 'http://api.geonames.org/countrySubdivision?lat='+userLat+'&lng='+userLng+'&username=register2020',
-        //     type: 'GET',
-        //     dataType: 'xml',
-        //     success: function(res) {
-        //         userState = res.getElementsByTagName("adminName1")[0].childNodes[0].nodeValue;
-        //         userCountry = res.getElementsByTagName("countryName")[0].childNodes[0].nodeValue;
-        //         resolve();
-        //     }
-        // });
-        resolve();
-    }
-
-    function errorFunction(){
-        alert("Geocoder failed!");
-    }
-
-    navigator.geolocation.getCurrentPosition(successFunction, errorFunction);})
-}
-
-  ///////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////// Set up Basemaps /////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////
 
 var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18, 
+    maxZoom: 18,
     attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 });
 
@@ -79,7 +39,6 @@ function loadJson(json_url) {
     })
 }
 
-var promise_user=getLocation();
 var promise=loadJson("preprocessing/classes.json");
 var promise0=loadJson("preprocessing/worldwide/who_world_data.geojson");
 var promise1=loadJson("preprocessing/nyt_states_data.geojson");
@@ -92,7 +51,7 @@ var promise7=loadJson("preprocessing/illinois/Chicago_ACC_v.geojson");
 var promise8=loadJson("preprocessing/illinois/vulnerability.geojson");
 var promise9=loadJson("preprocessing/illinois/dph_zipcode_data.geojson");
 
-Promise.allSettled([promise, promise0, promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise8, promise9, promise_user]).then((values) => {
+Promise.allSettled([promise, promise0, promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise8, promise9]).then((values) => {
     //console.log(values[0].value);
     colorClass = values[0].value;
     world = values[1].value;
@@ -112,9 +71,9 @@ Promise.allSettled([promise, promise0, promise1, promise2, promise3, promise4, p
   });
 
 var map = L.map('map', {
-    layers: [osm, CartoDB_DarkMatter], 
-    center: new L.LatLng(40, -89), 
-    zoom: 7, 
+    layers: [osm, CartoDB_DarkMatter],
+    center: new L.LatLng(40, -89),
+    zoom: 7,
     //Remove Zoom Control from the map
     zoomControl: false,
     //Disable snap to zoom level
@@ -127,14 +86,14 @@ var map = L.map('map', {
 // Add the attribution of the base mapo to the left side
 L.control.attribution({
     position: 'bottomleft'
-}).addTo(map);   
+}).addTo(map);
 
 function main(){
 
     ///////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////// Define Color Scheme ///////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////
-    
+
     function splitStrInt(str,num) {
     var newStr = str.split(",")
     return parseInt(newStr[num])
@@ -145,9 +104,9 @@ function main(){
         return parseFloat(newStr[num])
     }
 
-    // var bins = colorClass.vulnerability.case.nolog.NaturalBreaks.bins.split(",").map(function(item) {
-    //     return parseFloat(parseFloat(item).toFixed(2));
-    // });
+    var bins = colorClass.vulnerability.case.nolog.NaturalBreaks.bins.split(",").map(function(item) {
+        return parseFloat(parseFloat(item).toFixed(2));
+    });
 
     function getColorFor(_num,_bins) {
         return _num > _bins[5] ? '#800026' :
@@ -196,7 +155,7 @@ function main(){
         fillOpacity: 0.5
         }
     }
-    
+
     var styleAcc = function(_data){
         return {
         stroke: false,
@@ -232,7 +191,7 @@ function main(){
 
     var index = 0;
     const DayInMilSec = 60*60*24*1000;
-    
+
     var slider = L.timelineSliderControl({
         formatOutput: function(date){
             return new Date(date).toLocaleDateString('en-US', { timeZone: 'UTC' })
@@ -242,7 +201,7 @@ function main(){
         showTicks: false
     });
     map.addControl(slider);
-            
+
     var illinois_counties_ts = L.timeline(illinois_counties,{style: styleFunc,
         waitToUpdateMap: true, onEachFeature: onEachFeature_illinois_counties, drawOnSetTime: true});
     //illinois_counties_ts.addTo(map);
@@ -250,21 +209,21 @@ function main(){
     illinois_counties_ts.on('add', function(){
         bins = colorClass.dph_illinois.case_per_100k_capita.nolog.NaturalBreaks.bins.split(",").map(function(item) {
             return parseInt(item, 10);
-        });		 
+        });
     });
-    
+
     illinois_counties_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
-        this.setStyle(styleFunc);		 
+        this.setStyle(styleFunc);
     });
 
     var illinois_change_ts = L.timeline(illinois_counties,{style: styleChange,
         waitToUpdateMap: true});
     //illinois_change_ts.addTo(map);
-    
+
     illinois_change_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
-        this.setStyle(styleChange);		 
+        this.setStyle(styleChange);
     });
 
     var us_states_ts = L.timeline(us_states,{style: styleFunc,
@@ -274,21 +233,21 @@ function main(){
     us_states_ts.on('add', function(){
         bins = colorClass.state.case_per_100k_capita.nolog.NaturalBreaks.bins.split(",").map(function(item) {
             return parseInt(item, 10);
-        });		 
+        });
     });
-    
+
     us_states_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
-        this.setStyle(styleFunc);		 
+        this.setStyle(styleFunc);
     });
 
     var us_states_change_ts = L.timeline(us_states,{style: styleChange,
         waitToUpdateMap: true});
     //us_states_change_ts.addTo(map);
-    
+
     us_states_change_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
-        this.setStyle(styleChange);		 
+        this.setStyle(styleChange);
     });
 
     var us_counties_ts = L.timeline(us_counties,{style: styleFunc,
@@ -298,21 +257,21 @@ function main(){
     us_counties_ts.on('add', function(){
         bins = colorClass.county.case_per_100k_capita.nolog.NaturalBreaks.bins.split(",").map(function(item) {
             return parseInt(item, 10);
-        });		 
+        });
     });
-    
+
     us_counties_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
-        this.setStyle(styleFunc);		 
+        this.setStyle(styleFunc);
     });
 
     var us_counties_change_ts = L.timeline(us_counties,{style: styleChange,
         waitToUpdateMap: true});
     //us_counties_change_ts.addTo(map);
-    
+
     us_counties_change_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
-        this.setStyle(styleChange);		 
+        this.setStyle(styleChange);
     });
 
     var world_ts = L.timeline(world,{style: styleFunc,
@@ -322,129 +281,82 @@ function main(){
     world_ts.on('add', function(){
         bins = colorClass.who_world.case_per_100k_capita.nolog.NaturalBreaks.bins.split(",").map(function(item) {
             return parseInt(item, 10);
-        });		 
+        });
     });
-    
+
     world_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
-        this.setStyle(styleFunc);		 
+        this.setStyle(styleFunc);
     });
 
     var world_change_ts = L.timeline(world,{style: styleChange,
         waitToUpdateMap: true});
     //world_change_ts.addTo(map);
-    
+
     world_change_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
-        this.setStyle(styleChange);		 
+        this.setStyle(styleChange);
     });
 
     var chicago_acc_i_ts = L.timeline(chicago_acc_i,{style: styleAcc,
         waitToUpdateMap: true});
     //chicago_acc_i_ts.addTo(map);
-    
+
     chicago_acc_i_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
-        this.setStyle(styleAcc);		 
+        this.setStyle(styleAcc);
     });
 
     var chicago_acc_v_ts = L.timeline(chicago_acc_v,{style: styleAcc,
         waitToUpdateMap: true});
     //chicago_acc_v_ts.addTo(map);
-    
+
     chicago_acc_v_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
-        this.setStyle(styleAcc);		 
+        this.setStyle(styleAcc);
     });
 
     var illinois_acc_i_ts = L.timeline(illinois_acc_i,{style: styleAcc,
         waitToUpdateMap: true});
     //illinois_acc_i_ts.addTo(map);
-    
+
     illinois_acc_i_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
-        this.setStyle(styleAcc);		 
+        this.setStyle(styleAcc);
     });
 
     var illinois_acc_v_ts = L.timeline(illinois_acc_v,{style: styleAcc,
         waitToUpdateMap: true});
     //illinois_acc_v_ts.addTo(map);
-    
+
     illinois_acc_v_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
-        this.setStyle(styleAcc);		 
+        this.setStyle(styleAcc);
     });
 
     var illinois_vul_ts = L.timeline(illinois_vulnerability,{style: styleVul,
         waitToUpdateMap: true});
-    //illinois_vul_ts.addTo(map);
+    illinois_vul_ts.addTo(map);
 
     illinois_vul_ts.on('add', function(){
         bins = colorClass.vulnerability.case.nolog.NaturalBreaks.bins.split(",").map(function(item) {
             return parseFloat(parseFloat(item).toFixed(2));
-        });	 
+        });
     });
-    
+
     illinois_vul_ts.on('change', function(){
         index = Math.floor((this.time-this.start)/DayInMilSec);
-        this.setStyle(styleVul);		 
+        this.setStyle(styleVul);
     });
 
-    var activeAnimationLayer;
-    var bins;
-    var legend;
-    
-    var boundaryIllinois = 
-    [[-90.54179687500002, 42.43051037801457],
-    [-90.54179687500002, 37.30787664699351],
-    [-87.50957031250002, 37.30787664699351],
-    [-87.50957031250002, 42.43051037801457]]
-
-    var boundaryUS = 
-    [[-127.52638302724817, 49.02551219307651],
-    [-127.52638302724817, 25.148115576371765],
-    [-66.35450802724817, 25.148115576371765],
-    [-66.35450802724817, 49.02551219307651]]
-
-    // if (userState == 'Illinois')
-    if (userLat < boundaryIllinois[0][1] && userLat > boundaryIllinois[1][1] &&
-        userLng < boundaryIllinois[2][0] && userLng > boundaryIllinois[0][0]) {
-        illinois_counties_ts.addTo(map);
-        activeAnimationLayer = illinois_counties_ts;
-        bins = colorClass.dph_illinois.case_per_100k_capita.nolog.NaturalBreaks.bins.split(",").map(function(item) {
-            return parseInt(item, 10);
-        });
-        refreshLegend(illinois_counties_ts);
-        map.setView([userLat, userLng], 9);
-    } 
-    else if (userLat < boundaryUS[0][1] && userLat > boundaryUS[1][1] &&
-        userLng < boundaryUS[2][0] && userLng > boundaryUS[0][0]) {
-        us_counties_ts.addTo(map);
-        activeAnimationLayer = us_counties_ts;
-        bins = colorClass.county.case_per_100k_capita.nolog.NaturalBreaks.bins.split(",").map(function(item) {
-            return parseInt(item, 10);
-        });
-        refreshLegend(us_counties_ts);
-        map.setView([userLat, userLng], 6);
-    } 
-    else {
-        world_ts.addTo(map);
-        activeAnimationLayer = world_ts;
-        bins = colorClass.who_world.case_per_100k_capita.nolog.NaturalBreaks.bins.split(",").map(function(item) {
-            return parseInt(item, 10);
-        });
-        refreshLegend(world_ts);
-        map.setView([userLat, userLng], 4);
-    }
-    
-    // var activeAnimationLayer = illinois_vul_ts;    
+    var activeAnimationLayer = illinois_vul_ts;
     slider.addTimelines(activeAnimationLayer);
-    
+
     // Get the most recent map
     slider.setTime(slider.end);
 
-    var animationLayerList = [illinois_counties_ts, illinois_change_ts, chicago_acc_i_ts, chicago_acc_v_ts, 
-        illinois_acc_i_ts, illinois_acc_v_ts, illinois_vul_ts, us_counties_ts, us_counties_change_ts, 
+    var animationLayerList = [illinois_counties_ts, illinois_change_ts, chicago_acc_i_ts, chicago_acc_v_ts,
+        illinois_acc_i_ts, illinois_acc_v_ts, illinois_vul_ts, us_counties_ts, us_counties_change_ts,
         us_states_ts, us_states_change_ts, world_ts, world_change_ts];
 
     // var illinois_zipcode_static = L.geoJSON(illinois_zipcode,{style: styleFunc});
@@ -470,18 +382,18 @@ function main(){
         // Remove all previous timelines and the slider itself
         slider.removeTimelines(activeAnimationLayer);
         slider.remove();
-        map.removeControl(legend);        
-        
+        map.removeControl(legend);
+
         // Add back slider with right timeline and legend if it's animation layer
         animationLayerList.forEach(function(layer) {
             if (e.layer == layer) {
                 slider.addTo(map);
                 slider.addTimelines(e.layer);
                 slider.setTime(slider.end);
-                activeAnimationLayer = e.layer;                
-            }            
+                activeAnimationLayer = e.layer;
+            }
         })
-        
+
         refreshLegend(e.layer);
         //console.log(e);
         if (e.name == "Accessibility (ICU Beds-Chicago)" || e.name == "Accessibility (Ventilators-Chicago)") {
@@ -493,7 +405,7 @@ function main(){
         }else if (e.group.name == "World"){
             map.setView([0, 0], 2)
         }
-        // timelineList.push(e.layer);       
+        // timelineList.push(e.layer);
     }
 
     map.on('overlayadd', onOverlayAdd);
@@ -503,8 +415,10 @@ function main(){
     ///////////////////////////////////// Create Legend ///////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////
 
+    var legend = null;
+
     function refreshLegend(_layer) {
-        
+
         if (legend != null) {
             map.removeControl(legend)
         }
@@ -524,13 +438,13 @@ function main(){
             label4 = ['<strong> Density </strong>'];
             label5 = ['<strong> Social Vulnerability Index </strong>'];
             label6 = ['<strong> Weekly Change Rate of New Cases </strong>']
-    
+
             // Changing the grades using unshift somehow also changes bins?
             //grades.unshift(0);
             var legendContent = "";
-    
+
             // loop through our density intervals and generate a label with a colored square for each interval
-            if (_layer == illinois_counties_ts || _layer == us_counties_ts 
+            if (_layer == illinois_counties_ts || _layer == us_counties_ts
                 || _layer == us_states_ts || _layer == world_ts) {
                 grades = bins;
                 for (var i = 0; i < grades.length; i++) {
@@ -540,7 +454,7 @@ function main(){
                 }
             label1.push(legendContent);
             div.innerHTML = label1.join('<br><br><br>');
-            } 
+            }
             else if (_layer == illinois_vul_ts) {
                 grades = bins;
                 for (var i = 0; i < grades.length; i++) {
@@ -551,7 +465,7 @@ function main(){
             label2.push(legendContent);
             div.innerHTML = label2.join('<br><br><br>');
             }
-            else if (_layer == chicago_acc_i_ts || _layer == chicago_acc_v_ts || 
+            else if (_layer == chicago_acc_i_ts || _layer == chicago_acc_v_ts ||
                 _layer == illinois_acc_i_ts || _layer == illinois_acc_v_ts) {
                 grades = binsAcc;
                 for (var i = 0; i < grades.length; i++) {
@@ -560,7 +474,7 @@ function main(){
                         grades[i] + (grades[i + 1] != undefined ? '<br>' : '')+'<br>';
                 }
             label3.push(legendContent);
-            div.innerHTML = label3.join('<br><br><br>');  
+            div.innerHTML = label3.join('<br><br><br>');
             }
             else if (_layer == hiv_layer) {
                 grades = binsAcc;
@@ -570,7 +484,7 @@ function main(){
                         grades[i] + (grades[i + 1] != undefined ? '<br>' : '')+'<br>';
                 }
             label4.push(legendContent);
-            div.innerHTML = label4.join('<br><br><br>');  
+            div.innerHTML = label4.join('<br><br><br>');
             }
             else if (_layer == svi_layer) {
                 grades = binsAcc;
@@ -580,7 +494,7 @@ function main(){
                         grades[i] + (grades[i + 1] != undefined ? '<br>' : '')+'<br>';
                 }
             label5.push(legendContent);
-            div.innerHTML = label5.join('<br><br><br>');  
+            div.innerHTML = label5.join('<br><br><br>');
             }
             else if (_layer == illinois_change_ts || _layer == us_counties_change_ts ||
                 _layer == us_states_change_ts || _layer == world_change_ts) {
@@ -592,14 +506,16 @@ function main(){
                         grades[i] + (grades[i + 1] != undefined ? '<br>' : '')+'<br>';
                 }
             label6.push(legendContent);
-            div.innerHTML = label6.join('<br><br><br>');  
+            div.innerHTML = label6.join('<br><br><br>');
             }
 
             return div;
         };
-    
+
         legend.addTo(map);
     }
+
+    refreshLegend(illinois_vul_ts);
 
     ///////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////// Create Popup ///////////////////////////////////////
