@@ -12,12 +12,12 @@ function getLocation(){
 
     //Get the latitude and the longitude;
     function successFunction(position) {
-        // userLat = position.coords.latitude;
-        // userLng = position.coords.longitude;
+        userLat = position.coords.latitude;
+        userLng = position.coords.longitude;
         // userLat = '36.2048';
         // userLng = '138.2529';
-        userLat = '36.7783';
-        userLng = '-119.4179';
+        // userLat = '36.7783';
+        // userLng = '-119.4179';
         $.ajax({
             url: 'http://api.geonames.org/countrySubdivision?lat='+userLat+'&lng='+userLng+'&username=register2020',
             type: 'GET',
@@ -192,7 +192,7 @@ function main(){
         weight: 1,
         color: "gray",
         fillColor: getColorFor(100000*splitStrInt(_data.properties.cases_ts, index)/_data.properties.population,bins),
-        fillOpacity: 0.7
+        fillOpacity: 0.5
         }
     }
     
@@ -201,7 +201,7 @@ function main(){
         stroke: false,
         //color:  "gray",
         fillColor: getAccColor(_data.properties.category),
-        fillOpacity: 0.7
+        fillOpacity: 0.5
         }
     }
 
@@ -211,7 +211,7 @@ function main(){
         weight: 0.8,
         color:  "gray",
         fillColor: getVulColor(splitStrFloat(_data.properties.cases_ts, index),bins),
-        fillOpacity: 0.7
+        fillOpacity: 0.5
         }
     }
 
@@ -221,7 +221,7 @@ function main(){
         weight: 1,
         color:  "gray",
         fillColor: getChangeColor(splitStrFloat(_data.properties.change_ts, index),bins),
-        fillOpacity: 0.7
+        fillOpacity: 0.5
         }
     }
 
@@ -510,7 +510,7 @@ function main(){
             label3 = ['<strong> Accessibility </strong>'];
             label4 = ['<strong> Density </strong>'];
             label5 = ['<strong> Social Vulnerability Index </strong>'];
-            label6 = ['<strong> Weekly Increase Rate of New Cases </strong>']
+            label6 = ['<strong> Weekly Change Rate of New Cases </strong>']
     
             // Changing the grades using unshift somehow also changes bins?
             //grades.unshift(0);
