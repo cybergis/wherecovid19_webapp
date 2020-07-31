@@ -192,7 +192,7 @@ var layer_info_list_2 = [
 ];
 
 var layer_info_list_3 = [
-     {
+    {
         "name": "us_state_weekly_case",
         "display_name": "US State-level Weekly Average Change",
         "geojson_url": null,
@@ -232,13 +232,13 @@ function getLayerInfo(name, field = "name") {
         }
     }
 
-     for (i = 0; i < layer_info_list_3.length; i++) {
+    for (i = 0; i < layer_info_list_3.length; i++) {
         if (name == layer_info_list_3[i][field]) {
             return layer_info_list_3[i];
         }
     }
 
-     return null;
+    return null;
 
 }
 
@@ -597,16 +597,38 @@ L.control.attribution({
 
 
 function onOverlayAdd(e) {
+    // Remove the chart if it exists
+    document.getElementById('myChart').classList.add("d-none");
+    document.getElementById('myChart').classList.remove("d-block");
+
+    slider.timelines.forEach(function(item){
+        slider.removeTimelines(item)
+    });
+    slider.remove();
+    slider.addTo(map);
     slider.addTimelines(e.layer);
+    // setTime must be after addTo(map), otherwise reset to startTime
+    slider.setTime(slider.end);
     refreshLegend(e.layer);
+
+    if (e.layer == il_chicago_acc_v_layer_object || e.layer == il_chicago_acc_i_layer_object) {
+        map.setView([41.87, -87.62], 10)
+    } else if (e.group.name == "Illinois") {
+        map.setView([40, -89], 7)
+    } else if (e.group.name == "US") {
+        map.setView([37, -96], 4)
+    } else if (e.group.name == "World") {
+        map.setView([0, 0], 2)
+    }
 }
 
 function onOverlayRemove(e) {
     slider.removeTimelines(e.layer);
+    slider.remove();
 }
 
 map.on('overlayadd', onOverlayAdd);
-map.on('overlayremove', onOverlayRemove);
+//map.on('overlayremove', onOverlayRemove);
 
 var bins = null;
 var index = 0;
@@ -711,9 +733,7 @@ function add_animation_layer_to_map(layer_info) {
     }
 
     layer_obj.on('add', function (e) {
-        console.log(e.target);
         let li = getLayerInfo(e.target.name);
-
         try {
             bins = class_json_obj[li.color_class[0]][li.color_class[1]][li.color_class[2]][li.color_class[3]].bins.split(",").map(function (item) {
 
@@ -732,7 +752,6 @@ function add_animation_layer_to_map(layer_info) {
     });
 
     layer_obj.on('change', function (e) {
-        console.log(e.target);
         let li = getLayerInfo(e.target.name);
         index = Math.floor((this.time - this.start) / DayInMilSec);
         this.setStyle(li.style_func);
@@ -742,6 +761,7 @@ function add_animation_layer_to_map(layer_info) {
         layer_obj.addTo(map);
         slider.addTimelines(layer_obj);
         refreshLegend(layer_obj);
+        slider.setTime(slider.end);
     }
 
     // add layer into LayerControl UI list
@@ -972,7 +992,7 @@ function refreshLegend(_layer) {
     legend = L.control({position: 'bottomright'});
 
     binsAcc = ["low", "", "", "", "", "high"];
-    binsChange = ["-50%","-10%~-50%","Steady (-10%~10%)","+10%~+50%","+50%"];
+    binsChange = ["-50%", "-10%~-50%", "Steady (-10%~10%)", "+10%~+50%", "+50%"];
 
     legend.onAdd = function (map) {
 
@@ -983,7 +1003,7 @@ function refreshLegend(_layer) {
         label3 = ['<strong> Accessibility </strong>'];
         label4 = ['<strong> Density </strong>'];
         label5 = ['<strong> Social Vulnerability Index </strong>'];
-        label6 = ['<strong> Weekly Increase Rate of New Cases </strong>']
+        label6 = ['<strong> Weekly Change Rate of New Cases </strong>']
 
         // Changing the grades using unshift somehow also changes bins?
         //grades.unshift(0);
@@ -1017,36 +1037,36 @@ function refreshLegend(_layer) {
             }
             label3.push(legendContent);
             div.innerHTML = label3.join('<br><br><br>');
-        // } else if (_layer == hiv_layer) {
-        //     grades = binsAcc;
-        //     for (var i = 0; i < grades.length; i++) {
-        //         legendContent +=
-        //             '<i style="background:' + getAccColor(i - 0.1) + '"></i> ' +
-        //             grades[i] + (grades[i + 1] != undefined ? '<br>' : '') + '<br>';
-        //     }
-        //     label4.push(legendContent);
-        //     div.innerHTML = label4.join('<br><br><br>');
-        // } else if (_layer == svi_layer) {
-        //     grades = binsAcc;
-        //     for (var i = 0; i < grades.length; i++) {
-        //         legendContent +=
-        //             '<i style="background:' + getAccColor(i - 0.1) + '"></i> ' +
-        //             grades[i] + (grades[i + 1] != undefined ? '<br>' : '') + '<br>';
-        //     }
-        //     label5.push(legendContent);
-        //     div.innerHTML = label5.join('<br><br><br>');
+            // } else if (_layer == hiv_layer) {
+            //     grades = binsAcc;
+            //     for (var i = 0; i < grades.length; i++) {
+            //         legendContent +=
+            //             '<i style="background:' + getAccColor(i - 0.1) + '"></i> ' +
+            //             grades[i] + (grades[i + 1] != undefined ? '<br>' : '') + '<br>';
+            //     }
+            //     label4.push(legendContent);
+            //     div.innerHTML = label4.join('<br><br><br>');
+            // } else if (_layer == svi_layer) {
+            //     grades = binsAcc;
+            //     for (var i = 0; i < grades.length; i++) {
+            //         legendContent +=
+            //             '<i style="background:' + getAccColor(i - 0.1) + '"></i> ' +
+            //             grades[i] + (grades[i + 1] != undefined ? '<br>' : '') + '<br>';
+            //     }
+            //     label5.push(legendContent);
+            //     div.innerHTML = label5.join('<br><br><br>');
         } else if (_layer == il_weekly_case_layer_object || _layer == us_county_weekly_case_layer_object ||
-                _layer == us_state_weekly_case_layer_object || _layer == world_weekly_case_layer_object) {
-                grades = binsChange;
-                var binsChangeValue = [-1,-0.4,0,0.4,1];
-                for (var i = 0; i < grades.length; i++) {
-                    legendContent +=
-                        '<i style="background:' + getChangeColor(binsChangeValue[i]) + '"></i> ' +
-                        grades[i] + (grades[i + 1] != undefined ? '<br>' : '')+'<br>';
-                }
+            _layer == us_state_weekly_case_layer_object || _layer == world_weekly_case_layer_object) {
+            grades = binsChange;
+            var binsChangeValue = [-1, -0.4, 0, 0.4, 1];
+            for (var i = 0; i < grades.length; i++) {
+                legendContent +=
+                    '<i style="background:' + getChangeColor(binsChangeValue[i]) + '"></i> ' +
+                    grades[i] + (grades[i + 1] != undefined ? '<br>' : '') + '<br>';
+            }
             label6.push(legendContent);
             div.innerHTML = label6.join('<br><br><br>');
-            }
+        }
 
         return div;
     };
