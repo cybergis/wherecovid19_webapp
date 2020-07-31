@@ -43,7 +43,7 @@ make_copy_data(){
 	cp ./illinois/Vulnerability_Animation/updates.txt ./illinois/Vulnerability_Animation/updates-tmp.txt #1
 }
 setup_env(){
-	cd /var/covid19_project/wherecovid19_service/wherecovid19_webapp/preprocessing/cronjob
+	cd /var/covid19_project/wherecovid19_webapp/preprocessing/cronjob
 	source /opt/anaconda3/bin/activate covid19
 }
 should_preprocessing_be_done(){
