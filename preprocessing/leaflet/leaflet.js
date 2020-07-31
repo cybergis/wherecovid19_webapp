@@ -1282,6 +1282,8 @@ function main(){
 
         }
 
+        hide_loader();
+
 }
 
   
