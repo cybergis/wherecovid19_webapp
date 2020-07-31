@@ -4,7 +4,7 @@ version: '3.2'
 services:
   covid19_app:
     restart: always
-    image: linuxserver/letsencrypt
+    image: linuxserver/letsencrypt::1.6.0-ls134
     volumes:
       # If spawn this container on a specific worker node, this file should already exist on that node 
       - /var/covid19_project/wherecovid19_webapp/deploy/nginx_sitedefault.conf:/config/nginx/site-confs/default
