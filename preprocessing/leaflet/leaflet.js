@@ -122,11 +122,17 @@ function main() {
     return parseFloat(newStr[num]);
   }
 
-  var bins = colorClass.vulnerability.case.nolog.NaturalBreaks.bins
-    .split(",")
-    .map(function (item) {
-      return parseFloat(parseFloat(item).toFixed(2));
-    });
+  // var bins = colorClass.vulnerability.case.nolog.NaturalBreaks.bins
+  //   .split(",")
+  //   .map(function (item) {
+  //     return parseFloat(parseFloat(item).toFixed(2));
+  //   });
+
+  var bins = colorClass.dph_illinois.case_per_100k_capita.nolog.NaturalBreaks.bins
+      .split(",")
+      .map(function (item) {
+        return parseInt(item, 10);
+      });
 
   function getColorFor(_num, _bins) {
     return _num > _bins[5]
@@ -260,7 +266,7 @@ function main() {
     onEachFeature: onEachFeature_illinois_counties,
     drawOnSetTime: true,
   });
-  //illinois_counties_ts.addTo(map);
+  illinois_counties_ts.addTo(map);
 
   illinois_counties_ts.on("add", function () {
     bins = colorClass.dph_illinois.case_per_100k_capita.nolog.NaturalBreaks.bins
@@ -427,7 +433,7 @@ function main() {
     style: styleVul,
     waitToUpdateMap: true,
   });
-  illinois_vul_ts.addTo(map);
+  //illinois_vul_ts.addTo(map);
 
   illinois_vul_ts.on("add", function () {
     bins = colorClass.vulnerability.case.nolog.NaturalBreaks.bins
@@ -442,7 +448,7 @@ function main() {
     this.setStyle(styleVul);
   });
 
-  var activeAnimationLayer = illinois_vul_ts;
+  var activeAnimationLayer = illinois_counties_ts;
   slider.addTimelines(activeAnimationLayer);
 
   // Get the most recent map
@@ -660,7 +666,7 @@ function main() {
     legend.addTo(map);
   }
 
-  refreshLegend(illinois_vul_ts);
+  refreshLegend(illinois_counties_ts);
 
   ///////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////////// Create Popup ///////////////////////////////////////
