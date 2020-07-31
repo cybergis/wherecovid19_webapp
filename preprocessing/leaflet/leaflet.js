@@ -1,17 +1,124 @@
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////// Set up Basemaps /////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
-function showPosition(position) {
-    var lat = position.coords.latitude;
-    var lon = position.coords.longitude;
-    console.log(lat);
-    console.log(lon);
+
+function _switch_layer(layer, map) {
+    if (map.hasLayer(layer) != true) {
+        map.eachLayer(function (layer) {
+            if (layer._url == undefined) {
+                map.removeLayer(layer);
+            }
+        });
+        map.addLayer(layer);
+    }
 }
 
-if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(showPosition);
-} else {
-    x.innerHTML = "Geolocation is not supported by this browser.";
+function userLatLonAction(point) {
+
+    let userLat = point.lat;
+    let userLng = point.lon;
+    // // New York
+    // userLat = 40.7128;
+    // userLng = -74.0060;
+    // // Japan
+    // userLat = 36.2048;
+    // userLng = 138.2529;
+
+
+    let boundaryIllinois =
+        [[-90.54179687500002, 42.43051037801457],
+            [-90.54179687500002, 37.30787664699351],
+            [-87.50957031250002, 37.30787664699351],
+            [-87.50957031250002, 42.43051037801457]];
+
+    let boundaryUS =
+        [[-127.52638302724817, 49.02551219307651],
+            [-127.52638302724817, 25.148115576371765],
+            [-66.35450802724817, 25.148115576371765],
+            [-66.35450802724817, 49.02551219307651]];
+
+    try {
+
+        // if (userState == 'Illinois')
+        if (userLat < boundaryIllinois[0][1] && userLat > boundaryIllinois[1][1] &&
+            userLng < boundaryIllinois[2][0] && userLng > boundaryIllinois[0][0]) {
+            //il_county_case_layer_object.addTo(map);
+            //activeAnimationLayer = illinois_counties_ts;
+            // bins = colorClass.dph_illinois.case_per_100k_capita.nolog.NaturalBreaks.bins.split(",").map(function(item) {
+            //     return parseInt(item, 10);
+            // });
+            // refreshLegend(illinois_counties_ts);
+
+            //// !!! map.setView must comes befoe _switch_layer
+            map.setView({lat: userLat, lon: userLng}, 9);
+            _switch_layer(il_county_case_layer_object, map);
+
+        } else if (userLat < boundaryUS[0][1] && userLat > boundaryUS[1][1] &&
+            userLng < boundaryUS[2][0] && userLng > boundaryUS[0][0]) {
+            //us_county_case_layer_object.addTo(map);
+            // activeAnimationLayer = us_counties_ts;
+            // bins = colorClass.county.case_per_100k_capita.nolog.NaturalBreaks.bins.split(",").map(function(item) {
+            //     return parseInt(item, 10);
+            // });
+            // refreshLegend(us_counties_ts);
+
+            //// !!! map.setView must comes befoe _switch_layer
+            map.setView({lat: userLat, lon: userLng}, 9);
+            _switch_layer(us_county_case_layer_object, map);
+
+        } else {
+            //world_case_layer_object.addTo(map);
+            // activeAnimationLayer = world_ts;
+            // bins = colorClass.who_world.case_per_100k_capita.nolog.NaturalBreaks.bins.split(",").map(function(item) {
+            //     return parseInt(item, 10);
+            // });
+            // refreshLegend(world_ts);
+
+            //// !!! map.setView must comes befoe _switch_layer
+            map.setView({lat: userLat, lon: userLng}, 6);
+            _switch_layer(world_case_layer_object, map);
+        }
+
+    } catch (ex) {
+
+    }
+
+}
+
+function getUserLatLonPromise() {
+
+    let options = {
+        enableHighAccuracy: false,
+        timeout: 5000,
+        maximumAge: 0
+    };
+
+    return new Promise((resolve, reject) => {
+        function success(pos) {
+            try {
+                var crd = pos.coords;
+
+                console.log('Your current position is:');
+                console.log(`Latitude : ${crd.latitude}`);
+                console.log(`Longitude: ${crd.longitude}`);
+                console.log(`More or less ${crd.accuracy} meters.`);
+                userLatLonAction({lat: crd.latitude, lon: crd.longitude});
+            } catch (ex) {
+
+            }
+
+            resolve({lat: crd.latitude, lon: crd.longitude});
+        }
+
+        function error(err) {
+            console.warn(`ERROR(${err.code}): ${err.message}`);
+            // Always Resolve Promise
+            resolve(`ERROR(${err.code}): ${err.message}`);
+        }
+
+        navigator.geolocation.getCurrentPosition(success, error, options);
+
+    });
 }
 
 var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -543,6 +650,12 @@ var illinois_counties_ts, chicago_acc_i_ts, chicago_acc_v_ts,
     illinois_acc_i_ts, illinois_acc_v_ts, illinois_vul_ts, us_counties_ts, us_states_ts, world_ts;
 //Promise.allSettled([promise, promise0, promise1, promise2, promise3, promise4, promise5, promise6, promise7, promise8, promise9]).then((values) => {
 
+// getUserLatLonPromise().then(function (result) {
+//     userLatLonAction(result);
+//     var a = 1;
+// }, function error(err) {
+//     var a = 1;
+// });
 
 var map = L.map('map', {
     layers: [osm, CartoDB_DarkMatter],
@@ -599,7 +712,7 @@ function onOverlayAdd(e) {
     document.getElementById('myChart').classList.add("d-none");
     document.getElementById('myChart').classList.remove("d-block");
 
-    slider.timelines.forEach(function(item){
+    slider.timelines.forEach(function (item) {
         slider.removeTimelines(item)
     });
     slider.remove();
@@ -789,6 +902,8 @@ loadClassJson(class_json_url).then(
         switch_left_tab_page_handler_old();
         left_tab_page_table_click_old();
 
+    }).then(function () {
+        return getUserLatLonPromise();
     }).then(function () {
         return Promise.allSettled(layer_info_list_2.map(chain_promise));
     }).then(function () {
@@ -1385,6 +1500,7 @@ function createPopup(_feature, _layer) {
         </table>\
         </form>')
 }
+
 //
 //   ///////////////////////////////////////////////////////////////////////////////////////////
 //   //////////////////////////////////// Get User Location ////////////////////////////////////
