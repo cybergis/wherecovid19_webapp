@@ -1,7 +1,6 @@
 $(window).on("load", function () {
   // initialize our loader overlay
-  loader.initialize();
-  window.addEventListener("load", fadeEffect);
+  // loader.initialize();
 });
 
 $("#map").on("load", hide_loader);
