@@ -672,6 +672,10 @@ function main() {
   ////////////////////////////////////// Create Popup ///////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////
 
+  function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
   function createPopup(_feature, _layer) {
     if (_feature.properties.state_name != undefined) {
       var popupName =
@@ -679,6 +683,10 @@ function main() {
     } else {
       var popupName = _feature.properties.NAME;
     }
+    
+    var dt_first_case = new Date(_feature.properties.dt_first_case);
+    var dt_first_death = new Date(_feature.properties.dt_first_death);
+
     _layer.bindPopup(
       '<form id="popup-form">\
         <label id="name">' +
@@ -688,31 +696,31 @@ function main() {
             <tr class="popup-table-row">\
             <th class="popup-table-header">Total Cases:</th>\
             <td id="total_cases" class="popup-table-data">' +
-        _feature.properties.today_case +
+            numberWithCommas(_feature.properties.today_case) +
         '</td>\
             </tr>\
             <tr class="popup-table-row">\
             <th class="popup-table-header">Total Deaths:</th>\
             <td id="total_deaths" class="popup-table-data">' +
-        _feature.properties.today_death +
+            numberWithCommas(_feature.properties.today_death) +
         '</td>\
             </tr>\
             <tr class="popup-table-row">\
             <th class="popup-table-header">Population:</th>\
             <td id="population" class="popup-table-data">' +
-        _feature.properties.population +
+            numberWithCommas(_feature.properties.population) +
         '</td>\
             </tr>\
             <tr class="popup-table-row">\
             <th class="popup-table-header">First Date of Confirmed Cases</th>\
             <td id="first_date_case" class="popup-table-data">' +
-        _feature.properties.dt_first_case +
+            dt_first_case.toLocaleDateString("en-US", { timeZone: "UTC" }) +
         '</td>\
             </tr>\
             <tr class="popup-table-row">\
             <th class="popup-table-header">First Date of Deaths</th>\
             <td id="first_date_death" class="popup-table-data">' +
-        _feature.properties.dt_first_death +
+            dt_first_death.toLocaleDateString("en-US", { timeZone: "UTC" }) +
         "</td>\
             </tr>\
         </table>\
@@ -852,10 +860,6 @@ function main() {
   ///////////////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////////////// Handle side panel ///////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////
-
-  function numberWithCommas(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  }
 
   map.whenReady(function () {
     let tab = document.getElementById("illinois-tab");
