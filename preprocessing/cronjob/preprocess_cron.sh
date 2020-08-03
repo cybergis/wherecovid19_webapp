@@ -23,7 +23,7 @@ make_copy_data(){
 	cp ../illinois/illinois_county_population.txt ./illinois/ 
         # WHO
 	mkdir -p worldwide
-	cp ./worldwide/World_Countries_Boundaries_new.geojson ./worldwide/World_Countries_Boundaries_new.geojson
+	cp ../worldwide/World_Countries_Boundaries_new.geojson ./worldwide/World_Countries_Boundaries_new.geojson
 	cp ./worldwide/who_world_data.geojson ./worldwide/who_world_data-tmp.geojson
 	cp ./worldwide/global-covid19-who-gis.json ./worldwide/global-covid19-who-gis-tmp.json
         cp ../worldwide/world_population.csv ./worldwide/
@@ -43,7 +43,7 @@ make_copy_data(){
 	cp ./illinois/Vulnerability_Animation/updates.txt ./illinois/Vulnerability_Animation/updates-tmp.txt #1
 }
 setup_env(){
-	cd /var/covid19_project/wherecovid19_webapp/preprocessing/cronjob
+	cd /var/covid19_project/wherecovid19_service/wherecovid19_webapp/preprocessing/cronjob
 	source /opt/anaconda3/bin/activate covid19
 }
 should_preprocessing_be_done(){

@@ -7,118 +7,133 @@
 
 main,
 #app-wrap {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    -webkit-box-flex: 1;
-    -ms-flex-positive: 1;
-    flex-grow: 1;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-flex: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
 }
 
 #applicationDiv {
-    background-color: #242424;
-    position: relative;
-    width: 100%;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    overflow: hidden;
-    -webkit-box-flex: 1;
-    -ms-flex-positive: 1;
-    flex-grow: 1;
+  background-color: #242424;
+  position: relative;
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  overflow: hidden;
+  -webkit-box-flex: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
 }
 
 #map {
-    width: 100%;
-    height: 100%;
-    -webkit-box-flex: 1;
-    -ms-flex: 1 1 auto;
-    flex: 1 1 auto;
-    -webkit-box-ordinal-group: 2;
-    -ms-flex-order: 1;
-    order: 1;
-    z-index: 0;
+  width: 100%;
+  height: 100%;
+  -webkit-box-flex: 1;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  -webkit-box-ordinal-group: 2;
+  -ms-flex-order: 1;
+  order: 1;
+  z-index: 0;
 }
-
 
 /* Layer Control */
 
-.leaflet-control-layers-list {
-    max-height: 400px;
-    overflow-y: auto;
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  background-clip: padding-box;
+  max-height: calc(100vw - 50px);
+  overflow: auto;
+  position: relative;
 }
-  
 .leaflet-control-layers-group-name {
-    font-weight: bold;
-    margin-bottom: .2em;
-    margin-left: 3px;
+  font-weight: bold;
+  margin-bottom: 0.2em;
+  margin-left: 3px;
 }
 
 .leaflet-control-layers-group {
-    margin-bottom: .5em;
+  margin-bottom: 0.5em;
 }
 
 .leaflet-control-layers-scrollbar {
-    overflow-y: scroll;
-    padding-right: 10px;
+  overflow-y: scroll;
+  padding-right: 10px;
 }
-
 
 /* Popup Window */
 
 .popup-table {
-    width: 100%;
+  width: 100%;
 }
 
 .popup-table-row {
-    background-color: lightgrey;
+  background-color: lightgrey;
 }
 
-
 /* Legend */
-
 .info {
-    /* max-width: 120px; */
-    padding: 6px 8px;
-    font: 14px/16px Arial, Helvetica, sans-serif;
-    /* background: grey; */
-    background: rgba(0,0,0,0,0.5);
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    border-radius: 5px;
+  padding: 6px 8px;
+  font: 13px Arial, Helvetica, sans-serif;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  max-width: 150px;
+  margin: 10px;
 }
 
 .legend {
-    line-height: 15px;
-    color: white;
+  line-height: 15px;
+  color: white;
+  line-height: 20px;
 }
 
 .legend i {
-    width: 18px;
-    height: 18px;
-    float: left;
-    margin-right: 8px;
-    opacity: 0.7;
+  width: 13px;
+  height: 13px;
+  float: left;
+  margin-right: 8px;
+  margin-bottom: 5px;
+  opacity: 0.5;
 }
 
+.legend strong {
+  padding-bottom: 10px;
+  display: block;
+}
+
+.legend br {
+  display: none;
+}
+
+.legend i + br,
+.legend strong + br {
+  display: block;
+  width: 100%;
+}
+
+/* Leaflet credit text */
 .leaflet-container .leaflet-control-attribution {
-    background: rgba(255, 255, 255, 0.3);
-    margin: 0;
+  background: rgba(255, 255, 255, 0.35);
+  margin: 0;
 }
-
 
 /* Timeline Controller */
 
 .button-container .prev,
 .button-container .next {
-    display: none;
+  display: none;
 }
 .button-container button {
   border: none;
@@ -128,291 +143,295 @@ main,
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
+  border-radius: 5px;
 }
 .button-container .play {
-    background-color: gray; /* Green */
+  background-color: gray; /* Green */
 }
 .button-container .pause {
-    background-color: gray; /* Green */
+  background-color: gray; /* Green */
 }
 
-.leaflet-control.leaflet-timeline-control .button-container button.play::before {
-    border: 7px solid transparent;
-    border-width: 5px 0 5px 8px;
-    border-left-color: black;
-    margin-top: -5px;
-    background: transparent;
-    margin-left: -5px;
+.leaflet-control.leaflet-timeline-control
+  .button-container
+  button.play::before {
+  border: 7px solid transparent;
+  border-width: 5px 0 5px 8px;
+  border-left-color: black;
+  margin-top: -5px;
+  background: transparent;
+  margin-left: -5px;
 }
 
-.leaflet-control.leaflet-timeline-control .button-container button.pause::before {
-    width: 4px;
-    height: 11px;
-    border: 2px solid black;
-    border-width: 0 4px;
-    margin-top: -6px;
-    margin-left: -6px;
-    background: transparent;
+.leaflet-control.leaflet-timeline-control
+  .button-container
+  button.pause::before {
+  width: 4px;
+  height: 11px;
+  border: 2px solid black;
+  border-width: 0 4px;
+  margin-top: -6px;
+  margin-left: -6px;
+  background: transparent;
 }
 
 .leaflet-control-layers-toggle {
-    width: 48px !important;
-    height: 48px;
+  width: 48px !important;
+  height: 48px !important;
 }
 
-.leaflet-top.leaflet-left{
-    width: 100%;
+.leaflet-top.leaflet-left {
+  width: 100%;
 }
 
 .leaflet-control-layers.leaflet-control-layers-expanded.leaflet-timeline-control.leaflet-control {
-    position: absolute;
-    height: 48px;
-    top: 0;
-    border-radius: 5;
-    width: calc(100% - 78px);
+  position: absolute;
+  border: none !important;
+  display: flex;
+  height: 48px;
+  /* height: 52px; */
+  top: 2px;
+  width: calc(100% - 78px);
 }
 
 .leaflet-control.leaflet-timeline-control input[type="range"] {
-    width: calc( 100% - 130px );
-    margin: auto;
-    margin-top: 9px;
+  width: calc(100% - 85px);
+  margin: 0;
+  padding: 10px;
 }
 .leaflet-control.leaflet-timeline-control .sldr-ctrl-container {
-    float: left;
-    width: 13%;
-    box-sizing: border-box;
+  float: left;
+  width: 80px;
+  box-sizing: border-box;
 }
 
-#titleDiv {
-    font-weight: 400;
-    font-style: normal;
-    font-size: 1.2019rem;
-    padding: 10px;
+/* #titleDiv {
+  font-weight: 400;
+  font-style: normal;
+  font-size: 1.2019rem;
+  padding: 10px;
 }
 
 #sliderContainer {
-    -webkit-box-ordinal-group: 1;
-    -ms-flex-order: 0;
-    order: 0;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-    -ms-flex-flow: row;
-    flex-flow: row;
-    padding: 0 12px;
-    height: 100px;
-    -webkit-box-flex: 0 !important;
-    -ms-flex: 0 0 50px !important;
-    flex: 0 0 50px !important;
+  -webkit-box-ordinal-group: 1;
+  -ms-flex-order: 0;
+  order: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-flow: row;
+  flex-flow: row;
+  padding: 0 12px;
+  height: 100px;
+  -webkit-box-flex: 0 !important;
+  -ms-flex: 0 0 50px !important;
+  flex: 0 0 50px !important;
 }
 
 #parametersDiv {
-    -webkit-box-flex: 0;
-    -ms-flex: 0 0 auto;
-    flex: 0 0 auto;
-    -webkit-box-ordinal-group: 2;
-    -ms-flex-order: 1;
-    order: 1;
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 auto;
+  flex: 0 0 auto;
+  -webkit-box-ordinal-group: 2;
+  -ms-flex-order: 1;
+  order: 1;
 }
 
 #sliderValue {
-    -webkit-box-flex: 0;
-    -ms-flex: 0 0 40px;
-    flex: 0 0 40px;
-    -webkit-box-ordinal-group: 5;
-    -ms-flex-order: 4;
-    order: 4;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-pack: center;
-    -ms-flex-pack: center;
-    justify-content: center;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    text-align: center;
-    font-size: 170%;
-    padding: 0 20px;
-    margin: 10px;
-    height: 30px;
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 40px;
+  flex: 0 0 40px;
+  -webkit-box-ordinal-group: 5;
+  -ms-flex-order: 4;
+  order: 4;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  text-align: center;
+  font-size: 170%;
+  padding: 0 20px;
+  margin: 10px;
+  height: 30px;
 }
 
 #sliderInnerContainer {
-    -webkit-box-flex: 1;
-    -ms-flex: 1 1 auto;
-    flex: 1 1 auto;
-    -webkit-box-ordinal-group: 4;
-    -ms-flex-order: 3;
-    order: 3;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    -webkit-box-pack: center;
-    -ms-flex-pack: center;
-    justify-content: center;
-    height: 50px;
+  -webkit-box-flex: 1;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  -webkit-box-ordinal-group: 4;
+  -ms-flex-order: 3;
+  order: 3;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  height: 50px;
 }
 
 #slider {
-    width: 100%;
-}
+  width: 100%;
+} */
 
 .chart-wrap {
-    width: 100%;
-    -webkit-box-ordinal-group: 4;
-    -ms-flex-order: 3;
-    order: 3;
-    position: relative;
+  width: 100%;
+  -webkit-box-ordinal-group: 4;
+  -ms-flex-order: 3;
+  order: 3;
+  position: relative;
 }
 
 #close_chart {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 100000;
-    color: white;
-    font-size: 15px;
-    cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 100000;
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
 }
 
 #myChart {
-    display: none;
-    z-index: 1000;
-    left: 15px;
-    top: 500px;
-    width: 100% !important;
-    height: 200px !important;
-    background: #242424;
+  display: none;
+  z-index: 1000;
+  left: 15px;
+  top: 500px;
+  width: 100% !important;
+  height: 200px !important;
+  background: #242424;
 }
 
 .disabledbutton {
-    pointer-events: none;
-    opacity: 0.4;
+  pointer-events: none;
+  opacity: 0.4;
 }
 
 .hideDiv {
-    display: none !important;
+  display: none !important;
 }
-
 
 /* Play/Stop toggle button */
 
 #playButton {
-    -webkit-box-flex: 0;
-    -ms-flex: 0 0 100px;
-    flex: 0 0 100px;
-    -webkit-box-ordinal-group: 3;
-    -ms-flex-order: 2;
-    order: 2;
-    margin: 10px;
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 100px;
+  flex: 0 0 100px;
+  -webkit-box-ordinal-group: 3;
+  -ms-flex-order: 2;
+  order: 2;
+  margin: 10px;
 }
 
 .toggle-button {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
 }
 
 .toggle-button.toggled .toggle-button-icon {
-    color: #cc1b1b;
+  color: #cc1b1b;
 }
 
 .toggle-button .toggle-button-icon {
-    color: #1bcc1b;
+  color: #1bcc1b;
 }
 
-.toggle-button> :nth-child(2) {
-    display: none;
+.toggle-button > :nth-child(2) {
+  display: none;
 }
 
-.toggle-button.toggled> :nth-child(1) {
-    display: none;
+.toggle-button.toggled > :nth-child(1) {
+  display: none;
 }
 
-.toggle-button.toggled> :nth-child(2) {
-    display: block;
+.toggle-button.toggled > :nth-child(2) {
+  display: block;
 }
-
 
 /* Hover tooltip */
 
 .tooltip {
-    position: absolute;
-    pointer-events: none;
-    -webkit-transition: opacity 200ms;
-    -o-transition: opacity 200ms;
-    transition: opacity 200ms;
+  position: absolute;
+  pointer-events: none;
+  -webkit-transition: opacity 200ms;
+  -o-transition: opacity 200ms;
+  transition: opacity 200ms;
 }
 
-.tooltip>div {
-    margin: 0 auto;
-    padding: 12px;
-    border-radius: 4px;
-    -webkit-box-shadow: 0px 0px 4px rgba(255, 255, 255, 0.75);
-    box-shadow: 0px 0px 4px rgba(255, 255, 255, 0.75);
-    -webkit-transform: translate3d(-50%, -125%, 0);
-    transform: translate3d(-50%, -125%, 0);
+.tooltip > div {
+  margin: 0 auto;
+  padding: 12px;
+  border-radius: 4px;
+  -webkit-box-shadow: 0px 0px 4px rgba(255, 255, 255, 0.75);
+  box-shadow: 0px 0px 4px rgba(255, 255, 255, 0.75);
+  -webkit-transform: translate3d(-50%, -125%, 0);
+  transform: translate3d(-50%, -125%, 0);
 }
 
 .map-title {
-    z-index: 1000;
-    left: 10px;
-    top: 15px;
-    display: block;
-    position: absolute;
-    height: 64px;
-    color: white;
+  z-index: 1000;
+  left: 10px;
+  top: 15px;
+  display: block;
+  position: absolute;
+  height: 64px;
+  color: white;
 }
 
 .map-title h1 {
-    font-size: 25px;
-    padding: 0;
-    margin: 0;
-    line-height: unset;
+  font-size: 25px;
+  padding: 0;
+  margin: 0;
+  line-height: unset;
 }
 
 .sidebar-left {
-    z-index: 1000;
-    display: block;
-    position: absolute;
-    left: 10px;
-    top: 90px;
-    height: calc(100% - 120px);
-    width: 15%;
-    min-width: 300px;
-    /* background-color: #242424; */
+  z-index: 1000;
+  display: block;
+  position: absolute;
+  left: 10px;
+  top: 90px;
+  height: calc(100% - 120px);
+  width: 15%;
+  min-width: 300px;
+  /* background-color: #242424; */
 }
 
 .sidebar-lowerleft {
-    z-index: 1000;
-    display: block;
-    position: absolute;
-    left: 10px;
-    top: 350px;
-    height: 200px;
-    width: 15%;
-    min-width: 300px;
-    /* background-color: #242424; */
+  z-index: 1000;
+  display: block;
+  position: absolute;
+  left: 10px;
+  top: 350px;
+  height: 200px;
+  width: 15%;
+  min-width: 300px;
+  /* background-color: #242424; */
 }
 
 .myChart {
-    position: absolute;
-    right: 0;
-    top: 30%;
-    width: 300px !important;
-    height: 200px !important;
-    /* background:black; */
-    /* position: fixed; */
+  position: absolute;
+  right: 0;
+  top: 30%;
+  width: 300px !important;
+  height: 200px !important;
+  /* background:black; */
+  /* position: fixed; */
 }
-
 
 /* .sidebar-right {
     z-index: 1000;
@@ -427,181 +446,244 @@ main,
 } */
 
 .bordered-box {
-    background-color: #242424;
-    border: 1px solid #363636;
-    /* border-radius: 5px; */
-    overflow: hidden;
+  background-color: #242424;
+  border: 1px solid #363636;
+  /* border-radius: 5px; */
+  overflow: hidden;
 }
 
 .bordered-box h2 {
-    font-size: 20px;
+  font-size: 20px;
 }
 
 .sidebar-left .total {
-    /* height: 20%; */
-    margin-bottom: 10px;
-    position: relative;
-    color: white;
+  /* height: 20%; */
+  margin-bottom: 10px;
+  position: relative;
+  color: white;
 }
 
 .sidebar-left .total h3 {
-    font-size: 65px;
-    font-family: 'Open Sans', sans-serif !important;
+  font-size: 65px;
+  font-family: "Open Sans", sans-serif !important;
 }
 
 .confirmed {
-    color: orange;
+  color: orange;
 }
 
 .deaths {
-    color: red;
+  color: red;
 }
 
 .recovered {
-    color: rgb(112, 168, 0);
+  color: rgb(112, 168, 0);
 }
 
 .sidebar-left i {
-    z-index: 10000;
-    color: white;
-    position: absolute;
-    right: 5px;
-    top: 5px;
-    cursor: pointer;
+  z-index: 10000;
+  color: white;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  cursor: pointer;
 }
 
 .cases {
-    position: relative;
-    color: white;
-    overflow: hidden;
-    max-height: 290px;
+  position: relative;
+  color: white;
+  overflow: hidden;
+  max-height: 290px;
 }
 
 .cases .title {
-    border-bottom: #363636 solid 1px;
+  border-bottom: #363636 solid 1px;
 }
 
 .cases .title p {
-    margin: 0;
+  margin: 0;
 }
 
 .cases .case-list {
-    height: 100%;
-    overflow-y: scroll;
-    padding: 0;
-    margin: 0;
+  height: 100%;
+  overflow-y: scroll;
+  padding: 0;
+  margin: 0;
 }
 
 .case-list .case {
-    border-bottom: #363636 solid 1px;
+  border-bottom: #363636 solid 1px;
 }
 
 .case-list .case p {
-    margin: 0;
-    padding: 5px 0;
+  margin: 0;
+  padding: 5px 0;
 }
 
 ::-webkit-scrollbar {
-    width: 10px
+  width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #353535;
-    border-radius: 0px
+  background: #353535;
+  border-radius: 0px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #9d9d9d;
-    border-radius: 0px
+  background: #9d9d9d;
+  border-radius: 0px;
 }
 
 .esri-view-height-medium .esri-expand .esri-widget--panel,
 .esri-view-height-medium .esri-expand .esri-widget--panel-height-only,
 .esri-view-height-medium .esri-ui-corner .esri-component.esri-widget--panel,
-.esri-view-height-medium .esri-ui-corner .esri-component.esri-widget--panel-height-only {
-    max-height: 335px !important;
+.esri-view-height-medium
+  .esri-ui-corner
+  .esri-component.esri-widget--panel-height-only {
+  max-height: 335px !important;
 }
-
 
 /* // Extra small devices (portrait phones, less than 576px) */
 
 @media (max-width: 575.98px) {
-    .esri-view-width-xsmall .esri-expand--auto .esri-expand__container--expanded {
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        margin: 0;
-        height: 100%;
-        background: #242424;
-        z-index: 1;
-        overflow: auto;
-        width: 100%;
-    }
-    #sliderInnerContainer {
-        display: none;
-    }
-    #sliderContainer {
-        margin: 0 auto;
-    }
-    .esri-view-width-less-than-small .esri-zoom .esri-widget--button {
-        display: block;
-    }
-    .esri-icon.esri-icon-plus,
-    .esri-icon.esri-icon-minus {
-        padding-top: 8px;
-    }
-    .esri-view-width-xsmall .esri-expand--auto .esri-expand__container--expanded {
-        position: fixed;
-        top: 30%;
-        bottom: 0;
-        margin: 0;
-        height: 100%;
-        background: #242424;
-        z-index: 1;
-        overflow: auto;
-        right: 0;
-        left: 100%;
-    }
-}
+  .esri-view-width-xsmall .esri-expand--auto .esri-expand__container--expanded {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    margin: 0;
+    height: 100%;
+    background: #242424;
+    z-index: 1;
+    overflow: auto;
+    width: 100%;
+  }
+  #sliderInnerContainer {
+    display: none;
+  }
+  #sliderContainer {
+    margin: 0 auto;
+  }
+  .esri-view-width-less-than-small .esri-zoom .esri-widget--button {
+    display: block;
+  }
+  .esri-icon.esri-icon-plus,
+  .esri-icon.esri-icon-minus {
+    padding-top: 8px;
+  }
+  .esri-view-width-xsmall .esri-expand--auto .esri-expand__container--expanded {
+    position: fixed;
+    top: 30%;
+    bottom: 0;
+    margin: 0;
+    height: 100%;
+    background: #242424;
+    z-index: 1;
+    overflow: auto;
+    right: 0;
+    left: 100%;
+  }
+  /* Legend */
+  .info {
+    padding: 10px 7px;
+    font: 11px Arial, Helvetica, sans-serif;
+    background: rgba(0, 0, 0, 0, 0.5);
+    border-radius: 5px;
+    max-width: 126px;
+    margin: 10px;
+    text-align: right;
+  }
 
+  .legend strong {
+    display: block;
+    border-bottom: 1px dotted rgba(255, 255, 255, 0.3);
+    margin-bottom: 5px;
+  }
+
+  .legend {
+    line-height: 15px;
+    color: white;
+    line-height: 20px;
+  }
+
+  .legend i {
+    width: 13px;
+    height: 13px;
+    float: left;
+    margin-right: 8px;
+    margin-bottom: 5px;
+    opacity: 0.7;
+  }
+}
 
 /* // Small devices (landscape phones, 576px and up) */
 
 @media (min-width: 576px) and (max-width: 767.98px) {
-    .esri-view-width-xsmall .esri-expand--auto .esri-expand__container--expanded {
-        position: fixed;
-        /* top: 0; */
-        /* bottom: 0; */
-        margin: 0;
-        height: 100%;
-        background: #242424;
-        z-index: 1;
-        overflow: auto;
-        width: 100%;
-    }
-    #sliderInnerContainer {
-        display: none;
-    }
-    #sliderContainer {
-        margin: 0 auto;
-    }
-    .esri-view-width-less-than-small .esri-zoom .esri-widget--button {
-        display: block;
-    }
-    .esri-icon.esri-icon-plus,
-    .esri-icon.esri-icon-minus {
-        padding-top: 8px;
-    }
-    .esri-view-width-xsmall .esri-expand--auto .esri-expand__container--expanded {
-        position: fixed;
-        top: 30%;
-        bottom: 0;
-        margin: 0;
-        height: 100%;
-        background: #242424;
-        z-index: 1;
-        overflow: auto;
-        right: 0;
-        left: 100%;
-    }
+  .esri-view-width-xsmall .esri-expand--auto .esri-expand__container--expanded {
+    position: fixed;
+    /* top: 0; */
+    /* bottom: 0; */
+    margin: 0;
+    height: 100%;
+    background: #242424;
+    z-index: 1;
+    overflow: auto;
+    width: 100%;
+  }
+  #sliderInnerContainer {
+    display: none;
+  }
+  #sliderContainer {
+    margin: 0 auto;
+  }
+  .esri-view-width-less-than-small .esri-zoom .esri-widget--button {
+    display: block;
+  }
+  .esri-icon.esri-icon-plus,
+  .esri-icon.esri-icon-minus {
+    padding-top: 8px;
+  }
+  .esri-view-width-xsmall .esri-expand--auto .esri-expand__container--expanded {
+    position: fixed;
+    top: 30%;
+    bottom: 0;
+    margin: 0;
+    height: 100%;
+    background: #242424;
+    z-index: 1;
+    overflow: auto;
+    right: 0;
+    left: 100%;
+  }
+
+  /* Legend */
+  .info {
+    padding: 10px 7px;
+    font: 11px Arial, Helvetica, sans-serif;
+    background: rgba(0, 0, 0, 0, 0.5);
+    border-radius: 5px;
+    max-width: 126px;
+    margin: 10px;
+    text-align: right;
+  }
+
+  .legend strong {
+    display: block;
+    border-bottom: 1px dotted rgba(255, 255, 255, 0.3);
+    margin-bottom: 5px;
+  }
+
+  .legend {
+    line-height: 15px;
+    color: white;
+    line-height: 20px;
+  }
+
+  .legend i {
+    width: 13px;
+    height: 13px;
+    float: left;
+    margin-right: 8px;
+    margin-bottom: 5px;
+    opacity: 0.7;
+  }
 }
