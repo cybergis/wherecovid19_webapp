@@ -187,6 +187,7 @@ var layer_info_list = [
         "style_func": styleFunc1,
         "color_class": ["dph_illinois", "case_per_100k_capita", "nolog", "NaturalBreaks", "int"],
         "tab_page_id": "illinois-tab",
+        "animation": true,
     },
     {
         "name": "us_county_case",
@@ -197,6 +198,7 @@ var layer_info_list = [
         "style_func": styleFunc1,
         "color_class": ["county", "case_per_100k_capita", "nolog", "NaturalBreaks", "int"],
         "tab_page_id": "county-tab",
+        "animation": true,
     },
     {
         "name": "world_case",
@@ -207,6 +209,7 @@ var layer_info_list = [
         "style_func": styleFunc1,
         "color_class": ["who_world", "case_per_100k_capita", "nolog", "NaturalBreaks", "int"],
         "tab_page_id": "world-tab",
+        "animation": true,
     },
 ];
 
@@ -221,6 +224,7 @@ var layer_info_list_2 = [
         "style_func": styleFunc1,
         "color_class": ["state", "case_per_100k_capita", "nolog", "NaturalBreaks", "int"],
         //"tab_page_id": "world-tab",
+        "animation": true,
 
     },
     {
@@ -232,6 +236,7 @@ var layer_info_list_2 = [
         "style_func": styleVul,
         "color_class": ["vulnerability", "case", "nolog", "NaturalBreaks", "float"],
         //"tab_page_id": "illinois-tab",
+        "animation": true,
 
     },
     {
@@ -241,6 +246,7 @@ var layer_info_list_2 = [
         "category": "Illinois",
         "show": false,
         "style_func": styleAcc,
+        "animation": true,
     },
     {
         "name": "il_acc_v",
@@ -249,6 +255,7 @@ var layer_info_list_2 = [
         "category": "Illinois",
         "show": false,
         "style_func": styleAcc,
+        "animation": true,
     },
     {
         "name": "il_chicago_acc_i",
@@ -257,6 +264,7 @@ var layer_info_list_2 = [
         "category": "Illinois",
         "show": false,
         "style_func": styleAcc,
+        "animation": true,
     },
     {
         "name": "il_chicago_acc_v",
@@ -265,6 +273,7 @@ var layer_info_list_2 = [
         "category": "Illinois",
         "show": false,
         "style_func": styleAcc,
+        "animation": true,
     },
     {
         "name": "il_weekly_case",
@@ -274,6 +283,7 @@ var layer_info_list_2 = [
         "show": false,
         "style_func": styleChange,
         "reuse": "il_county_case",
+        "animation": true,
     },
     {
         "name": "us_county_weekly_case",
@@ -283,6 +293,7 @@ var layer_info_list_2 = [
         "show": false,
         "style_func": styleChange,
         "reuse": "us_county_case",
+        "animation": true,
     },
     {
         "name": "world_weekly_case",
@@ -292,6 +303,7 @@ var layer_info_list_2 = [
         "show": false,
         "style_func": styleChange,
         "reuse": "world_case",
+        "animation": true,
     },
 
 ];
@@ -305,6 +317,37 @@ var layer_info_list_3 = [
         "show": false,
         "style_func": styleChange,
         "reuse": "us_state_case",
+        "animation": true,
+    },
+];
+
+var layer_info_list_4 = [
+    {
+        "name": "il_hiv",
+        "display_name": "Density of PLWH (Persons Living with HIV)",
+        "geojson_url": null,
+        "category": "Illinois",
+        "show": false,
+        "esri_url": "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/HIV_Map/MapServer",
+        "animation": false,
+    },
+    {
+        "name": "il_svi",
+        "display_name": "CDC Social Vulnerability Index",
+        "geojson_url": null,
+        "category": "Illinois",
+        "show": false,
+        "esri_url": "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/SVI_2018/MapServer",
+        "animation": false,
+    },
+    {
+        "name": "il_testing_sites",
+        "display_name": "Testing Sites",
+        "geojson_url": null,
+        "category": "Illinois",
+        "show": false,
+        "esri_url": "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Testing_Sites/MapServer",
+        "animation": false,
     },
 ];
 
@@ -321,6 +364,9 @@ var il_weekly_case_layer_object = null;
 var us_county_weekly_case_layer_object = null;
 var us_state_weekly_case_layer_object = null;
 var world_weekly_case_layer_object = null;
+var il_hiv_layer_object = null;
+var il_svi_layer_object = null;
+var il_testing_sites_layer_object = null;
 
 function getLayerInfo(name, field = "name") {
 
@@ -340,6 +386,12 @@ function getLayerInfo(name, field = "name") {
     for (i = 0; i < layer_info_list_3.length; i++) {
         if (name == layer_info_list_3[i][field]) {
             return layer_info_list_3[i];
+        }
+    }
+
+    for (i = 0; i < layer_info_list_4.length; i++) {
+        if (name == layer_info_list_4[i][field]) {
+            return layer_info_list_4[i];
         }
     }
 
@@ -369,31 +421,43 @@ function loadClassJson(url) {
 
 function loadGeoJson(layer_info) {
     return new Promise((resolve, reject) => {
-        if (layer_info["reuse"] != null && layer_info["reuse"] != undefined) {
-            li_resue = getLayerInfo(layer_info["reuse"]);
-            layer_info.geojson_obj = JSON.parse(JSON.stringify(li_resue.geojson_obj));
+        if (layer_info["esri_url"] != undefined) {
             resolve(layer_info);
         }
-
-        $.ajax({
-            url: layer_info.geojson_url,
-            type: 'GET',
-            dataType: 'json',
-            success: function (data) {
-                console.log(layer_info.geojson_url);
-                layer_info.geojson_obj = data;
+        else
+        {       
+            if (layer_info["reuse"] != null && layer_info["reuse"] != undefined) {
+                li_reuse = getLayerInfo(layer_info["reuse"]);
+                layer_info.geojson_obj = JSON.parse(JSON.stringify(li_reuse.geojson_obj));
                 resolve(layer_info);
-            },
-            error: function (error) {
-                reject(error);
-            },
-        })
+            }
+    
+            $.ajax({
+                url: layer_info.geojson_url,
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    console.log(layer_info.geojson_url);
+                    layer_info.geojson_obj = data;
+                    resolve(layer_info);
+                },
+                error: function (error) {
+                    reject(error);
+                },
+            })
+        }
+        
     })
 }
 
 function add_animation_layer_to_map_promise(layer_info) {
     return new Promise((resolve, reject) => {
-        add_animation_layer_to_map(layer_info);
+        if (layer_info.esri_url != undefined) 
+        {
+            add_esri_layer_to_map(layer_info);
+        } else {
+            add_animation_layer_to_map(layer_info);
+        }
         resolve();
     })
 }
@@ -407,7 +471,6 @@ function fill_left_panel_il(geojson) {
 
     let illinois_table = document.getElementById('illinois-table').querySelector('tbody');
     let template = document.querySelector('template')
-
     let result_list = geojson.features.map(function (value, index) {
         return {
             centroid_x: turf.centroid(value.geometry).geometry.coordinates[0],
@@ -709,12 +772,16 @@ function onOverlayAdd(e) {
         slider.removeTimelines(item)
     });
     slider.remove();
-    slider.addTo(map);
-    slider.addTimelines(e.layer);
-    // setTime must be after addTo(map), otherwise reset to startTime
-    slider.setTime(slider.end);
-    refreshLegend(e.layer);
 
+    if (getLayerInfo(e.layer.name)['animation'] == true) {
+        slider.addTo(map);
+        slider.addTimelines(e.layer);
+        // setTime must be after addTo(map), otherwise reset to startTime
+        slider.setTime(slider.end);           
+    } 
+
+    refreshLegend(e.layer); 
+    
     if (e.layer == il_chicago_acc_v_layer_object || e.layer == il_chicago_acc_i_layer_object) {
         map.setView([41.87, -87.62], 10)
     } else if (e.group.name == "Illinois") {
@@ -784,6 +851,31 @@ function getChangeColor(d) {
             d > -0.1 ? '#ffffbf' :
                 d > -0.5 ? '#a5d96a' :
                     '#199640';
+}
+
+function add_esri_layer_to_map(layer_info) {
+    var layer_obj = L.esri.dynamicMapLayer({
+        url:
+          layer_info.esri_url,
+    });
+
+    layer_obj.name = layer_info.name;
+    layer_info.layer_object = layer_obj
+
+    if (layer_info.show) {
+        layer_obj.addTo(map);
+    }
+
+    if (layer_obj.name == "il_hiv") {
+        il_hiv_layer_object = layer_obj;
+    } else if (layer_obj.name == "il_svi") {
+        il_svi_layer_object = layer_obj;
+    } else if (layer_obj.name == "il_testing_sites") {
+        il_testing_sites_layer_object = layer_obj;
+    }
+    // add layer into LayerControl UI list
+    layerControl.addOverlay(layer_obj, layer_info.display_name, layer_info.category);
+
 }
 
 function add_animation_layer_to_map(layer_info) {
@@ -902,6 +994,8 @@ loadClassJson(class_json_url).then(
         return Promise.allSettled(layer_info_list_2.map(chain_promise));
     }).then(function () {
         return Promise.allSettled(layer_info_list_3.map(chain_promise));
+    }).then(function () {
+        return Promise.allSettled(layer_info_list_4.map(chain_promise));
     })
 );
 
@@ -1144,24 +1238,24 @@ function refreshLegend(_layer) {
             }
             label3.push(legendContent);
             div.innerHTML = label3.join('<br><br><br>');
-            // } else if (_layer == hiv_layer) {
-            //     grades = binsAcc;
-            //     for (var i = 0; i < grades.length; i++) {
-            //         legendContent +=
-            //             '<i style="background:' + getAccColor(i - 0.1) + '"></i> ' +
-            //             grades[i] + (grades[i + 1] != undefined ? '<br>' : '') + '<br>';
-            //     }
-            //     label4.push(legendContent);
-            //     div.innerHTML = label4.join('<br><br><br>');
-            // } else if (_layer == svi_layer) {
-            //     grades = binsAcc;
-            //     for (var i = 0; i < grades.length; i++) {
-            //         legendContent +=
-            //             '<i style="background:' + getAccColor(i - 0.1) + '"></i> ' +
-            //             grades[i] + (grades[i + 1] != undefined ? '<br>' : '') + '<br>';
-            //     }
-            //     label5.push(legendContent);
-            //     div.innerHTML = label5.join('<br><br><br>');
+        } else if (_layer == il_hiv_layer_object) {
+            grades = binsAcc;
+            for (var i = 0; i < grades.length; i++) {
+                legendContent +=
+                    '<i style="background:' + getAccColor(i - 0.1) + '"></i> ' +
+                    grades[i] + (grades[i + 1] != undefined ? '<br>' : '') + '<br>';
+            }
+            label4.push(legendContent);
+            div.innerHTML = label4.join('<br><br><br>');
+        } else if (_layer == il_svi_layer_object) {
+            grades = binsAcc;
+            for (var i = 0; i < grades.length; i++) {
+                legendContent +=
+                    '<i style="background:' + getAccColor(i - 0.1) + '"></i> ' +
+                    grades[i] + (grades[i + 1] != undefined ? '<br>' : '') + '<br>';
+            }
+            label5.push(legendContent);
+            div.innerHTML = label5.join('<br><br><br>');
         } else if (_layer == il_weekly_case_layer_object || _layer == us_county_weekly_case_layer_object ||
             _layer == us_state_weekly_case_layer_object || _layer == world_weekly_case_layer_object) {
             grades = binsChange;
