@@ -781,20 +781,26 @@ L.Control.zoomHome = L.Control.extend({
 
     _zoomHome: function (e) {
         //map.setView([lat, lng], zoom);
-        if (userLat < boundaryIllinois[0][1] && userLat > boundaryIllinois[1][1] &&
-            userLng < boundaryIllinois[2][0] && userLng > boundaryIllinois[0][0]) {
+        if (userLat == null || userLng == null) {
             _switch_layer(il_county_case_layer_object, map);
-            map.setView({lat: userLat, lon: userLng}, 9);
-
-        } else if (userLat < boundaryUS[0][1] && userLat > boundaryUS[1][1] &&
-            userLng < boundaryUS[2][0] && userLng > boundaryUS[0][0]) {            
-            _switch_layer(us_county_case_layer_object, map);
-            map.setView({lat: userLat, lon: userLng}, 9);
-
-        } else {
-            _switch_layer(world_case_layer_object, map);
-            map.setView({lat: userLat, lon: userLng}, 6);            
+            map.setView([40, -89], 7)
         }
+        else {
+            if (userLat < boundaryIllinois[0][1] && userLat > boundaryIllinois[1][1] &&
+                userLng < boundaryIllinois[2][0] && userLng > boundaryIllinois[0][0]) {
+                _switch_layer(il_county_case_layer_object, map);
+                map.setView({lat: userLat, lon: userLng}, 9);
+    
+            } else if (userLat < boundaryUS[0][1] && userLat > boundaryUS[1][1] &&
+                userLng < boundaryUS[2][0] && userLng > boundaryUS[0][0]) {            
+                _switch_layer(us_county_case_layer_object, map);
+                map.setView({lat: userLat, lon: userLng}, 9);
+    
+            } else {
+                _switch_layer(world_case_layer_object, map);
+                map.setView({lat: userLat, lon: userLng}, 6);            
+            }
+        }        
     },
 
     _createButton: function (html, title, className, container, fn) {
