@@ -121,11 +121,12 @@ download_files(){
 	wget -O ./illinois/idph_CountyDemos.json http://www.dph.illinois.gov/sitefiles/CountyDemos.json?nocache=1
 	wget -O ./illinois/idph_COVIDZip.json http://www.dph.illinois.gov/sitefiles/COVIDZip.json?nocache=1
 	wget -O ./illinois/idph_COVIDHistoricalTestResults.json http://www.dph.illinois.gov/sitefiles/COVIDHistoricalTestResults.json?nocache=1
-	wget -O ./global-covid19-who-gis.json.gz https://dashboards-dev.sprinklr.com/data/9043/global-covid19-who-gis.json
-        # WHO
-        gunzip -f ./global-covid19-who-gis.json.gz
+	#WHO
+        wget -O ./global-covid19-who-gis.json https://covid19.who.int/page-data/index/page-data.json
+        #wget -O ./global-covid19-who-gis.json.gz https://dashboards-dev.sprinklr.com/data/9043/global-covid19-who-gis.json
+        #gunzip -f ./global-covid19-who-gis.json.gz
         mv -f ./global-covid19-who-gis.json ./worldwide/
-        rm -f ./global-covid19-who-gis.json.gz
+        #rm -f ./global-covid19-who-gis.json.gz
         # IL Accessibility
         mkdir -p ./illinois/Accessibility_Dissolve_Animation
         cp -v ../illinois/Accessibility_Dissolve_Animation/* ./illinois/Accessibility_Dissolve_Animation/
