@@ -14,16 +14,29 @@ var getPosition = function (options) {
     });
 }
 var userLat = null;
-var userLon = null;
+var userLng = null;
 var userCentered = false;
 var userGeolocationTimer = null;
 var userGeolocationTriedCounter = 0;
+
+var boundaryIllinois =
+    [[-90.54179687500002, 42.43051037801457],
+        [-90.54179687500002, 37.30787664699351],
+        [-87.50957031250002, 37.30787664699351],
+        [-87.50957031250002, 42.43051037801457]];
+
+var boundaryUS =
+    [[-127.52638302724817, 49.02551219307651],
+        [-127.52638302724817, 25.148115576371765],
+        [-66.35450802724817, 25.148115576371765],
+        [-66.35450802724817, 49.02551219307651]];
+
 
 getPosition(geolocation_options)
     .then((position) => {
         console.log(position);
         userLat = position.coords.latitude;
-        userLon = position.coords.longitude;
+        userLng = position.coords.longitude;
     })
     .catch((err) => {
         console.error(err.message);
@@ -32,8 +45,8 @@ getPosition(geolocation_options)
 function zoomToUserLocation() {
     console.log("Trying to center view to user location ....");
     if (!userCentered || userGeolocationTriedCounter > 60) {
-        if (userLat != null && userLon != null) {
-            userLatLonAction({lat: userLat, lon: userLon});
+        if (userLat != null && userLng != null) {
+            userLatLonAction({lat: userLat, lon: userLng});
             userCentered = true;
             console.log("centered");
         }
@@ -67,27 +80,14 @@ function _switch_layer(layer, map) {
 
 function userLatLonAction(point) {
 
-    let userLat = point.lat;
-    let userLng = point.lon;
+    userLat = point.lat;
+    userLng = point.lon;
     // // New York
     // userLat = 40.7128;
     // userLng = -74.0060;
     // // Japan
     // userLat = 36.2048;
     // userLng = 138.2529;
-
-
-    let boundaryIllinois =
-        [[-90.54179687500002, 42.43051037801457],
-            [-90.54179687500002, 37.30787664699351],
-            [-87.50957031250002, 37.30787664699351],
-            [-87.50957031250002, 42.43051037801457]];
-
-    let boundaryUS =
-        [[-127.52638302724817, 49.02551219307651],
-            [-127.52638302724817, 25.148115576371765],
-            [-66.35450802724817, 25.148115576371765],
-            [-66.35450802724817, 49.02551219307651]];
 
     try {
 
@@ -101,9 +101,8 @@ function userLatLonAction(point) {
             // });
             // refreshLegend(illinois_counties_ts);
 
-            //// !!! map.setView must comes befoe _switch_layer
-            map.setView({lat: userLat, lon: userLng}, 9);
             _switch_layer(il_county_case_layer_object, map);
+            map.setView({lat: userLat, lon: userLng}, 9);
 
         } else if (userLat < boundaryUS[0][1] && userLat > boundaryUS[1][1] &&
             userLng < boundaryUS[2][0] && userLng > boundaryUS[0][0]) {
@@ -113,10 +112,9 @@ function userLatLonAction(point) {
             //     return parseInt(item, 10);
             // });
             // refreshLegend(us_counties_ts);
-
-            //// !!! map.setView must comes befoe _switch_layer
-            map.setView({lat: userLat, lon: userLng}, 9);
+       
             _switch_layer(us_county_case_layer_object, map);
+            map.setView({lat: userLat, lon: userLng}, 9);
 
         } else {
             //world_case_layer_object.addTo(map);
@@ -126,9 +124,8 @@ function userLatLonAction(point) {
             // });
             // refreshLegend(world_ts);
 
-            //// !!! map.setView must comes befoe _switch_layer
-            map.setView({lat: userLat, lon: userLng}, 6);
             _switch_layer(world_case_layer_object, map);
+            map.setView({lat: userLat, lon: userLng}, 6);
         }
 
     } catch (ex) {
@@ -739,6 +736,98 @@ var map = L.map('map', {
     attributionControl: false
 });
 
+// new L.Control.Zoom({ position: 'topright' }).addTo(map);
+
+L.Control.zoomHome = L.Control.extend({
+    options: {
+        position: 'topright',
+        zoomInText: '+',
+        zoomInTitle: 'Zoom in',
+        zoomOutText: '-',
+        zoomOutTitle: 'Zoom out',
+        zoomHomeText: '<i class="fa fa-home" style="line-height:1.65;"></i>',
+        zoomHomeTitle: 'Zoom home'
+    },
+
+    onAdd: function (map) {
+        var controlName = 'gin-control-zoom',
+            container = L.DomUtil.create('div', controlName + ' leaflet-bar'),
+            options = this.options;
+
+        this._zoomInButton = this._createButton(options.zoomInText, options.zoomInTitle,
+        controlName + '-in', container, this._zoomIn);
+        this._zoomHomeButton = this._createButton(options.zoomHomeText, options.zoomHomeTitle,
+        controlName + '-home', container, this._zoomHome);
+        this._zoomOutButton = this._createButton(options.zoomOutText, options.zoomOutTitle,
+        controlName + '-out', container, this._zoomOut);
+
+        this._updateDisabled();
+        map.on('zoomend zoomlevelschange', this._updateDisabled, this);
+
+        return container;
+    },
+
+    onRemove: function (map) {
+        map.off('zoomend zoomlevelschange', this._updateDisabled, this);
+    },
+
+    _zoomIn: function (e) {
+        this._map.zoomIn(e.shiftKey ? 3 : 1);
+    },
+
+    _zoomOut: function (e) {
+        this._map.zoomOut(e.shiftKey ? 3 : 1);
+    },
+
+    _zoomHome: function (e) {
+        //map.setView([lat, lng], zoom);
+        if (userLat < boundaryIllinois[0][1] && userLat > boundaryIllinois[1][1] &&
+            userLng < boundaryIllinois[2][0] && userLng > boundaryIllinois[0][0]) {
+            _switch_layer(il_county_case_layer_object, map);
+            map.setView({lat: userLat, lon: userLng}, 9);
+
+        } else if (userLat < boundaryUS[0][1] && userLat > boundaryUS[1][1] &&
+            userLng < boundaryUS[2][0] && userLng > boundaryUS[0][0]) {            
+            _switch_layer(us_county_case_layer_object, map);
+            map.setView({lat: userLat, lon: userLng}, 9);
+
+        } else {
+            _switch_layer(world_case_layer_object, map);
+            map.setView({lat: userLat, lon: userLng}, 6);            
+        }
+    },
+
+    _createButton: function (html, title, className, container, fn) {
+        var link = L.DomUtil.create('a', className, container);
+        link.innerHTML = html;
+        link.href = '#';
+        link.title = title;
+
+        L.DomEvent.on(link, 'mousedown dblclick', L.DomEvent.stopPropagation)
+            .on(link, 'click', L.DomEvent.stop)
+            .on(link, 'click', fn, this)
+            .on(link, 'click', this._refocusOnMap, this);
+
+        return link;
+    },
+
+    _updateDisabled: function () {
+        var map = this._map,
+            className = 'leaflet-disabled';
+
+        L.DomUtil.removeClass(this._zoomInButton, className);
+        L.DomUtil.removeClass(this._zoomOutButton, className);
+
+        if (map._zoom === map.getMinZoom()) {
+            L.DomUtil.addClass(this._zoomOutButton, className);
+        }
+        if (map._zoom === map.getMaxZoom()) {
+            L.DomUtil.addClass(this._zoomInButton, className);
+        }
+    }
+});
+
+
 var slider = L.timelineSliderControl({
     formatOutput: function (date) {
         return new Date(date).toLocaleDateString('en-US', {timeZone: 'UTC'})
@@ -766,11 +855,15 @@ var options = {
     groupCheckboxes: true
 };
 
-
+// add layer control to the map
 var layerControl = L.control.groupedLayers(baseMaps, groupedOverlays, options);
 map.addControl(layerControl);
 
-// Add the attribution of the base mapo to the left side
+// add zoom control to the map
+var zoomHome = new L.Control.zoomHome();
+zoomHome.addTo(map);
+
+// Add the attribution of the base map to the left side
 L.control.attribution({
     position: 'bottomleft'
 }).addTo(map);
