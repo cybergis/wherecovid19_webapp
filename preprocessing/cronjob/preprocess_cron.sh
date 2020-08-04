@@ -12,7 +12,7 @@ make_copy_data(){
 	cp ../counties_update_new.geojson .
 	cp ../states_update.geojson .
 	mkdir -p illinois
-	cp ./illinois/nyt_illinois_counties_data.geojson ./illinois/nyt_illinois_counties_data-tmp.geojson
+	#cp ./illinois/nyt_illinois_counties_data.geojson ./illinois/nyt_illinois_counties_data-tmp.geojson
 
 	cp ./illinois/idph_CountyDemos.json ./illinois/idph_CountyDemos-tmp.json
 	cp ./illinois/idph_COVIDZip.json ./illinois/idph_COVIDZip-tmp.json
@@ -121,11 +121,12 @@ download_files(){
 	wget -O ./illinois/idph_CountyDemos.json http://www.dph.illinois.gov/sitefiles/CountyDemos.json?nocache=1
 	wget -O ./illinois/idph_COVIDZip.json http://www.dph.illinois.gov/sitefiles/COVIDZip.json?nocache=1
 	wget -O ./illinois/idph_COVIDHistoricalTestResults.json http://www.dph.illinois.gov/sitefiles/COVIDHistoricalTestResults.json?nocache=1
-	wget -O ./global-covid19-who-gis.json.gz https://dashboards-dev.sprinklr.com/data/9043/global-covid19-who-gis.json
-        # WHO
-        gunzip -f ./global-covid19-who-gis.json.gz
+	# WHO
+        #wget -O ./global-covid19-who-gis.json.gz https://dashboards-dev.sprinklr.com/data/9043/global-covid19-who-gis.json
+        wget -O ./global-covid19-who-gis.json https://covid19.who.int/page-data/index/page-data.json
+        #gunzip -f ./global-covid19-who-gis.json.gz
         mv -f ./global-covid19-who-gis.json ./worldwide/
-        rm -f ./global-covid19-who-gis.json.gz
+        #rm -f ./global-covid19-who-gis.json.gz
         # IL Accessibility
         mkdir -p ./illinois/Accessibility_Dissolve_Animation
         cp -v ../illinois/Accessibility_Dissolve_Animation/* ./illinois/Accessibility_Dissolve_Animation/
@@ -220,7 +221,7 @@ restore_data(){
         cp classes-tmp.json classes.json
 	cp nyt_states_data-tmp.geojson nyt_states_data.geojson
 	cp nyt_counties_data-tmp.geojson nyt_counties_data.geojson
-        cp ./illinois/nyt_illinois_counties_data-tmp.geojson ./illinois/nyt_illinois_counties_data.geojson
+        #cp ./illinois/nyt_illinois_counties_data-tmp.geojson ./illinois/nyt_illinois_counties_data.geojson
 	cp us-counties-tmp.csv us-counties.csv
 	cp us-states-tmp.csv us-states.csv
 
@@ -253,7 +254,7 @@ copy_back_results_webfolder(){
   cp nyt_counties_data.geojson ../
   cp nyt_states_data.geojson ../
   cp classes.json ../
-  cp ./illinois/nyt_illinois_counties_data.geojson ../illinois/
+  #cp ./illinois/nyt_illinois_counties_data.geojson ../illinois/
   cp ./illinois/dph_*_data.geojson ../illinois/
   cp ./illinois/idph_CountyDemos.json ../illinois/
   cp ./illinois/idph_COVIDZip.json ../illinois/
