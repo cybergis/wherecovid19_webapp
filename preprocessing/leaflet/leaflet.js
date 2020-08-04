@@ -17,6 +17,7 @@ var userLat = null;
 var userLon = null;
 var userCentered = false;
 var userGeolocationTimer = null;
+var userGeolocationTriedCounter = 0;
 
 getPosition(geolocation_options)
     .then((position) => {
@@ -29,19 +30,26 @@ getPosition(geolocation_options)
     })
 
 function zoomToUserLocation() {
-    if (!userCentered) {
+    console.log("Trying to center view to user location ....");
+    if (!userCentered || userGeolocationTriedCounter > 60) {
         if (userLat != null && userLon != null) {
             userLatLonAction({lat: userLat, lon: userLon});
             userCentered = true;
+            console.log("centered");
+        }
+        else
+        {
+            console.log("User location still unknown; Will try again in 1s.");
         }
     } else {
-        clearTimeout(userGeolocationTimer);
+        clearInterval(userGeolocationTimer);
     }
+    userGeolocationTriedCounter = userGeolocationTriedCounter + 1;
 }
 
 function zoomToUserLocationPromise() {
     return new Promise((resolve, reject) => {
-        userGeolocationTimer = setTimeout(zoomToUserLocation, 2000);
+        userGeolocationTimer = setInterval(zoomToUserLocation, 1000);
         resolve();
     });
 }
