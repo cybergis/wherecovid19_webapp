@@ -1,6 +1,50 @@
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////// Set up Basemaps /////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
+var geolocation_options = {
+    enableHighAccuracy: false,
+    timeout: 30000,
+    maximumAge: 0
+};
+
+var getPosition = function (options) {
+    //// https://gist.github.com/varmais/74586ec1854fe288d393
+    return new Promise(function (resolve, reject) {
+        navigator.geolocation.getCurrentPosition(resolve, reject, options);
+    });
+}
+var userLat = null;
+var userLon = null;
+var userCentered = false;
+var userGeolocationTimer = null;
+
+getPosition(geolocation_options)
+    .then((position) => {
+        console.log(position);
+        userLat = position.coords.latitude;
+        userLon = position.coords.longitude;
+    })
+    .catch((err) => {
+        console.error(err.message);
+    })
+
+function zoomToUserLocation() {
+    if (!userCentered) {
+        if (userLat != null && userLon != null) {
+            userLatLonAction({lat: userLat, lon: userLon});
+            userCentered = true;
+        }
+    } else {
+        clearTimeout(userGeolocationTimer);
+    }
+}
+
+function zoomToUserLocationPromise() {
+    return new Promise((resolve, reject) => {
+        userGeolocationTimer = setTimeout(zoomToUserLocation, 2000);
+        resolve();
+    });
+}
 
 function _switch_layer(layer, map) {
     if (map.hasLayer(layer) != true) {
@@ -83,42 +127,6 @@ function userLatLonAction(point) {
 
     }
 
-}
-
-function getUserLatLonPromise() {
-
-    let options = {
-        enableHighAccuracy: false,
-        timeout: 5000,
-        maximumAge: 0
-    };
-
-    return new Promise((resolve, reject) => {
-        function success(pos) {
-            try {
-                var crd = pos.coords;
-
-                console.log('Your current position is:');
-                console.log(`Latitude : ${crd.latitude}`);
-                console.log(`Longitude: ${crd.longitude}`);
-                console.log(`More or less ${crd.accuracy} meters.`);
-                userLatLonAction({lat: crd.latitude, lon: crd.longitude});
-            } catch (ex) {
-
-            }
-
-            resolve({lat: crd.latitude, lon: crd.longitude});
-        }
-
-        function error(err) {
-            console.warn(`ERROR(${err.code}): ${err.message}`);
-            // Always Resolve Promise
-            resolve(`ERROR(${err.code}): ${err.message}`);
-        }
-
-        navigator.geolocation.getCurrentPosition(success, error, options);
-
-    });
 }
 
 var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -423,15 +431,13 @@ function loadGeoJson(layer_info) {
     return new Promise((resolve, reject) => {
         if (layer_info["esri_url"] != undefined) {
             resolve(layer_info);
-        }
-        else
-        {       
+        } else {
             if (layer_info["reuse"] != null && layer_info["reuse"] != undefined) {
                 li_reuse = getLayerInfo(layer_info["reuse"]);
                 layer_info.geojson_obj = JSON.parse(JSON.stringify(li_reuse.geojson_obj));
                 resolve(layer_info);
             }
-    
+
             $.ajax({
                 url: layer_info.geojson_url,
                 type: 'GET',
@@ -446,14 +452,13 @@ function loadGeoJson(layer_info) {
                 },
             })
         }
-        
+
     })
 }
 
 function add_animation_layer_to_map_promise(layer_info) {
     return new Promise((resolve, reject) => {
-        if (layer_info.esri_url != undefined) 
-        {
+        if (layer_info.esri_url != undefined) {
             add_esri_layer_to_map(layer_info);
         } else {
             add_animation_layer_to_map(layer_info);
@@ -777,11 +782,11 @@ function onOverlayAdd(e) {
         slider.addTo(map);
         slider.addTimelines(e.layer);
         // setTime must be after addTo(map), otherwise reset to startTime
-        slider.setTime(slider.end);           
-    } 
+        slider.setTime(slider.end);
+    }
 
-    refreshLegend(e.layer); 
-    
+    refreshLegend(e.layer);
+
     if (e.layer == il_chicago_acc_v_layer_object || e.layer == il_chicago_acc_i_layer_object) {
         map.setView([41.87, -87.62], 10)
     } else if (e.group.name == "Illinois") {
@@ -856,7 +861,7 @@ function getChangeColor(d) {
 function add_esri_layer_to_map(layer_info) {
     var layer_obj = L.esri.dynamicMapLayer({
         url:
-          layer_info.esri_url,
+        layer_info.esri_url,
     });
 
     layer_obj.name = layer_info.name;
@@ -987,9 +992,8 @@ loadClassJson(class_json_url).then(
     }).then(function () {
         switch_left_tab_page_handler_old();
         left_tab_page_table_click_old();
-
     }).then(function () {
-        return getUserLatLonPromise();
+        return zoomToUserLocationPromise();
     }).then(function () {
         return Promise.allSettled(layer_info_list_2.map(chain_promise));
     }).then(function () {
@@ -1497,16 +1501,16 @@ function updateChart(graphic) {
 
     dic5 = {
         data: SlicedAverageWeeklyCases,
-      label: "7-Day Average New Cases ",
-      type: "line",
-      borderColor: "#fed8b1",
-      pointStyle: "circle",
-      pointHoverRadius: 3,
-      pointRadius: 0,
-      lineTension: 0.5,
-      borderWidth: 2,
-      fill: false,
-      hidden: false,
+        label: "7-Day Average New Cases ",
+        type: "line",
+        borderColor: "#fed8b1",
+        pointStyle: "circle",
+        pointHoverRadius: 3,
+        pointRadius: 0,
+        lineTension: 0.5,
+        borderWidth: 2,
+        fill: false,
+        hidden: false,
     };
 
     if (graphic.properties.cases_ts != undefined) {
@@ -1586,11 +1590,11 @@ function createPopup(_feature, _layer) {
             </tr>\
             <tr class="popup-table-row">\
             <th class="popup-table-header">First Date of Confirmed Cases</th>\
-            <td id="first_date_case" class="popup-table-data">' + dt_first_case.toLocaleDateString("en-US", { timeZone: "UTC" }) + '</td>\
+            <td id="first_date_case" class="popup-table-data">' + dt_first_case.toLocaleDateString("en-US", {timeZone: "UTC"}) + '</td>\
             </tr>\
             <tr class="popup-table-row">\
             <th class="popup-table-header">First Date of Deaths</th>\
-            <td id="first_date_death" class="popup-table-data">' + dt_first_death.toLocaleDateString("en-US", { timeZone: "UTC" }) + '</td>\
+            <td id="first_date_death" class="popup-table-data">' + dt_first_death.toLocaleDateString("en-US", {timeZone: "UTC"}) + '</td>\
             </tr>\
         </table>\
         </form>')
