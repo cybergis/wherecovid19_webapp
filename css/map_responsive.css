@@ -692,3 +692,7 @@ main,
     opacity: 0.7;
   }
 }
+
+#loadOverlay {
+  display: none;
+}

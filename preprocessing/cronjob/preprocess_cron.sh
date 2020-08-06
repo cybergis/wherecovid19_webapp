@@ -230,7 +230,7 @@ restore_data(){
         cp ./illinois/idph_COVIDHistoricalTestResults-tmp.json ./illinois/idph_COVIDHistoricalTestResults.json
         cp ./illinois/dph_county_data-tmp.geojson ./illinois/dph_county_data.geojson
 	#cp ./illinois/dph_county_static_data-tmp.geojson	./illinois/dph_county_static_data.geojson
-	cp ./illinois/dph_zipcode_data-tmp.geojson	./illinois/dph_zipcode_data.geojson
+	cp ./illinois/dph_zipcode_data.geojson	./illinois/dph_zipcode_data-tmp.geojson
 
 	cp ./worldwide/who_world_data-tmp.geojson ./worldwide/who_world_data.geojson
 	cp ./worldwide/global-covid19-who-gis-tmp.json ./worldwide/global-covid19-who-gis.json

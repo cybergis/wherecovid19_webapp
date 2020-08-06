@@ -2,6 +2,9 @@
 <html lang="en">
 
 <head>
+    <div id="loadOverlay"
+        style="background-color:#333; position:absolute; top:0px; left:0px; width:100%; height:100%; z-index:2000;">
+    </div>
     <!-- COMMON TAGS -->
 
     <meta charset="utf-8">
@@ -82,86 +85,6 @@
                 <a class="btn btn-dark d-none d-md-block mx-1" style="color: white;" data-toggle="modal"
                     data-target="#aboutModal" href="#aboutModal">
                     <i class="fas fa-info-circle"></i></a>
-
-                <div class=" modal fade " id="aboutModal" tabindex="-1 " role="dialog "
-                    aria-labelledby="exampleModalLabel " aria-hidden="true ">
-                    <div class="modal-dialog modal-dialog-centered modal-xl " role="document ">
-                        <div class="modal-content ">
-                            <div class="modal-header ">
-                                <h5 class="modal-title " id="exampleModalLabel "
-                                    style="color:black; text-align: center;width: 100%; ">
-                                    WhereCOVID-19: Mapping Multi-Scale Spread and Impacts <br>of COVID-19 for Spatial
-                                    Decision Support
-                                </h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body " style="color:black; ">
-                                <p> The ongoing COVID-19 pandemic has put the world into an unprecedented situation
-                                    causing massive impacts on populations and businesses. While there exist numerous
-                                    geospatial data portals and resources for fighting against
-                                    the COVID crisis, a major challenge is that few of these are based on rigorous
-                                    geospatial analysis and modeling as many simply report COVID-19 cases and summary
-                                    statistics. To tackle this challenge requires detailed
-                                    data on populations, health care services, and high-risk settings, along with
-                                    decision support tools for geospatial analytics and place-based intervention.
-                                    Dynamic and interactive mapping informed by rigorous geospatial
-                                    analysis and modeling is urgently needed for understanding how COVID-19 spreads
-                                    across a number of spatial and temporal scales in different population contexts and
-                                    for supporting decision making to mitigate the spread
-                                    and save lives. However, such geospatial analysis and modeling are often
-                                    computation- and data-intensive, and thus requires integration with and enablement
-                                    by cyberGIS – geospatial information science and systems (GIS)
-                                    based on advanced cyberinfrastructure. Therefore, the CyberGIS Center for Advanced
-                                    Digital and Spatial Studies at the University of Illinois at Urbana-Champaign has
-                                    established the WhereCOVID-19 platform to pursue important
-                                    knowledge of multi-scale spread and impacts of COVID-19 while producing a unique and
-                                    critically urgent capability for spatial decision support.
-                                </p>
-                                <p> Specifically, WhereCOVID-19 maps and predicts where COVID-19 is spreading across a
-                                    number of spatial and temporal scales while providing an online spatial decision
-                                    support system for identifying populations at risk and
-                                    targeting health care interventions. The platform is developed collaboratively with
-                                    public health and epidemiology researchers as well as public health officials with
-                                    the aim to provide a one-stop geospatial data and
-                                    analysis system to support cutting-edge research and timely decision-making.
-                                    WhereCOVID-19 seeks to answer a number of critical “where” questions such as where
-                                    COVID-19 cases are and will likely be; where vulnerable
-                                    populations are; where containment and mitigation measures should be applied; where
-                                    health care services might be overwhelmed; and where additional health care
-                                    resources should be deployed. WhereCOVID-19 is committed
-                                    to providing mapping and spatial decision support capabilities based on scientific
-                                    understanding of how spatiotemporal patterns and trends of COVID-19 relate to
-                                    population characteristics and health care resources.
-                                    The WhereCOVID-19 platform is made available to the general public, a broad range of
-                                    stakeholders, and research and education communities.</p>
-                                <p>Currently, WhereCOVID-19 provides a collection of static and dynamic maps for
-                                    estimating the spread and exposure risk of COVID-19 at various spatial and temporal
-                                    scales. For example, a set of vulnerability maps synthesize
-                                    information of confirmed COVID-19 cases, tested cases, population density, social
-                                    vulnerability index based on CDC data, people living with HIV, and spatial
-                                    accessibility to hospital resources based on a linear model.
-                                    Another example is a suite of maps representing spatial accessibility to healthcare
-                                    resources based on the outcome of a recent study: <a
-                                        href=" https://medrxiv.org/cgi/content/short/2020.05.06.20093534v1 "
-                                        target="_blank ">
-                                        https://medrxiv.org/cgi/content/short/2020.05.06.20093534v1</a>. </p>
-
-                                <p style="text-align: center; "><a href="data-info.html " target="_blank ">WhereCOVID-19
-                                        Data Summary</a></p>
-                                <p style="text-align:center; ">A Quick Tutorial on the CyberGIS App of WhereCOVID-19: <a
-                                        href="https://youtu.be/yKP3wYEF2Ng " target="_blank ">Play Video</a></p>
-                                <p style="text-align:center; ">
-                                    <a href="https://youtu.be/yKP3wYEF2Ng " target="_blank "><img width="560 "
-                                            height="315 " style="margin: 15px auto; " src="../img/video.png "
-                                            frameborder="0 "></img>
-                                    </a>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <div class="app-drawer btn-dark">
                     <span><i class="fas fa-th"></i><span class="sr-only">Applications</span></span>
@@ -522,6 +445,86 @@
             <div id="about-screen-btn" id="map-screen-btn" class="col screen-btn">
                 <i class="fas fa-info-circle"></i>
                 <br>About
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade" id="aboutModal" tabindex="-1 " role="dialog " aria-labelledby="exampleModalLabel "
+        aria-hidden="true ">
+        <div class="modal-dialog modal-dialog-centered modal-xl " role="document ">
+            <div class="modal-content ">
+                <div class="modal-header ">
+                    <h5 class="modal-title " id="exampleModalLabel "
+                        style="color:black; text-align: center;width: 100%; ">
+                        WhereCOVID-19: Mapping Multi-Scale Spread and Impacts <br>of COVID-19 for Spatial
+                        Decision Support
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body " style="color:black; ">
+                    <p> The ongoing COVID-19 pandemic has put the world into an unprecedented situation
+                        causing massive impacts on populations and businesses. While there exist numerous
+                        geospatial data portals and resources for fighting against
+                        the COVID crisis, a major challenge is that few of these are based on rigorous
+                        geospatial analysis and modeling as many simply report COVID-19 cases and summary
+                        statistics. To tackle this challenge requires detailed
+                        data on populations, health care services, and high-risk settings, along with
+                        decision support tools for geospatial analytics and place-based intervention.
+                        Dynamic and interactive mapping informed by rigorous geospatial
+                        analysis and modeling is urgently needed for understanding how COVID-19 spreads
+                        across a number of spatial and temporal scales in different population contexts and
+                        for supporting decision making to mitigate the spread
+                        and save lives. However, such geospatial analysis and modeling are often
+                        computation- and data-intensive, and thus requires integration with and enablement
+                        by cyberGIS – geospatial information science and systems (GIS)
+                        based on advanced cyberinfrastructure. Therefore, the CyberGIS Center for Advanced
+                        Digital and Spatial Studies at the University of Illinois at Urbana-Champaign has
+                        established the WhereCOVID-19 platform to pursue important
+                        knowledge of multi-scale spread and impacts of COVID-19 while producing a unique and
+                        critically urgent capability for spatial decision support.
+                    </p>
+                    <p> Specifically, WhereCOVID-19 maps and predicts where COVID-19 is spreading across a
+                        number of spatial and temporal scales while providing an online spatial decision
+                        support system for identifying populations at risk and
+                        targeting health care interventions. The platform is developed collaboratively with
+                        public health and epidemiology researchers as well as public health officials with
+                        the aim to provide a one-stop geospatial data and
+                        analysis system to support cutting-edge research and timely decision-making.
+                        WhereCOVID-19 seeks to answer a number of critical “where” questions such as where
+                        COVID-19 cases are and will likely be; where vulnerable
+                        populations are; where containment and mitigation measures should be applied; where
+                        health care services might be overwhelmed; and where additional health care
+                        resources should be deployed. WhereCOVID-19 is committed
+                        to providing mapping and spatial decision support capabilities based on scientific
+                        understanding of how spatiotemporal patterns and trends of COVID-19 relate to
+                        population characteristics and health care resources.
+                        The WhereCOVID-19 platform is made available to the general public, a broad range of
+                        stakeholders, and research and education communities.</p>
+                    <p>Currently, WhereCOVID-19 provides a collection of static and dynamic maps for
+                        estimating the spread and exposure risk of COVID-19 at various spatial and temporal
+                        scales. For example, a set of vulnerability maps synthesize
+                        information of confirmed COVID-19 cases, tested cases, population density, social
+                        vulnerability index based on CDC data, people living with HIV, and spatial
+                        accessibility to hospital resources based on a linear model.
+                        Another example is a suite of maps representing spatial accessibility to healthcare
+                        resources based on the outcome of a recent study: <a
+                            href=" https://medrxiv.org/cgi/content/short/2020.05.06.20093534v1 " target="_blank ">
+                            https://medrxiv.org/cgi/content/short/2020.05.06.20093534v1</a>. </p>
+
+                    <p style="text-align: center; "><a href="data-info.html " target="_blank ">WhereCOVID-19
+                            Data Summary</a></p>
+                    <p style="text-align:center; ">A Quick Tutorial on the CyberGIS App of WhereCOVID-19: <a
+                            href="https://youtu.be/yKP3wYEF2Ng " target="_blank ">Play Video</a></p>
+                    <p style="text-align:center; ">
+                        <a href="https://youtu.be/yKP3wYEF2Ng " target="_blank "><img width="560 " height="315 "
+                                style="margin: 15px auto; " src="../img/video.png " frameborder="0 "></img>
+                        </a>
+                    </p>
+                </div>
             </div>
         </div>
     </div>
