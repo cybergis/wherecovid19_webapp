@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////// Set up Basemaps /////////////////////////////////////
+////////////////////////// Get User Location And Set Up Markers ///////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 var geolocation_options = {
     enableHighAccuracy: false,
@@ -18,19 +18,32 @@ var userLng = null;
 var userCentered = false;
 var userGeolocationTimer = null;
 var userGeolocationTriedCounter = 0;
+var marker;
 
 var boundaryIllinois =
     [[-90.54179687500002, 42.43051037801457],
-        [-90.54179687500002, 37.30787664699351],
-        [-87.50957031250002, 37.30787664699351],
-        [-87.50957031250002, 42.43051037801457]];
+    [-90.54179687500002, 37.30787664699351],
+    [-87.50957031250002, 37.30787664699351],
+    [-87.50957031250002, 42.43051037801457]];
 
 var boundaryUS =
     [[-127.52638302724817, 49.02551219307651],
-        [-127.52638302724817, 25.148115576371765],
-        [-66.35450802724817, 25.148115576371765],
-        [-66.35450802724817, 49.02551219307651]];
+    [-127.52638302724817, 25.148115576371765],
+    [-66.35450802724817, 25.148115576371765],
+    [-66.35450802724817, 49.02551219307651]];
 
+var locIcon = L.icon({
+    // iconUrl: 'https://img.icons8.com/color/48/000000/map-pin.png',
+    iconUrl: 'img/point.gif',
+    iconSize: [24,24],
+    iconAnchor: [12,12],
+});
+
+function addMarker() {
+    marker = new L.marker({lat: userLat, lng: userLng},{icon: locIcon});
+    marker.setOpacity(0.8);
+    marker.addTo(map);  
+}
 
 getPosition(geolocation_options)
     .then((position) => {
@@ -46,8 +59,9 @@ function zoomToUserLocation() {
     console.log("Trying to center view to user location ....");
     if (!userCentered || userGeolocationTriedCounter > 60) {
         if (userLat != null && userLng != null) {
-            userLatLonAction({lat: userLat, lon: userLng});
+            userLatLonAction({lat: userLat, lng: userLng});
             userCentered = true;
+            addMarker();
             console.log("centered");
         }
         else
@@ -74,6 +88,9 @@ function _switch_layer(layer, map) {
                 map.removeLayer(layer);
             }
         });
+        if (map.hasLayer(marker)) {
+            map.removeLayer(marker);
+        }
         map.addLayer(layer);
     }
 }
@@ -81,7 +98,7 @@ function _switch_layer(layer, map) {
 function userLatLonAction(point) {
 
     userLat = point.lat;
-    userLng = point.lon;
+    userLng = point.lng;
     // // New York
     // userLat = 40.7128;
     // userLng = -74.0060;
@@ -91,41 +108,22 @@ function userLatLonAction(point) {
 
     try {
 
-        // if (userState == 'Illinois')
         if (userLat < boundaryIllinois[0][1] && userLat > boundaryIllinois[1][1] &&
             userLng < boundaryIllinois[2][0] && userLng > boundaryIllinois[0][0]) {
-            //il_county_case_layer_object.addTo(map);
-            //activeAnimationLayer = illinois_counties_ts;
-            // bins = colorClass.dph_illinois.case_per_100k_capita.nolog.NaturalBreaks.bins.split(",").map(function(item) {
-            //     return parseInt(item, 10);
-            // });
-            // refreshLegend(illinois_counties_ts);
 
             _switch_layer(il_county_case_layer_object, map);
-            map.setView({lat: userLat, lon: userLng}, 9);
+            map.setView({lat: userLat, lng: userLng}, 9);
 
         } else if (userLat < boundaryUS[0][1] && userLat > boundaryUS[1][1] &&
             userLng < boundaryUS[2][0] && userLng > boundaryUS[0][0]) {
-            //us_county_case_layer_object.addTo(map);
-            // activeAnimationLayer = us_counties_ts;
-            // bins = colorClass.county.case_per_100k_capita.nolog.NaturalBreaks.bins.split(",").map(function(item) {
-            //     return parseInt(item, 10);
-            // });
-            // refreshLegend(us_counties_ts);
        
             _switch_layer(us_county_case_layer_object, map);
-            map.setView({lat: userLat, lon: userLng}, 9);
+            map.setView({lat: userLat, lng: userLng}, 9);
 
         } else {
-            //world_case_layer_object.addTo(map);
-            // activeAnimationLayer = world_ts;
-            // bins = colorClass.who_world.case_per_100k_capita.nolog.NaturalBreaks.bins.split(",").map(function(item) {
-            //     return parseInt(item, 10);
-            // });
-            // refreshLegend(world_ts);
 
             _switch_layer(world_case_layer_object, map);
-            map.setView({lat: userLat, lon: userLng}, 6);
+            map.setView({lat: userLat, lng: userLng}, 6);
         }
 
     } catch (ex) {
@@ -133,6 +131,10 @@ function userLatLonAction(point) {
     }
 
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////// Set up Basemaps /////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
 
 var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
@@ -812,17 +814,18 @@ L.Control.zoomHome = L.Control.extend({
             if (userLat < boundaryIllinois[0][1] && userLat > boundaryIllinois[1][1] &&
                 userLng < boundaryIllinois[2][0] && userLng > boundaryIllinois[0][0]) {
                 _switch_layer(il_county_case_layer_object, map);
-                map.setView({lat: userLat, lon: userLng}, 9);
+                map.setView({lat: userLat, lng: userLng}, 9);
     
             } else if (userLat < boundaryUS[0][1] && userLat > boundaryUS[1][1] &&
                 userLng < boundaryUS[2][0] && userLng > boundaryUS[0][0]) {            
                 _switch_layer(us_county_case_layer_object, map);
-                map.setView({lat: userLat, lon: userLng}, 9);
+                map.setView({lat: userLat, lng: userLng}, 9);
     
             } else {
                 _switch_layer(world_case_layer_object, map);
-                map.setView({lat: userLat, lon: userLng}, 6);            
+                map.setView({lat: userLat, lng: userLng}, 6);            
             }
+            addMarker();
         }        
     },
 
@@ -907,6 +910,10 @@ function onOverlayAdd(e) {
         slider.removeTimelines(item)
     });
     slider.remove();
+
+    if (map.hasLayer(marker)) {
+        map.removeLayer(marker);
+    }
 
     if (getLayerInfo(e.layer.name)['animation'] == true) {
         slider.addTo(map);
