@@ -161,6 +161,16 @@ var styleFunc1 = function (_data) {
     }
 };
 
+var styleFunc2 = function (_data) {
+  return {
+      stroke: true,
+      weight: 1,
+      color: "gray",
+      fillColor: getColorFor(_data.properties.confirmed_cases, bins),
+      fillOpacity: 0.7
+  }
+};
+
 var styleVul = function (_data) {
     return {
         stroke: true,
@@ -362,6 +372,16 @@ var layer_info_list_4 = [
         "esri_url": "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Testing_Sites/MapServer",
         "animation": false,
     },
+    {
+        "name": "il_zipcode_case",
+        "display_name": "IDPH Zipcode-level Cases",
+        "geojson_url": "preprocessing/illinois/dph_zipcode_data.geojson",
+        "category": "Illinois",
+        "show": false,
+        "style_func": styleFunc2,
+        "color_class": ["dph_illinois", "zipcode_case", "nolog", "NaturalBreaks", "int"],
+        "animation": false,
+    },
 ];
 
 var il_county_case_layer_object = null;
@@ -380,6 +400,7 @@ var world_weekly_case_layer_object = null;
 var il_hiv_layer_object = null;
 var il_svi_layer_object = null;
 var il_testing_sites_layer_object = null;
+var il_zipcode_case_layer_object = null;
 
 function getLayerInfo(name, field = "name") {
 
@@ -465,6 +486,8 @@ function add_animation_layer_to_map_promise(layer_info) {
     return new Promise((resolve, reject) => {
         if (layer_info.esri_url != undefined) {
             add_esri_layer_to_map(layer_info);
+        } else if (layer_info.animation == false) {
+            add_static_layer_to_map(layer_info);
         } else {
             add_animation_layer_to_map(layer_info);
         }
@@ -990,6 +1013,47 @@ function add_esri_layer_to_map(layer_info) {
 
 }
 
+function add_static_layer_to_map(layer_info) {
+  let layer_obj = L.geoJson(layer_info.geojson_obj);
+
+  layer_obj.name = layer_info.name;
+  layer_info.layer_object = layer_obj
+
+  if (layer_info.show) {
+      layer_obj.addTo(map);
+  }
+
+  if (layer_obj.name == "il_zipcode_case") {
+      il_zipcode_case_layer_object = layer_obj;
+  }
+
+  layer_obj.on('add', function (e) {
+      let li = getLayerInfo(e.target.name);
+      try {
+          bins = class_json_obj[li.color_class[0]][li.color_class[1]][li.color_class[2]][li.color_class[3]].bins.split(",").map(function (item) {
+
+              if (li.color_class[4] == "int") {
+                  return parseInt(item, 10);
+              } else {
+                  return parseFloat(parseFloat(item).toFixed(2));
+              }
+          });
+          this.setStyle(li.style_func);
+      } catch (err) {
+
+      }
+  });
+
+  if (layer_info.show) {
+      layer_obj.addTo(map);
+      refreshLegend(layer_obj);
+  }
+  
+  // add layer into LayerControl UI list
+  layerControl.addOverlay(layer_obj, layer_info.display_name, layer_info.category);
+
+}
+
 function add_animation_layer_to_map(layer_info) {
 
     let _onEachFeatureFunc;
@@ -1052,11 +1116,10 @@ function add_animation_layer_to_map(layer_info) {
                 }
 
             });
+            this.setStyle(li.style_func);
         } catch (err) {
 
         }
-
-
     });
 
     layer_obj.on('change', function (e) {
@@ -1316,6 +1379,7 @@ function refreshLegend(_layer) {
         label4 = ['<strong> Density </strong>'];
         label5 = ['<strong> Social Vulnerability Index </strong>'];
         label6 = ['<strong> Weekly Change Rate of New Cases </strong>']
+        label7 = ['<strong> Cases </strong>'];
 
         // Changing the grades using unshift somehow also changes bins?
         //grades.unshift(0);
@@ -1378,6 +1442,15 @@ function refreshLegend(_layer) {
             }
             label6.push(legendContent);
             div.innerHTML = label6.join('<br><br><br>');
+        } else if (_layer == il_zipcode_case_layer_object) {
+            grades = bins;
+            for (var i = 0; i < grades.length; i++) {
+                legendContent +=
+                    '<i style="background:' + getColorFor((grades[i] + 0.000001), bins) + '"></i> ' +
+                    grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+') + '<br>';
+            }
+            label7.push(legendContent);
+            div.innerHTML = label7.join('<br><br><br>');
         }
 
         return div;
