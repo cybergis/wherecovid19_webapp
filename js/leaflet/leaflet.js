@@ -961,7 +961,7 @@ function onOverlayAdd(e) {
         map.setView([0, 0], 2)
     }
 
-    hide_loader();
+    // hide_loader();
 }
 
 function onOverlayRemove(e) {
@@ -1241,7 +1241,7 @@ function switch_left_tab_page_handler_old(layer_info) {
                     map.removeLayer(layer);
                 }
             });
-            show_loader();
+            // show_loader();
             map.addLayer(il_county_case_layer_object);
         }
     });
@@ -1253,7 +1253,7 @@ function switch_left_tab_page_handler_old(layer_info) {
                     map.removeLayer(layer);
                 }
             });
-            show_loader();
+            // show_loader();
             map.addLayer(us_county_case_layer_object);
         }
     });
@@ -1265,7 +1265,7 @@ function switch_left_tab_page_handler_old(layer_info) {
                     map.removeLayer(layer);
                 }
             });
-            show_loader();
+            // show_loader();
             map.addLayer(world_case_layer_object);
         }
     });
@@ -1414,7 +1414,7 @@ function refreshLegend(_layer) {
 
         var div = L.DomUtil.create('div', 'info legend');
 
-        label1 = ['<strong> Cases per 100k Population </strong>'];
+        label1 = ['<strong> Confirmed cases per 100k people </strong>'];
         label2 = ['<strong> Vulnerability </strong>'];
         label3 = ['<strong> Accessibility </strong>'];
         label4 = ['<strong> Density </strong>'];
