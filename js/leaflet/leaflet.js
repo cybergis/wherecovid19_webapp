@@ -1825,7 +1825,7 @@ function createPopup(_feature, _layer) {
             <td id="population" class="popup-table-data">' + numberWithCommas(_feature.properties.population) + '</td>\
             </tr>\
             <tr class="popup-table-row">\
-            <th class="popup-table-header text-center pt-3 pb-1" colspan=2 style="font-size:13px;">Frist Date of</th>\
+            <th class="popup-table-header text-center pt-3 pb-1" colspan=2 style="font-size:13px;">First Date of</th>\
             </tr>\
             <tr class="popup-table-row">\
             <th class="popup-table-header">   Confirmed Cases:</th>\
