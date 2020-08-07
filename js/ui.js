@@ -5,7 +5,13 @@ $(window).on("load", function () {
 
 $("#map").on("load", hide_loader);
 
+function show_loader() {
+  $(".loading-overlay, .loading-overlay-image-container").show();
+  console.log("Showing loader");
+}
+
+
 function hide_loader() {
   $(".loading-overlay, .loading-overlay-image-container").hide();
-  console.log("loaded");
+  console.log("Hiding loader");
 }

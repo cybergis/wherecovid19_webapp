@@ -159,7 +159,7 @@ var styleFunc1 = function(_data) {
         weight: 1,
         color: "gray",
         fillColor: getColorFor(100000 * splitStrInt(_data.properties.cases_ts, index) / _data.properties.population, bins),
-        fillOpacity: 0.7
+        fillOpacity: 0.5
     }
 };
 
@@ -926,6 +926,9 @@ L.control.attribution({
 
 
 function onOverlayAdd(e) {
+
+    
+
     // Remove the chart if it exists
     document.getElementById('myChart').classList.add("d-none");
     document.getElementById('myChart').classList.remove("d-block");
@@ -957,6 +960,8 @@ function onOverlayAdd(e) {
     } else if (e.group.name == "World") {
         map.setView([0, 0], 2)
     }
+
+    hide_loader();
 }
 
 function onOverlayRemove(e) {
@@ -989,7 +994,7 @@ function getColorFor(_num, _bins) {
         _num > _bins[1] ? '#FD8D3C' :
         _num > _bins[0] ? '#FEB24C' :
         _num > 0 ? '#FFEDA0' :
-        '#000000';
+        'transparent';
 }
 
 function getVulColor(_num, _bins) {
@@ -1236,6 +1241,7 @@ function switch_left_tab_page_handler_old(layer_info) {
                     map.removeLayer(layer);
                 }
             });
+            show_loader();
             map.addLayer(il_county_case_layer_object);
         }
     });
@@ -1247,6 +1253,7 @@ function switch_left_tab_page_handler_old(layer_info) {
                     map.removeLayer(layer);
                 }
             });
+            show_loader();
             map.addLayer(us_county_case_layer_object);
         }
     });
@@ -1258,6 +1265,7 @@ function switch_left_tab_page_handler_old(layer_info) {
                     map.removeLayer(layer);
                 }
             });
+            show_loader();
             map.addLayer(world_case_layer_object);
         }
     });

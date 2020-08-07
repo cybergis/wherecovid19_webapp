@@ -323,6 +323,9 @@ L.Control.GroupedLayers = L.Control.extend({
   },
 
   _onInputClick: function () {
+
+    show_loader();
+    
     var i, input, obj,
       inputs = this._form.getElementsByTagName('input'),
       inputsLen = inputs.length;
