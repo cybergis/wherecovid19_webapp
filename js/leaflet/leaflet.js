@@ -837,16 +837,16 @@ L.Control.zoomHome = L.Control.extend({
         } else {
             if (userLat < boundaryIllinois[0][1] && userLat > boundaryIllinois[1][1] &&
                 userLng < boundaryIllinois[2][0] && userLng > boundaryIllinois[0][0]) {
-                _switch_layer(il_county_case_layer_object, map);
+                // _switch_layer(il_county_case_layer_object, map);
                 map.setView({ lat: userLat, lng: userLng }, 9);
 
             } else if (userLat < boundaryUS[0][1] && userLat > boundaryUS[1][1] &&
                 userLng < boundaryUS[2][0] && userLng > boundaryUS[0][0]) {
-                _switch_layer(us_county_case_layer_object, map);
+                // _switch_layer(us_county_case_layer_object, map);
                 map.setView({ lat: userLat, lng: userLng }, 9);
 
             } else {
-                _switch_layer(world_case_layer_object, map);
+                // _switch_layer(world_case_layer_object, map);
                 map.setView({ lat: userLat, lng: userLng }, 6);
             }
             addMarker();
@@ -961,7 +961,7 @@ function onOverlayAdd(e) {
         map.setView([0, 0], 2)
     }
 
-    hide_loader();
+    // hide_loader();
 }
 
 function onOverlayRemove(e) {
@@ -1241,7 +1241,7 @@ function switch_left_tab_page_handler_old(layer_info) {
                     map.removeLayer(layer);
                 }
             });
-            show_loader();
+            // show_loader();
             map.addLayer(il_county_case_layer_object);
         }
     });
@@ -1253,7 +1253,7 @@ function switch_left_tab_page_handler_old(layer_info) {
                     map.removeLayer(layer);
                 }
             });
-            show_loader();
+            // show_loader();
             map.addLayer(us_county_case_layer_object);
         }
     });
@@ -1265,7 +1265,7 @@ function switch_left_tab_page_handler_old(layer_info) {
                     map.removeLayer(layer);
                 }
             });
-            show_loader();
+            // show_loader();
             map.addLayer(world_case_layer_object);
         }
     });
@@ -1414,7 +1414,7 @@ function refreshLegend(_layer) {
 
         var div = L.DomUtil.create('div', 'info legend');
 
-        label1 = ['<strong> Cases per 100k Population </strong>'];
+        label1 = ['<strong> Confirmed cases per 100k people </strong>'];
         label2 = ['<strong> Vulnerability </strong>'];
         label3 = ['<strong> Accessibility </strong>'];
         label4 = ['<strong> Density </strong>'];
