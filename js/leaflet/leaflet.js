@@ -837,16 +837,16 @@ L.Control.zoomHome = L.Control.extend({
         } else {
             if (userLat < boundaryIllinois[0][1] && userLat > boundaryIllinois[1][1] &&
                 userLng < boundaryIllinois[2][0] && userLng > boundaryIllinois[0][0]) {
-                _switch_layer(il_county_case_layer_object, map);
+                // _switch_layer(il_county_case_layer_object, map);
                 map.setView({ lat: userLat, lng: userLng }, 9);
 
             } else if (userLat < boundaryUS[0][1] && userLat > boundaryUS[1][1] &&
                 userLng < boundaryUS[2][0] && userLng > boundaryUS[0][0]) {
-                _switch_layer(us_county_case_layer_object, map);
+                // _switch_layer(us_county_case_layer_object, map);
                 map.setView({ lat: userLat, lng: userLng }, 9);
 
             } else {
-                _switch_layer(world_case_layer_object, map);
+                // _switch_layer(world_case_layer_object, map);
                 map.setView({ lat: userLat, lng: userLng }, 6);
             }
             addMarker();
