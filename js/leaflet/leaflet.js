@@ -927,7 +927,7 @@ L.control.attribution({
 
 function onOverlayAdd(e) {
 
-    
+
 
     // Remove the chart if it exists
     document.getElementById('myChart').classList.add("d-none");
@@ -1799,7 +1799,7 @@ function createPopup(_feature, _layer) {
     }
     var dt_first_case = new Date(_feature.properties.dt_first_case);
     var dt_first_death = new Date(_feature.properties.dt_first_death);
-    
+
     function dateCorrection(dateString) {
         if (dateString == "1/1/1970") {
             return "unavailable";
@@ -1810,10 +1810,10 @@ function createPopup(_feature, _layer) {
     }
 
     _layer.bindPopup('<form id="popup-form">\
-        <label id="name">' + popupName + '</label>\
-        <table class="popup-table">\
+            <h5 id="name" style="font-weight:bold;">' + popupName + '</h5>\
+            <table class="popup-table" style="background-color:white;">\
             <tr class="popup-table-row">\
-            <th class="popup-table-header">Total Cases:</th>\
+            <th class="popup-table-header" style="min-width:120px;">Total Cases:</th>\
             <td id="total_cases" class="popup-table-data">' + numberWithCommas(_feature.properties.today_case) + '</td>\
             </tr>\
             <tr class="popup-table-row">\
@@ -1825,11 +1825,14 @@ function createPopup(_feature, _layer) {
             <td id="population" class="popup-table-data">' + numberWithCommas(_feature.properties.population) + '</td>\
             </tr>\
             <tr class="popup-table-row">\
-            <th class="popup-table-header">First Date of Confirmed Cases</th>\
+            <th class="popup-table-header text-center pt-3 pb-1" colspan=2 style="font-size:13px;">Frist Date of</th>\
+            </tr>\
+            <tr class="popup-table-row">\
+            <th class="popup-table-header">   Confirmed Cases:</th>\
             <td id="first_date_case" class="popup-table-data">' + dateCorrection(dt_first_case.toLocaleDateString("en-US", { timeZone: "UTC" })) + '</td>\
             </tr>\
             <tr class="popup-table-row">\
-            <th class="popup-table-header">First Date of Deaths</th>\
+            <th class="popup-table-header pb-2">   Deaths:</th>\
             <td id="first_date_death" class="popup-table-data">' + dateCorrection(dt_first_death.toLocaleDateString("en-US", { timeZone: "UTC" })) + '</td>\
             </tr>\
         </table>\
