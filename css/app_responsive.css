@@ -491,6 +491,14 @@ screen-btn:first {
     margin-top: 0 !important;
 }
 
+tr.selected {
+    background-color: #ffffff;
+}
+
+tr.selected th {
+    color: black;
+}
+
 .dataTables_paginate,
 .dataTables_paginate .pagination {
     display: flex;

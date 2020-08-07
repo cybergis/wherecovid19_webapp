@@ -563,6 +563,16 @@ function fill_left_panel_il(geojson) {
         dom: "pt",
     });
 
+
+    $('#illinois-table').on('click', 'tr', function() {
+        if ($(this).hasClass('selected')) {
+            $(this).removeClass('selected');
+        } else {
+            il_table.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+        }
+    });
+
     $('#il-search-input').on('input', function() {
         console.log($('#il-search-input').val());
         il_table.search($('#il-search-input').val()).draw();
@@ -637,6 +647,16 @@ function fill_left_panel_us(geojson) {
         dom: "pt",
     });
 
+
+    $('#county-table').on('click', 'tr', function() {
+        if ($(this).hasClass('selected')) {
+            $(this).removeClass('selected');
+        } else {
+            county_table.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+        }
+    });
+
     $('#w-search-input').on('input', function() {
         console.log($('#w-search-input').val());
         county_table.search($('#w-search-input').val()).draw();
@@ -705,6 +725,16 @@ function fill_left_panel_world(geojson) {
         info: false,
         responsive: true,
         dom: "pt",
+    });
+
+
+    $('#world-table').on('click', 'tr', function() {
+        if ($(this).hasClass('selected')) {
+            $(this).removeClass('selected');
+        } else {
+            world_table.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+        }
     });
 
     $('#world-search-input').on('input', function() {

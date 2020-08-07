@@ -65,4 +65,12 @@ $(function() {
     } else {
         L.DomEvent.disableClickPropagation(container);
     }
+
+
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+        // e.target; // newly activated tab
+        // console.log(e.target);
+        $('tr.selected').removeClass('selected');
+    })
+
 });
