@@ -1799,6 +1799,15 @@ function createPopup(_feature, _layer) {
     }
     var dt_first_case = new Date(_feature.properties.dt_first_case);
     var dt_first_death = new Date(_feature.properties.dt_first_death);
+    
+    function dateCorrection(dateString) {
+        if (dateString == "1/1/1970") {
+            return "unavailable";
+        } else {
+            return dateString;
+        }
+
+    }
 
     _layer.bindPopup('<form id="popup-form">\
         <label id="name">' + popupName + '</label>\
@@ -1817,11 +1826,11 @@ function createPopup(_feature, _layer) {
             </tr>\
             <tr class="popup-table-row">\
             <th class="popup-table-header">First Date of Confirmed Cases</th>\
-            <td id="first_date_case" class="popup-table-data">' + dt_first_case.toLocaleDateString("en-US", { timeZone: "UTC" }) + '</td>\
+            <td id="first_date_case" class="popup-table-data">' + dateCorrection(dt_first_case.toLocaleDateString("en-US", { timeZone: "UTC" })) + '</td>\
             </tr>\
             <tr class="popup-table-row">\
             <th class="popup-table-header">First Date of Deaths</th>\
-            <td id="first_date_death" class="popup-table-data">' + dt_first_death.toLocaleDateString("en-US", { timeZone: "UTC" }) + '</td>\
+            <td id="first_date_death" class="popup-table-data">' + dateCorrection(dt_first_death.toLocaleDateString("en-US", { timeZone: "UTC" })) + '</td>\
             </tr>\
         </table>\
         </form>')
