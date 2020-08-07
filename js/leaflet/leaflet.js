@@ -7,9 +7,9 @@ var geolocation_options = {
     maximumAge: 0
 };
 
-var getPosition = function (options) {
+var getPosition = function(options) {
     //// https://gist.github.com/varmais/74586ec1854fe288d393
-    return new Promise(function (resolve, reject) {
+    return new Promise(function(resolve, reject) {
         navigator.geolocation.getCurrentPosition(resolve, reject, options);
     });
 }
@@ -20,29 +20,31 @@ var userGeolocationTimer = null;
 var userGeolocationTriedCounter = 0;
 var marker;
 
-var boundaryIllinois =
-    [[-90.54179687500002, 42.43051037801457],
+var boundaryIllinois = [
+    [-90.54179687500002, 42.43051037801457],
     [-90.54179687500002, 37.30787664699351],
     [-87.50957031250002, 37.30787664699351],
-    [-87.50957031250002, 42.43051037801457]];
+    [-87.50957031250002, 42.43051037801457]
+];
 
-var boundaryUS =
-    [[-127.52638302724817, 49.02551219307651],
+var boundaryUS = [
+    [-127.52638302724817, 49.02551219307651],
     [-127.52638302724817, 25.148115576371765],
     [-66.35450802724817, 25.148115576371765],
-    [-66.35450802724817, 49.02551219307651]];
+    [-66.35450802724817, 49.02551219307651]
+];
 
 var locIcon = L.icon({
     // iconUrl: 'https://img.icons8.com/color/48/000000/map-pin.png',
     iconUrl: 'img/point.gif',
-    iconSize: [24,24],
-    iconAnchor: [12,12],
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
 });
 
 function addMarker() {
-    marker = new L.marker({lat: userLat, lng: userLng},{icon: locIcon});
+    marker = new L.marker({ lat: userLat, lng: userLng }, { icon: locIcon });
     marker.setOpacity(0.8);
-    marker.addTo(map);  
+    marker.addTo(map);
 }
 
 getPosition(geolocation_options)
@@ -59,13 +61,11 @@ function zoomToUserLocation() {
     console.log("Trying to center view to user location ....");
     if (!userCentered || userGeolocationTriedCounter > 60) {
         if (userLat != null && userLng != null) {
-            userLatLonAction({lat: userLat, lng: userLng});
+            userLatLonAction({ lat: userLat, lng: userLng });
             userCentered = true;
             addMarker();
             console.log("centered");
-        }
-        else
-        {
+        } else {
             console.log("User location still unknown; Will try again in 1s.");
         }
     } else {
@@ -83,7 +83,7 @@ function zoomToUserLocationPromise() {
 
 function _switch_layer(layer, map) {
     if (map.hasLayer(layer) != true) {
-        map.eachLayer(function (layer) {
+        map.eachLayer(function(layer) {
             if (layer._url == undefined) {
                 map.removeLayer(layer);
             }
@@ -112,18 +112,18 @@ function userLatLonAction(point) {
             userLng < boundaryIllinois[2][0] && userLng > boundaryIllinois[0][0]) {
 
             _switch_layer(il_county_case_layer_object, map);
-            map.setView({lat: userLat, lng: userLng}, 9);
+            map.setView({ lat: userLat, lng: userLng }, 9);
 
         } else if (userLat < boundaryUS[0][1] && userLat > boundaryUS[1][1] &&
             userLng < boundaryUS[2][0] && userLng > boundaryUS[0][0]) {
-       
+
             _switch_layer(us_county_case_layer_object, map);
-            map.setView({lat: userLat, lng: userLng}, 9);
+            map.setView({ lat: userLat, lng: userLng }, 9);
 
         } else {
 
             _switch_layer(world_case_layer_object, map);
-            map.setView({lat: userLat, lng: userLng}, 6);
+            map.setView({ lat: userLat, lng: userLng }, 6);
         }
 
     } catch (ex) {
@@ -153,7 +153,7 @@ var CartoDB_DarkMatter = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all
 
 class_json_url = "preprocessing/classes.json";
 
-var styleFunc1 = function (_data) {
+var styleFunc1 = function(_data) {
     return {
         stroke: true,
         weight: 1,
@@ -163,17 +163,17 @@ var styleFunc1 = function (_data) {
     }
 };
 
-var styleFunc2 = function (_data) {
-  return {
-      stroke: true,
-      weight: 1,
-      color: "gray",
-      fillColor: getColorFor(_data.properties.confirmed_cases, bins),
-      fillOpacity: 0.7
-  }
+var styleFunc2 = function(_data) {
+    return {
+        stroke: true,
+        weight: 1,
+        color: "gray",
+        fillColor: getColorFor(_data.properties.confirmed_cases, bins),
+        fillOpacity: 0.7
+    }
 };
 
-var styleVul = function (_data) {
+var styleVul = function(_data) {
     return {
         stroke: true,
         weight: 0.8,
@@ -183,7 +183,7 @@ var styleVul = function (_data) {
     }
 };
 
-var styleAcc = function (_data) {
+var styleAcc = function(_data) {
     return {
         stroke: false,
         //color:  "gray",
@@ -192,7 +192,7 @@ var styleAcc = function (_data) {
     }
 }
 
-var styleChange = function (_data) {
+var styleChange = function(_data) {
     return {
         stroke: true,
         weight: 1,
@@ -202,8 +202,7 @@ var styleChange = function (_data) {
     }
 }
 
-var layer_info_list = [
-    {
+var layer_info_list = [{
         "name": "il_county_case",
         "display_name": "IDPH County-level Cases",
         "geojson_url": "preprocessing/illinois/dph_county_data.geojson",
@@ -239,8 +238,7 @@ var layer_info_list = [
 ];
 
 
-var layer_info_list_2 = [
-    {
+var layer_info_list_2 = [{
         "name": "us_state_case",
         "display_name": "US States",
         "geojson_url": "preprocessing/nyt_states_data.geojson",
@@ -333,21 +331,18 @@ var layer_info_list_2 = [
 
 ];
 
-var layer_info_list_3 = [
-    {
-        "name": "us_state_weekly_case",
-        "display_name": "US State-level Weekly Average Change",
-        "geojson_url": null,
-        "category": "US",
-        "show": false,
-        "style_func": styleChange,
-        "reuse": "us_state_case",
-        "animation": true,
-    },
-];
+var layer_info_list_3 = [{
+    "name": "us_state_weekly_case",
+    "display_name": "US State-level Weekly Average Change",
+    "geojson_url": null,
+    "category": "US",
+    "show": false,
+    "style_func": styleChange,
+    "reuse": "us_state_case",
+    "animation": true,
+}, ];
 
-var layer_info_list_4 = [
-    {
+var layer_info_list_4 = [{
         "name": "il_hiv",
         "display_name": "Density of PLWH (Persons Living with HIV)",
         "geojson_url": null,
@@ -443,12 +438,12 @@ function loadClassJson(url) {
             url: url,
             type: 'GET',
             dataType: 'json',
-            success: function (data) {
+            success: function(data) {
                 console.log(url);
                 class_json_obj = data;
                 resolve();
             },
-            error: function (error) {
+            error: function(error) {
                 reject(error);
             },
         })
@@ -470,12 +465,12 @@ function loadGeoJson(layer_info) {
                 url: layer_info.geojson_url,
                 type: 'GET',
                 dataType: 'json',
-                success: function (data) {
+                success: function(data) {
                     console.log(layer_info.geojson_url);
                     layer_info.geojson_obj = data;
                     resolve(layer_info);
                 },
-                error: function (error) {
+                error: function(error) {
                     reject(error);
                 },
             })
@@ -506,7 +501,7 @@ function fill_left_panel_il(geojson) {
 
     let illinois_table = document.getElementById('illinois-table').querySelector('tbody');
     let template = document.querySelector('template')
-    let result_list = geojson.features.map(function (value, index) {
+    let result_list = geojson.features.map(function(value, index) {
         return {
             centroid_x: turf.centroid(value.geometry).geometry.coordinates[0],
             centroid_y: turf.centroid(value.geometry).geometry.coordinates[1],
@@ -523,7 +518,7 @@ function fill_left_panel_il(geojson) {
 
     //console.log(result_list);
 
-    result_list.forEach(function (value) {
+    result_list.forEach(function(value) {
 
         let instance = template.content.cloneNode(true);
 
@@ -568,7 +563,7 @@ function fill_left_panel_il(geojson) {
         dom: "pt",
     });
 
-    $('#il-search-input').on('input', function () {
+    $('#il-search-input').on('input', function() {
         console.log($('#il-search-input').val());
         il_table.search($('#il-search-input').val()).draw();
     });
@@ -583,7 +578,7 @@ function fill_left_panel_us(geojson) {
     let counties_table = document.getElementById('county-table').querySelector('tbody');
     let template = document.querySelectorAll('template')[1]
 
-    let result_list = geojson.features.map(function (value, index) {
+    let result_list = geojson.features.map(function(value, index) {
         return {
             centroid_x: turf.centroid(value.geometry).geometry.coordinates[0],
             centroid_y: turf.centroid(value.geometry).geometry.coordinates[1],
@@ -599,7 +594,7 @@ function fill_left_panel_us(geojson) {
 
     //console.log(result_list);
 
-    result_list.forEach(function (value) {
+    result_list.forEach(function(value) {
         let instance = template.content.cloneNode(true);
 
         instance.querySelector('th').innerHTML = value.county + ", " + value.state;
@@ -642,7 +637,7 @@ function fill_left_panel_us(geojson) {
         dom: "pt",
     });
 
-    $('#w-search-input').on('input', function () {
+    $('#w-search-input').on('input', function() {
         console.log($('#w-search-input').val());
         county_table.search($('#w-search-input').val()).draw();
     });
@@ -656,7 +651,7 @@ function fill_left_panel_world(geojson) {
     let worlds_table = document.getElementById('world-table').querySelector('tbody');
     let template = document.querySelectorAll('template')[1]
 
-    let result_list = geojson.features.map(function (value, index) {
+    let result_list = geojson.features.map(function(value, index) {
         return {
             centroid_x: turf.centroid(value.geometry).geometry.coordinates[0],
             centroid_y: turf.centroid(value.geometry).geometry.coordinates[1],
@@ -671,7 +666,7 @@ function fill_left_panel_world(geojson) {
 
     //console.log(result_list);
 
-    result_list.forEach(function (value) {
+    result_list.forEach(function(value) {
         let instance = template.content.cloneNode(true);
 
         instance.querySelector('th').innerHTML = value.country;
@@ -712,7 +707,7 @@ function fill_left_panel_world(geojson) {
         dom: "pt",
     });
 
-    $('#world-search-input').on('input', function () {
+    $('#world-search-input').on('input', function() {
         console.log($('#world-search-input').val());
         world_table.search($('#world-search-input').val()).draw();
     });
@@ -774,17 +769,17 @@ L.Control.zoomHome = L.Control.extend({
         zoomHomeTitle: 'Zoom home'
     },
 
-    onAdd: function (map) {
+    onAdd: function(map) {
         var controlName = 'gin-control-zoom',
             container = L.DomUtil.create('div', controlName + ' leaflet-bar'),
             options = this.options;
 
         this._zoomInButton = this._createButton(options.zoomInText, options.zoomInTitle,
-        controlName + '-in', container, this._zoomIn);
+            controlName + '-in', container, this._zoomIn);
         this._zoomHomeButton = this._createButton(options.zoomHomeText, options.zoomHomeTitle,
-        controlName + '-home', container, this._zoomHome);
+            controlName + '-home', container, this._zoomHome);
         this._zoomOutButton = this._createButton(options.zoomOutText, options.zoomOutTitle,
-        controlName + '-out', container, this._zoomOut);
+            controlName + '-out', container, this._zoomOut);
 
         this._updateDisabled();
         map.on('zoomend zoomlevelschange', this._updateDisabled, this);
@@ -792,44 +787,43 @@ L.Control.zoomHome = L.Control.extend({
         return container;
     },
 
-    onRemove: function (map) {
+    onRemove: function(map) {
         map.off('zoomend zoomlevelschange', this._updateDisabled, this);
     },
 
-    _zoomIn: function (e) {
+    _zoomIn: function(e) {
         this._map.zoomIn(e.shiftKey ? 3 : 1);
     },
 
-    _zoomOut: function (e) {
+    _zoomOut: function(e) {
         this._map.zoomOut(e.shiftKey ? 3 : 1);
     },
 
-    _zoomHome: function (e) {
+    _zoomHome: function(e) {
         //map.setView([lat, lng], zoom);
         if (userLat == null || userLng == null) {
             _switch_layer(il_county_case_layer_object, map);
             map.setView([40, -89], 7)
-        }
-        else {
+        } else {
             if (userLat < boundaryIllinois[0][1] && userLat > boundaryIllinois[1][1] &&
                 userLng < boundaryIllinois[2][0] && userLng > boundaryIllinois[0][0]) {
                 _switch_layer(il_county_case_layer_object, map);
-                map.setView({lat: userLat, lng: userLng}, 9);
-    
+                map.setView({ lat: userLat, lng: userLng }, 9);
+
             } else if (userLat < boundaryUS[0][1] && userLat > boundaryUS[1][1] &&
-                userLng < boundaryUS[2][0] && userLng > boundaryUS[0][0]) {            
+                userLng < boundaryUS[2][0] && userLng > boundaryUS[0][0]) {
                 _switch_layer(us_county_case_layer_object, map);
-                map.setView({lat: userLat, lng: userLng}, 9);
-    
+                map.setView({ lat: userLat, lng: userLng }, 9);
+
             } else {
                 _switch_layer(world_case_layer_object, map);
-                map.setView({lat: userLat, lng: userLng}, 6);            
+                map.setView({ lat: userLat, lng: userLng }, 6);
             }
             addMarker();
-        }        
+        }
     },
 
-    _createButton: function (html, title, className, container, fn) {
+    _createButton: function(html, title, className, container, fn) {
         var link = L.DomUtil.create('a', className, container);
         link.innerHTML = html;
         link.href = '#';
@@ -843,7 +837,7 @@ L.Control.zoomHome = L.Control.extend({
         return link;
     },
 
-    _updateDisabled: function () {
+    _updateDisabled: function() {
         var map = this._map,
             className = 'leaflet-disabled';
 
@@ -861,8 +855,8 @@ L.Control.zoomHome = L.Control.extend({
 
 
 var slider = L.timelineSliderControl({
-    formatOutput: function (date) {
-        return new Date(date).toLocaleDateString('en-US', {timeZone: 'UTC'})
+    formatOutput: function(date) {
+        return new Date(date).toLocaleDateString('en-US', { timeZone: 'UTC' })
     },
     steps: 150,
     position: 'topleft',
@@ -906,7 +900,7 @@ function onOverlayAdd(e) {
     document.getElementById('myChart').classList.add("d-none");
     document.getElementById('myChart').classList.remove("d-block");
 
-    slider.timelines.forEach(function (item) {
+    slider.timelines.forEach(function(item) {
         slider.removeTimelines(item)
     });
     slider.remove();
@@ -960,45 +954,44 @@ function splitStrFloat(str, num) {
 function getColorFor(_num, _bins) {
     return _num > _bins[5] ? '#800026' :
         _num > _bins[4] ? '#BD0026' :
-            _num > _bins[3] ? '#E31A1C' :
-                _num > _bins[2] ? '#FC4E2A' :
-                    _num > _bins[1] ? '#FD8D3C' :
-                        _num > _bins[0] ? '#FEB24C' :
-                            _num > 0 ? '#FFEDA0' :
-                                '#000000';
+        _num > _bins[3] ? '#E31A1C' :
+        _num > _bins[2] ? '#FC4E2A' :
+        _num > _bins[1] ? '#FD8D3C' :
+        _num > _bins[0] ? '#FEB24C' :
+        _num > 0 ? '#FFEDA0' :
+        '#000000';
 }
 
 function getVulColor(_num, _bins) {
     return _num > _bins[5] ? '#301934' :
         _num > _bins[4] ? '#8c0002' :
-            _num > _bins[3] ? '#d7191c' :
-                _num > _bins[2] ? '#fdaf61' :
-                    _num > _bins[1] ? '#ffffbf' :
-                        _num > _bins[0] ? '#a5d96a' :
-                            '#199640';
+        _num > _bins[3] ? '#d7191c' :
+        _num > _bins[2] ? '#fdaf61' :
+        _num > _bins[1] ? '#ffffbf' :
+        _num > _bins[0] ? '#a5d96a' :
+        '#199640';
 }
 
 function getAccColor(d) {
     return d > 4 ? '#08519c' :
         d > 3 ? '#3182bd' :
-            d > 2 ? '#6baed6' :
-                d > 1 ? '#9ecae1' :
-                    d > 0 ? '#c6dbef' :
-                        '#eff3ff';
+        d > 2 ? '#6baed6' :
+        d > 1 ? '#9ecae1' :
+        d > 0 ? '#c6dbef' :
+        '#eff3ff';
 }
 
 function getChangeColor(d) {
     return d > 0.5 ? '#d7191c' :
         d > 0.1 ? '#fd9861' :
-            d > -0.1 ? '#ffffbf' :
-                d > -0.5 ? '#a5d96a' :
-                    '#199640';
+        d > -0.1 ? '#ffffbf' :
+        d > -0.5 ? '#a5d96a' :
+        '#199640';
 }
 
 function add_esri_layer_to_map(layer_info) {
     var layer_obj = L.esri.dynamicMapLayer({
-        url:
-        layer_info.esri_url,
+        url: layer_info.esri_url,
     });
 
     layer_obj.name = layer_info.name;
@@ -1021,43 +1014,43 @@ function add_esri_layer_to_map(layer_info) {
 }
 
 function add_static_layer_to_map(layer_info) {
-  let layer_obj = L.geoJson(layer_info.geojson_obj);
+    let layer_obj = L.geoJson(layer_info.geojson_obj);
 
-  layer_obj.name = layer_info.name;
-  layer_info.layer_object = layer_obj
+    layer_obj.name = layer_info.name;
+    layer_info.layer_object = layer_obj
 
-  if (layer_info.show) {
-      layer_obj.addTo(map);
-  }
+    if (layer_info.show) {
+        layer_obj.addTo(map);
+    }
 
-  if (layer_obj.name == "il_zipcode_case") {
-      il_zipcode_case_layer_object = layer_obj;
-  }
+    if (layer_obj.name == "il_zipcode_case") {
+        il_zipcode_case_layer_object = layer_obj;
+    }
 
-  layer_obj.on('add', function (e) {
-      let li = getLayerInfo(e.target.name);
-      try {
-          bins = class_json_obj[li.color_class[0]][li.color_class[1]][li.color_class[2]][li.color_class[3]].bins.split(",").map(function (item) {
+    layer_obj.on('add', function(e) {
+        let li = getLayerInfo(e.target.name);
+        try {
+            bins = class_json_obj[li.color_class[0]][li.color_class[1]][li.color_class[2]][li.color_class[3]].bins.split(",").map(function(item) {
 
-              if (li.color_class[4] == "int") {
-                  return parseInt(item, 10);
-              } else {
-                  return parseFloat(parseFloat(item).toFixed(2));
-              }
-          });
-          this.setStyle(li.style_func);
-      } catch (err) {
+                if (li.color_class[4] == "int") {
+                    return parseInt(item, 10);
+                } else {
+                    return parseFloat(parseFloat(item).toFixed(2));
+                }
+            });
+            this.setStyle(li.style_func);
+        } catch (err) {
 
-      }
-  });
+        }
+    });
 
-  if (layer_info.show) {
-      layer_obj.addTo(map);
-      refreshLegend(layer_obj);
-  }
-  
-  // add layer into LayerControl UI list
-  layerControl.addOverlay(layer_obj, layer_info.display_name, layer_info.category);
+    if (layer_info.show) {
+        layer_obj.addTo(map);
+        refreshLegend(layer_obj);
+    }
+
+    // add layer into LayerControl UI list
+    layerControl.addOverlay(layer_obj, layer_info.display_name, layer_info.category);
 
 }
 
@@ -1074,11 +1067,10 @@ function add_animation_layer_to_map(layer_info) {
         _onEachFeatureFunc = onEachFeature_us_state_case;
     }
 
-    let layer_obj = L.timeline(layer_info.geojson_obj,
-        {
-            style: layer_info.style_func,
-            onEachFeature: _onEachFeatureFunc,
-        });
+    let layer_obj = L.timeline(layer_info.geojson_obj, {
+        style: layer_info.style_func,
+        onEachFeature: _onEachFeatureFunc,
+    });
 
     layer_obj.name = layer_info.name;
     layer_info.layer_object = layer_obj;
@@ -1111,10 +1103,10 @@ function add_animation_layer_to_map(layer_info) {
         world_weekly_case_layer_object = layer_obj;
     }
 
-    layer_obj.on('add', function (e) {
+    layer_obj.on('add', function(e) {
         let li = getLayerInfo(e.target.name);
         try {
-            bins = class_json_obj[li.color_class[0]][li.color_class[1]][li.color_class[2]][li.color_class[3]].bins.split(",").map(function (item) {
+            bins = class_json_obj[li.color_class[0]][li.color_class[1]][li.color_class[2]][li.color_class[3]].bins.split(",").map(function(item) {
 
                 if (li.color_class[4] == "int") {
                     return parseInt(item, 10);
@@ -1129,7 +1121,7 @@ function add_animation_layer_to_map(layer_info) {
         }
     });
 
-    layer_obj.on('change', function (e) {
+    layer_obj.on('change', function(e) {
         let li = getLayerInfo(e.target.name);
         index = Math.floor((this.time - this.start) / DayInMilSec);
         this.setStyle(li.style_func);
@@ -1153,7 +1145,7 @@ function add_animation_layer_to_map(layer_info) {
 
 
 function chain_promise(layer_info) {
-    return loadGeoJson(layer_info).then(function (result) {
+    return loadGeoJson(layer_info).then(function(result) {
         p1 = add_animation_layer_to_map_promise(result);
         p2 = fill_left_panel_promise(result);
         return Promise.allSettled([p1, p2]);
@@ -1162,17 +1154,16 @@ function chain_promise(layer_info) {
 
 // Promise Entry Point
 loadClassJson(class_json_url).then(
-    Promise.allSettled(layer_info_list.map(chain_promise)).then(function () {
-    }).then(function () {
+    Promise.allSettled(layer_info_list.map(chain_promise)).then(function() {}).then(function() {
         switch_left_tab_page_handler_old();
         left_tab_page_table_click_old();
-    }).then(function () {
+    }).then(function() {
         return zoomToUserLocationPromise();
-    }).then(function () {
+    }).then(function() {
         return Promise.allSettled(layer_info_list_2.map(chain_promise));
-    }).then(function () {
+    }).then(function() {
         return Promise.allSettled(layer_info_list_3.map(chain_promise));
-    }).then(function () {
+    }).then(function() {
         return Promise.allSettled(layer_info_list_4.map(chain_promise));
     })
 );
@@ -1186,7 +1177,7 @@ function _switch_to_layer(layer_object) {
         return;
     }
     if (map.hasLayer(layer_object) != true) {
-        map.eachLayer(function (layer) {
+        map.eachLayer(function(layer) {
             if (layer._url == undefined) {
                 map.removeLayer(layer);
             }
@@ -1198,7 +1189,7 @@ function _switch_to_layer(layer_object) {
 function switch_left_tab_page_handler(layer_info) {
     console.log(layer_info["tab_page_id"]);
     if (layer_info["tab_page_id"] != null && layer_info["tab_page_id"] != undefined) {
-        document.getElementById(layer_info["tab_page_id"]).addEventListener("click", function (event) {
+        document.getElementById(layer_info["tab_page_id"]).addEventListener("click", function(event) {
             let li = getLayerInfo(event.target.id, "tab_page_id");
             let layer_object = li.layer_object;
             _switch_to_layer(layer_object);
@@ -1208,9 +1199,9 @@ function switch_left_tab_page_handler(layer_info) {
 
 function switch_left_tab_page_handler_old(layer_info) {
     //Set default layers after clicking side panels
-    document.getElementById("illinois-tab").addEventListener("click", function (event) {
+    document.getElementById("illinois-tab").addEventListener("click", function(event) {
         if (map.hasLayer(il_county_case_layer_object) != true) {
-            map.eachLayer(function (layer) {
+            map.eachLayer(function(layer) {
                 if (layer._url == undefined) {
                     map.removeLayer(layer);
                 }
@@ -1219,9 +1210,9 @@ function switch_left_tab_page_handler_old(layer_info) {
         }
     });
 
-    document.getElementById("county-tab").addEventListener("click", function (event) {
+    document.getElementById("county-tab").addEventListener("click", function(event) {
         if (map.hasLayer(us_county_case_layer_object) != true) {
-            map.eachLayer(function (layer) {
+            map.eachLayer(function(layer) {
                 if (layer._url == undefined) {
                     map.removeLayer(layer);
                 }
@@ -1230,9 +1221,9 @@ function switch_left_tab_page_handler_old(layer_info) {
         }
     });
 
-    document.getElementById("world-tab").addEventListener("click", function (event) {
+    document.getElementById("world-tab").addEventListener("click", function(event) {
         if (map.hasLayer(world_case_layer_object) != true) {
-            map.eachLayer(function (layer) {
+            map.eachLayer(function(layer) {
                 if (layer._url == undefined) {
                     map.removeLayer(layer);
                 }
@@ -1257,9 +1248,9 @@ var highlight = {
 function left_tab_page_table_click_old() {
 
     /// illinois Table
-    document.querySelector("#illinois-table tbody").addEventListener("click", function (event) {
+    document.querySelector("#illinois-table tbody").addEventListener("click", function(event) {
         if (map.hasLayer(il_county_case_layer_object) != true) {
-            map.eachLayer(function (layer) {
+            map.eachLayer(function(layer) {
                 if (layer._url == undefined) {
                     map.removeLayer(layer);
                 }
@@ -1280,7 +1271,7 @@ function left_tab_page_table_click_old() {
             objID = parseFloat(tr.firstElementChild.dataset.uid);
             countyName = tr.firstElementChild.dataset.county;
 
-            il_county_case_layer_object.eachLayer(function (value) {
+            il_county_case_layer_object.eachLayer(function(value) {
                 if (value.feature.properties.NAME == countyName) {
                     il_county_case_layer_object.setStyle(styleFunc1);
                     value.setStyle(highlight);
@@ -1292,9 +1283,9 @@ function left_tab_page_table_click_old() {
     });
 
     /// US Table
-    document.querySelector("#county-table tbody").addEventListener("click", function (event) {
+    document.querySelector("#county-table tbody").addEventListener("click", function(event) {
         if (map.hasLayer(us_county_case_layer_object) != true) {
-            map.eachLayer(function (layer) {
+            map.eachLayer(function(layer) {
                 if (layer._url == undefined) {
                     map.removeLayer(layer);
                 }
@@ -1316,7 +1307,7 @@ function left_tab_page_table_click_old() {
             countyName = tr.firstElementChild.dataset.county;
             stateName = tr.firstElementChild.dataset.state;
 
-            us_county_case_layer_object.eachLayer(function (value) {
+            us_county_case_layer_object.eachLayer(function(value) {
                 if (value.feature.properties.NAME == countyName && value.feature.properties.state_name == stateName) {
                     us_county_case_layer_object.setStyle(styleFunc1);
                     value.setStyle(highlight);
@@ -1328,9 +1319,9 @@ function left_tab_page_table_click_old() {
     });
 
     /// World Table
-    document.querySelector("#world-table tbody").addEventListener("click", function (event) {
+    document.querySelector("#world-table tbody").addEventListener("click", function(event) {
         if (map.hasLayer(world_case_layer_object) != true) {
-            map.eachLayer(function (layer) {
+            map.eachLayer(function(layer) {
                 if (layer._url == undefined) {
                     map.removeLayer(layer);
                 }
@@ -1351,7 +1342,7 @@ function left_tab_page_table_click_old() {
             objID = parseFloat(tr.firstElementChild.dataset.uid);
             countryName = tr.firstElementChild.dataset.country;
 
-            world_case_layer_object.eachLayer(function (value) {
+            world_case_layer_object.eachLayer(function(value) {
                 if (value.feature.properties.NAME == countryName) {
                     world_case_layer_object.setStyle(styleFunc1);
                     value.setStyle(highlight);
@@ -1376,12 +1367,12 @@ function refreshLegend(_layer) {
         map.removeControl(legend)
     }
 
-    legend = L.control({position: 'bottomright'});
+    legend = L.control({ position: 'bottomright' });
 
     binsAcc = ["low", "", "", "", "", "high"];
     binsChange = ["-50%", "-10%~-50%", "Steady (-10%~10%)", "+10%~+50%", "+50%"];
 
-    legend.onAdd = function (map) {
+    legend.onAdd = function(map) {
 
         var div = L.DomUtil.create('div', 'info legend');
 
@@ -1475,30 +1466,30 @@ function refreshLegend(_layer) {
 //////////////////////////////////////// Plot Chart ///////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-var onEachFeature_il_county_case = function (feature, layer) {
+var onEachFeature_il_county_case = function(feature, layer) {
     if (feature.properties) {
         createPopup(feature, layer);
-        layer.on("click", function (e, layer) {
+        layer.on("click", function(e, layer) {
             //index = Math.floor((layer.time - layer.start) / DayInMilSec);
             il_county_case_layer_object.setStyle(styleFunc1);
             onMapClick(e);
         });
     }
 }
-var onEachFeature_us_county_case = function (feature, layer) {
+var onEachFeature_us_county_case = function(feature, layer) {
     if (feature.properties) {
         createPopup(feature, layer);
-        layer.on("click", function (e, layer) {
+        layer.on("click", function(e, layer) {
             //index = Math.floor((layer.time - layer.start) / DayInMilSec);
             us_county_case_layer_object.setStyle(styleFunc1);
             onMapClick(e);
         });
     }
 }
-var onEachFeature_world_case = function (feature, layer) {
+var onEachFeature_world_case = function(feature, layer) {
     if (feature.properties) {
         createPopup(feature, layer);
-        layer.on("click", function (e, layer) {
+        layer.on("click", function(e, layer) {
             //index = Math.floor((layer.time - layer.start) / DayInMilSec);
             world_case_layer_object.setStyle(styleFunc1);
             onMapClick(e);
@@ -1506,10 +1497,10 @@ var onEachFeature_world_case = function (feature, layer) {
     }
 }
 
-var onEachFeature_us_state_case = function (feature, layer) {
+var onEachFeature_us_state_case = function(feature, layer) {
     if (feature.properties) {
         createPopup(feature, layer);
-        layer.on("click", function (e, layer) {
+        layer.on("click", function(e, layer) {
             //index = Math.floor((layer.time - layer.start) / DayInMilSec);
             us_state_case_layer_object.setStyle(styleFunc1);
             onMapClick(e);
@@ -1560,8 +1551,8 @@ function updateChart(graphic) {
         if (i < 6) {
             averageWeeklyCases.push(IncreasedCases[i]);
         } else {
-            averageWeeklyCases.push(Math.round((IncreasedCases[i] + IncreasedCases[i - 1] + IncreasedCases[i - 2]
-                + IncreasedCases[i - 3] + IncreasedCases[i - 4] + IncreasedCases[i - 5] + IncreasedCases[i - 6]) / 7));
+            averageWeeklyCases.push(Math.round((IncreasedCases[i] + IncreasedCases[i - 1] + IncreasedCases[i - 2] +
+                IncreasedCases[i - 3] + IncreasedCases[i - 4] + IncreasedCases[i - 5] + IncreasedCases[i - 6]) / 7));
         }
     }
 
@@ -1594,8 +1585,7 @@ function updateChart(graphic) {
         var IncreasedDeaths = [];
         for (i = 1; i < DeathsArray.length; i++) {
             IncreasedDeaths.push(DeathsArray[i] - DeathsArray[i - 1])
-        }
-        ;
+        };
         IncreasedDeaths.unshift(0);
 
         var ExtendedDeathsArray = DeathsArray.slice(0);
@@ -1625,12 +1615,12 @@ function updateChart(graphic) {
     SlicedLabelDates = LabelDates.slice(firstCaseIndex);
 
     const verticalLinePlugin = {
-        getLinePosition: function (chart, pointIndex) {
+        getLinePosition: function(chart, pointIndex) {
             const meta = chart.getDatasetMeta(0); // first dataset is used to discover X coordinate of a point
             const data = meta.data;
             return data[pointIndex]._model.x;
         },
-        renderVerticalLine: function (chartInstance, pointIndex) {
+        renderVerticalLine: function(chartInstance, pointIndex) {
             const lineLeftOffset = this.getLinePosition(chartInstance, pointIndex);
             const scale = chartInstance.scales['y-axis-0'];
             const context = chartInstance.chart.ctx;
@@ -1649,7 +1639,7 @@ function updateChart(graphic) {
             //context.fillText('Current Day ', lineLeftOffset, (scale.bottom - scale.top) / 2 + scale.top);
         },
 
-        afterDatasetsDraw: function (chart, easing) {
+        afterDatasetsDraw: function(chart, easing) {
             if (chart.config.lineAtIndex) {
                 chart.config.lineAtIndex.forEach(pointIndex => this.renderVerticalLine(chart, pointIndex));
             }
@@ -1736,6 +1726,7 @@ function updateChart(graphic) {
                 fontSize: 15
             },
             legend: {
+                display: ($(window).width() > 1000),
                 position: 'top',
                 fullWidth: true,
                 labels: {
@@ -1788,11 +1779,11 @@ function createPopup(_feature, _layer) {
             </tr>\
             <tr class="popup-table-row">\
             <th class="popup-table-header">First Date of Confirmed Cases</th>\
-            <td id="first_date_case" class="popup-table-data">' + dt_first_case.toLocaleDateString("en-US", {timeZone: "UTC"}) + '</td>\
+            <td id="first_date_case" class="popup-table-data">' + dt_first_case.toLocaleDateString("en-US", { timeZone: "UTC" }) + '</td>\
             </tr>\
             <tr class="popup-table-row">\
             <th class="popup-table-header">First Date of Deaths</th>\
-            <td id="first_date_death" class="popup-table-data">' + dt_first_death.toLocaleDateString("en-US", {timeZone: "UTC"}) + '</td>\
+            <td id="first_date_death" class="popup-table-data">' + dt_first_death.toLocaleDateString("en-US", { timeZone: "UTC" }) + '</td>\
             </tr>\
         </table>\
         </form>')
