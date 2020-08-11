@@ -1,18 +1,16 @@
 ///////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////// Get User Location And Set Up Markers ///////////////////////////
+//////////////////////////////////////// Variables ////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////// Get User Location And Set Up Markers ///////////////////////////
+
 var geolocation_options = {
     enableHighAccuracy: false,
     timeout: 30000,
     maximumAge: 0
 };
 
-var getPosition = function(options) {
-    //// https://gist.github.com/varmais/74586ec1854fe288d393
-    return new Promise(function(resolve, reject) {
-        navigator.geolocation.getCurrentPosition(resolve, reject, options);
-    });
-}
 var userLat = null;
 var userLng = null;
 var userCentered = false;
@@ -40,6 +38,99 @@ var locIcon = L.icon({
     iconSize: [24, 24],
     iconAnchor: [12, 12],
 });
+
+///////////////////////////////////// Set up Basemaps /////////////////////////////////////
+
+var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+});
+
+var CartoDB_DarkMatter = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 19
+});
+
+var il_county_case_layer_object = null;
+var us_county_case_layer_object = null;
+var world_case_layer_object = null;
+var us_state_case_layer_object = null;
+var il_acc_i_layer_object = null;
+var il_acc_v_layer_object = null;
+var il_vul_layer_object = null;
+var il_chiago_acc_v_layer_object = null;
+var il_chiago_acc_i_layer_object = null;
+var il_weekly_case_layer_object = null;
+var us_county_weekly_case_layer_object = null;
+var us_state_weekly_case_layer_object = null;
+var world_weekly_case_layer_object = null;
+var il_hiv_layer_object = null;
+var il_svi_layer_object = null;
+var il_testing_sites_layer_object = null;
+var il_zipcode_case_layer_object = null;
+
+//////////////////////////////////// Load GeoJSON File ////////////////////////////////////
+
+class_json_url = "preprocessing/classes.json";
+var class_json_obj = null;
+
+////////////////////////////////// Add Data To Left Panel /////////////////////////////////
+
+var il_table;
+var county_table;
+var world_table;
+
+/////////////////////////////// Initialize Map And Controls ///////////////////////////////
+
+var colorClass = null;
+var world = null;
+var us_states = null;
+var us_counties = null;
+var illinois_counties = null;
+var illinois_acc_i = null;
+var illinois_acc_v = null;
+var chicago_acc_i = null;
+var chicago_acc_v = null;
+var illinois_vulnerability = null;
+var illinois_zipcode = null;
+
+var illinois_counties_ts, chicago_acc_i_ts, chicago_acc_v_ts,
+    illinois_acc_i_ts, illinois_acc_v_ts, illinois_vul_ts, us_counties_ts, us_states_ts, world_ts;
+
+/////////////////////////////// Define Color Schema And Bins //////////////////////////////
+
+var bins = null;
+var index = 0;
+const DayInMilSec = 60 * 60 * 24 * 1000;
+
+///////////////////////////// Handle Left Panel Table Clicking ////////////////////////////
+
+var highlight = {
+    //'color': '#00fbff',
+    'fillColor': '#00fbff',
+    'weight': 2,
+    'fillOpacity': 0.7
+};
+
+////////////////////////////////////// Create Legend //////////////////////////////////////
+
+var legend = null;
+
+
+///////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////// Functions ////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////// Get User Location And Set Up Markers ///////////////////////////
+
+var getPosition = function(options) {
+    //// https://gist.github.com/varmais/74586ec1854fe288d393
+    return new Promise(function(resolve, reject) {
+        navigator.geolocation.getCurrentPosition(resolve, reject, options);
+    });
+}
 
 function addMarker() {
     marker = new L.marker({ lat: userLat, lng: userLng }, { icon: locIcon });
@@ -132,24 +223,7 @@ function userLatLonAction(point) {
 
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////// Set up Basemaps /////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-
-var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18,
-    attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-});
-
-var CartoDB_DarkMatter = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    subdomains: 'abcd',
-    maxZoom: 19
-});
-
-///////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////// Setup Layer Style ////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
 
 var styleFunc1 = function(_data) {
     return {
@@ -200,136 +274,133 @@ var styleChange = function(_data) {
     }
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////// Define Layerlist ////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
 
 var layer_info_list = [{
-        "name": "il_county_case",
-        "display_name": "IDPH County-level Cases",
-        "geojson_url": "preprocessing/illinois/dph_county_data.geojson",
-        "category": "Illinois",
-        "show": true,
-        "style_func": styleFunc1,
-        "color_class": ["dph_illinois", "case_per_100k_capita", "nolog", "NaturalBreaks", "int"],
-        "tab_page_id": "illinois-tab",
-        "animation": true,
-    },
-    {
-        "name": "us_county_case",
-        "display_name": "US Counties",
-        "geojson_url": "preprocessing/nyt_counties_data.geojson",
-        "category": "US",
-        "show": false,
-        "style_func": styleFunc1,
-        "color_class": ["county", "case_per_100k_capita", "nolog", "NaturalBreaks", "int"],
-        "tab_page_id": "county-tab",
-        "animation": true,
-    },
-    {
-        "name": "world_case",
-        "display_name": "World",
-        "geojson_url": "preprocessing/worldwide/who_world_data.geojson",
-        "category": "World",
-        "show": false,
-        "style_func": styleFunc1,
-        "color_class": ["who_world", "case_per_100k_capita", "nolog", "NaturalBreaks", "int"],
-        "tab_page_id": "world-tab",
-        "animation": true,
-    },
+    "name": "il_county_case",
+    "display_name": "IDPH County-level Cases",
+    "geojson_url": "preprocessing/illinois/dph_county_data.geojson",
+    "category": "Illinois",
+    "show": true,
+    "style_func": styleFunc1,
+    "color_class": ["dph_illinois", "case_per_100k_capita", "nolog", "NaturalBreaks", "int"],
+    "tab_page_id": "illinois-tab",
+    "animation": true,
+},
+{
+    "name": "us_county_case",
+    "display_name": "US Counties",
+    "geojson_url": "preprocessing/nyt_counties_data.geojson",
+    "category": "US",
+    "show": false,
+    "style_func": styleFunc1,
+    "color_class": ["county", "case_per_100k_capita", "nolog", "NaturalBreaks", "int"],
+    "tab_page_id": "county-tab",
+    "animation": true,
+},
+{
+    "name": "world_case",
+    "display_name": "World",
+    "geojson_url": "preprocessing/worldwide/who_world_data.geojson",
+    "category": "World",
+    "show": false,
+    "style_func": styleFunc1,
+    "color_class": ["who_world", "case_per_100k_capita", "nolog", "NaturalBreaks", "int"],
+    "tab_page_id": "world-tab",
+    "animation": true,
+},
 ];
 
-
 var layer_info_list_2 = [{
-        "name": "us_state_case",
-        "display_name": "US States",
-        "geojson_url": "preprocessing/nyt_states_data.geojson",
-        "category": "US",
-        "show": false,
-        "style_func": styleFunc1,
-        "color_class": ["state", "case_per_100k_capita", "nolog", "NaturalBreaks", "int"],
-        //"tab_page_id": "world-tab",
-        "animation": true,
+    "name": "us_state_case",
+    "display_name": "US States",
+    "geojson_url": "preprocessing/nyt_states_data.geojson",
+    "category": "US",
+    "show": false,
+    "style_func": styleFunc1,
+    "color_class": ["state", "case_per_100k_capita", "nolog", "NaturalBreaks", "int"],
+    //"tab_page_id": "world-tab",
+    "animation": true,
 
-    },
-    {
-        "name": "il_vul",
-        "display_name": "Vulnerability",
-        "geojson_url": "preprocessing/illinois/vulnerability.geojson",
-        "category": "Illinois",
-        "show": false,
-        "style_func": styleVul,
-        "color_class": ["vulnerability", "case", "nolog", "NaturalBreaks", "float"],
-        //"tab_page_id": "illinois-tab",
-        "animation": true,
+},
+{
+    "name": "il_vul",
+    "display_name": "Vulnerability",
+    "geojson_url": "preprocessing/illinois/vulnerability.geojson",
+    "category": "Illinois",
+    "show": false,
+    "style_func": styleVul,
+    "color_class": ["vulnerability", "case", "nolog", "NaturalBreaks", "float"],
+    //"tab_page_id": "illinois-tab",
+    "animation": true,
 
-    },
-    {
-        "name": "il_acc_i",
-        "display_name": "Accessibility (ICU Beds-State)",
-        "geojson_url": "preprocessing/illinois/Illinois_ACC_i.geojson",
-        "category": "Illinois",
-        "show": false,
-        "style_func": styleAcc,
-        "animation": true,
-    },
-    {
-        "name": "il_acc_v",
-        "display_name": "Accessibility (Ventilators-State)",
-        "geojson_url": "preprocessing/illinois/Illinois_ACC_v.geojson",
-        "category": "Illinois",
-        "show": false,
-        "style_func": styleAcc,
-        "animation": true,
-    },
-    {
-        "name": "il_chicago_acc_i",
-        "display_name": "Accessibility (ICU Beds-Chicago)",
-        "geojson_url": "preprocessing/illinois/Chicago_ACC_i.geojson",
-        "category": "Illinois",
-        "show": false,
-        "style_func": styleAcc,
-        "animation": true,
-    },
-    {
-        "name": "il_chicago_acc_v",
-        "display_name": "Accessibility (Ventilators-Chicago)",
-        "geojson_url": "preprocessing/illinois/Chicago_ACC_v.geojson",
-        "category": "Illinois",
-        "show": false,
-        "style_func": styleAcc,
-        "animation": true,
-    },
-    {
-        "name": "il_weekly_case",
-        "display_name": "Illinois Weekly Average Change",
-        "geojson_url": null,
-        "category": "Illinois",
-        "show": false,
-        "style_func": styleChange,
-        "reuse": "il_county_case",
-        "animation": true,
-    },
-    {
-        "name": "us_county_weekly_case",
-        "display_name": "US County-level Weekly Average Change",
-        "geojson_url": null,
-        "category": "US",
-        "show": false,
-        "style_func": styleChange,
-        "reuse": "us_county_case",
-        "animation": true,
-    },
-    {
-        "name": "world_weekly_case",
-        "display_name": "World Weekly Average Change",
-        "geojson_url": null,
-        "category": "World",
-        "show": false,
-        "style_func": styleChange,
-        "reuse": "world_case",
-        "animation": true,
-    },
+},
+{
+    "name": "il_acc_i",
+    "display_name": "Accessibility (ICU Beds-State)",
+    "geojson_url": "preprocessing/illinois/Illinois_ACC_i.geojson",
+    "category": "Illinois",
+    "show": false,
+    "style_func": styleAcc,
+    "animation": true,
+},
+{
+    "name": "il_acc_v",
+    "display_name": "Accessibility (Ventilators-State)",
+    "geojson_url": "preprocessing/illinois/Illinois_ACC_v.geojson",
+    "category": "Illinois",
+    "show": false,
+    "style_func": styleAcc,
+    "animation": true,
+},
+{
+    "name": "il_chicago_acc_i",
+    "display_name": "Accessibility (ICU Beds-Chicago)",
+    "geojson_url": "preprocessing/illinois/Chicago_ACC_i.geojson",
+    "category": "Illinois",
+    "show": false,
+    "style_func": styleAcc,
+    "animation": true,
+},
+{
+    "name": "il_chicago_acc_v",
+    "display_name": "Accessibility (Ventilators-Chicago)",
+    "geojson_url": "preprocessing/illinois/Chicago_ACC_v.geojson",
+    "category": "Illinois",
+    "show": false,
+    "style_func": styleAcc,
+    "animation": true,
+},
+{
+    "name": "il_weekly_case",
+    "display_name": "Illinois Weekly Average Change",
+    "geojson_url": null,
+    "category": "Illinois",
+    "show": false,
+    "style_func": styleChange,
+    "reuse": "il_county_case",
+    "animation": true,
+},
+{
+    "name": "us_county_weekly_case",
+    "display_name": "US County-level Weekly Average Change",
+    "geojson_url": null,
+    "category": "US",
+    "show": false,
+    "style_func": styleChange,
+    "reuse": "us_county_case",
+    "animation": true,
+},
+{
+    "name": "world_weekly_case",
+    "display_name": "World Weekly Average Change",
+    "geojson_url": null,
+    "category": "World",
+    "show": false,
+    "style_func": styleChange,
+    "reuse": "world_case",
+    "animation": true,
+},
 
 ];
 
@@ -345,61 +416,43 @@ var layer_info_list_3 = [{
 }, ];
 
 var layer_info_list_4 = [{
-        "name": "il_hiv",
-        "display_name": "Density of PLWH (Persons Living with HIV)",
-        "geojson_url": null,
-        "category": "Illinois",
-        "show": false,
-        "esri_url": "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/HIV_Map/MapServer",
-        "animation": false,
-    },
-    {
-        "name": "il_svi",
-        "display_name": "CDC Social Vulnerability Index",
-        "geojson_url": null,
-        "category": "Illinois",
-        "show": false,
-        "esri_url": "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/SVI_2018/MapServer",
-        "animation": false,
-    },
-    {
-        "name": "il_testing_sites",
-        "display_name": "Testing Sites",
-        "geojson_url": null,
-        "category": "Illinois",
-        "show": false,
-        "esri_url": "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Testing_Sites/MapServer",
-        "animation": false,
-    },
-    {
-        "name": "il_zipcode_case",
-        "display_name": "IDPH Zipcode-level Cases",
-        "geojson_url": "preprocessing/illinois/dph_zipcode_data.geojson",
-        "category": "Illinois",
-        "show": false,
-        "style_func": styleFunc2,
-        "color_class": ["dph_illinois", "zipcode_case", "nolog", "NaturalBreaks", "int"],
-        "animation": false,
-    },
+    "name": "il_hiv",
+    "display_name": "Density of PLWH (Persons Living with HIV)",
+    "geojson_url": null,
+    "category": "Illinois",
+    "show": false,
+    "esri_url": "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/HIV_Map/MapServer",
+    "animation": false,
+},
+{
+    "name": "il_svi",
+    "display_name": "CDC Social Vulnerability Index",
+    "geojson_url": null,
+    "category": "Illinois",
+    "show": false,
+    "esri_url": "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/SVI_2018/MapServer",
+    "animation": false,
+},
+{
+    "name": "il_testing_sites",
+    "display_name": "Testing Sites",
+    "geojson_url": null,
+    "category": "Illinois",
+    "show": false,
+    "esri_url": "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Testing_Sites/MapServer",
+    "animation": false,
+},
+{
+    "name": "il_zipcode_case",
+    "display_name": "IDPH Zipcode-level Cases",
+    "geojson_url": "preprocessing/illinois/dph_zipcode_data.geojson",
+    "category": "Illinois",
+    "show": false,
+    "style_func": styleFunc2,
+    "color_class": ["dph_illinois", "zipcode_case", "nolog", "NaturalBreaks", "int"],
+    "animation": false,
+},
 ];
-
-var il_county_case_layer_object = null;
-var us_county_case_layer_object = null;
-var world_case_layer_object = null;
-var us_state_case_layer_object = null;
-var il_acc_i_layer_object = null;
-var il_acc_v_layer_object = null;
-var il_vul_layer_object = null;
-var il_chiago_acc_v_layer_object = null;
-var il_chiago_acc_i_layer_object = null;
-var il_weekly_case_layer_object = null;
-var us_county_weekly_case_layer_object = null;
-var us_state_weekly_case_layer_object = null;
-var world_weekly_case_layer_object = null;
-var il_hiv_layer_object = null;
-var il_svi_layer_object = null;
-var il_testing_sites_layer_object = null;
-var il_zipcode_case_layer_object = null;
 
 function getLayerInfo(name, field = "name") {
 
@@ -432,12 +485,7 @@ function getLayerInfo(name, field = "name") {
 
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////// Load GeoJSON File ////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-
-class_json_url = "preprocessing/classes.json";
-var class_json_obj = null;
 
 function loadClassJson(url) {
     return new Promise((resolve, reject) => {
@@ -499,13 +547,7 @@ function add_animation_layer_to_map_promise(layer_info) {
     })
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////// Add Data To Left Panel /////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-
-var il_table;
-var county_table;
-var world_table;
 
 function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -773,24 +815,7 @@ function fill_left_panel_promise(layer_info) {
     })
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////// Initialize Map And Controls ///////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-
-var colorClass = null;
-var world = null;
-var us_states = null;
-var us_counties = null;
-var illinois_counties = null;
-var illinois_acc_i = null;
-var illinois_acc_v = null;
-var chicago_acc_i = null;
-var chicago_acc_v = null;
-var illinois_vulnerability = null;
-var illinois_zipcode = null;
-
-var illinois_counties_ts, chicago_acc_i_ts, chicago_acc_v_ts,
-    illinois_acc_i_ts, illinois_acc_v_ts, illinois_vul_ts, us_counties_ts, us_states_ts, world_ts;
 
 var map = L.map('map', {
     layers: [osm, CartoDB_DarkMatter],
@@ -941,9 +966,7 @@ L.control.attribution({
     position: 'bottomleft'
 }).addTo(map);
 
-///////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////// Define Layer Change Events ///////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
 
 function onOverlayAdd(e) {
 
@@ -990,13 +1013,7 @@ function onOverlayRemove(e) {
 map.on('overlayadd', onOverlayAdd);
 //map.on('overlayremove', onOverlayRemove);
 
-///////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////// Define Color Schema And Bins //////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-
-var bins = null;
-var index = 0;
-const DayInMilSec = 60 * 60 * 24 * 1000;
 
 function splitStrInt(str, num) {
     var newStr = str.split(",");
@@ -1046,9 +1063,7 @@ function getChangeColor(d) {
         '#199640';
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////// Define Promises And Entry Point ////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
 
 function add_esri_layer_to_map(layer_info) {
     var layer_obj = L.esri.dynamicMapLayer({
@@ -1234,9 +1249,7 @@ loadClassJson(class_json_url).then(
     })
 );
 
-///////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////// Handle Left Panel Tab Page Clicking ///////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
 
 function _switch_to_layer(layer_object) {
     if (layer_object == null || layer_object == undefined) {
@@ -1303,16 +1316,7 @@ function switch_left_tab_page_handler_old(layer_info) {
 
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////// Handle Left Panel Table Clicking ////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-
-var highlight = {
-    //'color': '#00fbff',
-    'fillColor': '#00fbff',
-    'weight': 2,
-    'fillOpacity': 0.7
-};
 
 function left_tab_page_table_click_old() {
 
@@ -1424,11 +1428,7 @@ function left_tab_page_table_click_old() {
 
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////// Create Legend //////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
-
-var legend = null;
 
 function refreshLegend(_layer) {
 
@@ -1531,9 +1531,7 @@ function refreshLegend(_layer) {
     legend.addTo(map);
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////// Plot Chart ///////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
 
 var onEachFeature_il_county_case = function(feature, layer) {
     if (feature.properties) {
@@ -1854,9 +1852,7 @@ function updateChart(graphic) {
 
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////// Create Popup //////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////
 
 function createPopup(_feature, _layer) {
     if (_feature.properties.state_name != undefined) {
