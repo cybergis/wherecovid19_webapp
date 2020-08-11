@@ -632,7 +632,14 @@ function fill_left_panel_il(geojson) {
 
     $('#il-search-input').on('input', function() {
         console.log($('#il-search-input').val());
-        il_table.search($('#il-search-input').val()).draw();
+        il_table.column(0).search($('#il-search-input').val()).draw();
+        il_table.$('tr.selected').removeClass('selected');
+    });
+
+    $('#il-search-input').on('change', function() {
+        console.log($('#il-search-input').val());
+        // If using regex in strict search, the context can only be searched in targetTable.column(i) instead of targetTable
+        il_table.column(0).search('^'+$('#il-search-input').val()+'$', true, false).draw();
     });
 
 }
@@ -716,7 +723,14 @@ function fill_left_panel_us(geojson) {
 
     $('#w-search-input').on('input', function() {
         console.log($('#w-search-input').val());
-        county_table.search($('#w-search-input').val()).draw();
+        county_table.column(0).search($('#w-search-input').val()).draw();
+        county_table.$('tr.selected').removeClass('selected');
+    });
+
+    $('#w-search-input').on('change', function() {
+        console.log($('#w-search-input').val());
+        // If using regex in strict search, the context can only be searched in targetTable.column(i) instead of targetTable
+        county_table.column(0).search('^'+$('#w-search-input').val()+'$', true, false).draw();
     });
 }
 
@@ -796,7 +810,14 @@ function fill_left_panel_world(geojson) {
 
     $('#world-search-input').on('input', function() {
         console.log($('#world-search-input').val());
-        world_table.search($('#world-search-input').val()).draw();
+        world_table.column(0).search($('#world-search-input').val()).draw();
+        world_table.$('tr.selected').removeClass('selected');
+    });
+
+    $('#world-search-input').on('change', function() {
+        console.log($('#world-search-input').val());
+        // If using regex in strict search, the context can only be searched in targetTable.column(i) instead of targetTable
+        world_table.column(0).search('^'+$('#world-search-input').val()+'$', true, false).draw();
     });
 
 }
@@ -1595,32 +1616,29 @@ function onMapClick(e) {
     
     var targetTable;
 
+    // If using regex in strict search, the context can only be searched in targetTable.column(i) instead of targetTable
+
     if (e.target.feature.properties.ISO_2DIGIT != undefined) {
         targetTable = world_table;
-        targetTable.column(0).search('^'+e.target.feature.properties.NAME+'$', true, false).draw();
+        targetTable.$('tr.selected').removeClass('selected');
+        document.getElementById("world-search-input").value = e.target.feature.properties.NAME;
+        $("#world-search-input").trigger("change");
+        targetTable.$('tr').addClass('selected');
     } 
     else if (e.target.feature.properties.state_name != undefined) {
         targetTable = county_table;
-        targetTable.column(0).search('^'+e.target.feature.properties.NAME+", "+e.target.feature.properties.state_name+'$', true, false).draw();
+        targetTable.$('tr.selected').removeClass('selected');
+        document.getElementById("w-search-input").value = e.target.feature.properties.NAME+", "+e.target.feature.properties.state_name;
+        $("#w-search-input").trigger("change");
+        targetTable.$('tr').addClass('selected');
     }
     else if (e.target.feature.properties.fips == undefined) {
         targetTable = il_table;
-        targetTable.column(0).search('^'+e.target.feature.properties.NAME+'$', true, false).draw();
+        targetTable.$('tr.selected').removeClass('selected');
+        document.getElementById("il-search-input").value = e.target.feature.properties.NAME;
+        $("#il-search-input").trigger("change");
+        targetTable.$('tr').addClass('selected');
     }
-
-    // $('#county-table').on('click', 'tr', function() {
-    //     if ($(this).hasClass('selected')) {
-    //         $(this).removeClass('selected');
-    //     } else {
-    //         county_table.$('tr.selected').removeClass('selected');
-    //         $(this).addClass('selected');
-    //     }
-    // });
-
-    // $('#w-search-input').on('input', function() {
-    //     console.log($('#w-search-input').val());
-    //     county_table.search($('#w-search-input').val()).draw();
-    // });
 
     // Add d-block class and remove d-none to display the chart
     if (window.bar != undefined) {
