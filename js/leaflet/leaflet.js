@@ -1578,6 +1578,14 @@ var onEachFeature_us_state_case = function(feature, layer) {
 var onEachFeature_change = function(feature, layer) {
     if (feature.properties) {
         createChangePopup(feature, layer);
+        layer.on("click", function(e, layer) {
+            //index = Math.floor((layer.time - layer.start) / DayInMilSec);
+            il_weekly_case_layer_object.setStyle(styleChange);
+            us_county_weekly_case_layer_object.setStyle(styleChange);
+            us_state_weekly_case_layer_object.setStyle(styleChange);
+            world_weekly_case_layer_object.setStyle(styleChange);
+            onMapClick(e);
+        });
     }
 }
 
@@ -1593,7 +1601,7 @@ function onMapClick(e) {
     } 
     else if (e.target.feature.properties.state_name != undefined) {
         targetTable = county_table;
-        targetTable.column(0).search(e.target.feature.properties.NAME+", "+e.target.feature.properties.state_name).draw();
+        targetTable.column(0).search('^'+e.target.feature.properties.NAME+", "+e.target.feature.properties.state_name+'$', true, false).draw();
     }
     else if (e.target.feature.properties.fips == undefined) {
         targetTable = il_table;
