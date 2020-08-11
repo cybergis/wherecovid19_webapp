@@ -503,6 +503,10 @@ function add_animation_layer_to_map_promise(layer_info) {
 ////////////////////////////////// Add Data To Left Panel /////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 
+var il_table;
+var county_table;
+var world_table;
+
 function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
@@ -561,7 +565,7 @@ function fill_left_panel_il(geojson) {
         }
     })
 
-    var il_table = $('#illinois-table').DataTable({
+    il_table = $('#illinois-table').DataTable({
         paging: true,
         pagingType: "simple_numbers",
         pageLength: 50,
@@ -645,7 +649,7 @@ function fill_left_panel_us(geojson) {
     death_div.querySelector('.case-number').innerHTML = numberWithCommas(sum_us_counties_today_death)
     death_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(sum_us_counties_today_new_death)
 
-    var county_table = $('#county-table').DataTable({
+    county_table = $('#county-table').DataTable({
         paging: true,
         pagingType: "simple_numbers",
         pageLength: 50,
@@ -725,7 +729,7 @@ function fill_left_panel_world(geojson) {
     death_div.querySelector('.case-number').innerHTML = numberWithCommas(sum_world_today_death)
     death_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(sum_world_today_new_death)
 
-    var world_table = $('#world-table').DataTable({
+    world_table = $('#world-table').DataTable({
         paging: true,
         pagingType: "simple_numbers",
         pageLength: 50,
@@ -1122,7 +1126,12 @@ function add_animation_layer_to_map(layer_info) {
         _onEachFeatureFunc = onEachFeature_world_case;
     } else if (layer_info.name == "us_state_case") {
         _onEachFeatureFunc = onEachFeature_us_state_case;
-    }
+    } else if (layer_info.name == "il_weekly_case" || 
+    layer_info.name == "us_county_weekly_case" || 
+    layer_info.name == "us_state_weekly_case" || 
+    layer_info.name == "world_weekly_case") {
+        _onEachFeatureFunc = onEachFeature_change;
+    } 
 
     let layer_obj = L.timeline(layer_info.geojson_obj, {
         style: layer_info.style_func,
@@ -1568,8 +1577,44 @@ var onEachFeature_us_state_case = function(feature, layer) {
     }
 }
 
+var onEachFeature_change = function(feature, layer) {
+    if (feature.properties) {
+        createChangePopup(feature, layer);
+    }
+}
+
 function onMapClick(e) {
+    console.log(e);
     e.target.setStyle(highlight);
+    
+    var targetTable;
+
+    if (e.target.feature.properties.ISO_2DIGIT != undefined) {
+        targetTable = world_table;
+        targetTable.column(0).search('^'+e.target.feature.properties.NAME+'$', true, false).draw();
+    } 
+    else if (e.target.feature.properties.state_name != undefined) {
+        targetTable = county_table;
+        targetTable.column(0).search(e.target.feature.properties.NAME+", "+e.target.feature.properties.state_name).draw();
+    }
+    else if (e.target.feature.properties.fips == undefined) {
+        targetTable = il_table;
+        targetTable.column(0).search('^'+e.target.feature.properties.NAME+'$', true, false).draw();
+    }
+
+    // $('#county-table').on('click', 'tr', function() {
+    //     if ($(this).hasClass('selected')) {
+    //         $(this).removeClass('selected');
+    //     } else {
+    //         county_table.$('tr.selected').removeClass('selected');
+    //         $(this).addClass('selected');
+    //     }
+    // });
+
+    // $('#w-search-input').on('input', function() {
+    //     console.log($('#w-search-input').val());
+    //     county_table.search($('#w-search-input').val()).draw();
+    // });
 
     // Add d-block class and remove d-none to display the chart
     if (window.bar != undefined) {
@@ -1856,6 +1901,26 @@ function createPopup(_feature, _layer) {
             <tr class="popup-table-row">\
             <th class="popup-table-header pb-2">   Deaths:</th>\
             <td id="first_date_death" class="popup-table-data">' + dateCorrection(dt_first_death.toLocaleDateString("en-US", { timeZone: "UTC" })) + '</td>\
+            </tr>\
+        </table>\
+        </form>')
+}
+
+function createChangePopup(_feature, _layer) {
+    if (_feature.properties.state_name != undefined) {
+        var popupName = _feature.properties.NAME + ", " + _feature.properties.state_name
+    } else {
+        var popupName = _feature.properties.NAME
+    }
+
+    lastIndex = _feature.properties.change_ts.split(',').length - 1
+
+    _layer.bindPopup('<form id="popup-form">\
+            <h5 id="name" style="font-weight:bold;">' + popupName + '</h5>\
+            <table class="popup-table" style="background-color:white;">\
+            <tr class="popup-table-row">\
+            <th class="popup-table-header" style="min-width:120px;">Weekly Change Rate:</th>\
+            <td id="total_cases" class="popup-table-data">' + Math.round(100*splitStrFloat(_feature.properties.change_ts, lastIndex)) +'%' + '</td>\
             </tr>\
         </table>\
         </form>')
