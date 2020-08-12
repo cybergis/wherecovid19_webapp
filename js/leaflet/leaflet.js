@@ -1356,6 +1356,8 @@ var left_tab_page_table_click_old = function () {
 
     /// illinois Table
     document.querySelector("#illinois-table tbody").addEventListener("click", function(event) {
+        // Clear existing popup
+        map.closePopup();
         if (map.hasLayer(il_county_case_layer_object) != true) {
             map.eachLayer(function(layer) {
                 if (layer._url == undefined) {
@@ -1391,6 +1393,8 @@ var left_tab_page_table_click_old = function () {
 
     /// US Table
     document.querySelector("#county-table tbody").addEventListener("click", function(event) {
+        // Clear existing popup
+        map.closePopup();
         if (map.hasLayer(us_county_case_layer_object) != true) {
             map.eachLayer(function(layer) {
                 if (layer._url == undefined) {
@@ -1427,6 +1431,8 @@ var left_tab_page_table_click_old = function () {
 
     /// World Table
     document.querySelector("#world-table tbody").addEventListener("click", function(event) {
+        // Clear existing popup
+        map.closePopup();
         if (map.hasLayer(world_case_layer_object) != true) {
             map.eachLayer(function(layer) {
                 if (layer._url == undefined) {
@@ -1624,7 +1630,6 @@ var onEachFeature_change = function(feature, layer) {
 }
 
 var onMapClick = function (e) {
-    console.log(e);
     e.target.setStyle(highlight);
     
     var targetTable;
