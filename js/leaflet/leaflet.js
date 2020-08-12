@@ -636,7 +636,7 @@ var fill_left_panel_il = function (geojson) {
         il_table.$('tr.selected').removeClass('selected');
     });
 
-    $('#il-search-input').on('change', function() {
+    $('#il-search-input').on('textchange', function() {
         console.log($('#il-search-input').val());
         // If using regex in strict search, the context can only be searched in targetTable.column(i) instead of targetTable
         il_table.column(0).search('^'+$('#il-search-input').val()+'$', true, false).draw();
@@ -727,7 +727,7 @@ var fill_left_panel_us = function (geojson) {
         county_table.$('tr.selected').removeClass('selected');
     });
 
-    $('#w-search-input').on('change', function() {
+    $('#w-search-input').on('textchange', function() {
         console.log($('#w-search-input').val());
         // If using regex in strict search, the context can only be searched in targetTable.column(i) instead of targetTable
         county_table.column(0).search('^'+$('#w-search-input').val()+'$', true, false).draw();
@@ -814,7 +814,7 @@ var fill_left_panel_world = function (geojson) {
         world_table.$('tr.selected').removeClass('selected');
     });
 
-    $('#world-search-input').on('change', function() {
+    $('#world-search-input').on('textchange', function() {
         console.log($('#world-search-input').val());
         // If using regex in strict search, the context can only be searched in targetTable.column(i) instead of targetTable
         world_table.column(0).search('^'+$('#world-search-input').val()+'$', true, false).draw();
@@ -1635,21 +1635,21 @@ var onMapClick = function (e) {
         targetTable = world_table;
         targetTable.$('tr.selected').removeClass('selected');
         document.getElementById("world-search-input").value = e.target.feature.properties.NAME;
-        $("#world-search-input").trigger("change");
+        $("#world-search-input").trigger("textchange");
         targetTable.$('tr').addClass('selected');
     } 
     else if (e.target.feature.properties.state_name != undefined) {
         targetTable = county_table;
         targetTable.$('tr.selected').removeClass('selected');
         document.getElementById("w-search-input").value = e.target.feature.properties.NAME+", "+e.target.feature.properties.state_name;
-        $("#w-search-input").trigger("change");
+        $("#w-search-input").trigger("textchange");
         targetTable.$('tr').addClass('selected');
     }
     else if (e.target.feature.properties.fips == undefined) {
         targetTable = il_table;
         targetTable.$('tr.selected').removeClass('selected');
         document.getElementById("il-search-input").value = e.target.feature.properties.NAME;
-        $("#il-search-input").trigger("change");
+        $("#il-search-input").trigger("textchange");
         targetTable.$('tr').addClass('selected');
     }
 
