@@ -562,6 +562,7 @@ var fill_left_panel_il = function (geojson) {
         return {
             centroid_x: turf.centroid(value.geometry).geometry.coordinates[0],
             centroid_y: turf.centroid(value.geometry).geometry.coordinates[1],
+            bounds: value.geometry.coordinates,
             uid: value.properties.OBJECTID,
             county: value.properties.NAME,
             case: value.properties.today_case,
@@ -594,6 +595,7 @@ var fill_left_panel_il = function (geojson) {
             instance.querySelector('th').innerHTML = value.county;
             instance.querySelector('th').setAttribute('data-x', value.centroid_x);
             instance.querySelector('th').setAttribute('data-y', value.centroid_y);
+            instance.querySelector('th').setAttribute('data-bounds', value.bounds);
             instance.querySelector('th').setAttribute('data-uid', value.uid);
             instance.querySelector('th').setAttribute('data-county', value.county);
 
@@ -656,6 +658,7 @@ var fill_left_panel_us = function (geojson) {
         return {
             centroid_x: turf.centroid(value.geometry).geometry.coordinates[0],
             centroid_y: turf.centroid(value.geometry).geometry.coordinates[1],
+            bounds: value.geometry.coordinates,
             uid: value.properties.OBJECTID,
             county: value.properties.NAME,
             state: value.properties.state_name,
@@ -674,6 +677,7 @@ var fill_left_panel_us = function (geojson) {
         instance.querySelector('th').innerHTML = value.county + ", " + value.state;
         instance.querySelector('th').setAttribute('data-x', value.centroid_x);
         instance.querySelector('th').setAttribute('data-y', value.centroid_y);
+        instance.querySelector('th').setAttribute('data-bounds', value.bounds);
         instance.querySelector('th').setAttribute('data-uid', value.uid);
         instance.querySelector('th').setAttribute('data-county', value.county);
         instance.querySelector('th').setAttribute('data-state', value.state);
@@ -746,6 +750,7 @@ var fill_left_panel_world = function (geojson) {
         return {
             centroid_x: turf.centroid(value.geometry).geometry.coordinates[0],
             centroid_y: turf.centroid(value.geometry).geometry.coordinates[1],
+            bounds: value.geometry.coordinates,
             uid: value.properties.OBJECTID,
             country: value.properties.NAME,
             case: value.properties.today_case,
@@ -763,6 +768,7 @@ var fill_left_panel_world = function (geojson) {
         instance.querySelector('th').innerHTML = value.country;
         instance.querySelector('th').setAttribute('data-x', value.centroid_x);
         instance.querySelector('th').setAttribute('data-y', value.centroid_y);
+        instance.querySelector('th').setAttribute('data-bounds', value.bounds);
         instance.querySelector('th').setAttribute('data-country', value.country);
         instance.querySelector('.confirmed').innerHTML = '<span>' + numberWithCommas(value.case) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_case);
         instance.querySelector('.death').innerHTML = '<span>' + numberWithCommas(value.death) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_death);
@@ -1377,6 +1383,15 @@ var left_tab_page_table_click_old = function () {
 
             long = parseFloat(tr.firstElementChild.dataset.x);
             lat = parseFloat(tr.firstElementChild.dataset.y);
+            bounds = tr.firstElementChild.dataset.bounds.split(',').map(function(item) {
+                return parseFloat(item);
+            });
+            boundCoords = [];
+            for (i=0; i<bounds.length; i++) {
+                if (i%2 == 0) {
+                    boundCoords.push([bounds[i+1],bounds[i]])
+                }
+            }
             objID = parseFloat(tr.firstElementChild.dataset.uid);
             countyName = tr.firstElementChild.dataset.county;
 
@@ -1384,7 +1399,8 @@ var left_tab_page_table_click_old = function () {
                 if (value.feature.properties.NAME == countyName) {
                     il_county_case_layer_object.setStyle(styleFunc1);
                     value.setStyle(highlight);
-                    map.setView([lat, long], 9);
+                    //map.setView([lat, long], 9);
+                    map.fitBounds(boundCoords);
                     updateChart(value.feature);
                 }
             })
@@ -1414,6 +1430,15 @@ var left_tab_page_table_click_old = function () {
 
             long = parseFloat(tr.firstElementChild.dataset.x);
             lat = parseFloat(tr.firstElementChild.dataset.y);
+            bounds = tr.firstElementChild.dataset.bounds.split(',').map(function(item) {
+                return parseFloat(item);
+            });
+            boundCoords = [];
+            for (i=0; i<bounds.length; i++) {
+                if (i%2 == 0) {
+                    boundCoords.push([bounds[i+1],bounds[i]])
+                }
+            }
             objID = parseFloat(tr.firstElementChild.dataset.uid);
             countyName = tr.firstElementChild.dataset.county;
             stateName = tr.firstElementChild.dataset.state;
@@ -1422,7 +1447,8 @@ var left_tab_page_table_click_old = function () {
                 if (value.feature.properties.NAME == countyName && value.feature.properties.state_name == stateName) {
                     us_county_case_layer_object.setStyle(styleFunc1);
                     value.setStyle(highlight);
-                    map.setView([lat, long], 9);
+                    //map.setView([lat, long], 9);
+                    map.fitBounds(boundCoords);
                     updateChart(value.feature);
                 }
             })
@@ -1452,6 +1478,15 @@ var left_tab_page_table_click_old = function () {
 
             long = parseFloat(tr.firstElementChild.dataset.x);
             lat = parseFloat(tr.firstElementChild.dataset.y);
+            bounds = tr.firstElementChild.dataset.bounds.split(',').map(function(item) {
+                return parseFloat(item);
+            });
+            boundCoords = [];
+            for (i=0; i<bounds.length; i++) {
+                if (i%2 == 0) {
+                    boundCoords.push([bounds[i+1],bounds[i]])
+                }
+            }
             objID = parseFloat(tr.firstElementChild.dataset.uid);
             countryName = tr.firstElementChild.dataset.country;
 
@@ -1459,7 +1494,8 @@ var left_tab_page_table_click_old = function () {
                 if (value.feature.properties.NAME == countryName) {
                     world_case_layer_object.setStyle(styleFunc1);
                     value.setStyle(highlight);
-                    map.setView([lat, long], 4);
+                    //map.setView([lat, long], 4);
+                    map.fitBounds(boundCoords);
                     updateChart(value.feature);
                 }
             })
