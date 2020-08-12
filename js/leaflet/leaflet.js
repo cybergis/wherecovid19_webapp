@@ -132,7 +132,7 @@ var getPosition = function(options) {
     });
 }
 
-function addMarker() {
+var addMarker = function () {
     marker = new L.marker({ lat: userLat, lng: userLng }, { icon: locIcon });
     marker.setOpacity(0.8);
     marker.addTo(map);
@@ -148,7 +148,7 @@ getPosition(geolocation_options)
         console.error(err.message);
     })
 
-function zoomToUserLocation() {
+var zoomToUserLocation = function () {
     console.log("Trying to center view to user location ....");
     if (!userCentered || userGeolocationTriedCounter > 60) {
         if (userLat != null && userLng != null) {
@@ -165,14 +165,14 @@ function zoomToUserLocation() {
     userGeolocationTriedCounter = userGeolocationTriedCounter + 1;
 }
 
-function zoomToUserLocationPromise() {
+var zoomToUserLocationPromise = function () {
     return new Promise((resolve, reject) => {
         userGeolocationTimer = setInterval(zoomToUserLocation, 1000);
         resolve();
     });
 }
 
-function _switch_layer(layer, map) {
+var _switch_layer = function (layer, map) {
     if (map.hasLayer(layer) != true) {
         map.eachLayer(function(layer) {
             if (layer._url == undefined) {
@@ -186,7 +186,7 @@ function _switch_layer(layer, map) {
     }
 }
 
-function userLatLonAction(point) {
+var userLatLonAction = function (point) {
 
     userLat = point.lat;
     userLng = point.lng;
@@ -454,7 +454,7 @@ var layer_info_list_4 = [{
 },
 ];
 
-function getLayerInfo(name, field = "name") {
+var getLayerInfo = function (name, field = "name") {
 
     for (i = 0; i < layer_info_list.length; i++) {
         if (name == layer_info_list[i][field]) {
@@ -487,7 +487,7 @@ function getLayerInfo(name, field = "name") {
 
 //////////////////////////////////// Load GeoJSON File ////////////////////////////////////
 
-function loadClassJson(url) {
+var loadClassJson = function (url) {
     return new Promise((resolve, reject) => {
         $.ajax({
             url: url,
@@ -505,7 +505,7 @@ function loadClassJson(url) {
     })
 }
 
-function loadGeoJson(layer_info) {
+var loadGeoJson = function (layer_info) {
     return new Promise((resolve, reject) => {
         if (layer_info["esri_url"] != undefined) {
             resolve(layer_info);
@@ -534,7 +534,7 @@ function loadGeoJson(layer_info) {
     })
 }
 
-function add_animation_layer_to_map_promise(layer_info) {
+var add_animation_layer_to_map_promise = function (layer_info) {
     return new Promise((resolve, reject) => {
         if (layer_info.esri_url != undefined) {
             add_esri_layer_to_map(layer_info);
@@ -549,11 +549,11 @@ function add_animation_layer_to_map_promise(layer_info) {
 
 ////////////////////////////////// Add Data To Left Panel /////////////////////////////////
 
-function numberWithCommas(x) {
+var numberWithCommas = function (x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-function fill_left_panel_il(geojson) {
+var fill_left_panel_il = function (geojson) {
     let tab = document.getElementById('illinois-tab');
 
     let illinois_table = document.getElementById('illinois-table').querySelector('tbody');
@@ -644,7 +644,7 @@ function fill_left_panel_il(geojson) {
 
 }
 
-function fill_left_panel_us(geojson) {
+var fill_left_panel_us = function (geojson) {
     var sum_us_counties_today_case = 0;
     var sum_us_counties_today_death = 0;
     var sum_us_counties_today_new_case = 0;
@@ -734,7 +734,7 @@ function fill_left_panel_us(geojson) {
     });
 }
 
-function fill_left_panel_world(geojson) {
+var fill_left_panel_world = function (geojson) {
     var sum_world_today_case = 0;
     var sum_world_today_death = 0;
     var sum_world_today_new_case = 0;
@@ -822,7 +822,7 @@ function fill_left_panel_world(geojson) {
 
 }
 
-function fill_left_panel_promise(layer_info) {
+var fill_left_panel_promise = function (layer_info) {
     return new Promise((resolve, reject) => {
         if (layer_info.name == "il_county_case") {
             fill_left_panel_il(layer_info.geojson_obj);
@@ -989,7 +989,7 @@ L.control.attribution({
 
 //////////////////////////////// Define Layer Change Events ///////////////////////////////
 
-function onOverlayAdd(e) {
+var onOverlayAdd = function (e) {
 
     // Remove the chart if it exists
     document.getElementById('myChart').classList.add("d-none");
@@ -1024,9 +1024,22 @@ function onOverlayAdd(e) {
     }
 
     // hide_loader();
+
+    world_table.$('tr.selected').removeClass('selected');
+    document.getElementById("world-search-input").value = '';
+    $("#world-search-input").trigger("input");
+
+    county_table.$('tr.selected').removeClass('selected');
+    document.getElementById("w-search-input").value = '';
+    $("#w-search-input").trigger("input");
+
+    il_table.$('tr.selected').removeClass('selected');
+    document.getElementById("il-search-input").value = '';
+    $("#il-search-input").trigger("input");
+    
 }
 
-function onOverlayRemove(e) {
+var onOverlayRemove = function (e) {
     slider.removeTimelines(e.layer);
     slider.remove();
 }
@@ -1036,17 +1049,17 @@ map.on('overlayadd', onOverlayAdd);
 
 /////////////////////////////// Define Color Schema And Bins //////////////////////////////
 
-function splitStrInt(str, num) {
+var splitStrInt = function (str, num) {
     var newStr = str.split(",");
     return parseInt(newStr[num])
 }
 
-function splitStrFloat(str, num) {
+var splitStrFloat = function (str, num) {
     var newStr = str.split(",");
     return parseFloat(newStr[num])
 }
 
-function getColorFor(_num, _bins) {
+var getColorFor = function (_num, _bins) {
     return _num > _bins[5] ? '#800026' :
         _num > _bins[4] ? '#BD0026' :
         _num > _bins[3] ? '#E31A1C' :
@@ -1057,7 +1070,7 @@ function getColorFor(_num, _bins) {
         'transparent';
 }
 
-function getVulColor(_num, _bins) {
+var getVulColor = function (_num, _bins) {
     return _num > _bins[5] ? '#301934' :
         _num > _bins[4] ? '#8c0002' :
         _num > _bins[3] ? '#d7191c' :
@@ -1067,7 +1080,7 @@ function getVulColor(_num, _bins) {
         '#199640';
 }
 
-function getAccColor(d) {
+var getAccColor = function (d) {
     return d > 4 ? '#08519c' :
         d > 3 ? '#3182bd' :
         d > 2 ? '#6baed6' :
@@ -1076,7 +1089,7 @@ function getAccColor(d) {
         '#eff3ff';
 }
 
-function getChangeColor(d) {
+var getChangeColor = function (d) {
     return d > 0.5 ? '#d7191c' :
         d > 0.1 ? '#fd9861' :
         d > -0.1 ? '#ffffbf' :
@@ -1086,7 +1099,7 @@ function getChangeColor(d) {
 
 ////////////////////////////// Define Promises And Entry Point ////////////////////////////
 
-function add_esri_layer_to_map(layer_info) {
+var add_esri_layer_to_map = function (layer_info) {
     var layer_obj = L.esri.dynamicMapLayer({
         url: layer_info.esri_url,
     });
@@ -1110,7 +1123,7 @@ function add_esri_layer_to_map(layer_info) {
 
 }
 
-function add_static_layer_to_map(layer_info) {
+var add_static_layer_to_map = function (layer_info) {
     let layer_obj = L.geoJson(layer_info.geojson_obj);
 
     layer_obj.name = layer_info.name;
@@ -1151,7 +1164,7 @@ function add_static_layer_to_map(layer_info) {
 
 }
 
-function add_animation_layer_to_map(layer_info) {
+var add_animation_layer_to_map = function (layer_info) {
 
     let _onEachFeatureFunc;
     if (layer_info.name == "il_county_case") {
@@ -1246,7 +1259,7 @@ function add_animation_layer_to_map(layer_info) {
 }
 
 
-function chain_promise(layer_info) {
+var chain_promise = function (layer_info) {
     return loadGeoJson(layer_info).then(function(result) {
         p1 = add_animation_layer_to_map_promise(result);
         p2 = fill_left_panel_promise(result);
@@ -1272,7 +1285,7 @@ loadClassJson(class_json_url).then(
 
 /////////////////////////// Handle Left Panel Tab Page Clicking ///////////////////////////
 
-function _switch_to_layer(layer_object) {
+var _switch_to_layer = function (layer_object) {
     if (layer_object == null || layer_object == undefined) {
         return;
     }
@@ -1286,7 +1299,7 @@ function _switch_to_layer(layer_object) {
     }
 }
 
-function switch_left_tab_page_handler(layer_info) {
+var switch_left_tab_page_handler = function (layer_info) {
     console.log(layer_info["tab_page_id"]);
     if (layer_info["tab_page_id"] != null && layer_info["tab_page_id"] != undefined) {
         document.getElementById(layer_info["tab_page_id"]).addEventListener("click", function(event) {
@@ -1297,7 +1310,7 @@ function switch_left_tab_page_handler(layer_info) {
     }
 }
 
-function switch_left_tab_page_handler_old(layer_info) {
+var switch_left_tab_page_handler_old = function (layer_info) {
     //Set default layers after clicking side panels
     document.getElementById("illinois-tab").addEventListener("click", function(event) {
         if (map.hasLayer(il_county_case_layer_object) != true) {
@@ -1339,7 +1352,7 @@ function switch_left_tab_page_handler_old(layer_info) {
 
 ///////////////////////////// Handle Left Panel Table Clicking ////////////////////////////
 
-function left_tab_page_table_click_old() {
+var left_tab_page_table_click_old = function () {
 
     /// illinois Table
     document.querySelector("#illinois-table tbody").addEventListener("click", function(event) {
@@ -1451,7 +1464,7 @@ function left_tab_page_table_click_old() {
 
 ////////////////////////////////////// Create Legend //////////////////////////////////////
 
-function refreshLegend(_layer) {
+var refreshLegend = function (_layer) {
 
     if (legend != null) {
         map.removeControl(legend)
@@ -1610,7 +1623,7 @@ var onEachFeature_change = function(feature, layer) {
     }
 }
 
-function onMapClick(e) {
+var onMapClick = function (e) {
     console.log(e);
     e.target.setStyle(highlight);
     
@@ -1650,7 +1663,7 @@ function onMapClick(e) {
 }
 
 
-function updateChart(graphic) {
+var updateChart = function (graphic) {
 
     Chart.defaults.global.defaultFontSize = 12;
     Chart.defaults.global.defaultFontColor = '#777';
@@ -1880,7 +1893,7 @@ function updateChart(graphic) {
 
 /////////////////////////////////////// Create Popup //////////////////////////////////////
 
-function createPopup(_feature, _layer) {
+var createPopup = function (_feature, _layer) {
     if (_feature.properties.state_name != undefined) {
         var popupName = _feature.properties.NAME + ", " + _feature.properties.state_name
     } else {
@@ -1928,7 +1941,7 @@ function createPopup(_feature, _layer) {
         </form>')
 }
 
-function createChangePopup(_feature, _layer) {
+var createChangePopup = function (_feature, _layer) {
     if (_feature.properties.state_name != undefined) {
         var popupName = _feature.properties.NAME + ", " + _feature.properties.state_name
     } else {
