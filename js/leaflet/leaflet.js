@@ -59,8 +59,8 @@ var us_state_case_layer_object = null;
 var il_acc_i_layer_object = null;
 var il_acc_v_layer_object = null;
 var il_vul_layer_object = null;
-var il_chiago_acc_v_layer_object = null;
-var il_chiago_acc_i_layer_object = null;
+var il_chicago_acc_v_layer_object = null;
+var il_chicago_acc_i_layer_object = null;
 var il_weekly_case_layer_object = null;
 var us_county_weekly_case_layer_object = null;
 var us_state_weekly_case_layer_object = null;
@@ -1283,6 +1283,10 @@ loadClassJson(class_json_url).then(
     Promise.allSettled(layer_info_list.map(chain_promise)).then(function() {}).then(function() {
         switch_left_tab_page_handler_old();
         left_tab_page_table_click_old();
+    }).then(function() {
+        $('#illinois-tab').css("pointer-events","auto");
+        $('#county-tab').css("pointer-events","auto");
+        $('#world-tab').css("pointer-events","auto");
     }).then(function() {
         return zoomToUserLocationPromise();
     }).then(function() {
