@@ -5,6 +5,10 @@
 
 ////////////////////////// Get User Location And Set Up Markers ///////////////////////////
 
+$('#illinois-tab').css("pointer-events","none");
+$('#county-tab').css("pointer-events","none");
+$('#world-tab').css("pointer-events","none");
+
 var geolocation_options = {
     enableHighAccuracy: false,
     timeout: 30000,
@@ -1280,10 +1284,12 @@ var chain_promise = function (layer_info) {
 
 // Promise Entry Point
 loadClassJson(class_json_url).then(
-    Promise.allSettled(layer_info_list.map(chain_promise)).then(function() {}).then(function() {
+    Promise.allSettled(layer_info_list.map(chain_promise)).then(function() {
         switch_left_tab_page_handler_old();
         left_tab_page_table_click_old();
+        console.log("111111111111111111111111111111111111");
     }).then(function() {
+        console.log("222222222222222222222222222222222222");
         $('#illinois-tab').css("pointer-events","auto");
         $('#county-tab').css("pointer-events","auto");
         $('#world-tab').css("pointer-events","auto");

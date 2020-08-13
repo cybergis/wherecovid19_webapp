@@ -438,7 +438,6 @@ screen-btn:first {
     /* for Firefox */
     min-height: 0;
     display: none;
-    pointer-events: none;
 }
 
 .tabs-wrap .tab.active {
@@ -449,7 +448,6 @@ screen-btn:first {
     -webkit-box-flex: 1;
     -ms-flex-positive: 1;
     flex-grow: 1;
-    pointer-events: none;
 }
 
 .tab-header {
