@@ -1020,12 +1020,17 @@ var onOverlayAdd = function (e) {
     refreshLegend(e.layer);
 
     if (e.layer == il_chicago_acc_v_layer_object || e.layer == il_chicago_acc_i_layer_object) {
+        // Trigger click event to change the tab page
+        $("#illinois-tab").trigger("click");
         map.setView([41.87, -87.62], 10)
     } else if (e.group.name == "Illinois") {
+        $("#illinois-tab").trigger("click");
         map.setView([40, -89], 7)
     } else if (e.group.name == "US") {
+        $("#county-tab").trigger("click");
         map.setView([37, -96], 4)
     } else if (e.group.name == "World") {
+        $("#world-tab").trigger("click");
         map.setView([0, 0], 2)
     }
 
