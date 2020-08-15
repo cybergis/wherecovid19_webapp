@@ -147,8 +147,8 @@ require([
                 'breaks': 'NaturalBreaks',
             },
             'case_per_100k_capita': {
-                'value': 'nolog',
-                'breaks': 'Quantiles',
+                'value': 'log',
+                'breaks': 'NaturalBreaks',
             },
             'death_per_100k_capita': {
                 'value': 'nolog',
@@ -219,6 +219,18 @@ require([
                 outline: { // autocasts as new SimpleLineSymbol()
                     color: [128, 128, 128, 0.3],
                     width: "1px"
+                }
+            }
+        };
+
+        const default_polygon_renderer_no_outline = {
+            type: "simple",
+            symbol: {
+                type: "simple-fill",
+                color: [0, 0, 0, 0.1],
+                outline: { // autocasts as new SimpleLineSymbol()
+                    color: [128, 128, 128, 0.3],
+                    width: "0px"
                 }
             }
         };
@@ -316,7 +328,7 @@ require([
             outFields: ["*"],
             title: "Accessibility (ICU Beds-Chicago)",
             visible: false,
-            renderer: default_polygon_renderer,
+            renderer: default_polygon_renderer_no_outline,
         });
 
         var chicago_acc_v_layer = new GeoJSONLayer({
@@ -324,7 +336,7 @@ require([
             outFields: ["*"],
             title: "Accessibility (Ventilators-Chicago)",
             visible: false,
-            renderer: default_polygon_renderer,
+            renderer: default_polygon_renderer_no_outline,
         });
 
         var illinois_acc_i_layer = new GeoJSONLayer({
@@ -332,22 +344,17 @@ require([
             outFields: ["*"],
             title: "Accessibility (ICU Beds-State)",
             visible: false,
-            renderer: default_polygon_renderer,
+            renderer: default_polygon_renderer_no_outline,
         });
 
         var illinois_acc_v_layer = new GeoJSONLayer({
-                url: illinois_acc_v_url,
-                outFields: ["*"],
-                title: "Accessibility (Ventilators-State)",
-                visible: false,
-                renderer: default_polygon_renderer,
-            //who worldwide
             url: illinois_acc_v_url,
             outFields: ["*"],
             title: "Accessibility (Ventilators-State)",
             visible: false,
-            renderer: default_polygon_renderer,
+            renderer: default_polygon_renderer_no_outline,
         });
+
         //who worldwide
         var who_world_layer = new GeoJSONLayer({
             url: who_world_layer_url,
@@ -361,7 +368,7 @@ require([
         var nyt_layer_states = new GeoJSONLayer({
             url: nyt_layer_states_url,
             outFields: ["*"],
-            title: "US States (New York Times)",
+            title: "Cases per 100k population (state level)",
             visible: false,
             renderer: default_polygon_renderer,
         });
@@ -370,7 +377,7 @@ require([
         var nyt_layer_counties = new GeoJSONLayer({
             url: nyt_layer_counties_url,
             outFields: ["*"],
-            title: "US Counties (New York Times)",
+            title: "Cases per 100k population (county level)",
             visible: false,
             renderer: default_polygon_renderer,
         });
@@ -983,14 +990,14 @@ require([
             //list_query.orderByFields = ['population DESC'];
             list_query.returnGeometry = false;
             list_query.num = 1;
-            list_query.outFields = ["dt_start", "dt_end", "dt_unit"];
+            list_query.outFields = ["start", "end", "dt_unit"];
             return _layer.queryFeatures(list_query);
         }
 
         function initSlider(response) {
             let feature0_attrs = response.features[0].attributes;
-            let _dt_start_str = feature0_attrs["dt_start"];
-            let _dt_end_str = feature0_attrs["dt_end"];
+            let _dt_start_str = feature0_attrs["start"];
+            let _dt_end_str = feature0_attrs["end"];
 
             if (feature0_attrs.hasOwnProperty("dt_unit")) {
                 dt_interval_unit = feature0_attrs["dt_unit"];
@@ -1457,7 +1464,7 @@ require([
 
                 var dt_thumb = Date(${_date.getFullYear()}, ${_date.getMonth()}, ${_date.getDate()});
                 var ts = Split($feature['${_column}'],',');
-                var dt_start_array = Split($feature.dt_start, '-');
+                var dt_start_array = Split($feature.start, '-');
                 var dt_start = Date(Number(dt_start_array[0]), Number(dt_start_array[1])-1, Number(dt_start_array[2]));
                 if(dt_thumb < dt_start){
                     return '0';
@@ -1734,9 +1741,9 @@ require([
             }
 
             var LabelDates = [];
-            if (graphic.getAttribute("dt_start") == "2020-03-17") {
+            if (graphic.getAttribute("start") == "2020-03-17") {
                 var LabelDate = new Date(2020, 2, 9);
-            } else if (graphic.getAttribute("dt_start") == "2020-01-11") {
+            } else if (graphic.getAttribute("start") == "2020-01-11") {
                 var LabelDate = new Date(2020, 0, 3);
             } else {
                 var LabelDate = new Date(2020, 0, 13);
@@ -1963,20 +1970,20 @@ require([
                     value.popupTemplate = getDynamicPopup(_date);
                 }
 
-                if (value.visible == true && value.parent.visible == true) {
-                    console.log(value.title);
-                    if (value.title == nyt_layer_counties.title) {
-                        level = "county";
-                    } else if (value.title == nyt_layer_states.title) {
-                        level = "state";
-                    } else if (value.title == dph_illinois_county_dynamic.title) {
-                        level = "dph_illinois";
-                    } else if (value.title == who_world_layer.title) {
-                        level = "who_world";
-                    } else if (value.title == vulnerability_layer.title) {
-                        level = "vulnerability";
-                    }
-                }
+                // if (value.visible == true && value.parent.visible == true) {
+                //     console.log(value.title);
+                //     if (value.title == nyt_layer_counties.title) {
+                //         level = "county";
+                //     } else if (value.title == nyt_layer_states.title) {
+                //         level = "state";
+                //     } else if (value.title == dph_illinois_county_dynamic.title) {
+                //         level = "dph_illinois";
+                //     } else if (value.title == who_world_layer.title) {
+                //         level = "who_world";
+                //     } else if (value.title == vulnerability_layer.title) {
+                //         level = "vulnerability";
+                //     }
+                // }
             })
             if (dt_interval_unit == "week") {
                 dt_week_end = date.add(_date, "week", 1);
@@ -1999,12 +2006,28 @@ require([
             slider.viewModel.setValue(0, thumb_value);
             let _layer = mywatcher.get("active_animation_layer");
 
+            let event_type = "case"
+
+            if (_layer.title == nyt_layer_counties.title) {
+                level = "county";
+                event_type = 'case_per_100k_capita';
+            } else if (_layer.title == nyt_layer_states.title) {
+                level = "state";
+                event_type = 'case_per_100k_capita';
+            } else if (_layer.title == dph_illinois_county_dynamic.title) {
+                level = "dph_illinois";
+            } else if (_layer.title == who_world_layer.title) {
+                level = "who_world";
+            } else if (_layer.title == vulnerability_layer.title) {
+                level = "vulnerability";
+            }
+
             // let event_type = document.querySelector('input[name="dataOptions"]:checked').value;
             // let if_log = document.querySelector('input[name="logOptions"]:checked').value;
             // let method = document.querySelector('input[name="renderOptions"]:checked').value;
-            let event_type = "case"
-                // let if_log = "nolog"
-                // let method = "NaturalBreaks"
+            
+            // let if_log = "nolog"
+            // let method = "NaturalBreaks"
 
             if (_layer == null) {
                 return;
@@ -2063,6 +2086,8 @@ require([
                     var label = bins[i];
                     if (_if_log == "log") {
                         label = Math.ceil(Math.pow(2.71828, label));
+                    } else if (_event_type == 'case_per_100k_capita') {
+                        label = Math.ceil(label);
                     } else if (parseFloat(label) % 1 != 0) {
                         // label = parseFloat(label).toFixed(2);
                         if (i == 0) {
@@ -2141,7 +2166,7 @@ require([
                     color: "#0000FF",
                     outline: { // autocasts as new SimpleLineSymbol()
                         color: [128, 128, 128, 0.3],
-                        width: "1px"
+                        width: "0px"
                     }
                 },
                 visualVariables: [{
@@ -2174,7 +2199,7 @@ require([
                 var class = 0;
                 var bins = [${_class}];
                 var population = Number($feature['population'])/100000;
-                var dt_start_array = Split($feature.dt_start, '-');
+                var dt_start_array = Split($feature.start, '-');
                 var dt_start = Date(Number(dt_start_array[0]), Number(dt_start_array[1])-1, Number(dt_start_array[2]));
                 if(dt_thumb < dt_start){
                     class = -1;
@@ -2186,17 +2211,22 @@ require([
                     
                 if(event_type == "case" || event_type == "case_per_100k_capita"){
                     var case_ts = Split($feature['cases_ts'],',');
-                    val = case_ts[index];
+                    // Must convert string to number
+                    val = Number(case_ts[index]);
                     if(event_type == "case_per_100k_capita"){
                         val = val/population;
+                        if (val >= 5000) {
+                            Console("------------------------------------");
+                            Console($feature);
+                        }
                     }
                     if(if_log == "log"){
-                        val = Log(val + 1);
+                        val = Log(val + 1.0);
                     }
                 }
                 else if(event_type == "death" || event_type == "death_per_100k_capita"){
                     var death_ts = Split($feature['deaths_ts'],',');
-                    val = death_ts[index];
+                    val = Number(death_ts[index]);
                     if(event_type == "death_per_100k_capita"){
                         val = val/population;
                     }

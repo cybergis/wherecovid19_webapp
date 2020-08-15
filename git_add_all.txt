@@ -1,0 +1,2 @@
+xargs -a data_list.txt -d '\n' git add
+xargs -a data_list.txt -d '\n' git checkout

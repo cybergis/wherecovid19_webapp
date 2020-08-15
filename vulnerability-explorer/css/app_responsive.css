@@ -1,0 +1,411 @@
+/*
+* Prefixed by https://autoprefixer.github.io
+* PostCSS: v7.0.29,
+* Autoprefixer: v9.7.6
+* Browsers: last 4 version
+*/
+
+body {
+    font-size: .875rem;
+    color: #b3b3b3;
+}
+
+.outter-wrap {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    /* give the outermost container a predefined size */
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    /* NEW */
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.content-section {
+    flex-direction: row;
+    flex-grow: 1;
+    margin: 0;
+    background: #2196F3;
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    /* NEW */
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    /* for Firefox */
+    min-height: 0;
+    -webkit-transition: all .5s;
+    -o-transition: all .5s;
+    transition: all .5s;
+}
+
+#results {
+    flex: 1;
+    background-color: white;
+}
+
+#results iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.about-screen {
+    overflow: auto;
+    background-color: #303030;
+    padding: 15px;
+    font-size: 13px;
+    color: white;
+    text-align: justify;
+}
+
+.about-screen h1 {
+    text-align: center;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.about-screen img {
+    width: 100% !important;
+    height: auto;
+}
+
+.about-screen a,
+.about-screen a:focus {
+    color: #1cd5ee;
+}
+
+.mobile-button {
+    border-top: #3c3c3c 1px solid;
+    height: 42px;
+    min-height: 42px;
+}
+
+.screen-btn {
+    padding: 5px 0;
+    text-align: center;
+    border-left: #3c3c3c 1px solid;
+    font-size: 11px;
+    color: white;
+    background-color: #303030;
+}
+
+screen-btn:first {
+    border: none;
+}
+
+#about-screen-btn.active,
+#map-screen-btn.active,
+#table-screen-btn.active {
+    background-color: #00a4e4;
+}
+
+.feather {
+    width: 16px;
+    height: 16px;
+    vertical-align: text-bottom;
+}
+
+.sticky-top {
+    position: -webkit-sticky;
+    position: sticky;
+}
+
+
+/*
+ * Navbar
+ */
+
+.navbar {
+    /* background-color: #ffffff; */
+    /* min-width: 1080px; */
+    height: 60px;
+    min-height: 60px;
+    width: 100%;
+    background-color: #303030;
+    border-bottom: #404040 solid 1px;
+}
+
+.navbar h1 a:hover {
+    text-decoration: none;
+}
+
+.header-title {
+    font-size: 20px;
+    color: #FFFFFF;
+}
+
+
+/*
+ * Sidebar
+ */
+
+.sidebar {
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    z-index: 100;
+    padding: 0;
+    background-color: #363636;
+    /* max-width: 550px; */
+    border-right: #404040 solid 1px;
+    /* NEW */
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.sidebar.closed {
+    display: none;
+}
+
+#sidebar_control,
+#sidebar_control:focus {
+    position: absolute;
+    top: 50%;
+    background-color: #cc1b1b;
+    border: none;
+    z-index: 10;
+    border-radius: 0;
+    height: 52px;
+    padding: 10px;
+    line-height: 2rem;
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 30px;
+    flex: 0 0 30px;
+    -webkit-box-ordinal-group: 3;
+    -ms-flex-order: 2;
+    order: 2;
+    margin: 0 auto;
+    text-decoration: none;
+    color: #FFFFFF;
+    /* NEW */
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    text-align: center;
+}
+
+#sidebar_control_mobile_close {
+    position: absolute;
+    z-index: 10;
+    right: 0;
+    bottom: 0px;
+    border-radius: 3px 0px 0px 3px;
+    background-color: #cc1b1b;
+    color: #FFFFFF;
+    line-height: 0;
+    text-align: center;
+    vertical-align: top;
+    padding: 10px 13px;
+}
+
+#sidebar_control_mobile_open {
+    display: none;
+    position: absolute;
+    z-index: 10;
+    left: 0px;
+    bottom: 20px;
+    border-radius: 0px 3px 3px 0px;
+    background-color: #00cc29;
+    color: #FFFFFF;
+    line-height: 0;
+    text-align: center;
+    vertical-align: top;
+    padding: 10px 13px;
+}
+
+#sidebar_control.closed i {
+    -webkit-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
+    /* Equal to rotateZ(45deg) */
+}
+
+#sidebar_control.closed {
+    background-color: #1bcc1b;
+}
+
+#sliderContainer {
+    padding: 0 !important;
+}
+
+
+.overlay-loading {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 100;
+    display: none;
+}
+
+#variables_form {
+    height: 100%;
+}
+/* .variables_selections {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    max-height: 625px;
+} */
+
+/* // Extra small devices (portrait phones, less than 576px) */
+
+@media (max-width: 575.98px) {
+    .sidebar {
+        position: relative;
+        top: 0;
+        left: 0;
+        z-index: 0;
+    }
+    main {
+        position: relative;
+        z-index: 100;
+        top: 0;
+        left: 0;
+    }
+    .content-section {
+        -webkit-transform: translateX(0%);
+        -ms-transform: translateX(0%);
+        transform: translateX(0%);
+    }
+    .tab-table {
+        font-size: 12px;
+        line-height: 1.2;
+    }
+    .search-wrap .form-control {
+        display: block;
+        width: 100%;
+        height: calc(1.5em + .75rem + 2px);
+        padding: 5px;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1;
+    }
+    #sidebar_control {
+        display: none;
+    }
+}
+
+
+/* // Small devices (landscape phones, 576px and up) */
+
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .sidebar {
+        position: relative;
+        top: 0;
+        left: 0;
+        z-index: 0;
+        border-right: none;
+    }
+    main {
+        position: relative;
+        z-index: 100;
+        top: 0;
+        left: 0;
+    }
+    .content-section {
+        -webkit-transform: translateX(0%);
+        -ms-transform: translateX(0%);
+        transform: translateX(0%);
+    }
+    .tab-table {
+        font-size: 12px;
+        line-height: 1.2;
+    }
+    .search-wrap .form-control {
+        display: block;
+        width: 100%;
+        height: calc(1.5em + .75rem + 2px);
+        padding: 5px;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1;
+    }
+    #sidebar_control {
+        display: none;
+    }
+}
+
+
+/* // Medium devices (tablets, 768px and up) */
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+    #sidebar_control_mobile_close,
+    #sidebar_control_mobile_open {
+        display: none !important;
+    }
+}
+
+
+/* // Large devices (desktops, 992px and up) */
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    #sidebar_control_mobile_close,
+    #sidebar_control_mobile_open {
+        display: none !important;
+    }
+}
+
+
+/* // Extra large devices (large desktops, 1200px and up) */
+
+@media (min-width: 1200px) {
+    #sidebar_control_mobile_close,
+    #sidebar_control_mobile_open {
+        display: none !important;
+    }
+}
+
+.map-fullscreen {
+    width: 100% !important;
+    max-width: 100%;
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 100%;
+    flex: 0 0 100%;
+}
+
+.invisible {
+    visibility: collapse;
+}
+
+.esri-expand .esri-expand__content {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.esri-view-height-xsmall .esri-ui-corner .esri-expand .esri-legend.esri-widget,
+.esri-view-height-small .esri-ui-corner .esri-expand .esri-legend.esri-widget {
+    max-height: 100%;
+}
+
+.esri-view-width-less-than-small .esri-zoom .esri-widget--button,
+
+/* .esri-view-width-less-than-small .esri-home, */
+
+.esri-view-width-less-than-small .esri-fullscreen {
+    display: none;
+}

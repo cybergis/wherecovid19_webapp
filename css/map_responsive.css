@@ -36,7 +36,7 @@ main,
     flex-grow: 1;
 }
 
-#viewDiv {
+#map {
     width: 100%;
     height: 100%;
     -webkit-box-flex: 1;
@@ -45,88 +45,186 @@ main,
     -webkit-box-ordinal-group: 2;
     -ms-flex-order: 1;
     order: 1;
+    z-index: 0;
 }
 
-#titleDiv {
-    font-weight: 400;
-    font-style: normal;
-    font-size: 1.2019rem;
+
+/* Layer Control */
+
+.leaflet-top {
+    top: 0;
+    z-index: 1001 !important;
+}
+
+.leaflet-control-layers-list {
+    max-height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    background-clip: padding-box;
+    max-height: 100%;
+    max-height: calc(100vw - 50px);
+    position: relative;
+}
+
+.leaflet-control-layers-group-name {
+    font-weight: bold;
+    margin-bottom: 0.2em;
+    margin-left: 3px;
+}
+
+.leaflet-control-layers-group {
+    margin-bottom: 0.5em;
+}
+
+.leaflet-control-layers-scrollbar {
+    overflow-y: scroll;
+    padding-right: 10px;
+}
+
+
+/* Popup Window */
+
+.popup-table {
+    width: 100%;
+}
+
+.popup-table-row {
+    background-color: white;
+}
+
+
+/* Legend */
+
+.info {
+    padding: 6px 8px;
+    font: 13px Arial, Helvetica, sans-serif;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    max-width: 150px;
+    margin: 10px;
+}
+
+.legend {
+    line-height: 15px;
+    color: white;
+    line-height: 20px;
+}
+
+.legend i {
+    width: 13px;
+    height: 13px;
+    float: left;
+    margin-right: 8px;
+    margin-bottom: 5px;
+    opacity: 0.5;
+}
+
+.legend strong {
+    padding-bottom: 10px;
+    display: block;
+}
+
+.legend br {
+    display: none;
+}
+
+.legend i+br,
+.legend strong+br {
+    display: block;
+    width: 100%;
+}
+
+
+/* Leaflet credit text */
+
+.leaflet-container .leaflet-control-attribution {
+    background: rgba(255, 255, 255, 0.35);
+    margin: 0;
+}
+
+
+/* Timeline Controller */
+
+.button-container .prev,
+.button-container .next {
+    display: none;
+}
+
+.button-container button {
+    border: none;
+    color: white;
+    padding: 10px 27px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.button-container .play {
+    background-color: gray;
+    /* Green */
+}
+
+.button-container .pause {
+    background-color: gray;
+    /* Green */
+}
+
+.leaflet-control.leaflet-timeline-control .button-container button.play::before {
+    border: 7px solid transparent;
+    border-width: 5px 0 5px 8px;
+    border-left-color: black;
+    margin-top: -5px;
+    background: transparent;
+    margin-left: -5px;
+}
+
+.leaflet-control.leaflet-timeline-control .button-container button.pause::before {
+    width: 4px;
+    height: 11px;
+    border: 2px solid black;
+    border-width: 0 4px;
+    margin-top: -6px;
+    margin-left: -6px;
+    background: transparent;
+}
+
+.leaflet-control-layers-toggle {
+    width: 48px !important;
+    height: 48px !important;
+}
+
+.leaflet-top.leaflet-left {
+    width: 100%;
+}
+
+.leaflet-control-layers.leaflet-control-layers-expanded.leaflet-timeline-control.leaflet-control {
+    /* position: absolute; */
+    /* border: none !important; */
+    display: flex;
+    /* height: 48px; */
+    height: 52px;
+    top: 0px;
+    width: calc(100% - 78px);
+    /* max-height: calc(100% - 50px); */
+}
+
+.leaflet-control.leaflet-timeline-control input[type="range"] {
+    width: calc(100% - 85px);
+    margin: 0;
     padding: 10px;
 }
 
-#sliderContainer {
-    -webkit-box-ordinal-group: 1;
-    -ms-flex-order: 0;
-    order: 0;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-    -ms-flex-flow: row;
-    flex-flow: row;
-    padding: 0 12px;
-    height: 100px;
-    -webkit-box-flex: 0 !important;
-    -ms-flex: 0 0 50px !important;
-    flex: 0 0 50px !important;
-}
-
-#parametersDiv {
-    -webkit-box-flex: 0;
-    -ms-flex: 0 0 auto;
-    flex: 0 0 auto;
-    -webkit-box-ordinal-group: 2;
-    -ms-flex-order: 1;
-    order: 1;
-}
-
-#sliderValue {
-    -webkit-box-flex: 0;
-    -ms-flex: 0 0 40px;
-    flex: 0 0 40px;
-    -webkit-box-ordinal-group: 5;
-    -ms-flex-order: 4;
-    order: 4;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-pack: center;
-    -ms-flex-pack: center;
-    justify-content: center;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    text-align: center;
-    font-size: 170%;
-    padding: 0 20px;
-    margin: 10px;
-    height: 30px;
-}
-
-#sliderInnerContainer {
-    -webkit-box-flex: 1;
-    -ms-flex: 1 1 auto;
-    flex: 1 1 auto;
-    -webkit-box-ordinal-group: 4;
-    -ms-flex-order: 3;
-    order: 3;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    -webkit-box-pack: center;
-    -ms-flex-pack: center;
-    justify-content: center;
-    height: 50px;
-}
-
-#slider {
-    width: 100%;
+.leaflet-control.leaflet-timeline-control .sldr-ctrl-container {
+    float: left;
+    width: 80px;
+    box-sizing: border-box;
 }
 
 .chart-wrap {
@@ -167,9 +265,7 @@ main,
 }
 
 
-/**
-  * Play/Stop toggle button
-  */
+/* Play/Stop toggle button */
 
 #playButton {
     -webkit-box-flex: 0;
@@ -208,9 +304,7 @@ main,
 }
 
 
-/**
-    * Hover tooltip
-    */
+/* Hover tooltip */
 
 .tooltip {
     position: absolute;
@@ -281,19 +375,6 @@ main,
     /* position: fixed; */
 }
 
-
-/* .sidebar-right {
-    z-index: 1000;
-    display: block;
-    position: absolute;
-    right: 20px;
-    bottom: 80px;
-    height: calc(100% - 260px);
-    width: 15%;
-    min-width: 300px;
-    background-color: #242424;
-} */
-
 .bordered-box {
     background-color: #242424;
     border: 1px solid #363636;
@@ -314,7 +395,7 @@ main,
 
 .sidebar-left .total h3 {
     font-size: 65px;
-    font-family: 'Open Sans', sans-serif !important;
+    font-family: "Open Sans", sans-serif !important;
 }
 
 .confirmed {
@@ -370,17 +451,17 @@ main,
 }
 
 ::-webkit-scrollbar {
-    width: 10px
+    width: 10px;
 }
 
 ::-webkit-scrollbar-track {
     background: #353535;
-    border-radius: 0px
+    border-radius: 0px;
 }
 
 ::-webkit-scrollbar-thumb {
     background: #9d9d9d;
-    border-radius: 0px
+    border-radius: 0px;
 }
 
 .esri-view-height-medium .esri-expand .esri-widget--panel,
@@ -430,6 +511,46 @@ main,
         right: 0;
         left: 100%;
     }
+    /* Legend */
+    .info {
+        padding: 10px 7px;
+        font: 11px Arial, Helvetica, sans-serif;
+        background: rgba(0, 0, 0, 0, 0.5);
+        border-radius: 5px;
+        max-width: 126px;
+        margin: 10px;
+        text-align: right;
+    }
+    .legend strong {
+        display: block;
+        border-bottom: 1px dotted rgba(255, 255, 255, 0.3);
+        margin-bottom: 5px;
+    }
+    .legend {
+        line-height: 15px;
+        color: white;
+        line-height: 20px;
+    }
+    .legend i {
+        width: 13px;
+        height: 13px;
+        float: left;
+        margin-right: 8px;
+        margin-bottom: 5px;
+        opacity: 0.7;
+    }
+    .gin-control-zoom {
+        display: none;
+    }
+    .navbar .app-drawer .drawer-panel {
+        right: -42px;
+    }
+    .leaflet-control-layers-list {
+        max-height: 300px;
+    }
+    #myChart {
+        height: 170px !important;
+    }
 }
 
 
@@ -472,4 +593,48 @@ main,
         right: 0;
         left: 100%;
     }
+    /* Legend */
+    .info {
+        padding: 10px 7px;
+        font: 11px Arial, Helvetica, sans-serif;
+        background: rgba(0, 0, 0, 0, 0.5);
+        border-radius: 5px;
+        max-width: 126px;
+        margin: 10px;
+        text-align: right;
+    }
+    .legend strong {
+        display: block;
+        border-bottom: 1px dotted rgba(255, 255, 255, 0.3);
+        margin-bottom: 5px;
+    }
+    .legend {
+        line-height: 15px;
+        color: white;
+        line-height: 20px;
+    }
+    .legend i {
+        width: 13px;
+        height: 13px;
+        float: left;
+        margin-right: 8px;
+        margin-bottom: 5px;
+        opacity: 0.7;
+    }
+    .gin-control-zoom {
+        display: none;
+    }
+    .navbar .app-drawer .drawer-panel {
+        right: -42px;
+    }
+    .leaflet-control-layers-list {
+        max-height: 300px;
+    }
+    #myChart {
+        height: 170px !important;
+    }
+}
+
+#loadOverlay {
+    display: none;
 }
