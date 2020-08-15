@@ -6,7 +6,7 @@
 */
 
 body {
-    font-size: .875rem;
+    font-size: 0.875rem;
     color: #b3b3b3;
 }
 
@@ -49,7 +49,7 @@ body {
     flex-direction: row;
     flex-grow: 1;
     margin: 0;
-    background: #2196F3;
+    background: #2196f3;
     -webkit-box-flex: 1;
     -ms-flex-positive: 1;
     flex-grow: 1;
@@ -63,9 +63,9 @@ body {
     flex-direction: column;
     /* for Firefox */
     min-height: 0;
-    -webkit-transition: all .5s;
-    -o-transition: all .5s;
-    transition: all .5s;
+    -webkit-transition: all 0.5s;
+    -o-transition: all 0.5s;
+    transition: all 0.5s;
 }
 
 .about-screen {
@@ -150,8 +150,117 @@ screen-btn:first {
 
 .header-title {
     font-size: 20px;
-    color: #FFFFFF;
+    color: #ffffff;
 }
+
+
+/******* App drawer ******/
+
+.navbar .app-drawer {
+    color: white;
+    border-radius: 5px;
+    margin-right: 10px;
+    position: relative;
+}
+
+.navbar .app-drawer:hover,
+.navbar .app-drawer.opened {
+    background: #6d6d6d;
+}
+
+.navbar .app-drawer i {
+    font-size: 18px;
+    line-height: 1;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.navbar .app-drawer.opened .drawer-panel {
+    display: block;
+}
+
+.navbar .app-drawer .drawer-panel {
+    display: none;
+    width: 350px;
+    min-width: 250px;
+    max-width: 480px;
+    position: absolute;
+    background-color: violet;
+    overflow-y: auto;
+    top: 100%;
+    right: 0;
+    z-index: 100;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+    -moz-box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
+    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
+}
+
+.navbar .app-drawer .drawer-panel .app-icon-wrap {
+    width: 100%;
+    display: flex;
+    flex: 1;
+    cursor: pointer;
+}
+
+.navbar .app-drawer .drawer-panel .app-icon {
+    background-color: yellowgreen;
+    width: 100%;
+    height: 100px;
+    display: inline-block;
+    background-size: cover;
+    color: black;
+    border-radius: 5px;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.navbar .app-drawer .drawer-panel .app-icon::after {
+    content: "";
+    width: 100%;
+    height: 100%;
+    background: linear-gradient( 0deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
+    position: absolute;
+    z-index: 15;
+    transition: all 0.5s;
+    top: 0;
+}
+
+.navbar .app-drawer .drawer-panel .app-icon:hover::after {
+    background: linear-gradient( 0deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.2) 100%);
+}
+
+.navbar .app-drawer .drawer-panel .app-icon .app-desc {
+    position: absolute;
+    padding: 10px;
+    transition: all 0.5s;
+    transform: translatey(65px);
+    z-index: 1000;
+    color: white !important;
+}
+
+.navbar .app-drawer .drawer-panel .app-icon:hover .app-desc {
+    /* top:0px; */
+    transform: translatey(0%);
+}
+
+.navbar .app-drawer .drawer-panel .app-icon h3 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+.navbar .app-drawer .drawer-panel .app-icon p {
+    text-decoration: none;
+    font-size: 13px;
+    margin-bottom: 0;
+}
+
+
+/******* End of App drawer ******/
 
 
 /*
@@ -175,6 +284,7 @@ screen-btn:first {
     -webkit-box-direction: normal;
     -ms-flex-direction: column;
     flex-direction: column;
+    /* min-width: 400px; */
 }
 
 .sidebar.closed {
@@ -188,14 +298,14 @@ screen-btn:first {
 
 .sidebar .nav-link {
     font-weight: 500;
-    color: #FFF;
+    color: #fff;
     border-radius: 0;
     text-align: center;
     font-size: 17px;
 }
 
 .sidebar .nav-link.active {
-    color: #FFFFFF;
+    color: #ffffff;
     background-color: #5d5d5d;
 }
 
@@ -236,12 +346,6 @@ screen-btn:first {
     font-size: 20px;
     font-weight: bold;
 }
-
-
-/* .highlight:nth-child(2) {
-    border-left: #404040 solid 1px;
-    border-right: #404040 solid 1px;
-} */
 
 .highlight.death .case-number,
 .highlight.death .change,
@@ -387,6 +491,14 @@ screen-btn:first {
     margin-top: 0 !important;
 }
 
+tr.selected {
+    background-color: #ffffff;
+}
+
+tr.selected th {
+    color: black;
+}
+
 .dataTables_paginate,
 .dataTables_paginate .pagination {
     display: flex;
@@ -455,7 +567,7 @@ screen-btn:first {
 
 .table td,
 .table th {
-    padding: .75rem;
+    padding: 0.75rem;
     vertical-align: top;
     border-top: none;
     border-bottom: #414141 solid 1px;
@@ -481,7 +593,7 @@ screen-btn:first {
     order: 2;
     margin: 0 auto;
     text-decoration: none;
-    color: #FFFFFF;
+    color: #ffffff;
     /* NEW */
     display: -webkit-box;
     display: -ms-flexbox;
@@ -499,7 +611,7 @@ screen-btn:first {
     bottom: 0px;
     border-radius: 3px 0px 0px 3px;
     background-color: #cc1b1b;
-    color: #FFFFFF;
+    color: #ffffff;
     line-height: 0;
     text-align: center;
     vertical-align: top;
@@ -514,7 +626,7 @@ screen-btn:first {
     bottom: 20px;
     border-radius: 0px 3px 3px 0px;
     background-color: #00cc29;
-    color: #FFFFFF;
+    color: #ffffff;
     line-height: 0;
     text-align: center;
     vertical-align: top;
@@ -564,7 +676,7 @@ screen-btn:first {
     .search-wrap .form-control {
         display: block;
         width: 100%;
-        height: calc(1.5em + .75rem + 2px);
+        height: calc(1.5em + 0.75rem + 2px);
         padding: 5px;
         font-size: 12px;
         font-weight: 400;
@@ -604,7 +716,7 @@ screen-btn:first {
     .search-wrap .form-control {
         display: block;
         width: 100%;
-        height: calc(1.5em + .75rem + 2px);
+        height: calc(1.5em + 0.75rem + 2px);
         padding: 5px;
         font-size: 12px;
         font-weight: 400;
@@ -673,4 +785,113 @@ screen-btn:first {
 
 .esri-view-width-less-than-small .esri-fullscreen {
     display: none;
+}
+
+
+/* The style for cross platform range seletion */
+
+input[type="range"] {
+    width: 100%;
+    margin: 7px 0;
+    background-color: transparent;
+    -webkit-appearance: none;
+}
+
+input[type="range"]:focus {
+    outline: none;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    background: #535353;
+    border: 1px solid rgba(1, 1, 1, 0.3);
+    border-radius: 6px;
+    width: 100%;
+    height: 5px;
+    cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    margin-top: -8px;
+    width: 14px;
+    height: 19px;
+    background: #ffffff;
+    border: 0.3px solid rgba(53, 53, 53, 0.5);
+    border-radius: 5px;
+    cursor: pointer;
+    -webkit-appearance: none;
+}
+
+input[type="range"]:focus::-webkit-slider-runnable-track {
+    background: #606060;
+}
+
+input[type="range"]::-moz-range-track {
+    background: #535353;
+    border: 1px solid rgba(1, 1, 1, 0.3);
+    border-radius: 6px;
+    width: 100%;
+    height: 5px;
+    cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 14px;
+    height: 19px;
+    background: #ffffff;
+    border: 0.3px solid rgba(53, 53, 53, 0.5);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+input[type="range"]::-ms-track {
+    background: transparent;
+    border-color: transparent;
+    border-width: 8.9px 0;
+    color: transparent;
+    width: 100%;
+    height: 5px;
+    cursor: pointer;
+}
+
+input[type="range"]::-ms-fill-lower {
+    background: #464646;
+    border: 1px solid rgba(1, 1, 1, 0.3);
+    border-radius: 12px;
+}
+
+input[type="range"]::-ms-fill-upper {
+    background: #535353;
+    border: 1px solid rgba(1, 1, 1, 0.3);
+    border-radius: 12px;
+}
+
+input[type="range"]::-ms-thumb {
+    width: 14px;
+    height: 19px;
+    background: #ffffff;
+    border: 0.3px solid rgba(53, 53, 53, 0.5);
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 0px;
+    /*Needed to keep the Edge thumb centred*/
+}
+
+input[type="range"]:focus::-ms-fill-lower {
+    background: #535353;
+}
+
+input[type="range"]:focus::-ms-fill-upper {
+    background: #606060;
+}
+
+
+/*TODO: Use one of the selectors from https://stackoverflow.com/a/20541859/7077589 and figure out
+  how to remove the virtical space around the range input in IE*/
+
+@supports (-ms-ime-align: auto) {
+    /* Pre-Chromium Edge only styles, selector taken from hhttps://stackoverflow.com/a/32202953/7077589 */
+    input[type="range"] {
+        margin: 0;
+        /*Edge starts the margin from the thumb, not the track as other browsers do*/
+    }
 }

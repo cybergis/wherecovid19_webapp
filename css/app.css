@@ -1,5 +1,5 @@
 body {
-    font-size: .875rem;
+    font-size: 0.875rem;
     color: #b3b3b3;
 }
 
@@ -34,7 +34,7 @@ body {
 
 .header-title {
     font-size: 20px;
-    color: #FFFFFF;
+    color: #ffffff;
 }
 
 
@@ -79,14 +79,14 @@ body {
 
 .sidebar .nav-link {
     font-weight: 500;
-    color: #FFF;
+    color: #fff;
     border-radius: 0;
     text-align: center;
     font-size: 17px;
 }
 
 .sidebar .nav-link.active {
-    color: #FFFFFF;
+    color: #ffffff;
     background-color: #5d5d5d;
 }
 
@@ -262,7 +262,7 @@ body {
 
 .table td,
 .table th {
-    padding: .75rem;
+    padding: 0.75rem;
     vertical-align: top;
     border-top: none;
     border-bottom: #414141 solid 1px;
@@ -289,7 +289,7 @@ table td {
     order: 2;
     margin: 0 auto;
     text-decoration: none;
-    color: #FFFFFF;
+    color: #ffffff;
     display: flex;
     align-items: center;
     text-align: center;
@@ -302,7 +302,7 @@ table td {
     bottom: 0px;
     border-radius: 3px 0px 0px 3px;
     background-color: #cc1b1b;
-    color: #FFFFFF;
+    color: #ffffff;
     line-height: 0;
     text-align: center;
     vertical-align: top;
@@ -317,7 +317,7 @@ table td {
     bottom: 20px;
     border-radius: 0px 3px 3px 0px;
     background-color: #00cc29;
-    color: #FFFFFF;
+    color: #ffffff;
     line-height: 0;
     text-align: center;
     vertical-align: top;
@@ -469,4 +469,107 @@ table td {
 
 .esri-view-width-less-than-small .esri-fullscreen {
     display: none;
+}
+
+
+/* The style for cross platform range seletion */
+
+input[type="range"] {
+    -webkit-appearance: none;
+    margin: 10px 0;
+    width: 100%;
+}
+
+input[type="range"]:focus {
+    outline: none;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 12.8px;
+    cursor: pointer;
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+    background: #ac51b5;
+    border-radius: 25px;
+    border: 0px solid #000101;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+    border: 0px solid #000000;
+    height: 20px;
+    width: 39px;
+    border-radius: 7px;
+    background: #65001c;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -3.6px;
+}
+
+input[type="range"]:focus::-webkit-slider-runnable-track {
+    background: #ac51b5;
+}
+
+input[type="range"]::-moz-range-track {
+    width: 100%;
+    height: 12.8px;
+    cursor: pointer;
+    animate: 0.2s;
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+    background: #ac51b5;
+    border-radius: 25px;
+    border: 0px solid #000101;
+}
+
+input[type="range"]::-moz-range-thumb {
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+    border: 0px solid #000000;
+    height: 20px;
+    width: 39px;
+    border-radius: 7px;
+    background: #65001c;
+    cursor: pointer;
+}
+
+input[type="range"]::-ms-track {
+    width: 100%;
+    height: 12.8px;
+    cursor: pointer;
+    animate: 0.2s;
+    background: transparent;
+    border-color: transparent;
+    border-width: 39px 0;
+    color: transparent;
+}
+
+input[type="range"]::-ms-fill-lower {
+    background: #ac51b5;
+    border: 0px solid #000101;
+    border-radius: 50px;
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+}
+
+input[type="range"]::-ms-fill-upper {
+    background: #ac51b5;
+    border: 0px solid #000101;
+    border-radius: 50px;
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+}
+
+input[type="range"]::-ms-thumb {
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+    border: 0px solid #000000;
+    height: 20px;
+    width: 39px;
+    border-radius: 7px;
+    background: #65001c;
+    cursor: pointer;
+}
+
+input[type="range"]:focus::-ms-fill-lower {
+    background: #ac51b5;
+}
+
+input[type="range"]:focus::-ms-fill-upper {
+    background: #ac51b5;
 }
