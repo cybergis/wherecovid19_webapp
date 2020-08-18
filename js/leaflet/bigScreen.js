@@ -197,7 +197,7 @@ var loadClassJson = function (url) {
     })
 }
 
-var loadGeoJson = function (layer_info) {
+var load_geojson_promise = function (layer_info) {
     return new Promise((resolve, reject) => {
         if (layer_info["esri_url"] != undefined) {
             resolve(layer_info);
@@ -209,7 +209,10 @@ var loadGeoJson = function (layer_info) {
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                    console.log(layer_info.geojson_url);
+                    console.log("Downloading " + layer_info.geojson_url);
+                    // Check Hash of newly loaded geojson obj
+                    // Update layer_info.geojson_obj if it changed
+                    // Update a flag in layer_info to indicare whether geojson_obj has changed
                     layer_info.geojson_obj = data;
                     resolve(layer_info);
                 },
@@ -708,74 +711,76 @@ var add_animation_layer_to_map = function (layer_info) {
 }
 
 
-var chain_promise_load = function (layer_info) {
-    return loadGeoJson(layer_info)
-    ;
+var chain_load_update_promise = function (layer_info) {
+    return load_geojson_promise(layer_info).then(update_layer_and_table_promise);
 }
 
-var chain_promise_add = function (layer_info) {
+var update_layer_and_table_promise = function (layer_info) {
+    // check if geojson obj updated
+
     let p1 = add_animation_layer_to_map_promise(layer_info);
     let p2 = fill_left_panel_promise(layer_info);
-    return Promise.allSettled([p1,p2]);
+    return Promise.allSettled([p1, p2]);
 }
 
-
-
-function loadNewLayers()
+hide_loader();
+function init_layer_and_table_promise()
 {
-    hide_loader();
-    return Promise.allSettled(layer_info_list.map(chain_promise_load))
-            .then(function () {
-                return Promise.allSettled(layer_info_list.map(chain_promise_add));
-            }                
-            )
-        ;
+    return Promise.allSettled(layer_info_list.map(chain_load_update_promise));
 }
 
-loadNewLayers();
-// setInterval(loadNewLayers, 10000);
+init_layer_and_table_promise();
+setInterval(init_layer_and_table_promise, 30000);
 
-// function addNewLayers()
-// {
-//      return  Promise.allSettled(layer_info_list.map(chain_promise_add));
-// }
 
-// addNewLayers();
-// setInterval(addNewLayers, 60000);
-
-layerIDCounter = 0;
-var showNewLayers_WIP = false;
-var activate_layer = null;
-function showNewLayers()
+var scene_play_counter = 0;
+var scene_playing = false;
+var active_scene_layer = null;
+function cycle_scenes()
 {
-    if(showNewLayers_WIP)
+    if(scene_playing)
     {
         return;
     }
-    showNewLayers_WIP = true;
-    let layer_info = layer_info_list[layerIDCounter % layer_info_list.length]
+    scene_playing = true;
+    let layer_index = scene_play_counter % layer_info_list.length;
+    let layer_info = layer_info_list[layer_index];
     let layer_obj= layer_info.layer_object;
 
-    if(activate_layer != null && activate_layer != undefined)
+    // remove layer in last scene
+    if(active_scene_layer != null && active_scene_layer != undefined)
     {
-        slider.removeTimelines(activate_layer);
-        map.removeLayer(activate_layer);
+        slider.removeTimelines(active_scene_layer);
+        map.removeLayer(active_scene_layer);
     }
 
     if(layer_obj != null && layer_obj != undefined)
     {
+        console.log("Playing " + layer_info.display_name);
+        // Switch Left Table tabpage
+        //
+
+
+        // add new layer to map
         layer_obj.addTo(map);
         slider.addTimelines(layer_obj);
         refreshLegend(layer_obj);
         slider.setTime(slider.end-1000*60*60*24*14);
-        activate_layer = layer_obj;
+        active_scene_layer = layer_obj;
         slider.play();
+
+        // zoom to location
+
+        // highlight geometry
+
+        // show plot/chart
+
     }
-    layerIDCounter = layerIDCounter + 1;
-    showNewLayers_WIP = false;
+    scene_play_counter = scene_play_counter + 1;
+    scene_playing = false;
 
 }
-setInterval(showNewLayers, 10000);
+setInterval(cycle_scenes, 5000);
 
 // Promise Entry Point
 // loadClassJson(class_json_url).then(
