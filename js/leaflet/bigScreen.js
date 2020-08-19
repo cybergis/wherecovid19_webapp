@@ -93,14 +93,14 @@ var illinois_zipcode = null;
 var bins = null;
 var index = 0;
 const DayInMilSec = 60 * 60 * 24 * 1000;
+const TwoWeeksInMilSec = 14 * DayInMilSec;
 
 ///////////////////////////// Handle Left Panel Table Clicking ////////////////////////////
 
 var highlight = {
-    //'color': '#00fbff',
-    'fillColor': '#00fbff',
-    'weight': 2,
-    'fillOpacity': 0.7
+    'color': '#00fbff',
+    'weight': 3,
+    'Opacity': 1
 };
 
 ////////////////////////////////////// Create Legend //////////////////////////////////////
@@ -134,6 +134,10 @@ var layer_info_list = [{
         "show": false,
         "style_func": styleChange,
         "animation": true,
+        "highlightArea": "Champaign",
+        "tabpage_id": "#illinois-tab",
+        "zoom_center": [39, -89],
+        "zoom_level": 6.5,
     },
     // {
     //     "name": "us_county_weekly_case",
@@ -152,6 +156,10 @@ var layer_info_list = [{
         "show": false,
         "style_func": styleChange,
         "animation": true,
+        "highlightArea": "Illinois",
+        "tabpage_id": "#county-tab",
+        "zoom_center": [35, -96],
+        "zoom_level": 4,
     },
     {
         "name": "world_weekly_case",
@@ -161,6 +169,10 @@ var layer_info_list = [{
         "show": false,
         "style_func": styleChange,
         "animation": true,
+        "highlightArea": "United States",
+        "tabpage_id": "#world-tab",
+        "zoom_center": [0, 0],
+        "zoom_level": 2,
     },
 ];
 
@@ -208,10 +220,16 @@ var load_geojson_promise = function(layer_info) {
                 dataType: 'json',
                 success: function(data) {
                     console.log("Downloading " + layer_info.geojson_url);
-                    // Check Hash of newly loaded geojson obj
+                    // Compare newly loaded geojson obj
                     // Update layer_info.geojson_obj if it changed
                     // Update a flag in layer_info to indicare whether geojson_obj has changed
-                    layer_info.geojson_obj = data;
+                    if (JSON.stringify(layer_info.geojson_obj) != JSON.stringify(data)) {
+                        layer_info.geojson_obj = data;
+                        layer_info.geojson_updated = true;
+                    } else {
+                        layer_info.geojson_updated = false;
+                    }
+
                     resolve(layer_info);
                 },
                 error: function(error) {
@@ -238,9 +256,9 @@ var numberWithCommas = function(x) {
 }
 
 var fill_left_panel_il = function(geojson) {
-    il_table.clear().draw();
-    let tab = document.getElementById('illinois-tab');
+    il_table.clear().destroy();
 
+    let tab = document.getElementById('illinois-tab');
     let illinois_table = document.getElementById('illinois-table').querySelector('tbody');
     let template = document.querySelector('template')
     let result_list = geojson.features.map(function(value, index) {
@@ -321,10 +339,9 @@ var fill_left_panel_il = function(geojson) {
 }
 
 var fill_left_panel_us = function(geojson) {
-    county_table.clear().draw();
+    county_table.clear().destroy();
 
     // All 'counties' refers to 'states'
-
     var sum_us_counties_today_case = 0;
     var sum_us_counties_today_death = 0;
     var sum_us_counties_today_new_case = 0;
@@ -408,7 +425,7 @@ var fill_left_panel_us = function(geojson) {
 }
 
 var fill_left_panel_world = function(geojson) {
-    world_table.clear().draw();
+    world_table.clear().destroy();
 
     var sum_world_today_case = 0;
     var sum_world_today_death = 0;
@@ -523,7 +540,7 @@ var slider = L.timelineSliderControl({
         return new Date(date).toLocaleDateString('en-US', { timeZone: 'UTC' })
     },
     steps: 150,
-    duration: 200000,
+    duration: 150000,
     position: 'topleft',
     showTicks: false
 });
@@ -572,7 +589,7 @@ var onOverlayAdd = function(e) {
     }
 
     if (getLayerInfo(e.layer.name)['animation'] == true) {
-        slider.addTo(map);
+        // slider.addTo(map);
         slider.addTimelines(e.layer);
         // setTime must be after addTo(map), otherwise reset to startTime
         slider.setTime(slider.end);
@@ -580,11 +597,7 @@ var onOverlayAdd = function(e) {
 
     refreshLegend(e.layer);
 
-    if (e.layer == il_chicago_acc_v_layer_object || e.layer == il_chicago_acc_i_layer_object) {
-        // Trigger click event to change the tab page
-        $("#illinois-tab").trigger("click");
-        map.setView([41.87, -87.62], 10)
-    } else if (e.group.name == "Illinois") {
+    if (e.group.name == "Illinois") {
         $("#illinois-tab").trigger("click");
         map.setView([40, -89], 7)
     } else if (e.group.name == "US") {
@@ -691,9 +704,20 @@ var add_animation_layer_to_map = function(layer_info) {
     });
 
     layer_obj.on('change', function(e) {
+        // console.log(slider.time);
         let li = getLayerInfo(e.target.name);
         index = Math.floor((this.time - this.start) / DayInMilSec);
+        // console.log(index);
         this.setStyle(li.style_func);
+        layer_obj.eachLayer(function(value) {
+            if (value.feature.properties.NAME == layer_info.highlightArea) {
+                // layer_obj.setStyle(layer_info.style_func);
+                // highlight geometry
+                value.setStyle(highlight);
+                // show chart
+                updateChart(value.feature);
+            }
+        })
     });
 
 
@@ -714,10 +738,13 @@ var chain_load_update_promise = function(layer_info) {
 
 var update_layer_and_table_promise = function(layer_info) {
     // check if geojson obj updated
-
-    let p1 = add_animation_layer_to_map_promise(layer_info);
-    let p2 = fill_left_panel_promise(layer_info);
-    return Promise.allSettled([p1, p2]);
+    if (layer_info.geojson_updated == true) {
+        let p1 = add_animation_layer_to_map_promise(layer_info);
+        let p2 = fill_left_panel_promise(layer_info);
+        return Promise.allSettled([p1, p2]);
+    } else {
+        return Promise.resolve(1);
+    }
 }
 
 // hide_loader();
@@ -727,7 +754,7 @@ function init_layer_and_table_promise() {
 }
 
 init_layer_and_table_promise();
-setInterval(init_layer_and_table_promise, 30000);
+setInterval(init_layer_and_table_promise, 3600000);
 
 
 var scene_play_counter = 0;
@@ -751,52 +778,34 @@ function cycle_scenes() {
 
     if (layer_obj != null && layer_obj != undefined) {
         console.log("Playing " + layer_info.display_name);
-        // Switch Left Table tabpage
-        //
 
+        // switch left table tab page
+        // zoom to layer
+        $(layer_info.tabpage_id).trigger("click");
+        map.setView(layer_info.zoom_center, layer_info.zoom_level);
 
         // add new layer to map
         layer_obj.addTo(map);
         slider.addTimelines(layer_obj);
         refreshLegend(layer_obj);
-        slider.setTime(slider.end - 1000 * 60 * 60 * 24 * 14);
+
+        // setup slider
+        map.removeControl(slider);
+        slider._stepDuration = 1000;
+        slider._stepSize = DayInMilSec;
+        slider.start = slider.end - TwoWeeksInMilSec;
+        // console.log(slider);
+        map.addControl(slider);
+        slider.setTime(slider.end - TwoWeeksInMilSec);
+
         active_scene_layer = layer_obj;
         slider.play();
-
-        // zoom to location
-
-        // highlight geometry
-
-        // show plot/chart
-
     }
     scene_play_counter = scene_play_counter + 1;
     scene_playing = false;
 
 }
-setInterval(cycle_scenes, 5000);
-
-// Promise Entry Point
-// loadClassJson(class_json_url).then(
-//     Promise.allSettled(layer_info_list.map(chain_promise)).then(function() {
-//         switch_left_tab_page_handler_old();
-//         left_tab_page_table_click_old();
-//         console.log("111111111111111111111111111111111111");
-//     }).then(function() {
-//         console.log("222222222222222222222222222222222222");
-//         $('#illinois-tab').css("pointer-events","auto");
-//         $('#county-tab').css("pointer-events","auto");
-//         $('#world-tab').css("pointer-events","auto");
-// }).then(function() {
-//     return zoomToUserLocationPromise();
-// }).then(function() {
-//     return Promise.allSettled(layer_info_list_2.map(chain_promise));
-// }).then(function() {
-//     return Promise.allSettled(layer_info_list_3.map(chain_promise));
-// }).then(function() {
-//     return Promise.allSettled(layer_info_list_4.map(chain_promise));
-//     })
-// );
+setInterval(cycle_scenes, 16000);
 
 /////////////////////////// Handle Left Panel Tab Page Clicking ///////////////////////////
 
@@ -1063,7 +1072,7 @@ var onEachFeature_change = function(feature, layer) {
         layer.on("click", function(e, layer) {
             //index = Math.floor((layer.time - layer.start) / DayInMilSec);
             il_weekly_case_layer_object.setStyle(styleChange);
-            us_county_weekly_case_layer_object.setStyle(styleChange);
+            // us_county_weekly_case_layer_object.setStyle(styleChange);
             us_state_weekly_case_layer_object.setStyle(styleChange);
             world_weekly_case_layer_object.setStyle(styleChange);
             onMapClick(e);
@@ -1073,6 +1082,7 @@ var onEachFeature_change = function(feature, layer) {
 
 var onMapClick = function(e) {
     e.target.setStyle(highlight);
+    console.log(e.target);
 
     var targetTable;
 
@@ -1186,12 +1196,17 @@ var updateChart = function(graphic) {
     }
 
     var LabelDates = [];
+    // IDPH data started from 2020-03-17
     if (graphic.properties.start == "2020-03-17") {
         var LabelDate = new Date(2020, 2, 9);
-    } else if (graphic.properties.start == "2020-01-11") {
-        var LabelDate = new Date(2020, 0, 3);
-    } else {
+    }
+    // NYT state-level data started from 2020-01-21
+    else if (graphic.properties.start == "2020-01-21") {
         var LabelDate = new Date(2020, 0, 13);
+    }
+    // WHO data started from 2020-01-04
+    else if (graphic.properties.start == "2020-01-04") {
+        var LabelDate = new Date(2019, 11, 27);
     }
 
     for (i = 0; i < ExtendedCasesArray.length; i++) {
@@ -1200,6 +1215,7 @@ var updateChart = function(graphic) {
     }
 
     SlicedLabelDates = LabelDates.slice(firstCaseIndex);
+    // console.log(firstCaseIndex);
 
     const verticalLinePlugin = {
         getLinePosition: function(chart, pointIndex) {
@@ -1288,16 +1304,22 @@ var updateChart = function(graphic) {
     if (graphic.properties.cases_ts != undefined) {
         datasetList.push(dic5)
         datasetList.push(dic2)
-        datasetList.push(dic1)
+            // datasetList.push(dic1)
     }
 
     if (graphic.properties.deaths_ts != undefined) {
-        datasetList.push(dic4)
-        datasetList.push(dic3)
+        // datasetList.push(dic4)
+        // datasetList.push(dic3)
     }
 
     if (window.bar != undefined) {
         window.bar.destroy();
+    }
+
+    // 'index' represents the exact location of silder, 'firstCaseIndex' minus 7 days is the actual index of first date
+    var verticalLineIndex = index - firstCaseIndex + 7;
+    if (verticalLineIndex < 0) {
+        verticalLineIndex = 1;
     }
 
     window.bar = new Chart(myChart, {
@@ -1324,7 +1346,7 @@ var updateChart = function(graphic) {
             responsive: true,
             maintainAspectRatio: false
         },
-        //lineAtIndex: [slider.values[0]-firstCaseIndex],
+        lineAtIndex: [verticalLineIndex],
         animation: {
             duration: 0
         },
