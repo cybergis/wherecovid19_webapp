@@ -692,17 +692,9 @@ var add_animation_layer_to_map = function (layer_info) {
         console.log("Geojson for " + layer_info.display_name + " is not loaded")
         return;
     }
-    let _onEachFeatureFunc;
-    if (layer_info.name == "il_weekly_case" || 
-    layer_info.name == "us_county_weekly_case" || 
-    layer_info.name == "us_state_weekly_case" || 
-    layer_info.name == "world_weekly_case") {
-        _onEachFeatureFunc = onEachFeature_change;
-    } 
 
     let layer_obj = L.timeline(layer_info.geojson_obj, {
         style: layer_info.style_func,
-        onEachFeature: _onEachFeatureFunc,
     });
 
     layer_obj.name = layer_info.name;
@@ -752,16 +744,6 @@ var add_animation_layer_to_map = function (layer_info) {
             }
         })
     });
-
-
-
-    // add layer into LayerControl UI list
-    //layerControl.addOverlay(layer_obj, layer_info.display_name, layer_info.category);
-
-    // switch_left_tab_page_handler
-    // switch_left_tab_page_handler(layer_info);
-
-    //popup
 }
 
 
@@ -845,31 +827,6 @@ setInterval(cycle_scenes, 16000);
 
 /////////////////////////// Handle Left Panel Tab Page Clicking ///////////////////////////
 
-var _switch_to_layer = function (layer_object) {
-    if (layer_object == null || layer_object == undefined) {
-        return;
-    }
-    if (map.hasLayer(layer_object) != true) {
-        map.eachLayer(function(layer) {
-            if (layer._url == undefined) {
-                map.removeLayer(layer);
-            }
-        });
-        map.addLayer(layer_object);
-    }
-}
-
-var switch_left_tab_page_handler = function (layer_info) {
-    console.log(layer_info["tab_page_id"]);
-    if (layer_info["tab_page_id"] != null && layer_info["tab_page_id"] != undefined) {
-        document.getElementById(layer_info["tab_page_id"]).addEventListener("click", function(event) {
-            let li = getLayerInfo(event.target.id, "tab_page_id");
-            let layer_object = li.layer_object;
-            _switch_to_layer(layer_object);
-        });
-    }
-}
-
 var switch_left_tab_page_handler_old = function (layer_info) {
     //Set default layers after clicking side panels
     document.getElementById("illinois-tab").addEventListener("click", function(event) {
@@ -905,154 +862,6 @@ var switch_left_tab_page_handler_old = function (layer_info) {
             });
             // show_loader();
             map.addLayer(world_case_layer_object);
-        }
-    });
-
-}
-
-///////////////////////////// Handle Left Panel Table Clicking ////////////////////////////
-
-var left_tab_page_table_click_old = function () {
-
-    /// illinois Table
-    document.querySelector("#illinois-table tbody").addEventListener("click", function(event) {
-        // Clear existing popup
-        map.closePopup();
-        if (map.hasLayer(il_county_case_layer_object) != true) {
-            map.eachLayer(function(layer) {
-                if (layer._url == undefined) {
-                    map.removeLayer(layer);
-                }
-            });
-            map.addLayer(il_county_case_layer_object);
-        }
-
-        var tr = event.target;
-        while (tr !== this && !tr.matches("tr")) {
-            tr = tr.parentNode;
-        }
-        if (tr === this) {
-            console.log("No table cell found");
-        } else {
-
-            long = parseFloat(tr.firstElementChild.dataset.x);
-            lat = parseFloat(tr.firstElementChild.dataset.y);
-            bounds = tr.firstElementChild.dataset.bounds.split(',').map(function(item) {
-                return parseFloat(item);
-            });
-            boundCoords = [];
-            for (i=0; i<bounds.length; i++) {
-                if (i%2 == 0) {
-                    boundCoords.push([bounds[i+1],bounds[i]])
-                }
-            }
-            objID = parseFloat(tr.firstElementChild.dataset.uid);
-            countyName = tr.firstElementChild.dataset.county;
-
-            il_county_case_layer_object.eachLayer(function(value) {
-                if (value.feature.properties.NAME == countyName) {
-                    il_county_case_layer_object.setStyle(styleFunc1);
-                    value.setStyle(highlight);
-                    //map.setView([lat, long], 9);
-                    map.fitBounds(boundCoords);
-                    updateChart(value.feature);
-                }
-            })
-        }
-    });
-
-    /// US Table
-    document.querySelector("#county-table tbody").addEventListener("click", function(event) {
-        // Clear existing popup
-        map.closePopup();
-        if (map.hasLayer(us_county_case_layer_object) != true) {
-            map.eachLayer(function(layer) {
-                if (layer._url == undefined) {
-                    map.removeLayer(layer);
-                }
-            });
-            map.addLayer(us_county_case_layer_object);
-        }
-
-        var tr = event.target;
-        while (tr !== this && !tr.matches("tr")) {
-            tr = tr.parentNode;
-        }
-        if (tr === this) {
-            console.log("No table cell found");
-        } else {
-
-            long = parseFloat(tr.firstElementChild.dataset.x);
-            lat = parseFloat(tr.firstElementChild.dataset.y);
-            bounds = tr.firstElementChild.dataset.bounds.split(',').map(function(item) {
-                return parseFloat(item);
-            });
-            boundCoords = [];
-            for (i=0; i<bounds.length; i++) {
-                if (i%2 == 0) {
-                    boundCoords.push([bounds[i+1],bounds[i]])
-                }
-            }
-            objID = parseFloat(tr.firstElementChild.dataset.uid);
-            countyName = tr.firstElementChild.dataset.county;
-            stateName = tr.firstElementChild.dataset.state;
-
-            us_county_case_layer_object.eachLayer(function(value) {
-                if (value.feature.properties.NAME == countyName && value.feature.properties.state_name == stateName) {
-                    us_county_case_layer_object.setStyle(styleFunc1);
-                    value.setStyle(highlight);
-                    //map.setView([lat, long], 9);
-                    map.fitBounds(boundCoords);
-                    updateChart(value.feature);
-                }
-            })
-        }
-    });
-
-    /// World Table
-    document.querySelector("#world-table tbody").addEventListener("click", function(event) {
-        // Clear existing popup
-        map.closePopup();
-        if (map.hasLayer(world_case_layer_object) != true) {
-            map.eachLayer(function(layer) {
-                if (layer._url == undefined) {
-                    map.removeLayer(layer);
-                }
-            });
-            map.addLayer(world_case_layer_object);
-        }
-
-        var tr = event.target;
-        while (tr !== this && !tr.matches("tr")) {
-            tr = tr.parentNode;
-        }
-        if (tr === this) {
-            console.log("No table cell found");
-        } else {
-
-            long = parseFloat(tr.firstElementChild.dataset.x);
-            lat = parseFloat(tr.firstElementChild.dataset.y);
-            bounds = tr.firstElementChild.dataset.bounds.split(',').map(function(item) {
-                return parseFloat(item);
-            });
-            boundCoords = [];
-            for (i=0; i<bounds.length; i++) {
-                if (i%2 == 0) {
-                    boundCoords.push([bounds[i+1],bounds[i]])
-                }
-            }
-            objID = parseFloat(tr.firstElementChild.dataset.uid);
-            countryName = tr.firstElementChild.dataset.country;
-
-            world_case_layer_object.eachLayer(function(value) {
-                if (value.feature.properties.NAME == countryName) {
-                    world_case_layer_object.setStyle(styleFunc1);
-                    value.setStyle(highlight);
-                    //map.setView([lat, long], 4);
-                    map.fitBounds(boundCoords);
-                    updateChart(value.feature);
-                }
-            })
         }
     });
 
@@ -1102,59 +911,6 @@ var refreshLegend = function (_layer) {
 }
 
 //////////////////////////////////////// Plot Chart ///////////////////////////////////////
-
-var onEachFeature_change = function(feature, layer) {
-    if (feature.properties) {
-        layer.on("click", function(e, layer) {
-            //index = Math.floor((layer.time - layer.start) / DayInMilSec);
-            il_weekly_case_layer_object.setStyle(styleChange);
-            // us_county_weekly_case_layer_object.setStyle(styleChange);
-            us_state_weekly_case_layer_object.setStyle(styleChange);
-            world_weekly_case_layer_object.setStyle(styleChange);
-            onMapClick(e);
-        });
-    }
-}
-
-var onMapClick = function (e) {
-    e.target.setStyle(highlight);
-    console.log(e.target);
-    
-    var targetTable;
-
-    // If using regex in strict search, the context can only be searched in targetTable.column(i) instead of targetTable
-
-    if (e.target.feature.properties.ISO_2DIGIT != undefined) {
-        targetTable = world_table;
-        targetTable.$('tr.selected').removeClass('selected');
-        document.getElementById("world-search-input").value = e.target.feature.properties.NAME;
-        $("#world-search-input").trigger("textchange");
-        targetTable.$('tr').addClass('selected');
-    } 
-    else if (e.target.feature.properties.state_name != undefined) {
-        targetTable = county_table;
-        targetTable.$('tr.selected').removeClass('selected');
-        document.getElementById("w-search-input").value = e.target.feature.properties.NAME+", "+e.target.feature.properties.state_name;
-        $("#w-search-input").trigger("textchange");
-        targetTable.$('tr').addClass('selected');
-    }
-    else if (e.target.feature.properties.fips == undefined) {
-        targetTable = il_table;
-        targetTable.$('tr.selected').removeClass('selected');
-        document.getElementById("il-search-input").value = e.target.feature.properties.NAME;
-        $("#il-search-input").trigger("textchange");
-        targetTable.$('tr').addClass('selected');
-    }
-
-    // Add d-block class and remove d-none to display the chart
-    if (window.bar != undefined) {
-        window.bar.destroy();
-    }
-    document.getElementById('myChart').classList.add("d-block");
-    document.getElementById('myChart').classList.remove("d-none");
-    updateChart(e.target.feature);
-}
-
 
 var updateChart = function (graphic) {
 
