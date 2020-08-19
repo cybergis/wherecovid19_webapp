@@ -572,7 +572,7 @@ var slider = L.timelineSliderControl({
     formatOutput: function(date) {
         return new Date(date).toLocaleDateString('en-US', { timeZone: 'UTC' })
     },
-    steps: 200,
+    steps: 1000,
     duration: 14000,
     position: 'topleft',
     showTicks: false
