@@ -572,7 +572,7 @@ var slider = L.timelineSliderControl({
     formatOutput: function(date) {
         return new Date(date).toLocaleDateString('en-US', { timeZone: 'UTC' })
     },
-    steps: 5000,
+    steps: 200,
     duration: 14000,
     position: 'topleft',
     showTicks: false
@@ -829,9 +829,9 @@ function cycle_scenes()
         slider.addTimelines(layer_obj);
         refreshLegend(layer_obj);
 
-        slider.start = slider.end-TwoWeeksInMilSec;
-        map.removeControl(slider);
-        map.addControl(slider);
+        //slider.start = slider.end-TwoWeeksInMilSec;
+        //map.removeControl(slider);
+        //map.addControl(slider);
         slider.setTime(slider.end-TwoWeeksInMilSec);
 
         active_scene_layer = layer_obj;
