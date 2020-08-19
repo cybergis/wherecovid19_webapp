@@ -1,0 +1,87 @@
+.data-pane {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    flex-direction: column;
+    text-align: center;
+    color: white !important;
+    font-weight: 700;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.location-name {
+    display: inline-block;
+    font-size: 40pt;
+    padding: 30px;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+.data-wrap,
+.credit {
+    border-top: solid 1px #585858;
+    padding: 20px;
+}
+
+.data-wrap .data-header {
+    padding-bottom: 5px;
+    font-size: 20pt
+}
+
+.data-wrap .data-number {
+    font-size: 38pt;
+    font-weight: 800;
+    font-family: 'Exo', sans-serif;
+}
+
+.data-wrap .change {
+    font-size: 13pt;
+    font-weight: 800;
+    font-family: 'Exo', sans-serif;
+}
+
+.leaflet-control-layers.leaflet-control-layers-expanded.leaflet-timeline-control.leaflet-control {
+    width: calc(100% - 20px);
+}
+
+.leaflet-control.leaflet-timeline-control input[type="range"] {
+    width: 100%;
+}
+
+.credit {
+    display: flex;
+    color: white;
+    text-align: center;
+    flex-direction: column;
+    font-size: 11pt;
+    font-weight: 300;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.credit h4 {
+    font-size: 15px;
+    padding-bottom: 5px;
+}
+
+.credit .qrs-wrap {
+    padding: 5px 20px 20px;
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.credit .qrs-wrap .qr img {
+    display: inline-block;
+    width: 90px;
+    height: 90px;
+    margin-bottom: 10px;
+    mix-blend-mode: multiply;
+}
+
+.credit .qrs-wrap .qr p {
+    font-size: 9pt;
+    font-weight: 300;
+    font-family: 'Open Sans', sans-serif;
+    margin: 0;
+}

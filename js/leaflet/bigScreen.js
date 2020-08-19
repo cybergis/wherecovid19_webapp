@@ -35,44 +35,44 @@ var class_json_obj = null;
 
 ////////////////////////////////// Add Data To Left Panel /////////////////////////////////
 
-var il_table = $('#illinois-table').DataTable({
-    paging: true,
-    pagingType: "simple_numbers",
-    pageLength: 50,
-    ordering: true,
-    order: [
-        [1, "desc"]
-    ],
-    info: false,
-    responsive: true,
-    dom: "pt",
-});
+// var il_table = $('#illinois-table').DataTable({
+//     paging: true,
+//     pagingType: "simple_numbers",
+//     pageLength: 50,
+//     ordering: true,
+//     order: [
+//         [1, "desc"]
+//     ],
+//     info: false,
+//     responsive: true,
+//     dom: "pt",
+// });
 
-var county_table = $('#county-table').DataTable({
-    paging: true,
-    pagingType: "simple_numbers",
-    pageLength: 50,
-    ordering: true,
-    order: [
-        [1, "desc"]
-    ],
-    info: false,
-    responsive: true,
-    dom: "pt",
-});
+// var county_table = $('#county-table').DataTable({
+//     paging: true,
+//     pagingType: "simple_numbers",
+//     pageLength: 50,
+//     ordering: true,
+//     order: [
+//         [1, "desc"]
+//     ],
+//     info: false,
+//     responsive: true,
+//     dom: "pt",
+// });
 
-var world_table = $('#world-table').DataTable({
-    paging: true,
-    pagingType: "simple_numbers",
-    pageLength: 50,
-    ordering: true,
-    order: [
-        [1, "desc"]
-    ],
-    info: false,
-    responsive: true,
-    dom: "pt",
-});
+// var world_table = $('#world-table').DataTable({
+//     paging: true,
+//     pagingType: "simple_numbers",
+//     pageLength: 50,
+//     ordering: true,
+//     order: [
+//         [1, "desc"]
+//     ],
+//     info: false,
+//     responsive: true,
+//     dom: "pt",
+// });
 
 /////////////////////////////// Initialize Map And Controls ///////////////////////////////
 
@@ -126,8 +126,7 @@ var styleChange = function(_data) {
 
 ///////////////////////////////////// Define Layerlist ////////////////////////////////////
 
-var layer_info_list = [
-    {
+var layer_info_list = [{
         "name": "il_weekly_case",
         "display_name": "Illinois Weekly Average Change",
         "geojson_url": "preprocessing/illinois/dph_county_data.geojson",
@@ -162,10 +161,10 @@ var layer_info_list = [
         "show": false,
         "style_func": styleChange,
         "animation": true,
-    },    
+    },
 ];
 
-var getLayerInfo = function (name, field = "name") {
+var getLayerInfo = function(name, field = "name") {
 
     for (i = 0; i < layer_info_list.length; i++) {
         if (name == layer_info_list[i][field]) {
@@ -179,7 +178,7 @@ var getLayerInfo = function (name, field = "name") {
 
 //////////////////////////////////// Load GeoJSON File ////////////////////////////////////
 
-var loadClassJson = function (url) {
+var loadClassJson = function(url) {
     return new Promise((resolve, reject) => {
         $.ajax({
             url: url,
@@ -197,12 +196,11 @@ var loadClassJson = function (url) {
     })
 }
 
-var load_geojson_promise = function (layer_info) {
+var load_geojson_promise = function(layer_info) {
     return new Promise((resolve, reject) => {
         if (layer_info["esri_url"] != undefined) {
             resolve(layer_info);
-        } 
-        else {
+        } else {
 
             $.ajax({
                 url: layer_info.geojson_url,
@@ -220,13 +218,13 @@ var load_geojson_promise = function (layer_info) {
                     reject(error);
                 },
             })
-            
+
         }
 
     })
 }
 
-var add_animation_layer_to_map_promise = function (layer_info) {
+var add_animation_layer_to_map_promise = function(layer_info) {
     return new Promise((resolve, reject) => {
         add_animation_layer_to_map(layer_info);
         resolve();
@@ -235,11 +233,11 @@ var add_animation_layer_to_map_promise = function (layer_info) {
 
 ////////////////////////////////// Add Data To Left Panel /////////////////////////////////
 
-var numberWithCommas = function (x) {
+var numberWithCommas = function(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-var fill_left_panel_il = function (geojson) {
+var fill_left_panel_il = function(geojson) {
     il_table.clear().draw();
     let tab = document.getElementById('illinois-tab');
 
@@ -296,7 +294,7 @@ var fill_left_panel_il = function (geojson) {
         }
     })
 
-    
+
 
 
     $('#illinois-table').on('click', 'tr', function() {
@@ -317,16 +315,16 @@ var fill_left_panel_il = function (geojson) {
     $('#il-search-input').on('textchange', function() {
         console.log($('#il-search-input').val());
         // If using regex in strict search, the context can only be searched in targetTable.column(i) instead of targetTable
-        il_table.column(0).search('^'+$('#il-search-input').val()+'$', true, false).draw();
+        il_table.column(0).search('^' + $('#il-search-input').val() + '$', true, false).draw();
     });
 
 }
 
-var fill_left_panel_us = function (geojson) {
+var fill_left_panel_us = function(geojson) {
     county_table.clear().draw();
 
     // All 'counties' refers to 'states'
-    
+
     var sum_us_counties_today_case = 0;
     var sum_us_counties_today_death = 0;
     var sum_us_counties_today_new_case = 0;
@@ -384,7 +382,7 @@ var fill_left_panel_us = function (geojson) {
     death_div.querySelector('.case-number').innerHTML = numberWithCommas(sum_us_counties_today_death)
     death_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(sum_us_counties_today_new_death)
 
-    
+
 
 
     $('#county-table').on('click', 'tr', function() {
@@ -405,11 +403,11 @@ var fill_left_panel_us = function (geojson) {
     $('#w-search-input').on('textchange', function() {
         console.log($('#w-search-input').val());
         // If using regex in strict search, the context can only be searched in targetTable.column(i) instead of targetTable
-        county_table.column(0).search('^'+$('#w-search-input').val()+'$', true, false).draw();
+        county_table.column(0).search('^' + $('#w-search-input').val() + '$', true, false).draw();
     });
 }
 
-var fill_left_panel_world = function (geojson) {
+var fill_left_panel_world = function(geojson) {
     world_table.clear().draw();
 
     var sum_world_today_case = 0;
@@ -464,7 +462,7 @@ var fill_left_panel_world = function (geojson) {
     death_div.querySelector('.case-number').innerHTML = numberWithCommas(sum_world_today_death)
     death_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(sum_world_today_new_death)
 
-    
+
 
 
     $('#world-table').on('click', 'tr', function() {
@@ -485,12 +483,12 @@ var fill_left_panel_world = function (geojson) {
     $('#world-search-input').on('textchange', function() {
         console.log($('#world-search-input').val());
         // If using regex in strict search, the context can only be searched in targetTable.column(i) instead of targetTable
-        world_table.column(0).search('^'+$('#world-search-input').val()+'$', true, false).draw();
+        world_table.column(0).search('^' + $('#world-search-input').val() + '$', true, false).draw();
     });
 
 }
 
-var fill_left_panel_promise = function (layer_info) {
+var fill_left_panel_promise = function(layer_info) {
     return new Promise((resolve, reject) => {
         if (layer_info.name == "il_weekly_case") {
             fill_left_panel_il(layer_info.geojson_obj);
@@ -524,8 +522,8 @@ var slider = L.timelineSliderControl({
     formatOutput: function(date) {
         return new Date(date).toLocaleDateString('en-US', { timeZone: 'UTC' })
     },
-    steps: 2000,
-    duration: 5000,
+    steps: 150,
+    duration: 200000,
     position: 'topleft',
     showTicks: false
 });
@@ -549,7 +547,7 @@ var options = {
 
 // add layer control to the map
 var layerControl = L.control.groupedLayers(baseMaps, groupedOverlays, options);
-map.addControl(layerControl);
+// map.addControl(layerControl);
 
 // Add the attribution of the base map to the left side
 L.control.attribution({
@@ -558,7 +556,7 @@ L.control.attribution({
 
 //////////////////////////////// Define Layer Change Events ///////////////////////////////
 
-var onOverlayAdd = function (e) {
+var onOverlayAdd = function(e) {
 
     // Remove the chart if it exists
     document.getElementById('myChart').classList.add("d-none");
@@ -610,10 +608,10 @@ var onOverlayAdd = function (e) {
     il_table.$('tr.selected').removeClass('selected');
     document.getElementById("il-search-input").value = '';
     $("#il-search-input").trigger("input");
-    
+
 }
 
-var onOverlayRemove = function (e) {
+var onOverlayRemove = function(e) {
     slider.removeTimelines(e.layer);
     slider.remove();
 }
@@ -623,17 +621,17 @@ map.on('overlayadd', onOverlayAdd);
 
 /////////////////////////////// Define Color Schema And Bins //////////////////////////////
 
-var splitStrInt = function (str, num) {
+var splitStrInt = function(str, num) {
     var newStr = str.split(",");
     return parseInt(newStr[num])
 }
 
-var splitStrFloat = function (str, num) {
+var splitStrFloat = function(str, num) {
     var newStr = str.split(",");
     return parseFloat(newStr[num])
 }
 
-var getChangeColor = function (d) {
+var getChangeColor = function(d) {
     return d > 0.5 ? '#d7191c' :
         d > 0.1 ? '#fd9861' :
         d > -0.1 ? '#ffffbf' :
@@ -643,19 +641,18 @@ var getChangeColor = function (d) {
 
 ////////////////////////////// Define Promises And Entry Point ////////////////////////////
 
-var add_animation_layer_to_map = function (layer_info) {
-    if (layer_info.geojson_obj == null || layer_info.geojson_obj == undefined)
-    {
+var add_animation_layer_to_map = function(layer_info) {
+    if (layer_info.geojson_obj == null || layer_info.geojson_obj == undefined) {
         console.log("Geojson for " + layer_info.display_name + " is not loaded")
         return;
     }
     let _onEachFeatureFunc;
-    if (layer_info.name == "il_weekly_case" || 
-    layer_info.name == "us_county_weekly_case" || 
-    layer_info.name == "us_state_weekly_case" || 
-    layer_info.name == "world_weekly_case") {
+    if (layer_info.name == "il_weekly_case" ||
+        layer_info.name == "us_county_weekly_case" ||
+        layer_info.name == "us_state_weekly_case" ||
+        layer_info.name == "world_weekly_case") {
         _onEachFeatureFunc = onEachFeature_change;
-    } 
+    }
 
     let layer_obj = L.timeline(layer_info.geojson_obj, {
         style: layer_info.style_func,
@@ -711,11 +708,11 @@ var add_animation_layer_to_map = function (layer_info) {
 }
 
 
-var chain_load_update_promise = function (layer_info) {
+var chain_load_update_promise = function(layer_info) {
     return load_geojson_promise(layer_info).then(update_layer_and_table_promise);
 }
 
-var update_layer_and_table_promise = function (layer_info) {
+var update_layer_and_table_promise = function(layer_info) {
     // check if geojson obj updated
 
     let p1 = add_animation_layer_to_map_promise(layer_info);
@@ -723,9 +720,9 @@ var update_layer_and_table_promise = function (layer_info) {
     return Promise.allSettled([p1, p2]);
 }
 
-hide_loader();
-function init_layer_and_table_promise()
-{
+// hide_loader();
+
+function init_layer_and_table_promise() {
     return Promise.allSettled(layer_info_list.map(chain_load_update_promise));
 }
 
@@ -736,26 +733,23 @@ setInterval(init_layer_and_table_promise, 30000);
 var scene_play_counter = 0;
 var scene_playing = false;
 var active_scene_layer = null;
-function cycle_scenes()
-{
-    if(scene_playing)
-    {
+
+function cycle_scenes() {
+    if (scene_playing) {
         return;
     }
     scene_playing = true;
     let layer_index = scene_play_counter % layer_info_list.length;
     let layer_info = layer_info_list[layer_index];
-    let layer_obj= layer_info.layer_object;
+    let layer_obj = layer_info.layer_object;
 
     // remove layer in last scene
-    if(active_scene_layer != null && active_scene_layer != undefined)
-    {
+    if (active_scene_layer != null && active_scene_layer != undefined) {
         slider.removeTimelines(active_scene_layer);
         map.removeLayer(active_scene_layer);
     }
 
-    if(layer_obj != null && layer_obj != undefined)
-    {
+    if (layer_obj != null && layer_obj != undefined) {
         console.log("Playing " + layer_info.display_name);
         // Switch Left Table tabpage
         //
@@ -765,7 +759,7 @@ function cycle_scenes()
         layer_obj.addTo(map);
         slider.addTimelines(layer_obj);
         refreshLegend(layer_obj);
-        slider.setTime(slider.end-1000*60*60*24*14);
+        slider.setTime(slider.end - 1000 * 60 * 60 * 24 * 14);
         active_scene_layer = layer_obj;
         slider.play();
 
@@ -793,20 +787,20 @@ setInterval(cycle_scenes, 5000);
 //         $('#illinois-tab').css("pointer-events","auto");
 //         $('#county-tab').css("pointer-events","auto");
 //         $('#world-tab').css("pointer-events","auto");
-    // }).then(function() {
-    //     return zoomToUserLocationPromise();
-    // }).then(function() {
-    //     return Promise.allSettled(layer_info_list_2.map(chain_promise));
-    // }).then(function() {
-    //     return Promise.allSettled(layer_info_list_3.map(chain_promise));
-    // }).then(function() {
-    //     return Promise.allSettled(layer_info_list_4.map(chain_promise));
+// }).then(function() {
+//     return zoomToUserLocationPromise();
+// }).then(function() {
+//     return Promise.allSettled(layer_info_list_2.map(chain_promise));
+// }).then(function() {
+//     return Promise.allSettled(layer_info_list_3.map(chain_promise));
+// }).then(function() {
+//     return Promise.allSettled(layer_info_list_4.map(chain_promise));
 //     })
 // );
 
 /////////////////////////// Handle Left Panel Tab Page Clicking ///////////////////////////
 
-var _switch_to_layer = function (layer_object) {
+var _switch_to_layer = function(layer_object) {
     if (layer_object == null || layer_object == undefined) {
         return;
     }
@@ -820,7 +814,7 @@ var _switch_to_layer = function (layer_object) {
     }
 }
 
-var switch_left_tab_page_handler = function (layer_info) {
+var switch_left_tab_page_handler = function(layer_info) {
     console.log(layer_info["tab_page_id"]);
     if (layer_info["tab_page_id"] != null && layer_info["tab_page_id"] != undefined) {
         document.getElementById(layer_info["tab_page_id"]).addEventListener("click", function(event) {
@@ -831,7 +825,7 @@ var switch_left_tab_page_handler = function (layer_info) {
     }
 }
 
-var switch_left_tab_page_handler_old = function (layer_info) {
+var switch_left_tab_page_handler_old = function(layer_info) {
     //Set default layers after clicking side panels
     document.getElementById("illinois-tab").addEventListener("click", function(event) {
         if (map.hasLayer(il_county_case_layer_object) != true) {
@@ -873,7 +867,7 @@ var switch_left_tab_page_handler_old = function (layer_info) {
 
 ///////////////////////////// Handle Left Panel Table Clicking ////////////////////////////
 
-var left_tab_page_table_click_old = function () {
+var left_tab_page_table_click_old = function() {
 
     /// illinois Table
     document.querySelector("#illinois-table tbody").addEventListener("click", function(event) {
@@ -902,9 +896,9 @@ var left_tab_page_table_click_old = function () {
                 return parseFloat(item);
             });
             boundCoords = [];
-            for (i=0; i<bounds.length; i++) {
-                if (i%2 == 0) {
-                    boundCoords.push([bounds[i+1],bounds[i]])
+            for (i = 0; i < bounds.length; i++) {
+                if (i % 2 == 0) {
+                    boundCoords.push([bounds[i + 1], bounds[i]])
                 }
             }
             objID = parseFloat(tr.firstElementChild.dataset.uid);
@@ -949,9 +943,9 @@ var left_tab_page_table_click_old = function () {
                 return parseFloat(item);
             });
             boundCoords = [];
-            for (i=0; i<bounds.length; i++) {
-                if (i%2 == 0) {
-                    boundCoords.push([bounds[i+1],bounds[i]])
+            for (i = 0; i < bounds.length; i++) {
+                if (i % 2 == 0) {
+                    boundCoords.push([bounds[i + 1], bounds[i]])
                 }
             }
             objID = parseFloat(tr.firstElementChild.dataset.uid);
@@ -997,9 +991,9 @@ var left_tab_page_table_click_old = function () {
                 return parseFloat(item);
             });
             boundCoords = [];
-            for (i=0; i<bounds.length; i++) {
-                if (i%2 == 0) {
-                    boundCoords.push([bounds[i+1],bounds[i]])
+            for (i = 0; i < bounds.length; i++) {
+                if (i % 2 == 0) {
+                    boundCoords.push([bounds[i + 1], bounds[i]])
                 }
             }
             objID = parseFloat(tr.firstElementChild.dataset.uid);
@@ -1021,7 +1015,7 @@ var left_tab_page_table_click_old = function () {
 
 ////////////////////////////////////// Create Legend //////////////////////////////////////
 
-var refreshLegend = function (_layer) {
+var refreshLegend = function(_layer) {
 
     if (legend != null) {
         map.removeControl(legend)
@@ -1077,9 +1071,9 @@ var onEachFeature_change = function(feature, layer) {
     }
 }
 
-var onMapClick = function (e) {
+var onMapClick = function(e) {
     e.target.setStyle(highlight);
-    
+
     var targetTable;
 
     // If using regex in strict search, the context can only be searched in targetTable.column(i) instead of targetTable
@@ -1090,15 +1084,13 @@ var onMapClick = function (e) {
         document.getElementById("world-search-input").value = e.target.feature.properties.NAME;
         $("#world-search-input").trigger("textchange");
         targetTable.$('tr').addClass('selected');
-    } 
-    else if (e.target.feature.properties.state_name != undefined) {
+    } else if (e.target.feature.properties.state_name != undefined) {
         targetTable = county_table;
         targetTable.$('tr.selected').removeClass('selected');
-        document.getElementById("w-search-input").value = e.target.feature.properties.NAME+", "+e.target.feature.properties.state_name;
+        document.getElementById("w-search-input").value = e.target.feature.properties.NAME + ", " + e.target.feature.properties.state_name;
         $("#w-search-input").trigger("textchange");
         targetTable.$('tr').addClass('selected');
-    }
-    else if (e.target.feature.properties.fips == undefined) {
+    } else if (e.target.feature.properties.fips == undefined) {
         targetTable = il_table;
         targetTable.$('tr.selected').removeClass('selected');
         document.getElementById("il-search-input").value = e.target.feature.properties.NAME;
@@ -1116,7 +1108,7 @@ var onMapClick = function (e) {
 }
 
 
-var updateChart = function (graphic) {
+var updateChart = function(graphic) {
 
     Chart.defaults.global.defaultFontSize = 12;
     Chart.defaults.global.defaultFontColor = '#777';
