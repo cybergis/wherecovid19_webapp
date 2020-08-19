@@ -571,8 +571,8 @@ var slider = L.timelineSliderControl({
     formatOutput: function(date) {
         return new Date(date).toLocaleDateString('en-US', { timeZone: 'UTC' })
     },
-    steps: 2000,
-    duration: 5000,
+    steps: 150,
+    duration: 150000,
     position: 'topleft',
     showTicks: false
 });
@@ -737,8 +737,10 @@ var add_animation_layer_to_map = function (layer_info) {
     });
 
     layer_obj.on('change', function(e) {
+        // console.log(slider.time);
         let li = getLayerInfo(e.target.name);
         index = Math.floor((this.time - this.start) / DayInMilSec);
+        // console.log(index);
         this.setStyle(li.style_func);
         layer_obj.eachLayer(function(value) {
             if (value.feature.properties.NAME == layer_info.highlightArea) {
@@ -823,8 +825,12 @@ function cycle_scenes()
         slider.addTimelines(layer_obj);
         refreshLegend(layer_obj);
 
-        slider.start = slider.end-TwoWeeksInMilSec;
+        // setup slider
         map.removeControl(slider);
+        slider._stepDuration = 1000;
+        slider._stepSize = DayInMilSec;
+        slider.start = slider.end-TwoWeeksInMilSec;
+        // console.log(slider);
         map.addControl(slider);
         slider.setTime(slider.end-TwoWeeksInMilSec);
 
@@ -835,29 +841,7 @@ function cycle_scenes()
     scene_playing = false;
 
 }
-setInterval(cycle_scenes, 15000);
-
-// Promise Entry Point
-// loadClassJson(class_json_url).then(
-//     Promise.allSettled(layer_info_list.map(chain_promise)).then(function() {
-//         switch_left_tab_page_handler_old();
-//         left_tab_page_table_click_old();
-//         console.log("111111111111111111111111111111111111");
-//     }).then(function() {
-//         console.log("222222222222222222222222222222222222");
-//         $('#illinois-tab').css("pointer-events","auto");
-//         $('#county-tab').css("pointer-events","auto");
-//         $('#world-tab').css("pointer-events","auto");
-    // }).then(function() {
-    //     return zoomToUserLocationPromise();
-    // }).then(function() {
-    //     return Promise.allSettled(layer_info_list_2.map(chain_promise));
-    // }).then(function() {
-    //     return Promise.allSettled(layer_info_list_3.map(chain_promise));
-    // }).then(function() {
-    //     return Promise.allSettled(layer_info_list_4.map(chain_promise));
-//     })
-// );
+setInterval(cycle_scenes, 16000);
 
 /////////////////////////// Handle Left Panel Tab Page Clicking ///////////////////////////
 
@@ -1250,12 +1234,17 @@ var updateChart = function (graphic) {
     }
 
     var LabelDates = [];
+    // IDPH data started from 2020-03-17
     if (graphic.properties.start == "2020-03-17") {
         var LabelDate = new Date(2020, 2, 9);
-    } else if (graphic.properties.start == "2020-01-11") {
-        var LabelDate = new Date(2020, 0, 3);
-    } else {
+    }
+    // NYT state-level data started from 2020-01-21
+    else if (graphic.properties.start == "2020-01-21") {
         var LabelDate = new Date(2020, 0, 13);
+    }
+    // WHO data started from 2020-01-04
+    else if (graphic.properties.start == "2020-01-04") {
+        var LabelDate = new Date(2019, 11, 27);
     }
 
     for (i = 0; i < ExtendedCasesArray.length; i++) {
@@ -1264,6 +1253,7 @@ var updateChart = function (graphic) {
     }
 
     SlicedLabelDates = LabelDates.slice(firstCaseIndex);
+    // console.log(firstCaseIndex);
 
     const verticalLinePlugin = {
         getLinePosition: function(chart, pointIndex) {
@@ -1352,16 +1342,22 @@ var updateChart = function (graphic) {
     if (graphic.properties.cases_ts != undefined) {
         datasetList.push(dic5)
         datasetList.push(dic2)
-        datasetList.push(dic1)
+        // datasetList.push(dic1)
     }
 
     if (graphic.properties.deaths_ts != undefined) {
-        datasetList.push(dic4)
-        datasetList.push(dic3)
+        // datasetList.push(dic4)
+        // datasetList.push(dic3)
     }
 
     if (window.bar != undefined) {
         window.bar.destroy();
+    }
+
+    // 'index' represents the exact location of silder, 'firstCaseIndex' minus 7 days is the actual index of first date
+    var verticalLineIndex = index-firstCaseIndex+7;
+    if (verticalLineIndex < 0) {
+        verticalLineIndex = 1;
     }
 
     window.bar = new Chart(myChart, {
@@ -1388,7 +1384,7 @@ var updateChart = function (graphic) {
             responsive: true,
             maintainAspectRatio: false
         },
-        //lineAtIndex: [slider.values[0]-firstCaseIndex],
+        lineAtIndex: [verticalLineIndex],
         animation: {
             duration: 0
         },
