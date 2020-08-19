@@ -554,7 +554,8 @@ var fill_left_panel_promise = function (layer_info) {
 /////////////////////////////// Initialize Map And Controls ///////////////////////////////
 
 var map = L.map('map', {
-    layers: [CartoDB_DarkMatter],
+    //layers: [CartoDB_DarkMatter],
+    layers: [],
     center: new L.LatLng(40, -89),
     zoom: 7,
     //Remove Zoom Control from the map
@@ -571,8 +572,8 @@ var slider = L.timelineSliderControl({
     formatOutput: function(date) {
         return new Date(date).toLocaleDateString('en-US', { timeZone: 'UTC' })
     },
-    steps: 2000,
-    duration: 5000,
+    steps: 5000,
+    duration: 14000,
     position: 'topleft',
     showTicks: false
 });
@@ -749,9 +750,11 @@ var add_animation_layer_to_map = function (layer_info) {
                 updateChart(value.feature);
             }
         })
+        if(slider.time == slider.end)
+        {
+            scene_playing = false;
+        }
     });
-
-
 
     // add layer into LayerControl UI list
     //layerControl.addOverlay(layer_obj, layer_info.display_name, layer_info.category);
@@ -764,7 +767,8 @@ var add_animation_layer_to_map = function (layer_info) {
 
 
 var chain_load_update_promise = function (layer_info) {
-    return load_geojson_promise(layer_info).then(update_layer_and_table_promise);
+    return load_geojson_promise(layer_info).
+    then(update_layer_and_table_promise);
 }
 
 var update_layer_and_table_promise = function (layer_info) {
@@ -784,8 +788,10 @@ function init_layer_and_table_promise()
     return Promise.allSettled(layer_info_list.map(chain_load_update_promise));
 }
 
-init_layer_and_table_promise();
-setInterval(init_layer_and_table_promise, 3600000);
+init_layer_and_table_promise().then(function(){
+        setInterval(cycle_scenes, 2000);
+    });
+//setInterval(init_layer_and_table_promise, 1);
 
 
 var scene_play_counter = 0;
@@ -832,10 +838,10 @@ function cycle_scenes()
         slider.play();
     }
     scene_play_counter = scene_play_counter + 1;
-    scene_playing = false;
+    //scene_playing = false;
 
 }
-setInterval(cycle_scenes, 15000);
+//setInterval(cycle_scenes, 1);
 
 // Promise Entry Point
 // loadClassJson(class_json_url).then(
