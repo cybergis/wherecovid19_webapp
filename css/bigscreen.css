@@ -10,8 +10,8 @@
     flex-direction: column;
     text-align: center;
     color: white !important;
-    font-weight: 700;
     padding: 50px;
+    font-weight: 700;
     font-family: 'Open Sans', sans-serif;
 }
 
@@ -104,4 +104,57 @@
 .leaflet-container {
     background: #262626 !important;
     outline: 0;
+}
+
+#myChart {
+    display: none;
+    z-index: 1000;
+    left: 15px;
+    top: 500px;
+    width: 100% !important;
+    height: 350px !important;
+    background: #242424;
+}
+
+.leaflet-control-layers.leaflet-control-layers-expanded.leaflet-timeline-control.leaflet-control {
+    display: none;
+}
+
+.info {
+    padding: 6px 8px;
+    font: 17px Arial, Helvetica, sans-serif;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    max-width: 250px;
+    padding: 15px;
+    margin: 20px;
+}
+
+#map {
+    position: relative;
+}
+
+.map-date {
+    display: block;
+    font-size: 30px;
+    margin-top: 25px;
+    text-align: center;
+    font-weight: bold;
+    opacity: 0.5;
+    font-weight: 700;
+    font-family: 'Open Sans', sans-serif;
+    color: #FFFFFF;
+}
+
+#current-datetime {
+    font-weight: bold;
+    font-weight: 700;
+    color: #FFFFFF;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.leaflet-container .leaflet-control-attribution {
+    background: rgba(255, 255, 255, 0.2) !important;
+    margin: 0;
+    color: #7d7d7d !important;
 }
