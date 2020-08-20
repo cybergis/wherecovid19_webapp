@@ -1,43 +1,58 @@
+.header-title {
+    font-size: 30px;
+    color: #ffffff;
+}
+
 .data-pane {
     display: flex;
     flex: 1;
-    justify-content: space-between;
+    justify-content: flex-start;
     flex-direction: column;
     text-align: center;
     color: white !important;
     font-weight: 700;
+    padding: 50px;
     font-family: 'Open Sans', sans-serif;
 }
 
 .location-name {
     display: inline-block;
     font-size: 40pt;
-    padding: 30px;
+    padding: 0;
     font-weight: 700;
     margin-bottom: 30px;
 }
 
+.data-wrap {
+    border: solid 1px #585858;
+    border-radius: 10px;
+    margin: 10px;
+}
+
 .data-wrap,
 .credit {
-    border-top: solid 1px #585858;
     padding: 20px;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .data-wrap .data-header {
     padding-bottom: 5px;
-    font-size: 20pt
+    font-size: 18pt;
+    font-weight: bold;
 }
 
 .data-wrap .data-number {
     font-size: 38pt;
     font-weight: 800;
-    font-family: 'Exo', sans-serif;
 }
 
 .data-wrap .change {
-    font-size: 13pt;
-    font-weight: 800;
-    font-family: 'Exo', sans-serif;
+    font-size: 18pt;
+    font-weight: 400;
+}
+
+.data-wrap .change i {
+    padding-right: 10px;
 }
 
 .leaflet-control-layers.leaflet-control-layers-expanded.leaflet-timeline-control.leaflet-control {
@@ -56,7 +71,7 @@
     font-size: 11pt;
     font-weight: 300;
     font-family: 'Open Sans', sans-serif;
-    background-color: lightslategray;
+    /* background-color: lightslategray; */
 }
 
 .credit h4 {
@@ -77,7 +92,6 @@
     width: 90px;
     height: 90px;
     margin-bottom: 10px;
-    mix-blend-mode: multiply;
 }
 
 .credit .qrs-wrap .qr p {
@@ -85,4 +99,9 @@
     font-weight: 300;
     font-family: 'Open Sans', sans-serif;
     margin: 0;
+}
+
+.leaflet-container {
+    background: #262626 !important;
+    outline: 0;
 }
