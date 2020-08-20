@@ -147,7 +147,7 @@ var layer_info_list = [{
         "zoom_center": [35, -96],
         "zoom_level": 4,
         "panel_id": "#us-data",
-        "chartTitle": "State Illinois",
+        "chartTitle": "Illinois State",
     },
     {
         "name": "world_weekly_case",
@@ -162,7 +162,7 @@ var layer_info_list = [{
         "zoom_center": [0, 0],
         "zoom_level": 2,
         "panel_id": "#world-data",
-        "chartTitle": "Unitied States",
+        "chartTitle": "United States",
     },
 ];
 
