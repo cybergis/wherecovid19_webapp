@@ -556,7 +556,7 @@ var add_animation_layer_to_map = function(layer_info) {
             }
         })
         var sliderDate = new Date(slider.time);
-        var options = { year: 'numeric', month: 'long', day: 'numeric' };
+        var options = { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC'};
         date_time = '<h2 class="map-date" style="padding:15px">' + sliderDate.toLocaleDateString('en-US', options) + "</h2>";
         // $('#current-datetime').text(sliderDate.toLocaleDateString('en-US', { timeZone: 'UTC' }));
         $('.leaflet-control-container .leaflet-top.leaflet-left').html(date_time);
