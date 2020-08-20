@@ -307,13 +307,13 @@ var fill_left_panel_il = function(geojson) {
             sum_illinois_today_new_tested = value.new_tested;
 
             // fill numbers in the pane
-            $('#illinois-data .confirmed .data-number').text(value.case);
-            $('#illinois-data .death .data-number').text(value.death);
-            $('#illinois-data .tested .data-number').text(value.tested);
+            $('#illinois-data .confirmed .data-number').text(numberWithCommas(value.case));
+            $('#illinois-data .death .data-number').text(numberWithCommas(value.death));
+            $('#illinois-data .tested .data-number').text(numberWithCommas(value.tested));
 
-            $('#illinois-data .confirmed .change').html(arrowHTML + value.new_case);
-            $('#illinois-data .death .change').html(arrowHTML + value.new_death) ;
-            $('#illinois-data .tested .change').html(arrowHTML + value.new_tested);
+            $('#illinois-data .confirmed .change').html(arrowHTML + numberWithCommas(value.new_case));
+            $('#illinois-data .death .change').html(arrowHTML + numberWithCommas(value.new_death)) ;
+            $('#illinois-data .tested .change').html(arrowHTML + numberWithCommas(value.new_tested));
             
         } 
     })
@@ -345,11 +345,11 @@ var fill_left_panel_us = function(geojson) {
         sum_us_counties_today_new_death += value.new_death;
 
         // fill numbers in the pane
-        $('#us-data .confirmed .data-number').text(sum_us_counties_today_case);
-        $('#us-data .death .data-number').text(sum_us_counties_today_death);
+        $('#us-data .confirmed .data-number').text(numberWithCommas(sum_us_counties_today_case));
+        $('#us-data .death .data-number').text(numberWithCommas(sum_us_counties_today_death));
 
-        $('#us-data .confirmed .change').html(arrowHTML + sum_us_counties_today_new_case);
-        $('#us-data .death .change').html(arrowHTML + sum_us_counties_today_new_death) ;
+        $('#us-data .confirmed .change').html(arrowHTML + numberWithCommas(sum_us_counties_today_new_case));
+        $('#us-data .death .change').html(arrowHTML + numberWithCommas(sum_us_counties_today_new_death)) ;
     })
 }
 
@@ -377,11 +377,11 @@ var fill_left_panel_world = function(geojson) {
         sum_world_today_new_death += value.new_death;
 
         // fill numbers in the pane
-        $('#world-data .confirmed .data-number').text(sum_world_today_case);
-        $('#world-data .death .data-number').text(sum_world_today_death);
+        $('#world-data .confirmed .data-number').text(numberWithCommas(sum_world_today_case));
+        $('#world-data .death .data-number').text(numberWithCommas(sum_world_today_death));
 
-        $('#world-data .confirmed .change').html(arrowHTML + sum_world_today_new_case);
-        $('#world-data .death .change').html(arrowHTML + sum_world_today_new_death) ;
+        $('#world-data .confirmed .change').html(arrowHTML + numberWithCommas(sum_world_today_new_case));
+        $('#world-data .death .change').html(arrowHTML + numberWithCommas(sum_world_today_new_death)) ;
     })
 }
 
