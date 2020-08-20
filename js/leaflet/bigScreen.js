@@ -33,47 +33,6 @@ var il_zipcode_case_layer_object = null;
 class_json_url = "preprocessing/classes.json";
 var class_json_obj = null;
 
-////////////////////////////////// Add Data To Left Panel /////////////////////////////////
-
-// var il_table = $('#illinois-table').DataTable({
-//     paging: true,
-//     pagingType: "simple_numbers",
-//     pageLength: 50,
-//     ordering: true,
-//     order: [
-//         [1, "desc"]
-//     ],
-//     info: false,
-//     responsive: true,
-//     dom: "pt",
-// });
-
-// var county_table = $('#county-table').DataTable({
-//     paging: true,
-//     pagingType: "simple_numbers",
-//     pageLength: 50,
-//     ordering: true,
-//     order: [
-//         [1, "desc"]
-//     ],
-//     info: false,
-//     responsive: true,
-//     dom: "pt",
-// });
-
-// var world_table = $('#world-table').DataTable({
-//     paging: true,
-//     pagingType: "simple_numbers",
-//     pageLength: 50,
-//     ordering: true,
-//     order: [
-//         [1, "desc"]
-//     ],
-//     info: false,
-//     responsive: true,
-//     dom: "pt",
-// });
-
 /////////////////////////////// Initialize Map And Controls ///////////////////////////////
 
 var colorClass = null;
@@ -126,6 +85,11 @@ var highlight = {
 
 var legend = null;
 
+////////////////////////////////////// Setup zooming //////////////////////////////////////
+
+var illinois_bounds = [];
+var us_bounds = [];
+var world_bounds = [];
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////// Functions ////////////////////////////////////////
@@ -312,9 +276,8 @@ var fill_left_panel_il = function(geojson) {
             $('#illinois-data .tested .data-number').text(numberWithCommas(value.tested));
 
             $('#illinois-data .confirmed .change').html(arrowHTML + numberWithCommas(value.new_case));
-            $('#illinois-data .death .change').html(arrowHTML + numberWithCommas(value.new_death)) ;
+            $('#illinois-data .death .change').html(arrowHTML + numberWithCommas(value.new_death));
             $('#illinois-data .tested .change').html(arrowHTML + numberWithCommas(value.new_tested));
-            
         } 
     })
 }
@@ -322,6 +285,14 @@ var fill_left_panel_il = function(geojson) {
 var fill_left_panel_us = function(geojson) {
 
     let result_list = geojson.features.map(function(value, index) {
+        if (value.properties.NAME == "Illinois") {
+            let bounds = value.geometry.coordinates;
+            // console.log(bounds.length);
+            // console.log(bounds[0].length);
+            for (i=0; i<bounds[0].length; i++) {
+                illinois_bounds.push([bounds[0][i][1],bounds[0][i][0]]);
+            }
+        }
         return {
             centroid_x: turf.centroid(value.geometry).geometry.coordinates[0],
             centroid_y: turf.centroid(value.geometry).geometry.coordinates[1],
@@ -356,6 +327,18 @@ var fill_left_panel_us = function(geojson) {
 var fill_left_panel_world = function(geojson) {
 
     let result_list = geojson.features.map(function(value, index) {
+        if (value.properties.NAME == "United States") {
+            let bounds = value.geometry.coordinates;
+            // console.log(bounds.length);
+            // console.log(bounds[0].length);
+            // console.log(bounds[0][0].length);
+            for (j=0; j<bounds.length; j++){
+                for (i=0; i<bounds[0][0].length; i++) {
+                    us_bounds.push([bounds[0][0][i][1],bounds[0][0][i][0]]);
+                }
+            }
+            // console.log(us_bounds);
+        }
         return {
             centroid_x: turf.centroid(value.geometry).geometry.coordinates[0],
             centroid_y: turf.centroid(value.geometry).geometry.coordinates[1],
@@ -633,7 +616,14 @@ function cycle_scenes() {
         $(layer_info.panel_id).removeClass('d-none');
         $(layer_info.panel_id).addClass('d-flex');
         
-        map.setView(layer_info.zoom_center, layer_info.zoom_level);
+        // map.setView(layer_info.zoom_center, layer_info.zoom_level);
+        if (layer_info.name == "il_weekly_case") {
+            map.fitBounds(illinois_bounds);
+        } else if (layer_info.name == "us_state_weekly_case") {
+            map.fitBounds(us_bounds);
+        } else {
+            map.fitWorld();
+        }
 
         // add new layer to map
         layer_obj.addTo(map);
