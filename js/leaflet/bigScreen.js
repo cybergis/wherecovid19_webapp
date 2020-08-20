@@ -282,7 +282,7 @@ var fill_left_panel_il = function(geojson) {
             $('#illinois-data .confirmed .change').html(arrowHTML + numberWithCommas(value.new_case));
             $('#illinois-data .death .change').html(arrowHTML + numberWithCommas(value.new_death));
             $('#illinois-data .tested .change').html(arrowHTML + numberWithCommas(value.new_tested));
-        } 
+        }
     })
 }
 
@@ -293,8 +293,8 @@ var fill_left_panel_us = function(geojson) {
             let bounds = value.geometry.coordinates;
             // console.log(bounds.length);
             // console.log(bounds[0].length);
-            for (i=0; i<bounds[0].length; i++) {
-                illinois_bounds.push([bounds[0][i][1],bounds[0][i][0]]);
+            for (i = 0; i < bounds[0].length; i++) {
+                illinois_bounds.push([bounds[0][i][1], bounds[0][i][0]]);
             }
         }
         return {
@@ -336,9 +336,9 @@ var fill_left_panel_world = function(geojson) {
             // console.log(bounds.length);
             // console.log(bounds[0].length);
             // console.log(bounds[0][0].length);
-            for (j=0; j<bounds.length; j++){
-                for (i=0; i<bounds[0][0].length; i++) {
-                    us_bounds.push([bounds[0][0][i][1],bounds[0][0][i][0]]);
+            for (j = 0; j < bounds.length; j++) {
+                for (i = 0; i < bounds[0][0].length; i++) {
+                    us_bounds.push([bounds[0][0][i][1], bounds[0][0][i][0]]);
                 }
             }
             // console.log(us_bounds);
@@ -624,14 +624,14 @@ function cycle_scenes() {
         // then to show specific pane
         $(layer_info.panel_id).removeClass('d-none');
         $(layer_info.panel_id).addClass('d-flex');
-        
+
         // map.setView(layer_info.zoom_center, layer_info.zoom_level);
         if (layer_info.name == "il_weekly_case") {
-            map.fitBounds(illinois_bounds);
+            map.fitBounds(illinois_bounds, { paddingTopLeft: [200, 50], paddingBottomRight: [200, 400] });
         } else if (layer_info.name == "us_state_weekly_case") {
-            map.fitBounds(us_bounds);
+            map.fitBounds(us_bounds, { paddingTopLeft: [100, 50], paddingBottomRight: [100, 400] });
         } else {
-            map.fitWorld();
+            map.fitWorld({ paddingTopLeft: [100, 50], paddingBottomRight: [100, 200] });
         }
 
         // add new layer to map
@@ -988,7 +988,7 @@ function update_clock() {
 
     var options = { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
     var now = new Date();
-    $('#current-datetime').text(now.toLocaleDateString('en-US', options) + " " + now.toLocaleTimeString());
+    $('#current-datetime').text(now.toLocaleDateString('en-US', options) + " " + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
 }
 
 setInterval(update_clock, 1000);
