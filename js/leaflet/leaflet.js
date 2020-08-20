@@ -313,9 +313,7 @@ var layer_info_list = [{
     "tab_page_id": "world-tab",
     "animation": true,
 },
-];
-
-var layer_info_list_2 = [{
+{
     "name": "us_state_case",
     "display_name": "US States",
     "geojson_url": "preprocessing/nyt_states_data.geojson",
@@ -327,6 +325,9 @@ var layer_info_list_2 = [{
     "animation": true,
 
 },
+];
+
+var layer_info_list_2 = [
 {
     "name": "il_vul",
     "display_name": "Vulnerability",
@@ -650,11 +651,12 @@ var fill_left_panel_il = function (geojson) {
 
 }
 
-var fill_left_panel_us = function (geojson) {
-    var sum_us_counties_today_case = 0;
-    var sum_us_counties_today_death = 0;
-    var sum_us_counties_today_new_case = 0;
-    var sum_us_counties_today_new_death = 0;
+// Use county data to fill the list
+var fill_left_panel_us_county = function (geojson) {
+    // var sum_us_counties_today_case = 0;
+    // var sum_us_counties_today_death = 0;
+    // var sum_us_counties_today_new_case = 0;
+    // var sum_us_counties_today_new_death = 0;
     let counties_table = document.getElementById('county-table').querySelector('tbody');
     let template = document.querySelectorAll('template')[1]
 
@@ -691,20 +693,20 @@ var fill_left_panel_us = function (geojson) {
         instance.querySelector('.death').setAttribute('data-order', value.death);
         counties_table.appendChild(instance);
 
-        sum_us_counties_today_case += value.case;
-        sum_us_counties_today_death += value.death;
-        sum_us_counties_today_new_case += value.new_case;
-        sum_us_counties_today_new_death += value.new_death;
+        // sum_us_counties_today_case += value.case;
+        // sum_us_counties_today_death += value.death;
+        // sum_us_counties_today_new_case += value.new_case;
+        // sum_us_counties_today_new_death += value.new_death;
     })
 
-    let tab = document.getElementById('county-tab');
-    tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(sum_us_counties_today_case)
-    let case_div = document.getElementById('counties_total_case_number')
-    let death_div = document.getElementById('counties_total_death_number')
-    case_div.querySelector('.case-number').innerHTML = numberWithCommas(sum_us_counties_today_case)
-    case_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(sum_us_counties_today_new_case)
-    death_div.querySelector('.case-number').innerHTML = numberWithCommas(sum_us_counties_today_death)
-    death_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(sum_us_counties_today_new_death)
+    // let tab = document.getElementById('county-tab');
+    // tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(sum_us_counties_today_case)
+    // let case_div = document.getElementById('counties_total_case_number')
+    // let death_div = document.getElementById('counties_total_death_number')
+    // case_div.querySelector('.case-number').innerHTML = numberWithCommas(sum_us_counties_today_case)
+    // case_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(sum_us_counties_today_new_case)
+    // death_div.querySelector('.case-number').innerHTML = numberWithCommas(sum_us_counties_today_death)
+    // death_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(sum_us_counties_today_new_death)
 
     county_table = $('#county-table').DataTable({
         paging: true,
@@ -740,6 +742,47 @@ var fill_left_panel_us = function (geojson) {
         // If using regex in strict search, the context can only be searched in targetTable.column(i) instead of targetTable
         county_table.column(0).search('^'+$('#w-search-input').val()+'$', true, false).draw();
     });
+}
+
+// Use state data to fill the sum number
+var fill_left_panel_us_state = function (geojson) {
+    // In this function, all 'counties' represents 'states'
+    var sum_us_counties_today_case = 0;
+    var sum_us_counties_today_death = 0;
+    var sum_us_counties_today_new_case = 0;
+    var sum_us_counties_today_new_death = 0;
+
+    let result_list = geojson.features.map(function(value, index) {
+        return {
+            centroid_x: turf.centroid(value.geometry).geometry.coordinates[0],
+            centroid_y: turf.centroid(value.geometry).geometry.coordinates[1],
+            bounds: value.geometry.coordinates,
+            uid: value.properties.OBJECTID,
+            state: value.properties.NAME,
+            case: value.properties.today_case,
+            new_case: value.properties.today_new_case,
+            death: value.properties.today_death,
+            new_death: value.properties.today_new_death,
+        }
+    });
+
+    //console.log(result_list);
+
+    result_list.forEach(function(value) {
+        sum_us_counties_today_case += value.case;
+        sum_us_counties_today_death += value.death;
+        sum_us_counties_today_new_case += value.new_case;
+        sum_us_counties_today_new_death += value.new_death;
+    })
+
+    let tab = document.getElementById('county-tab');
+    tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(sum_us_counties_today_case)
+    let case_div = document.getElementById('counties_total_case_number')
+    let death_div = document.getElementById('counties_total_death_number')
+    case_div.querySelector('.case-number').innerHTML = numberWithCommas(sum_us_counties_today_case)
+    case_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(sum_us_counties_today_new_case)
+    death_div.querySelector('.case-number').innerHTML = numberWithCommas(sum_us_counties_today_death)
+    death_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(sum_us_counties_today_new_death)
 }
 
 var fill_left_panel_world = function (geojson) {
@@ -837,7 +880,9 @@ var fill_left_panel_promise = function (layer_info) {
         if (layer_info.name == "il_county_case") {
             fill_left_panel_il(layer_info.geojson_obj);
         } else if (layer_info.name == "us_county_case") {
-            fill_left_panel_us(layer_info.geojson_obj);
+            fill_left_panel_us_county(layer_info.geojson_obj);
+        } else if (layer_info.name == "us_state_case") {
+            fill_left_panel_us_state(layer_info.geojson_obj);
         } else if (layer_info.name == "world_case") {
             fill_left_panel_world(layer_info.geojson_obj);
         }
@@ -1287,9 +1332,7 @@ loadClassJson(class_json_url).then(
     Promise.allSettled(layer_info_list.map(chain_promise)).then(function() {
         switch_left_tab_page_handler_old();
         left_tab_page_table_click_old();
-        console.log("111111111111111111111111111111111111");
     }).then(function() {
-        console.log("222222222222222222222222222222222222");
         $('#illinois-tab').css("pointer-events","auto");
         $('#county-tab').css("pointer-events","auto");
         $('#world-tab').css("pointer-events","auto");
