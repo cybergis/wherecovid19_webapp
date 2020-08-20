@@ -312,10 +312,10 @@ var fill_left_panel_il = function(geojson) {
             $('#illinois-data .tested .data-number').text(numberWithCommas(value.tested));
 
             $('#illinois-data .confirmed .change').html(arrowHTML + numberWithCommas(value.new_case));
-            $('#illinois-data .death .change').html(arrowHTML + numberWithCommas(value.new_death)) ;
+            $('#illinois-data .death .change').html(arrowHTML + numberWithCommas(value.new_death));
             $('#illinois-data .tested .change').html(arrowHTML + numberWithCommas(value.new_tested));
-            
-        } 
+
+        }
     })
 }
 
@@ -349,7 +349,7 @@ var fill_left_panel_us = function(geojson) {
         $('#us-data .death .data-number').text(numberWithCommas(sum_us_counties_today_death));
 
         $('#us-data .confirmed .change').html(arrowHTML + numberWithCommas(sum_us_counties_today_new_case));
-        $('#us-data .death .change').html(arrowHTML + numberWithCommas(sum_us_counties_today_new_death)) ;
+        $('#us-data .death .change').html(arrowHTML + numberWithCommas(sum_us_counties_today_new_death));
     })
 }
 
@@ -381,19 +381,19 @@ var fill_left_panel_world = function(geojson) {
         $('#world-data .death .data-number').text(numberWithCommas(sum_world_today_death));
 
         $('#world-data .confirmed .change').html(arrowHTML + numberWithCommas(sum_world_today_new_case));
-        $('#world-data .death .change').html(arrowHTML + numberWithCommas(sum_world_today_new_death)) ;
+        $('#world-data .death .change').html(arrowHTML + numberWithCommas(sum_world_today_new_death));
     })
 }
 
 var fill_left_panel_promise = function(layer_info) {
     return new Promise((resolve, reject) => {
-        if (layer_info.name == "il_weekly_case") {            
+        if (layer_info.name == "il_weekly_case") {
             fill_left_panel_il(layer_info.geojson_obj);
-        } else if (layer_info.name == "us_state_weekly_case") {            
+        } else if (layer_info.name == "us_state_weekly_case") {
             fill_left_panel_us(layer_info.geojson_obj);
         } else if (layer_info.name == "world_weekly_case") {
             fill_left_panel_world(layer_info.geojson_obj);
-        }        
+        }
         hide_loader();
         resolve();
     })
@@ -567,7 +567,10 @@ var add_animation_layer_to_map = function(layer_info) {
             }
         })
         var sliderDate = new Date(slider.time);
-        $('#current-datetime').text(sliderDate.toLocaleDateString('en-US', { timeZone: 'UTC' }));
+        var options = { year: 'numeric', month: 'long', day: 'numeric' };
+        date_time = '<h2 class="map-date" style="padding:15px">' + sliderDate.toLocaleDateString('en-US', options) + "</h2>";
+        // $('#current-datetime').text(sliderDate.toLocaleDateString('en-US', { timeZone: 'UTC' }));
+        $('.leaflet-control-container .leaflet-top.leaflet-left').html(date_time);
     });
 }
 
@@ -578,7 +581,7 @@ var chain_load_update_promise = function(layer_info) {
 
 var update_layer_and_table_promise = function(layer_info) {
     // check if geojson obj updated
-    if (layer_info.geojson_updated == true) {        
+    if (layer_info.geojson_updated == true) {
         let p1 = add_animation_layer_to_map_promise(layer_info);
         let p2 = fill_left_panel_promise(layer_info);
         return Promise.allSettled([p1, p2]);
@@ -593,7 +596,7 @@ function init_layer_and_table_promise() {
     return Promise.allSettled(layer_info_list.map(chain_load_update_promise));
 }
 
-init_layer_and_table_promise().then(function(){
+init_layer_and_table_promise().then(function() {
     setInterval(cycle_scenes, 16000);
 });
 setInterval(init_layer_and_table_promise, 3600000);
@@ -624,15 +627,15 @@ function cycle_scenes() {
         // switch left table tab page
         // zoom to layer
         // $(layer_info.tabpage_id).trigger("click");
-        
+
         // hide all data panes
         $('.data-pane').removeClass('d-flex');
         $('.data-pane').addClass('d-none');
-        
+
         // then to show specific pane
         $(layer_info.panel_id).removeClass('d-none');
         $(layer_info.panel_id).addClass('d-flex');
-        
+
         map.setView(layer_info.zoom_center, layer_info.zoom_level);
 
         // add new layer to map
@@ -957,8 +960,8 @@ var updateChart = function(graphic) {
         },
         options: {
             title: {
-                display: false,
-                text: 'COVID19 Time Series',
+                display: true,
+                text: 'COVID19 Time Series of',
                 fontSize: 15
             },
             legend: {
@@ -984,3 +987,12 @@ var updateChart = function(graphic) {
     window.bar.update(0);
 
 }
+
+function update_clock() {
+
+    var options = { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
+    var now = new Date();
+    $('#current-datetime').text(now.toLocaleDateString('en-US', options) + " " + now.toLocaleTimeString());
+}
+
+setInterval(update_clock, 1000);
