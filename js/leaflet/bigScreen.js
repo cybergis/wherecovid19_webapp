@@ -996,4 +996,4 @@ function update_clock() {
     $('#current-datetime').text(now.toLocaleDateString('en-US', options) + " " + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
 }
 
-setInterval(update_clock, 1000);
+setInterval(update_clock, 10000);
