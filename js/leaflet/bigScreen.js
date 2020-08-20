@@ -84,6 +84,7 @@ var highlight = {
 ////////////////////////////////////// Create Legend //////////////////////////////////////
 
 var legend = null;
+var chartTitle = "";
 
 ////////////////////////////////////// Setup zooming //////////////////////////////////////
 
@@ -122,6 +123,7 @@ var layer_info_list = [{
         "zoom_center": [39, -89],
         "zoom_level": 6.5,
         "panel_id": "#illinois-data",
+        "chartTitle": "Champaign County, IL",
     },
     // {
     //     "name": "us_county_weekly_case",
@@ -145,6 +147,7 @@ var layer_info_list = [{
         "zoom_center": [35, -96],
         "zoom_level": 4,
         "panel_id": "#us-data",
+        "chartTitle": "State Illinois",
     },
     {
         "name": "world_weekly_case",
@@ -159,6 +162,7 @@ var layer_info_list = [{
         "zoom_center": [0, 0],
         "zoom_level": 2,
         "panel_id": "#world-data",
+        "chartTitle": "Unitied States",
     },
 ];
 
@@ -517,6 +521,8 @@ var add_animation_layer_to_map = function(layer_info) {
     }
 
     layer_obj.on('add', function(e) {
+        // Set chart title
+        chartTitle = layer_info.chartTitle;
         let li = getLayerInfo(e.target.name);
         try {
             bins = class_json_obj[li.color_class[0]][li.color_class[1]][li.color_class[2]][li.color_class[3]].bins.split(",").map(function(item) {
@@ -951,7 +957,7 @@ var updateChart = function(graphic) {
         options: {
             title: {
                 display: true,
-                text: 'COVID19 Time Series of',
+                text: 'COVID19 Time Series of ' + chartTitle,
                 fontSize: 15
             },
             legend: {
