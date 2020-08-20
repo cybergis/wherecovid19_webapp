@@ -631,7 +631,7 @@ function cycle_scenes() {
         } else if (layer_info.name == "us_state_weekly_case") {
             map.fitBounds(us_bounds, { paddingTopLeft: [100, 50], paddingBottomRight: [100, 400] });
         } else {
-            map.fitWorld({ paddingTopLeft: [100, 50], paddingBottomRight: [100, 200] });
+            map.fitWorld({ paddingTopLeft: [100, -50], paddingBottomRight: [100, 200] });
         }
 
         // add new layer to map
