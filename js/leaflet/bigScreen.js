@@ -591,7 +591,7 @@ function init_layer_and_table_promise() {
 }
 
 init_layer_and_table_promise().then(function() {
-    setInterval(cycle_scenes, 2000);
+    setInterval(cycle_scenes, 4000);
 });
 setInterval(init_layer_and_table_promise, 3600000);
 
