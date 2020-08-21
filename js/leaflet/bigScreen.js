@@ -530,6 +530,9 @@ var add_animation_layer_to_map = function(layer_info) {
         date_time = '<h2 class="map-date" style="padding:15px">' + sliderDate.toLocaleDateString('en-US', options) + "</h2>";
         // $('#current-datetime').text(sliderDate.toLocaleDateString('en-US', { timeZone: 'UTC' }));
         $('.leaflet-control-container .leaflet-top.leaflet-left').html(date_time);
+        console.log("11111111111111111111111111");
+        console.log(slider.time);
+        console.log(slider);
 
         if(slider.time == slider.end)
         {
@@ -607,8 +610,8 @@ var cycle_scenes = function() {
 
         // setup slider
         // map.removeControl(slider);
-        // slider._stepDuration = 1000;
-        // slider._stepSize = DayInMilSec;
+        slider._stepDuration = 1000;
+        slider._stepSize = DayInMilSec;
         // slider.start = slider.end - TwoWeeksInMilSec;
         // map.addControl(slider);
         slider.setTime(slider.end - TwoWeeksInMilSec);
