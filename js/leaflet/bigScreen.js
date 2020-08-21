@@ -645,12 +645,11 @@ function cycle_scenes() {
         refreshLegend(layer_obj);
 
         // setup slider
-        map.removeControl(slider);
-        slider._stepDuration = 1000;
-        slider._stepSize = DayInMilSec;
-        slider.start = slider.end - TwoWeeksInMilSec;
-        // console.log(slider);
-        map.addControl(slider);
+        // map.removeControl(slider);
+        // slider._stepDuration = 1000;
+        // slider._stepSize = DayInMilSec;
+        // slider.start = slider.end - TwoWeeksInMilSec;
+        // map.addControl(slider);
         slider.setTime(slider.end - TwoWeeksInMilSec);
 
         active_scene_layer = layer_obj;
