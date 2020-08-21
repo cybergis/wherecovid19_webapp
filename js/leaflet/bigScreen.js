@@ -10,42 +10,15 @@ var CartoDB_DarkMatter = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all
     maxZoom: 19
 });
 
-var il_county_case_layer_object = null;
-var us_county_case_layer_object = null;
-var world_case_layer_object = null;
-var us_state_case_layer_object = null;
-var il_acc_i_layer_object = null;
-var il_acc_v_layer_object = null;
-var il_vul_layer_object = null;
-var il_chicago_acc_v_layer_object = null;
-var il_chicago_acc_i_layer_object = null;
 var il_weekly_case_layer_object = null;
 var us_county_weekly_case_layer_object = null;
 var us_state_weekly_case_layer_object = null;
 var world_weekly_case_layer_object = null;
-var il_hiv_layer_object = null;
-var il_svi_layer_object = null;
-var il_testing_sites_layer_object = null;
-var il_zipcode_case_layer_object = null;
 
 //////////////////////////////////// Load GeoJSON File ////////////////////////////////////
 
 class_json_url = "preprocessing/classes.json";
 var class_json_obj = null;
-
-/////////////////////////////// Initialize Map And Controls ///////////////////////////////
-
-var colorClass = null;
-var world = null;
-var us_states = null;
-var us_counties = null;
-var illinois_counties = null;
-var illinois_acc_i = null;
-var illinois_acc_v = null;
-var chicago_acc_i = null;
-var chicago_acc_v = null;
-var illinois_vulnerability = null;
-var illinois_zipcode = null;
 
 /////////////////////////////// Define Color Schema And Bins //////////////////////////////
 
@@ -54,7 +27,7 @@ var index = 0;
 const DayInMilSec = 60 * 60 * 24 * 1000;
 const TwoWeeksInMilSec = 14 * DayInMilSec;
 
-///////////////////////////// Handle Left Panel Table Clicking ////////////////////////////
+///////////////////////////////////// Handle Left Panel ///////////////////////////////////
 
 var sum_illinois_today_case = 0;
 var sum_illinois_today_death = 0;
@@ -92,6 +65,12 @@ var illinois_bounds = [];
 var us_bounds = [];
 var world_bounds = [];
 
+////////////////////////////////////// Setup cycles //////////////////////////////////////
+
+var scene_play_counter = 0;
+var scene_playing = false;
+var active_scene_layer = null;
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////// Functions ////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -125,15 +104,6 @@ var layer_info_list = [{
         "panel_id": "#illinois-data",
         "chartTitle": "Champaign County, IL",
     },
-    // {
-    //     "name": "us_county_weekly_case",
-    //     "display_name": "US County-level Weekly Average Change",
-    //     "geojson_url": "preprocessing/nyt_counties_data.geojson",
-    //     "category": "US",
-    //     "show": false,
-    //     "style_func": styleChange,
-    //     "animation": true,
-    // },
     {
         "name": "us_state_weekly_case",
         "display_name": "US State-level Weekly Average Change",
@@ -586,7 +556,7 @@ var update_layer_and_table_promise = function(layer_info) {
 
 // hide_loader();
 
-function init_layer_and_table_promise() {
+var init_layer_and_table_promise = function() {
     return Promise.allSettled(layer_info_list.map(chain_load_update_promise));
 }
 
@@ -595,12 +565,7 @@ init_layer_and_table_promise().then(function() {
 });
 setInterval(init_layer_and_table_promise, 3600000);
 
-
-var scene_play_counter = 0;
-var scene_playing = false;
-var active_scene_layer = null;
-
-function cycle_scenes() {
+var cycle_scenes = function() {
     if (scene_playing) {
         return;
     }
@@ -617,10 +582,6 @@ function cycle_scenes() {
 
     if (layer_obj != null && layer_obj != undefined) {
         console.log("Playing " + layer_info.display_name);
-
-        // switch left table tab page
-        // zoom to layer
-        // $(layer_info.tabpage_id).trigger("click");
 
         // hide all data panes
         $('.data-pane').removeClass('d-flex');
@@ -657,49 +618,6 @@ function cycle_scenes() {
     }
     scene_play_counter = scene_play_counter + 1;
     //scene_playing = false;
-
-}
-
-
-/////////////////////////// Handle Left Panel Tab Page Clicking ///////////////////////////
-
-var switch_left_tab_page_handler_old = function(layer_info) {
-    //Set default layers after clicking side panels
-    document.getElementById("illinois-tab").addEventListener("click", function(event) {
-        if (map.hasLayer(il_county_case_layer_object) != true) {
-            map.eachLayer(function(layer) {
-                if (layer._url == undefined) {
-                    map.removeLayer(layer);
-                }
-            });
-            // show_loader();
-            map.addLayer(il_county_case_layer_object);
-        }
-    });
-
-    document.getElementById("county-tab").addEventListener("click", function(event) {
-        if (map.hasLayer(us_county_case_layer_object) != true) {
-            map.eachLayer(function(layer) {
-                if (layer._url == undefined) {
-                    map.removeLayer(layer);
-                }
-            });
-            // show_loader();
-            map.addLayer(us_county_case_layer_object);
-        }
-    });
-
-    document.getElementById("world-tab").addEventListener("click", function(event) {
-        if (map.hasLayer(world_case_layer_object) != true) {
-            map.eachLayer(function(layer) {
-                if (layer._url == undefined) {
-                    map.removeLayer(layer);
-                }
-            });
-            // show_loader();
-            map.addLayer(world_case_layer_object);
-        }
-    });
 
 }
 
