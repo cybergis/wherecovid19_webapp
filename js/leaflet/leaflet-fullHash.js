@@ -1,5 +1,9 @@
+// Make the tag of initialization global variable 
+// so that it can be used in leaflet.js
+var initializedTag = false;
+
 (function(window) {
-	var initializedTag = false;
+	// var initializedTag = false;
 	
 	var HAS_HASHCHANGE = (function() {
 		var doc_mode = window.documentMode;
@@ -76,7 +80,7 @@
 			// reset the hash
 			// this.lastHash = null;
 			this.lastHash = "#"+document.location.href.split('#')[1];
-			this.onHashChange();
+			// this.onHashChange();
 			this.update();
 
 			if (!this.isListening) {

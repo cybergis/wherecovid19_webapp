@@ -153,20 +153,25 @@ getPosition(geolocation_options)
     })
 
 var zoomToUserLocation = function () {
-    console.log("Trying to center view to user location ....");
-    if (!userCentered || userGeolocationTriedCounter > 60) {
-        if (userLat != null && userLng != null) {
-            userLatLonAction({ lat: userLat, lng: userLng });
-            userCentered = true;
-            addMarker();
-            console.log("centered");
+    // Only locate user when detailed URL information is not given
+    if (document.location.href.includes("#") == false) {
+
+        console.log("Trying to center view to user location ....");
+        if (!userCentered || userGeolocationTriedCounter > 60) {
+            if (userLat != null && userLng != null) {
+                userLatLonAction({ lat: userLat, lng: userLng });
+                userCentered = true;
+                addMarker();
+                console.log("centered");
+            } else {
+                console.log("User location still unknown; Will try again in 1s.");
+            }
         } else {
-            console.log("User location still unknown; Will try again in 1s.");
+            clearInterval(userGeolocationTimer);
         }
-    } else {
-        clearInterval(userGeolocationTimer);
+        userGeolocationTriedCounter = userGeolocationTriedCounter + 1;
     }
-    userGeolocationTriedCounter = userGeolocationTriedCounter + 1;
+    
 }
 
 var zoomToUserLocationPromise = function () {
@@ -1073,22 +1078,24 @@ var onOverlayAdd = function (e) {
     }
 
     refreshLegend(e.layer);
-
-    if (e.layer == il_chicago_acc_v_layer_object || e.layer == il_chicago_acc_i_layer_object) {
-        // Trigger click event to change the tab page
-        $("#illinois-tab").trigger("click");
-        map.setView([41.87, -87.62], 10)
-    } else if (e.group.name == "Illinois") {
-        $("#illinois-tab").trigger("click");
-        map.setView([40, -89], 7)
-    } else if (e.group.name == "US") {
-        $("#county-tab").trigger("click");
-        map.setView([37, -96], 4)
-    } else if (e.group.name == "World") {
-        $("#world-tab").trigger("click");
-        map.setView([0, 0], 2)
+    // Only reset view when the map is already initialized
+    if (initializedTag == true) {
+        if (e.layer == il_chicago_acc_v_layer_object || e.layer == il_chicago_acc_i_layer_object) {
+            // Trigger click event to change the tab page
+            $("#illinois-tab").trigger("click");
+            map.setView([41.87, -87.62], 10)
+        } else if (e.group.name == "Illinois") {
+            $("#illinois-tab").trigger("click");
+            map.setView([40, -89], 7)
+        } else if (e.group.name == "US") {
+            $("#county-tab").trigger("click");
+            map.setView([37, -96], 4)
+        } else if (e.group.name == "World") {
+            $("#world-tab").trigger("click");
+            map.setView([0, 0], 2)
+        }    
     }
-
+    
     // hide_loader();
 
     world_table.$('tr.selected').removeClass('selected');
