@@ -83,7 +83,6 @@
 				this.startListening();
 			}
 
-			console.log(document.location.href);
 			initializedTag = true;
 		},
 
@@ -116,24 +115,12 @@
 
 		movingMap: false,
 		update: function() {
-			console.log(location);
-			// if (initializedTag == false) {
-			// 	var hash = "#"+document.location.href.split('#')[1];
-			// 	console.log("**************************************");
-			// 	console.log(hash);
-			// } else {
-			// 	console.log("######################################");
-			// 	var hash = this.formatHash(this.map);
-			// }		
-			// var hash = location.hash;
-			// if (hash === this.lastHash) {
-			// 	return;
-			// }
+			// Get the view of URL when initializing the map 
+			// But change the hash according to current view after initialization 
+			
 			if (initializedTag == false) {
-				console.log("**************************************");
 				hash = this.lastHash;
 			} else {
-				console.log("######################################");
 				hash = this.formatHash(this.map);
 				if (hash === this.lastHash) {
 					return;
@@ -148,7 +135,6 @@
 					options = this.options,
 					that = this;
 
-				console.log(layers);
 				//Add/remove layers
 				this.map.eachLayer(function(layer) {
 					that.map.removeLayer(layer);
