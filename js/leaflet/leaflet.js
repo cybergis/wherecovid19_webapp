@@ -1022,11 +1022,17 @@ var groupedOverlays = {
     "US": {},
     "World": {}
 };
+
 var options = {
     // Make the groups exclusive (use radio inputs)
     exclusiveGroups: ["Illinois", "US", "World"],
     // Show a checkbox next to non-exclusive group labels for toggling all
     groupCheckboxes: true
+};
+
+var allMapLayers = {
+    "Light_Mode": osm,
+    "Dark_Mode": CartoDB_DarkMatter,
 };
 
 // add layer control to the map
@@ -1180,6 +1186,7 @@ var add_esri_layer_to_map = function (layer_info) {
     }
     // add layer into LayerControl UI list
     layerControl.addOverlay(layer_obj, layer_info.display_name, layer_info.category);
+    allMapLayers[layer_info.name] = layer_obj;
 
 }
 
@@ -1221,6 +1228,7 @@ var add_static_layer_to_map = function (layer_info) {
 
     // add layer into LayerControl UI list
     layerControl.addOverlay(layer_obj, layer_info.display_name, layer_info.category);
+    allMapLayers[layer_info.name] = layer_obj;
 
 }
 
@@ -1311,6 +1319,7 @@ var add_animation_layer_to_map = function (layer_info) {
 
     // add layer into LayerControl UI list
     layerControl.addOverlay(layer_obj, layer_info.display_name, layer_info.category);
+    allMapLayers[layer_info.name] = layer_obj;
 
     // switch_left_tab_page_handler
     // switch_left_tab_page_handler(layer_info);
@@ -1318,6 +1327,10 @@ var add_animation_layer_to_map = function (layer_info) {
     //popup
 }
 
+var addUrlHash = function() {
+    // console.log(allMapLayers);
+    var hash = new L.Hash(map, allMapLayers);
+}
 
 var chain_promise = function (layer_info) {
     return loadGeoJson(layer_info).then(function(result) {
@@ -1344,6 +1357,9 @@ loadClassJson(class_json_url).then(
         return Promise.allSettled(layer_info_list_3.map(chain_promise));
     }).then(function() {
         return Promise.allSettled(layer_info_list_4.map(chain_promise));
+    }).then(function() {
+        addUrlHash();
+        return Promise.resolve(1);
     })
 );
 
