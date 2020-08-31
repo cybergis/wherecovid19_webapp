@@ -1043,6 +1043,7 @@ var allMapLayers = {
 // add layer control to the map
 var layerControl = L.control.groupedLayers(baseMaps, groupedOverlays, options);
 map.addControl(layerControl);
+map.removeLayer(osm);
 
 // add zoom control to the map
 var zoomHome = new L.Control.zoomHome();
