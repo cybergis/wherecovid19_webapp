@@ -1840,12 +1840,17 @@ var updateChart = function (graphic) {
     }
 
     var LabelDates = [];
+    // IDPH data started from 2020-03-17
     if (graphic.properties.start == "2020-03-17") {
         var LabelDate = new Date(2020, 2, 9);
-    } else if (graphic.properties.start == "2020-01-11") {
-        var LabelDate = new Date(2020, 0, 3);
-    } else {
+    }
+    // NYT state-level data started from 2020-01-21
+    else if (graphic.properties.start == "2020-01-21") {
         var LabelDate = new Date(2020, 0, 13);
+    }
+    // WHO data started from 2020-01-04
+    else if (graphic.properties.start == "2020-01-04") {
+        var LabelDate = new Date(2019, 11, 27);
     }
 
     for (i = 0; i < ExtendedCasesArray.length; i++) {
