@@ -1284,6 +1284,8 @@ loadClassJson(class_json_url).then(
     }).then(function() {
         return Promise.allSettled(layer_info_list_2.map(chain_promise));
     }).then(function() {
+        // Add default layer
+        map.addLayer(il_vul_layer_object);
         addUrlHash();
         return Promise.resolve(1);
     })
