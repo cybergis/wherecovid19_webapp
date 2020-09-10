@@ -1021,17 +1021,17 @@ var onOverlayAdd = function (e) {
     
     // hide_loader();
 
-    world_table.$('tr.selected').removeClass('selected');
-    document.getElementById("world-search-input").value = '';
-    $("#world-search-input").trigger("input");
+    // world_table.$('tr.selected').removeClass('selected');
+    // document.getElementById("world-search-input").value = '';
+    // $("#world-search-input").trigger("input");
 
-    county_table.$('tr.selected').removeClass('selected');
-    document.getElementById("w-search-input").value = '';
-    $("#w-search-input").trigger("input");
+    // county_table.$('tr.selected').removeClass('selected');
+    // document.getElementById("w-search-input").value = '';
+    // $("#w-search-input").trigger("input");
 
-    il_table.$('tr.selected').removeClass('selected');
-    document.getElementById("il-search-input").value = '';
-    $("#il-search-input").trigger("input");
+    // il_table.$('tr.selected').removeClass('selected');
+    // document.getElementById("il-search-input").value = '';
+    // $("#il-search-input").trigger("input");
     
 }
 
@@ -1273,6 +1273,7 @@ var chain_promise = function (layer_info) {
 // Promise Entry Point
 loadClassJson(class_json_url).then(
     Promise.allSettled(layer_info_list.map(chain_promise)).then(function() {
+        left_tab_button_handler();
         // switch_left_tab_page_handler_old();
         // left_tab_page_table_click_old();
     }).then(function() {
@@ -1353,6 +1354,88 @@ var switch_left_tab_page_handler_old = function (layer_info) {
             });
             // show_loader();
             map.addLayer(world_case_layer_object);
+        }
+    });
+
+}
+
+var left_tab_button_handler = function (layer_info) {
+
+    document.getElementById("svi_button").addEventListener("click", function(event) {
+        if (map.hasLayer(il_svi_layer_object) != true) {
+            map.eachLayer(function(layer) {
+                if (layer._url == undefined) {
+                    map.removeLayer(layer);
+                }
+            });
+            // show_loader();
+            map.addLayer(il_svi_layer_object);
+            map.setView([40, -89], 7);
+        }
+    });
+
+    document.getElementById("vul_button").addEventListener("click", function(event) {
+        if (map.hasLayer(il_vul_layer_object) != true) {
+            map.eachLayer(function(layer) {
+                if (layer._url == undefined) {
+                    map.removeLayer(layer);
+                }
+            });
+            // show_loader();
+            map.addLayer(il_vul_layer_object);
+            map.setView([40, -89], 7);
+        }
+    });
+
+    document.getElementById("acc_v_chi_button").addEventListener("click", function(event) {
+        if (map.hasLayer(il_chicago_acc_v_layer_object) != true) {
+            map.eachLayer(function(layer) {
+                if (layer._url == undefined) {
+                    map.removeLayer(layer);
+                }
+            });
+            // show_loader();
+            map.addLayer(il_chicago_acc_v_layer_object);
+            map.setView([41.87, -87.62], 10);
+        }
+    });
+
+    document.getElementById("acc_i_chi_button").addEventListener("click", function(event) {
+        if (map.hasLayer(il_chicago_acc_i_layer_object) != true) {
+            map.eachLayer(function(layer) {
+                if (layer._url == undefined) {
+                    map.removeLayer(layer);
+                }
+            });
+            // show_loader();
+            map.addLayer(il_chicago_acc_i_layer_object);
+            map.setView([41.87, -87.62], 10);
+        }
+    });
+
+    document.getElementById("acc_v_il_button").addEventListener("click", function(event) {
+        if (map.hasLayer(il_acc_v_layer_object) != true) {
+            map.eachLayer(function(layer) {
+                if (layer._url == undefined) {
+                    map.removeLayer(layer);
+                }
+            });
+            // show_loader();
+            map.addLayer(il_acc_v_layer_object);
+            map.setView([40, -89], 7);
+        }
+    });
+
+    document.getElementById("acc_i_il_button").addEventListener("click", function(event) {
+        if (map.hasLayer(il_acc_i_layer_object) != true) {
+            map.eachLayer(function(layer) {
+                if (layer._url == undefined) {
+                    map.removeLayer(layer);
+                }
+            });
+            // show_loader();
+            map.addLayer(il_acc_i_layer_object);
+            map.setView([40, -89], 7);
         }
     });
 
