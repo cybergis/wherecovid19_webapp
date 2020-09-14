@@ -485,6 +485,80 @@ var numberWithCommas = function (x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+var fill_left_panel_vul = function (geojson) {
+    let tab = document.getElementById('illinois-tab');
+
+    let illinois_table = document.getElementById('illinois-table').querySelector('tbody');
+    let template = document.querySelector('template')
+    let result_list = geojson.features.map(function(value, index) {
+        return {
+            centroid_x: turf.centroid(value.geometry).geometry.coordinates[0],
+            centroid_y: turf.centroid(value.geometry).geometry.coordinates[1],
+            bounds: value.geometry.coordinates,
+            // uid: value.properties.OBJECTID,
+            county: value.properties.NAME,
+            vul: value.properties.today_vul,
+        }
+    });
+
+    //console.log(result_list);
+
+    result_list.forEach(function(value) {
+
+        let instance = template.content.cloneNode(true);
+
+        if (value.county == "Illinois") {
+        } else {
+            instance.querySelector('th').innerHTML = value.county;
+            instance.querySelector('th').setAttribute('data-x', value.centroid_x);
+            instance.querySelector('th').setAttribute('data-y', value.centroid_y);
+            instance.querySelector('th').setAttribute('data-bounds', value.bounds);
+            // instance.querySelector('th').setAttribute('data-uid', value.uid);
+            instance.querySelector('th').setAttribute('data-county', value.county);
+
+            instance.querySelector('.confirmed').innerHTML = '<span>' + Math.round(value.vul*10000)/100+'%';
+            instance.querySelector('.confirmed').setAttribute('data-order', value.vul);
+            illinois_table.appendChild(instance);
+        }
+    })
+
+    il_table = $('#illinois-table').DataTable({
+        paging: true,
+        pagingType: "simple_numbers",
+        pageLength: 50,
+        ordering: true,
+        order: [
+            [1, "desc"]
+        ],
+        info: false,
+        responsive: true,
+        dom: "pt",
+    });
+
+
+    $('#illinois-table').on('click', 'tr', function() {
+        if ($(this).hasClass('selected')) {
+            $(this).removeClass('selected');
+        } else {
+            il_table.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+        }
+    });
+
+    $('#il-search-input').on('input', function() {
+        console.log($('#il-search-input').val());
+        il_table.column(0).search($('#il-search-input').val()).draw();
+        il_table.$('tr.selected').removeClass('selected');
+    });
+
+    $('#il-search-input').on('textchange', function() {
+        console.log($('#il-search-input').val());
+        // If using regex in strict search, the context can only be searched in targetTable.column(i) instead of targetTable
+        il_table.column(0).search('^'+$('#il-search-input').val()+'$', true, false).draw();
+    });
+
+}
+
 var fill_left_panel_il = function (geojson) {
     let tab = document.getElementById('illinois-tab');
 
@@ -804,14 +878,17 @@ var fill_left_panel_world = function (geojson) {
 
 var fill_left_panel_promise = function (layer_info) {
     return new Promise((resolve, reject) => {
-        if (layer_info.name == "il_county_case") {
-            fill_left_panel_il(layer_info.geojson_obj);
-        } else if (layer_info.name == "us_county_case") {
-            fill_left_panel_us_county(layer_info.geojson_obj);
-        } else if (layer_info.name == "us_state_case") {
-            fill_left_panel_us_state(layer_info.geojson_obj);
-        } else if (layer_info.name == "world_case") {
-            fill_left_panel_world(layer_info.geojson_obj);
+        // if (layer_info.name == "il_county_case") {
+        //     fill_left_panel_il(layer_info.geojson_obj);
+        // } else if (layer_info.name == "us_county_case") {
+        //     fill_left_panel_us_county(layer_info.geojson_obj);
+        // } else if (layer_info.name == "us_state_case") {
+        //     fill_left_panel_us_state(layer_info.geojson_obj);
+        // } else if (layer_info.name == "world_case") {
+        //     fill_left_panel_world(layer_info.geojson_obj);
+        // } else 
+        if (layer_info.name == "il_vul") {
+            fill_left_panel_vul(layer_info.geojson_obj);
         }
         hide_loader();
         resolve();
