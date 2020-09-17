@@ -37,8 +37,13 @@ var boundaryUS = [
 ];
 
 var locIcon = L.icon({
-    // iconUrl: 'https://img.icons8.com/color/48/000000/map-pin.png',
     iconUrl: 'img/point.gif',
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
+});
+
+var hospitalIcon = L.icon({
+    iconUrl: 'img/Red-Cross.png',
     iconSize: [24, 24],
     iconAnchor: [12, 12],
 });
@@ -73,6 +78,16 @@ var il_hiv_layer_object = null;
 var il_svi_layer_object = null;
 var il_testing_sites_layer_object = null;
 var il_zipcode_case_layer_object = null;
+var il_hospital_layer_object = null;
+var il_chicago_hospital_layer_object = null;
+
+var il_vul_geojson = null;
+var il_acc_i_geojson= null;
+var il_acc_v_geojson = null;
+var il_chicago_acc_v_geojson = null;
+var il_chicago_acc_i_geojson = null;
+var il_hospital_geojson = null;
+var il_chicago_hospital_geojson = null;
 
 //////////////////////////////////// Load GeoJSON File ////////////////////////////////////
 
@@ -390,6 +405,30 @@ var layer_info_list_2 = [
     "esri_url": "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/SVI_2018/MapServer",
     "animation": false,
 },
+{
+    "name": "il_hospitals",
+    "display_name": "Illinois Hospitals",
+    "geojson_url": "preprocessing/illinois/illinois_hospitals.geojson",
+    "category": "Illinois",
+    "show": false,
+    // "style_func": styleFunc1,
+    // "color_class": ["state", "case_per_100k_capita", "nolog", "NaturalBreaks", "int"],
+    // "tab_page_id": "world-tab",
+    "animation": false,
+
+},
+{
+    "name": "chi_hospitals",
+    "display_name": "Chicago Hospitals",
+    "geojson_url": "preprocessing/illinois/chicago_hospitals.geojson",
+    "category": "Illinois",
+    "show": false,
+    // "style_func": styleFunc1,
+    // "color_class": ["state", "case_per_100k_capita", "nolog", "NaturalBreaks", "int"],
+    // "tab_page_id": "world-tab",
+    "animation": false,
+
+},
 ];
 
 var getLayerInfo = function (name, field = "name") {
@@ -465,7 +504,11 @@ var add_animation_layer_to_map_promise = function (layer_info) {
         if (layer_info.name != 'il_county_case' &&
         layer_info.name != 'us_county_case' &&
         layer_info.name != 'us_state_case' &&
-        layer_info.name != 'world_case' ) {
+        layer_info.name != 'world_case' 
+        // &&
+        // layer_info.name != 'il_hospitals' &&
+        // layer_info.name != 'chi_hospitals' 
+        ) {
             if (layer_info.esri_url != undefined) {
                 add_esri_layer_to_map(layer_info);
             } else if (layer_info.animation == false) {
@@ -486,6 +529,13 @@ var numberWithCommas = function (x) {
 }
 
 var fill_left_panel_vul = function (geojson) {
+
+    if (il_table != undefined) {
+        il_table.clear();
+        il_table.destroy();
+    }
+
+    $('illinois-table tbody').empty();
     let tab = document.getElementById('illinois-tab');
 
     let illinois_table = document.getElementById('illinois-table').querySelector('tbody');
@@ -495,7 +545,7 @@ var fill_left_panel_vul = function (geojson) {
             centroid_x: turf.centroid(value.geometry).geometry.coordinates[0],
             centroid_y: turf.centroid(value.geometry).geometry.coordinates[1],
             bounds: value.geometry.coordinates,
-            // uid: value.properties.OBJECTID,
+            geoid: value.properties.GEOID,
             county: value.properties.NAME,
             vul: value.properties.today_vul,
         }
@@ -509,32 +559,38 @@ var fill_left_panel_vul = function (geojson) {
 
         if (value.county == "Illinois") {
         } else {
-            instance.querySelector('th').innerHTML = value.county;
+            instance.querySelector('th').innerHTML = value.geoid;
             instance.querySelector('th').setAttribute('data-x', value.centroid_x);
             instance.querySelector('th').setAttribute('data-y', value.centroid_y);
             instance.querySelector('th').setAttribute('data-bounds', value.bounds);
-            // instance.querySelector('th').setAttribute('data-uid', value.uid);
+            instance.querySelector('th').setAttribute('data-geoid', value.geoid);
             instance.querySelector('th').setAttribute('data-county', value.county);
 
-            instance.querySelector('.confirmed').innerHTML = '<span>' + Math.round(value.vul*10000)/100+'%';
-            instance.querySelector('.confirmed').setAttribute('data-order', value.vul);
+            instance.querySelector('.confirmed').innerHTML = '<span>' + value.county;
+            instance.querySelector('.confirmed').setAttribute('data-order', value.county);
+            instance.querySelector('.death').innerHTML = '<span>' + Math.round(value.vul*10000)/100+'%';
+            instance.querySelector('.death').setAttribute('data-order', value.vul);
             illinois_table.appendChild(instance);
         }
     })
-
+    
     il_table = $('#illinois-table').DataTable({
+        destroy: true,
         paging: true,
         pagingType: "simple_numbers",
         pageLength: 50,
         ordering: true,
         order: [
-            [1, "desc"]
+            [2, "desc"]
         ],
         info: false,
         responsive: true,
         dom: "pt",
     });
 
+    $(il_table.column(0).header()).text('GEOID');
+    $(il_table.column(1).header()).text('County');
+    $(il_table.column(2).header()).text('Vulnerability');
 
     $('#illinois-table').on('click', 'tr', function() {
         if ($(this).hasClass('selected')) {
@@ -547,36 +603,39 @@ var fill_left_panel_vul = function (geojson) {
 
     $('#il-search-input').on('input', function() {
         console.log($('#il-search-input').val());
-        il_table.column(0).search($('#il-search-input').val()).draw();
+        il_table.column(1).search($('#il-search-input').val()).draw();
         il_table.$('tr.selected').removeClass('selected');
     });
 
     $('#il-search-input').on('textchange', function() {
         console.log($('#il-search-input').val());
         // If using regex in strict search, the context can only be searched in targetTable.column(i) instead of targetTable
-        il_table.column(0).search('^'+$('#il-search-input').val()+'$', true, false).draw();
+        il_table.column(1).search('^'+$('#il-search-input').val()+'$', true, false).draw();
     });
 
 }
 
-var fill_left_panel_il = function (geojson) {
+var fill_left_panel_acc_i = function (geojson) {
+
+    if (il_table != undefined) {
+        il_table.clear();
+        il_table.destroy();
+    }
+
+    $('illinois-table tbody').empty();
     let tab = document.getElementById('illinois-tab');
 
     let illinois_table = document.getElementById('illinois-table').querySelector('tbody');
     let template = document.querySelector('template')
     let result_list = geojson.features.map(function(value, index) {
         return {
-            centroid_x: turf.centroid(value.geometry).geometry.coordinates[0],
-            centroid_y: turf.centroid(value.geometry).geometry.coordinates[1],
+            centroid_x: value.properties.X,
+            centroid_y: value.properties.Y,
             bounds: value.geometry.coordinates,
-            uid: value.properties.OBJECTID,
-            county: value.properties.NAME,
-            case: value.properties.today_case,
-            new_case: value.properties.today_new_case,
-            death: value.properties.today_death,
-            new_death: value.properties.today_new_death,
-            tested: value.properties.today_tested,
-            new_tested: value.properties.today_new_tested
+            hospital: value.properties.Hospital,
+            city: value.properties.City,
+            icu: value.properties.Total_Bed,
+            vent:value.properties.Total_Vent,
         }
     });
 
@@ -587,47 +646,39 @@ var fill_left_panel_il = function (geojson) {
         let instance = template.content.cloneNode(true);
 
         if (value.county == "Illinois") {
-            tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(value.case)
-            let case_div = document.getElementById('illinois_total_case_number')
-            let death_div = document.getElementById('illinois_total_death_number')
-            let test_div = document.getElementById('illinois_total_test_number')
-            case_div.querySelector('.case-number').innerHTML = numberWithCommas(value.case)
-            case_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(value.new_case)
-            death_div.querySelector('.case-number').innerHTML = numberWithCommas(value.death)
-            death_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(value.new_death)
-            test_div.querySelector('.case-number').innerHTML = numberWithCommas(value.tested)
-            test_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(value.new_tested)
         } else {
-            instance.querySelector('th').innerHTML = value.county;
+            instance.querySelector('th').innerHTML = value.hospital;
             instance.querySelector('th').setAttribute('data-x', value.centroid_x);
             instance.querySelector('th').setAttribute('data-y', value.centroid_y);
             instance.querySelector('th').setAttribute('data-bounds', value.bounds);
-            instance.querySelector('th').setAttribute('data-uid', value.uid);
-            instance.querySelector('th').setAttribute('data-county', value.county);
+            instance.querySelector('th').setAttribute('data-city', value.city);
+            instance.querySelector('th').setAttribute('data-hospital', value.hospital);
 
-            instance.querySelector('.confirmed').innerHTML = '<span>' + numberWithCommas(value.case) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_case);
-            instance.querySelector('.death').innerHTML = '<span>' + numberWithCommas(value.death) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_death);
-            instance.querySelector('.tested').innerHTML = '<span>' + numberWithCommas(value.tested) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_tested);
-            instance.querySelector('.confirmed').setAttribute('data-order', value.case);
-            instance.querySelector('.death').setAttribute('data-order', value.death);
-            instance.querySelector('.tested').setAttribute('data-order', value.tested);
+            instance.querySelector('.confirmed').innerHTML = '<span>' + value.city;
+            instance.querySelector('.confirmed').setAttribute('data-order', value.city);
+            instance.querySelector('.death').innerHTML = '<span>' + value.icu;
+            instance.querySelector('.death').setAttribute('data-order', value.icu);
             illinois_table.appendChild(instance);
         }
     })
 
     il_table = $('#illinois-table').DataTable({
+        destroy: true,
         paging: true,
         pagingType: "simple_numbers",
         pageLength: 50,
         ordering: true,
         order: [
-            [1, "desc"]
+            [2, "desc"]
         ],
         info: false,
         responsive: true,
         dom: "pt",
     });
 
+    $(il_table.column(0).header()).text('Hospital Name');
+    $(il_table.column(1).header()).text('City');
+    $(il_table.column(2).header()).text('ICU beds');
 
     $('#illinois-table').on('click', 'tr', function() {
         if ($(this).hasClass('selected')) {
@@ -640,255 +691,114 @@ var fill_left_panel_il = function (geojson) {
 
     $('#il-search-input').on('input', function() {
         console.log($('#il-search-input').val());
-        il_table.column(0).search($('#il-search-input').val()).draw();
+        il_table.column(1).search($('#il-search-input').val()).draw();
         il_table.$('tr.selected').removeClass('selected');
     });
 
     $('#il-search-input').on('textchange', function() {
         console.log($('#il-search-input').val());
         // If using regex in strict search, the context can only be searched in targetTable.column(i) instead of targetTable
-        il_table.column(0).search('^'+$('#il-search-input').val()+'$', true, false).draw();
+        il_table.column(1).search('^'+$('#il-search-input').val()+'$', true, false).draw();
     });
 
 }
 
-// Use county data to fill the list
-var fill_left_panel_us_county = function (geojson) {
-    // var sum_us_counties_today_case = 0;
-    // var sum_us_counties_today_death = 0;
-    // var sum_us_counties_today_new_case = 0;
-    // var sum_us_counties_today_new_death = 0;
-    let counties_table = document.getElementById('county-table').querySelector('tbody');
-    let template = document.querySelectorAll('template')[1]
+var fill_left_panel_acc_v = function (geojson) {
 
+    if (il_table != undefined) {
+        il_table.clear();
+        il_table.destroy();
+    }
+
+    $('illinois-table tbody').empty();
+    let tab = document.getElementById('illinois-tab');
+
+    let illinois_table = document.getElementById('illinois-table').querySelector('tbody');
+    let template = document.querySelector('template')
     let result_list = geojson.features.map(function(value, index) {
         return {
-            centroid_x: turf.centroid(value.geometry).geometry.coordinates[0],
-            centroid_y: turf.centroid(value.geometry).geometry.coordinates[1],
+            centroid_x: value.properties.X,
+            centroid_y: value.properties.Y,
             bounds: value.geometry.coordinates,
-            uid: value.properties.OBJECTID,
-            county: value.properties.NAME,
-            state: value.properties.state_name,
-            case: value.properties.today_case,
-            new_case: value.properties.today_new_case,
-            death: value.properties.today_death,
-            new_death: value.properties.today_new_death,
+            hospital: value.properties.Hospital,
+            city: value.properties.City,
+            icu: value.properties.Total_Bed,
+            vent:value.properties.Total_Vent,
         }
     });
 
     //console.log(result_list);
 
     result_list.forEach(function(value) {
+
         let instance = template.content.cloneNode(true);
 
-        instance.querySelector('th').innerHTML = value.county + ", " + value.state;
-        instance.querySelector('th').setAttribute('data-x', value.centroid_x);
-        instance.querySelector('th').setAttribute('data-y', value.centroid_y);
-        instance.querySelector('th').setAttribute('data-bounds', value.bounds);
-        instance.querySelector('th').setAttribute('data-uid', value.uid);
-        instance.querySelector('th').setAttribute('data-county', value.county);
-        instance.querySelector('th').setAttribute('data-state', value.state);
-        instance.querySelector('.confirmed').innerHTML = '<span>' + numberWithCommas(value.case) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_case);
-        instance.querySelector('.death').innerHTML = '<span>' + numberWithCommas(value.death) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_death);
-        instance.querySelector('.confirmed').setAttribute('data-order', value.case);
-        instance.querySelector('.death').setAttribute('data-order', value.death);
-        counties_table.appendChild(instance);
+        if (value.county == "Illinois") {
+        } else {
+            instance.querySelector('th').innerHTML = value.hospital;
+            instance.querySelector('th').setAttribute('data-x', value.centroid_x);
+            instance.querySelector('th').setAttribute('data-y', value.centroid_y);
+            instance.querySelector('th').setAttribute('data-bounds', value.bounds);
+            instance.querySelector('th').setAttribute('data-city', value.city);
+            instance.querySelector('th').setAttribute('data-hospital', value.hospital);
 
-        // sum_us_counties_today_case += value.case;
-        // sum_us_counties_today_death += value.death;
-        // sum_us_counties_today_new_case += value.new_case;
-        // sum_us_counties_today_new_death += value.new_death;
+            instance.querySelector('.confirmed').innerHTML = '<span>' + value.city;
+            instance.querySelector('.confirmed').setAttribute('data-order', value.city);
+            instance.querySelector('.death').innerHTML = '<span>' + value.vent;
+            instance.querySelector('.death').setAttribute('data-order', value.vent);
+            illinois_table.appendChild(instance);
+        }
     })
 
-    // let tab = document.getElementById('county-tab');
-    // tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(sum_us_counties_today_case)
-    // let case_div = document.getElementById('counties_total_case_number')
-    // let death_div = document.getElementById('counties_total_death_number')
-    // case_div.querySelector('.case-number').innerHTML = numberWithCommas(sum_us_counties_today_case)
-    // case_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(sum_us_counties_today_new_case)
-    // death_div.querySelector('.case-number').innerHTML = numberWithCommas(sum_us_counties_today_death)
-    // death_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(sum_us_counties_today_new_death)
-
-    county_table = $('#county-table').DataTable({
+    il_table = $('#illinois-table').DataTable({
+        destroy: true,
         paging: true,
         pagingType: "simple_numbers",
         pageLength: 50,
         ordering: true,
         order: [
-            [1, "desc"]
+            [2, "desc"]
         ],
         info: false,
         responsive: true,
         dom: "pt",
     });
 
+    $(il_table.column(0).header()).text('Hospital Name');
+    $(il_table.column(1).header()).text('City');
+    $(il_table.column(2).header()).text('Ventilators');
 
-    $('#county-table').on('click', 'tr', function() {
+    $('#illinois-table').on('click', 'tr', function() {
         if ($(this).hasClass('selected')) {
             $(this).removeClass('selected');
         } else {
-            county_table.$('tr.selected').removeClass('selected');
+            il_table.$('tr.selected').removeClass('selected');
             $(this).addClass('selected');
         }
     });
 
-    $('#w-search-input').on('input', function() {
-        console.log($('#w-search-input').val());
-        county_table.column(0).search($('#w-search-input').val()).draw();
-        county_table.$('tr.selected').removeClass('selected');
+    $('#il-search-input').on('input', function() {
+        console.log($('#il-search-input').val());
+        il_table.column(1).search($('#il-search-input').val()).draw();
+        il_table.$('tr.selected').removeClass('selected');
     });
 
-    $('#w-search-input').on('textchange', function() {
-        console.log($('#w-search-input').val());
+    $('#il-search-input').on('textchange', function() {
+        console.log($('#il-search-input').val());
         // If using regex in strict search, the context can only be searched in targetTable.column(i) instead of targetTable
-        county_table.column(0).search('^'+$('#w-search-input').val()+'$', true, false).draw();
-    });
-}
-
-// Use state data to fill the sum number
-var fill_left_panel_us_state = function (geojson) {
-    // In this function, all 'counties' represents 'states'
-    var sum_us_counties_today_case = 0;
-    var sum_us_counties_today_death = 0;
-    var sum_us_counties_today_new_case = 0;
-    var sum_us_counties_today_new_death = 0;
-
-    let result_list = geojson.features.map(function(value, index) {
-        return {
-            centroid_x: turf.centroid(value.geometry).geometry.coordinates[0],
-            centroid_y: turf.centroid(value.geometry).geometry.coordinates[1],
-            bounds: value.geometry.coordinates,
-            uid: value.properties.OBJECTID,
-            state: value.properties.NAME,
-            case: value.properties.today_case,
-            new_case: value.properties.today_new_case,
-            death: value.properties.today_death,
-            new_death: value.properties.today_new_death,
-        }
-    });
-
-    //console.log(result_list);
-
-    result_list.forEach(function(value) {
-        sum_us_counties_today_case += value.case;
-        sum_us_counties_today_death += value.death;
-        sum_us_counties_today_new_case += value.new_case;
-        sum_us_counties_today_new_death += value.new_death;
-    })
-
-    let tab = document.getElementById('county-tab');
-    tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(sum_us_counties_today_case)
-    let case_div = document.getElementById('counties_total_case_number')
-    let death_div = document.getElementById('counties_total_death_number')
-    case_div.querySelector('.case-number').innerHTML = numberWithCommas(sum_us_counties_today_case)
-    case_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(sum_us_counties_today_new_case)
-    death_div.querySelector('.case-number').innerHTML = numberWithCommas(sum_us_counties_today_death)
-    death_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(sum_us_counties_today_new_death)
-}
-
-var fill_left_panel_world = function (geojson) {
-    var sum_world_today_case = 0;
-    var sum_world_today_death = 0;
-    var sum_world_today_new_case = 0;
-    var sum_world_today_new_death = 0;
-    let worlds_table = document.getElementById('world-table').querySelector('tbody');
-    let template = document.querySelectorAll('template')[1]
-
-    let result_list = geojson.features.map(function(value, index) {
-        return {
-            centroid_x: turf.centroid(value.geometry).geometry.coordinates[0],
-            centroid_y: turf.centroid(value.geometry).geometry.coordinates[1],
-            bounds: value.geometry.coordinates,
-            uid: value.properties.OBJECTID,
-            country: value.properties.NAME,
-            case: value.properties.today_case,
-            new_case: value.properties.today_new_case,
-            death: value.properties.today_death,
-            new_death: value.properties.today_new_death,
-        }
-    });
-
-    //console.log(result_list);
-
-    result_list.forEach(function(value) {
-        let instance = template.content.cloneNode(true);
-
-        instance.querySelector('th').innerHTML = value.country;
-        instance.querySelector('th').setAttribute('data-x', value.centroid_x);
-        instance.querySelector('th').setAttribute('data-y', value.centroid_y);
-        instance.querySelector('th').setAttribute('data-bounds', value.bounds);
-        instance.querySelector('th').setAttribute('data-country', value.country);
-        instance.querySelector('.confirmed').innerHTML = '<span>' + numberWithCommas(value.case) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_case);
-        instance.querySelector('.death').innerHTML = '<span>' + numberWithCommas(value.death) + '</span><br><i class="fas fa-caret-up"></i> ' + numberWithCommas(value.new_death);
-        instance.querySelector('.confirmed').setAttribute('data-order', value.case);
-        instance.querySelector('.death').setAttribute('data-order', value.death);
-        worlds_table.appendChild(instance);
-
-        sum_world_today_case += value.case;
-        sum_world_today_death += value.death;
-        sum_world_today_new_case += value.new_case;
-        sum_world_today_new_death += value.new_death;
-    })
-
-    let tab = document.getElementById('world-tab');
-    tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(sum_world_today_case)
-    let case_div = document.getElementById('world_total_case_number')
-    let death_div = document.getElementById('world_total_death_number')
-    case_div.querySelector('.case-number').innerHTML = numberWithCommas(sum_world_today_case)
-    case_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(sum_world_today_new_case)
-    death_div.querySelector('.case-number').innerHTML = numberWithCommas(sum_world_today_death)
-    death_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(sum_world_today_new_death)
-
-    world_table = $('#world-table').DataTable({
-        paging: true,
-        pagingType: "simple_numbers",
-        pageLength: 50,
-        ordering: true,
-        order: [
-            [1, "desc"]
-        ],
-        info: false,
-        responsive: true,
-        dom: "pt",
-    });
-
-
-    $('#world-table').on('click', 'tr', function() {
-        if ($(this).hasClass('selected')) {
-            $(this).removeClass('selected');
-        } else {
-            world_table.$('tr.selected').removeClass('selected');
-            $(this).addClass('selected');
-        }
-    });
-
-    $('#world-search-input').on('input', function() {
-        console.log($('#world-search-input').val());
-        world_table.column(0).search($('#world-search-input').val()).draw();
-        world_table.$('tr.selected').removeClass('selected');
-    });
-
-    $('#world-search-input').on('textchange', function() {
-        console.log($('#world-search-input').val());
-        // If using regex in strict search, the context can only be searched in targetTable.column(i) instead of targetTable
-        world_table.column(0).search('^'+$('#world-search-input').val()+'$', true, false).draw();
+        il_table.column(1).search('^'+$('#il-search-input').val()+'$', true, false).draw();
     });
 
 }
 
 var fill_left_panel_promise = function (layer_info) {
     return new Promise((resolve, reject) => {
-        // if (layer_info.name == "il_county_case") {
-        //     fill_left_panel_il(layer_info.geojson_obj);
-        // } else if (layer_info.name == "us_county_case") {
-        //     fill_left_panel_us_county(layer_info.geojson_obj);
-        // } else if (layer_info.name == "us_state_case") {
-        //     fill_left_panel_us_state(layer_info.geojson_obj);
-        // } else if (layer_info.name == "world_case") {
-        //     fill_left_panel_world(layer_info.geojson_obj);
-        // } else 
         if (layer_info.name == "il_vul") {
             fill_left_panel_vul(layer_info.geojson_obj);
+        } if (layer_info.name == "il_hospitals") {
+            // fill_left_panel_acc_i(layer_info.geojson_obj);
+        } if (layer_info.name == "chi_hospitals") {
+            // fill_left_panel_acc_i(layer_info.geojson_obj);
         }
         hide_loader();
         resolve();
@@ -1237,6 +1147,13 @@ var add_static_layer_to_map = function (layer_info) {
     layerControl.addOverlay(layer_obj, layer_info.display_name, layer_info.category);
     allMapLayers[layer_info.name] = layer_obj;
 
+    if (layer_obj.name == "il_hospitals") {
+        il_hospital_layer_object = layer_obj;
+        il_hospital_geojson = layer_info.geojson_obj;
+    } else if (layer_obj.name == "chi_hospitals") {
+        il_chicago_hospital_layer_object = layer_obj;
+        il_chicago_hospital_geojson = layer_info.geojson_obj;
+    }
 }
 
 var add_animation_layer_to_map = function (layer_info) {
@@ -1275,14 +1192,20 @@ var add_animation_layer_to_map = function (layer_info) {
         us_state_case_layer_object = layer_obj;
     } else if (layer_obj.name == "il_vul") {
         il_vul_layer_object = layer_obj;
+        il_vul_geojson = layer_info.geojson_obj;
+        console.log(il_vul_geojson);
     } else if (layer_obj.name == "il_acc_i") {
         il_acc_i_layer_object = layer_obj;
+        il_acc_i_geojson = layer_info.geojson_obj;
     } else if (layer_obj.name == "il_acc_v") {
         il_acc_v_layer_object = layer_obj;
+        il_acc_v_geojson = layer_info.geojson_obj;
     } else if (layer_obj.name == "il_chicago_acc_i") {
         il_chicago_acc_i_layer_object = layer_obj;
+        il_chicago_acc_i_geojson = layer_info.geojson_obj;
     } else if (layer_obj.name == "il_chicago_acc_v") {
         il_chicago_acc_v_layer_object = layer_obj;
+        il_chicago_acc_v_geojson = layer_info.geojson_obj;
     } else if (layer_obj.name == "il_weekly_case") {
         il_weekly_case_layer_object = layer_obj;
     } else if (layer_obj.name == "us_state_weekly_case") {
@@ -1334,6 +1257,28 @@ var add_animation_layer_to_map = function (layer_info) {
     //popup
 }
 
+var add_markers = function(layer_info) {
+    var hospitalMarker;
+
+    if (layer_info.name == "il_acc_i" || layer_info.name == "il_acc_v") {
+        var featureCol = il_hospital_geojson.features;
+        for (i = 0; i < featureCol.length; i++) {
+            hospitalMarker = new L.marker({ lat: featureCol[i].properties.Y, 
+                lng: featureCol[i].properties.X }, 
+                { icon: hospitalIcon });
+            hospitalMarker.addTo(map);
+        }
+    } else if (layer_info.name == "il_chicago_acc_i" || layer_info.name == "il_chicago_acc_v") {
+        var featureCol = il_chicago_hospital_geojson.features;
+        for (i = 0; i < featureCol.length; i++) {
+            hospitalMarker = new L.marker({ lat: featureCol[i].properties.Y, 
+                lng: featureCol[i].properties.X }, 
+                { icon: hospitalIcon });
+            hospitalMarker.addTo(map);
+        }
+    }
+}
+
 var addUrlHash = function() {
     // console.log(allMapLayers);
     var hash = new L.Hash(map, allMapLayers);
@@ -1341,7 +1286,7 @@ var addUrlHash = function() {
 
 var chain_promise = function (layer_info) {
     return loadGeoJson(layer_info).then(function(result) {
-        p1 = add_animation_layer_to_map_promise(result);
+        p1 = add_animation_layer_to_map_promise(result);//.then(add_markers(result));
         p2 = fill_left_panel_promise(result);
         return Promise.allSettled([p1, p2]);
     })
@@ -1452,6 +1397,7 @@ var left_tab_button_handler = function (layer_info) {
     });
 
     document.getElementById("vul_button").addEventListener("click", function(event) {
+        fill_left_panel_vul(il_vul_geojson);
         if (map.hasLayer(il_vul_layer_object) != true) {
             map.eachLayer(function(layer) {
                 if (layer._url == undefined) {
@@ -1465,6 +1411,7 @@ var left_tab_button_handler = function (layer_info) {
     });
 
     document.getElementById("acc_v_chi_button").addEventListener("click", function(event) {
+        fill_left_panel_acc_v(il_chicago_hospital_geojson);
         if (map.hasLayer(il_chicago_acc_v_layer_object) != true) {
             map.eachLayer(function(layer) {
                 if (layer._url == undefined) {
@@ -1478,6 +1425,7 @@ var left_tab_button_handler = function (layer_info) {
     });
 
     document.getElementById("acc_i_chi_button").addEventListener("click", function(event) {
+        fill_left_panel_acc_i(il_chicago_hospital_geojson);
         if (map.hasLayer(il_chicago_acc_i_layer_object) != true) {
             map.eachLayer(function(layer) {
                 if (layer._url == undefined) {
@@ -1491,6 +1439,7 @@ var left_tab_button_handler = function (layer_info) {
     });
 
     document.getElementById("acc_v_il_button").addEventListener("click", function(event) {
+        fill_left_panel_acc_v(il_hospital_geojson);
         if (map.hasLayer(il_acc_v_layer_object) != true) {
             map.eachLayer(function(layer) {
                 if (layer._url == undefined) {
@@ -1504,6 +1453,7 @@ var left_tab_button_handler = function (layer_info) {
     });
 
     document.getElementById("acc_i_il_button").addEventListener("click", function(event) {
+        fill_left_panel_acc_i(il_hospital_geojson);
         if (map.hasLayer(il_acc_i_layer_object) != true) {
             map.eachLayer(function(layer) {
                 if (layer._url == undefined) {
