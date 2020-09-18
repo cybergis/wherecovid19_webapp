@@ -349,64 +349,7 @@ var layer_info_list = [
 ];
 
 var layer_info_list_2 = [
-{
-    "name": "il_vul",
-    "display_name": "Vulnerability",
-    "geojson_url": "preprocessing/illinois/vulnerability.geojson",
-    "category": "Illinois",
-    "show": false,
-    "style_func": styleVul,
-    "color_class": ["vulnerability", "case", "nolog", "NaturalBreaks", "float"],
-    //"tab_page_id": "illinois-tab",
-    "animation": true,
-
-},
-{
-    "name": "il_acc_i",
-    "display_name": "Accessibility (ICU Beds-State)",
-    "geojson_url": "preprocessing/illinois/Illinois_ACC_i.geojson",
-    "category": "Illinois",
-    "show": false,
-    "style_func": styleAcc,
-    "animation": true,
-},
-{
-    "name": "il_acc_v",
-    "display_name": "Accessibility (Ventilators-State)",
-    "geojson_url": "preprocessing/illinois/Illinois_ACC_v.geojson",
-    "category": "Illinois",
-    "show": false,
-    "style_func": styleAcc,
-    "animation": true,
-},
-{
-    "name": "il_chicago_acc_i",
-    "display_name": "Accessibility (ICU Beds-Chicago)",
-    "geojson_url": "preprocessing/illinois/Chicago_ACC_i.geojson",
-    "category": "Illinois",
-    "show": false,
-    "style_func": styleAcc,
-    "animation": true,
-},
-{
-    "name": "il_chicago_acc_v",
-    "display_name": "Accessibility (Ventilators-Chicago)",
-    "geojson_url": "preprocessing/illinois/Chicago_ACC_v.geojson",
-    "category": "Illinois",
-    "show": false,
-    "style_func": styleAcc,
-    "animation": true,
-},
-{
-    "name": "il_svi",
-    "display_name": "CDC Social Vulnerability Index",
-    "geojson_url": null,
-    "category": "Illinois",
-    "show": false,
-    "esri_url": "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/SVI_2018/MapServer",
-    "animation": false,
-},
-{
+    {
     "name": "il_hospitals",
     "display_name": "Illinois Hospitals",
     "geojson_url": "preprocessing/illinois/illinois_hospitals.geojson",
@@ -416,9 +359,26 @@ var layer_info_list_2 = [
     // "color_class": ["state", "case_per_100k_capita", "nolog", "NaturalBreaks", "int"],
     // "tab_page_id": "world-tab",
     "animation": false,
-
-},
-{
+    },
+    {
+    "name": "il_acc_i",
+    "display_name": "Accessibility (ICU Beds-State)",
+    "geojson_url": "preprocessing/illinois/Illinois_ACC_i.geojson",
+    "category": "Illinois",
+    "show": false,
+    "style_func": styleAcc,
+    "animation": true,
+    },
+    {
+    "name": "il_acc_v",
+    "display_name": "Accessibility (Ventilators-State)",
+    "geojson_url": "preprocessing/illinois/Illinois_ACC_v.geojson",
+    "category": "Illinois",
+    "show": false,
+    "style_func": styleAcc,
+    "animation": true,
+    },
+    {
     "name": "chi_hospitals",
     "display_name": "Chicago Hospitals",
     "geojson_url": "preprocessing/illinois/chicago_hospitals.geojson",
@@ -429,7 +389,46 @@ var layer_info_list_2 = [
     // "tab_page_id": "world-tab",
     "animation": false,
 
-},
+    },
+    {
+    "name": "il_chicago_acc_i",
+    "display_name": "Accessibility (ICU Beds-Chicago)",
+    "geojson_url": "preprocessing/illinois/Chicago_ACC_i.geojson",
+    "category": "Illinois",
+    "show": false,
+    "style_func": styleAcc,
+    "animation": true,
+    },
+    {
+    "name": "il_chicago_acc_v",
+    "display_name": "Accessibility (Ventilators-Chicago)",
+    "geojson_url": "preprocessing/illinois/Chicago_ACC_v.geojson",
+    "category": "Illinois",
+    "show": false,
+    "style_func": styleAcc,
+    "animation": true,
+    },
+    {
+    "name": "il_svi",
+    "display_name": "CDC Social Vulnerability Index",
+    "geojson_url": null,
+    "category": "Illinois",
+    "show": false,
+    "esri_url": "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/SVI_2018/MapServer",
+    "animation": false,
+    },
+    
+    {
+    "name": "il_vul",
+    "display_name": "Vulnerability",
+    "geojson_url": "preprocessing/illinois/vulnerability.geojson",
+    "category": "Illinois",
+    "show": false,
+    "style_func": styleVul,
+    "color_class": ["vulnerability", "case", "nolog", "NaturalBreaks", "float"],
+    //"tab_page_id": "illinois-tab",
+    "animation": true,
+    },
 ];
 
 var getLayerInfo = function (name, field = "name") {
