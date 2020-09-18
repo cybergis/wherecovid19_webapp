@@ -1515,23 +1515,23 @@ var left_tab_page_table_click_old = function () {
             } else {
                 long = parseFloat(tr.firstElementChild.dataset.x);
                 lat = parseFloat(tr.firstElementChild.dataset.y);
-                // bounds = tr.firstElementChild.dataset.bounds.split(',').map(function(item) {
-                //     return parseFloat(item);
-                // });
-                // boundCoords = [];
-                // for (i=0; i<bounds.length; i++) {
-                //     if (i%2 == 0) {
-                //         boundCoords.push([bounds[i+1],bounds[i]])
-                //     }
-                // }
+                bounds = tr.firstElementChild.dataset.bounds.split(',').map(function(item) {
+                    return parseFloat(item);
+                });
+                boundCoords = [];
+                for (i=0; i<bounds.length; i++) {
+                    if (i%2 == 0) {
+                        boundCoords.push([bounds[i+1],bounds[i]])
+                    }
+                }
                 geoID = tr.firstElementChild.dataset.geoid;
 
                 il_vul_layer_object.eachLayer(function(value) {
                     if (value.feature.properties.GEOID == geoID) {
                         il_vul_layer_object.setStyle(styleVul);
                         value.setStyle(highlight);
-                        map.setView([lat, long], 9);
-                        // map.fitBounds(boundCoords);
+                        // map.setView([lat, long], 9);
+                        map.fitBounds(boundCoords);
                         // updateChart(value.feature);
                     }
                 })
