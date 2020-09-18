@@ -60,19 +60,10 @@ var il_county_case_layer_object = null;
 var us_county_case_layer_object = null;
 var world_case_layer_object = null;
 var us_state_case_layer_object = null;
-var il_acc_i_layer_object = null;
-var il_acc_v_layer_object = null;
-var il_vul_layer_object = null;
-var il_chicago_acc_v_layer_object = null;
-var il_chicago_acc_i_layer_object = null;
 var il_weekly_case_layer_object = null;
 var us_county_weekly_case_layer_object = null;
 var us_state_weekly_case_layer_object = null;
 var world_weekly_case_layer_object = null;
-var il_hiv_layer_object = null;
-var il_svi_layer_object = null;
-var il_testing_sites_layer_object = null;
-var il_zipcode_case_layer_object = null;
 
 //////////////////////////////////// Load GeoJSON File ////////////////////////////////////
 
@@ -92,15 +83,8 @@ var world = null;
 var us_states = null;
 var us_counties = null;
 var illinois_counties = null;
-var illinois_acc_i = null;
-var illinois_acc_v = null;
-var chicago_acc_i = null;
-var chicago_acc_v = null;
-var illinois_vulnerability = null;
-var illinois_zipcode = null;
 
-var illinois_counties_ts, chicago_acc_i_ts, chicago_acc_v_ts,
-    illinois_acc_i_ts, illinois_acc_v_ts, illinois_vul_ts, us_counties_ts, us_states_ts, world_ts;
+var illinois_counties_ts, us_counties_ts, us_states_ts, world_ts;
 
 /////////////////////////////// Define Color Schema And Bins //////////////////////////////
 
@@ -153,20 +137,25 @@ getPosition(geolocation_options)
     })
 
 var zoomToUserLocation = function () {
-    console.log("Trying to center view to user location ....");
-    if (!userCentered || userGeolocationTriedCounter > 60) {
-        if (userLat != null && userLng != null) {
-            userLatLonAction({ lat: userLat, lng: userLng });
-            userCentered = true;
-            addMarker();
-            console.log("centered");
+    // Only locate user when detailed URL information is not given
+    if (document.location.href.includes("#") == false) {
+
+        console.log("Trying to center view to user location ....");
+        if (!userCentered || userGeolocationTriedCounter > 60) {
+            if (userLat != null && userLng != null) {
+                userLatLonAction({ lat: userLat, lng: userLng });
+                userCentered = true;
+                addMarker();
+                console.log("centered");
+            } else {
+                console.log("User location still unknown; Will try again in 1s.");
+            }
         } else {
-            console.log("User location still unknown; Will try again in 1s.");
+            clearInterval(userGeolocationTimer);
         }
-    } else {
-        clearInterval(userGeolocationTimer);
+        userGeolocationTriedCounter = userGeolocationTriedCounter + 1;
     }
-    userGeolocationTriedCounter = userGeolocationTriedCounter + 1;
+    
 }
 
 var zoomToUserLocationPromise = function () {
@@ -249,25 +238,6 @@ var styleFunc2 = function(_data) {
     }
 };
 
-var styleVul = function(_data) {
-    return {
-        stroke: true,
-        weight: 0.8,
-        color: "gray",
-        fillColor: getVulColor(splitStrFloat(_data.properties.cases_ts, index), bins),
-        fillOpacity: 0.7
-    }
-};
-
-var styleAcc = function(_data) {
-    return {
-        stroke: false,
-        //color:  "gray",
-        fillColor: getAccColor(_data.properties.category),
-        fillOpacity: 0.7
-    }
-}
-
 var styleChange = function(_data) {
     return {
         stroke: true,
@@ -329,54 +299,6 @@ var layer_info_list = [{
 
 var layer_info_list_2 = [
 {
-    "name": "il_vul",
-    "display_name": "Vulnerability",
-    "geojson_url": "preprocessing/illinois/vulnerability.geojson",
-    "category": "Illinois",
-    "show": false,
-    "style_func": styleVul,
-    "color_class": ["vulnerability", "case", "nolog", "NaturalBreaks", "float"],
-    //"tab_page_id": "illinois-tab",
-    "animation": true,
-
-},
-{
-    "name": "il_acc_i",
-    "display_name": "Accessibility (ICU Beds-State)",
-    "geojson_url": "preprocessing/illinois/Illinois_ACC_i.geojson",
-    "category": "Illinois",
-    "show": false,
-    "style_func": styleAcc,
-    "animation": true,
-},
-{
-    "name": "il_acc_v",
-    "display_name": "Accessibility (Ventilators-State)",
-    "geojson_url": "preprocessing/illinois/Illinois_ACC_v.geojson",
-    "category": "Illinois",
-    "show": false,
-    "style_func": styleAcc,
-    "animation": true,
-},
-{
-    "name": "il_chicago_acc_i",
-    "display_name": "Accessibility (ICU Beds-Chicago)",
-    "geojson_url": "preprocessing/illinois/Chicago_ACC_i.geojson",
-    "category": "Illinois",
-    "show": false,
-    "style_func": styleAcc,
-    "animation": true,
-},
-{
-    "name": "il_chicago_acc_v",
-    "display_name": "Accessibility (Ventilators-Chicago)",
-    "geojson_url": "preprocessing/illinois/Chicago_ACC_v.geojson",
-    "category": "Illinois",
-    "show": false,
-    "style_func": styleAcc,
-    "animation": true,
-},
-{
     "name": "il_weekly_case",
     "display_name": "Illinois Weekly Average Change",
     "geojson_url": null,
@@ -406,7 +328,6 @@ var layer_info_list_2 = [
     "reuse": "world_case",
     "animation": true,
 },
-
 ];
 
 var layer_info_list_3 = [{
@@ -418,44 +339,6 @@ var layer_info_list_3 = [{
     "style_func": styleChange,
     "reuse": "us_state_case",
     "animation": true,
-}, ];
-
-var layer_info_list_4 = [{
-    "name": "il_hiv",
-    "display_name": "Density of PLWH (Persons Living with HIV)",
-    "geojson_url": null,
-    "category": "Illinois",
-    "show": false,
-    "esri_url": "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/HIV_Map/MapServer",
-    "animation": false,
-},
-{
-    "name": "il_svi",
-    "display_name": "CDC Social Vulnerability Index",
-    "geojson_url": null,
-    "category": "Illinois",
-    "show": false,
-    "esri_url": "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/SVI_2018/MapServer",
-    "animation": false,
-},
-{
-    "name": "il_testing_sites",
-    "display_name": "Testing Sites",
-    "geojson_url": null,
-    "category": "Illinois",
-    "show": false,
-    "esri_url": "https://dev.rmms.illinois.edu/iepa/rest/services/wherecovid19/Testing_Sites/MapServer",
-    "animation": false,
-},
-{
-    "name": "il_zipcode_case",
-    "display_name": "IDPH Zipcode-level Cases",
-    "geojson_url": "preprocessing/illinois/dph_zipcode_data.geojson",
-    "category": "Illinois",
-    "show": false,
-    "style_func": styleFunc2,
-    "color_class": ["dph_illinois", "zipcode_case", "nolog", "NaturalBreaks", "int"],
-    "animation": false,
 },
 ];
 
@@ -467,7 +350,6 @@ var getLayerInfo = function (name, field = "name") {
         }
     }
 
-
     for (i = 0; i < layer_info_list_2.length; i++) {
         if (name == layer_info_list_2[i][field]) {
             return layer_info_list_2[i];
@@ -477,12 +359,6 @@ var getLayerInfo = function (name, field = "name") {
     for (i = 0; i < layer_info_list_3.length; i++) {
         if (name == layer_info_list_3[i][field]) {
             return layer_info_list_3[i];
-        }
-    }
-
-    for (i = 0; i < layer_info_list_4.length; i++) {
-        if (name == layer_info_list_4[i][field]) {
-            return layer_info_list_4[i];
         }
     }
 
@@ -541,13 +417,7 @@ var loadGeoJson = function (layer_info) {
 
 var add_animation_layer_to_map_promise = function (layer_info) {
     return new Promise((resolve, reject) => {
-        if (layer_info.esri_url != undefined) {
-            add_esri_layer_to_map(layer_info);
-        } else if (layer_info.animation == false) {
-            add_static_layer_to_map(layer_info);
-        } else {
-            add_animation_layer_to_map(layer_info);
-        }
+        add_animation_layer_to_map(layer_info);
         resolve();
     })
 }
@@ -1022,6 +892,7 @@ var groupedOverlays = {
     "US": {},
     "World": {}
 };
+
 var options = {
     // Make the groups exclusive (use radio inputs)
     exclusiveGroups: ["Illinois", "US", "World"],
@@ -1029,9 +900,15 @@ var options = {
     groupCheckboxes: true
 };
 
+var allMapLayers = {
+    "Light_Mode": osm,
+    "Dark_Mode": CartoDB_DarkMatter,
+};
+
 // add layer control to the map
 var layerControl = L.control.groupedLayers(baseMaps, groupedOverlays, options);
 map.addControl(layerControl);
+map.removeLayer(osm);
 
 // add zoom control to the map
 var zoomHome = new L.Control.zoomHome();
@@ -1067,22 +944,20 @@ var onOverlayAdd = function (e) {
     }
 
     refreshLegend(e.layer);
-
-    if (e.layer == il_chicago_acc_v_layer_object || e.layer == il_chicago_acc_i_layer_object) {
-        // Trigger click event to change the tab page
-        $("#illinois-tab").trigger("click");
-        map.setView([41.87, -87.62], 10)
-    } else if (e.group.name == "Illinois") {
-        $("#illinois-tab").trigger("click");
-        map.setView([40, -89], 7)
-    } else if (e.group.name == "US") {
-        $("#county-tab").trigger("click");
-        map.setView([37, -96], 4)
-    } else if (e.group.name == "World") {
-        $("#world-tab").trigger("click");
-        map.setView([0, 0], 2)
+    // Only reset view when the map is already initialized
+    if (initializedTag == true) {
+        if (e.group.name == "Illinois") {
+            $("#illinois-tab").trigger("click");
+            map.setView([40, -89], 7)
+        } else if (e.group.name == "US") {
+            $("#county-tab").trigger("click");
+            map.setView([37, -96], 4)
+        } else if (e.group.name == "World") {
+            $("#world-tab").trigger("click");
+            map.setView([0, 0], 2)
+        }    
     }
-
+    
     // hide_loader();
 
     world_table.$('tr.selected').removeClass('selected');
@@ -1130,25 +1005,6 @@ var getColorFor = function (_num, _bins) {
         'transparent';
 }
 
-var getVulColor = function (_num, _bins) {
-    return _num > _bins[5] ? '#301934' :
-        _num > _bins[4] ? '#8c0002' :
-        _num > _bins[3] ? '#d7191c' :
-        _num > _bins[2] ? '#fdaf61' :
-        _num > _bins[1] ? '#ffffbf' :
-        _num > _bins[0] ? '#a5d96a' :
-        '#199640';
-}
-
-var getAccColor = function (d) {
-    return d > 4 ? '#08519c' :
-        d > 3 ? '#3182bd' :
-        d > 2 ? '#6baed6' :
-        d > 1 ? '#9ecae1' :
-        d > 0 ? '#c6dbef' :
-        '#eff3ff';
-}
-
 var getChangeColor = function (d) {
     return d > 0.5 ? '#d7191c' :
         d > 0.1 ? '#fd9861' :
@@ -1158,71 +1014,6 @@ var getChangeColor = function (d) {
 }
 
 ////////////////////////////// Define Promises And Entry Point ////////////////////////////
-
-var add_esri_layer_to_map = function (layer_info) {
-    var layer_obj = L.esri.dynamicMapLayer({
-        url: layer_info.esri_url,
-    });
-
-    layer_obj.name = layer_info.name;
-    layer_info.layer_object = layer_obj
-
-    if (layer_info.show) {
-        layer_obj.addTo(map);
-    }
-
-    if (layer_obj.name == "il_hiv") {
-        il_hiv_layer_object = layer_obj;
-    } else if (layer_obj.name == "il_svi") {
-        il_svi_layer_object = layer_obj;
-    } else if (layer_obj.name == "il_testing_sites") {
-        il_testing_sites_layer_object = layer_obj;
-    }
-    // add layer into LayerControl UI list
-    layerControl.addOverlay(layer_obj, layer_info.display_name, layer_info.category);
-
-}
-
-var add_static_layer_to_map = function (layer_info) {
-    let layer_obj = L.geoJson(layer_info.geojson_obj);
-
-    layer_obj.name = layer_info.name;
-    layer_info.layer_object = layer_obj
-
-    if (layer_info.show) {
-        layer_obj.addTo(map);
-    }
-
-    if (layer_obj.name == "il_zipcode_case") {
-        il_zipcode_case_layer_object = layer_obj;
-    }
-
-    layer_obj.on('add', function(e) {
-        let li = getLayerInfo(e.target.name);
-        try {
-            bins = class_json_obj[li.color_class[0]][li.color_class[1]][li.color_class[2]][li.color_class[3]].bins.split(",").map(function(item) {
-
-                if (li.color_class[4] == "int") {
-                    return parseInt(item, 10);
-                } else {
-                    return parseFloat(parseFloat(item).toFixed(2));
-                }
-            });
-            this.setStyle(li.style_func);
-        } catch (err) {
-
-        }
-    });
-
-    if (layer_info.show) {
-        layer_obj.addTo(map);
-        refreshLegend(layer_obj);
-    }
-
-    // add layer into LayerControl UI list
-    layerControl.addOverlay(layer_obj, layer_info.display_name, layer_info.category);
-
-}
 
 var add_animation_layer_to_map = function (layer_info) {
 
@@ -1258,16 +1049,6 @@ var add_animation_layer_to_map = function (layer_info) {
         world_case_layer_object = layer_obj;
     } else if (layer_obj.name == "us_state_case") {
         us_state_case_layer_object = layer_obj;
-    } else if (layer_obj.name == "il_vul") {
-        il_vul_layer_object = layer_obj;
-    } else if (layer_obj.name == "il_acc_i") {
-        il_acc_i_layer_object = layer_obj;
-    } else if (layer_obj.name == "il_acc_v") {
-        il_acc_v_layer_object = layer_obj;
-    } else if (layer_obj.name == "il_chicago_acc_i") {
-        il_chicago_acc_i_layer_object = layer_obj;
-    } else if (layer_obj.name == "il_chicago_acc_v") {
-        il_chicago_acc_v_layer_object = layer_obj;
     } else if (layer_obj.name == "il_weekly_case") {
         il_weekly_case_layer_object = layer_obj;
     } else if (layer_obj.name == "us_state_weekly_case") {
@@ -1311,6 +1092,7 @@ var add_animation_layer_to_map = function (layer_info) {
 
     // add layer into LayerControl UI list
     layerControl.addOverlay(layer_obj, layer_info.display_name, layer_info.category);
+    allMapLayers[layer_info.name] = layer_obj;
 
     // switch_left_tab_page_handler
     // switch_left_tab_page_handler(layer_info);
@@ -1318,6 +1100,10 @@ var add_animation_layer_to_map = function (layer_info) {
     //popup
 }
 
+var addUrlHash = function() {
+    // console.log(allMapLayers);
+    var hash = new L.Hash(map, allMapLayers);
+}
 
 var chain_promise = function (layer_info) {
     return loadGeoJson(layer_info).then(function(result) {
@@ -1343,7 +1129,8 @@ loadClassJson(class_json_url).then(
     }).then(function() {
         return Promise.allSettled(layer_info_list_3.map(chain_promise));
     }).then(function() {
-        return Promise.allSettled(layer_info_list_4.map(chain_promise));
+        addUrlHash();
+        return Promise.resolve(1);
     })
 );
 
@@ -1572,7 +1359,6 @@ var refreshLegend = function (_layer) {
 
     legend = L.control({ position: 'bottomright' });
 
-    binsAcc = ["low", "", "", "", "", "high"];
     binsChange = ["-50%", "-10%~-50%", "Steady (-10%~10%)", "+10%~+50%", "+50%"];
 
     legend.onAdd = function(map) {
@@ -1580,10 +1366,6 @@ var refreshLegend = function (_layer) {
         var div = L.DomUtil.create('div', 'info legend');
 
         label1 = ['<strong> Confirmed cases per 100k people </strong>'];
-        label2 = ['<strong> Vulnerability </strong>'];
-        label3 = ['<strong> Accessibility </strong>'];
-        label4 = ['<strong> Density </strong>'];
-        label5 = ['<strong> Social Vulnerability Index </strong>'];
         label6 = ['<strong> Weekly Change Rate of New Cases </strong>']
         label7 = ['<strong> Cases </strong>'];
 
@@ -1601,42 +1383,6 @@ var refreshLegend = function (_layer) {
             }
             label1.push(legendContent);
             div.innerHTML = label1.join('<br><br><br>');
-        } else if (_layer == il_vul_layer_object) {
-            grades = bins;
-            for (var i = 0; i < grades.length; i++) {
-                legendContent +=
-                    '<i style="background:' + getVulColor((grades[i] + 0.000001), bins) + '"></i> ' +
-                    grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+') + '<br>';
-            }
-            label2.push(legendContent);
-            div.innerHTML = label2.join('<br><br><br>');
-        } else if (_layer == il_acc_i_layer_object || _layer == il_acc_v_layer_object || _layer == il_chicago_acc_v_layer_object || _layer == il_chicago_acc_i_layer_object) {
-            grades = binsAcc;
-            for (var i = 0; i < grades.length; i++) {
-                legendContent +=
-                    '<i style="background:' + getAccColor(i - 0.1) + '"></i> ' +
-                    grades[i] + (grades[i + 1] != undefined ? '<br>' : '') + '<br>';
-            }
-            label3.push(legendContent);
-            div.innerHTML = label3.join('<br><br><br>');
-        } else if (_layer == il_hiv_layer_object) {
-            grades = binsAcc;
-            for (var i = 0; i < grades.length; i++) {
-                legendContent +=
-                    '<i style="background:' + getAccColor(i - 0.1) + '"></i> ' +
-                    grades[i] + (grades[i + 1] != undefined ? '<br>' : '') + '<br>';
-            }
-            label4.push(legendContent);
-            div.innerHTML = label4.join('<br><br><br>');
-        } else if (_layer == il_svi_layer_object) {
-            grades = binsAcc;
-            for (var i = 0; i < grades.length; i++) {
-                legendContent +=
-                    '<i style="background:' + getAccColor(i - 0.1) + '"></i> ' +
-                    grades[i] + (grades[i + 1] != undefined ? '<br>' : '') + '<br>';
-            }
-            label5.push(legendContent);
-            div.innerHTML = label5.join('<br><br><br>');
         } else if (_layer == il_weekly_case_layer_object || _layer == us_county_weekly_case_layer_object ||
             _layer == us_state_weekly_case_layer_object || _layer == world_weekly_case_layer_object) {
             grades = binsChange;
@@ -1648,15 +1394,6 @@ var refreshLegend = function (_layer) {
             }
             label6.push(legendContent);
             div.innerHTML = label6.join('<br><br><br>');
-        } else if (_layer == il_zipcode_case_layer_object) {
-            grades = bins;
-            for (var i = 0; i < grades.length; i++) {
-                legendContent +=
-                    '<i style="background:' + getColorFor((grades[i] + 0.000001), bins) + '"></i> ' +
-                    grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+') + '<br>';
-            }
-            label7.push(legendContent);
-            div.innerHTML = label7.join('<br><br><br>');
         }
 
         return div;
