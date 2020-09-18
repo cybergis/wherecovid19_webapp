@@ -43,9 +43,9 @@ var locIcon = L.icon({
 });
 
 var hospitalIcon = L.icon({
-    iconUrl: 'img/Red-Cross.png',
-    iconSize: [10, 10],
-    iconAnchor: [5, 5],
+    iconUrl: 'img/hospital.png',
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
 });
 
 ///////////////////////////////////// Set up Basemaps /////////////////////////////////////
@@ -794,9 +794,9 @@ var fill_left_panel_acc_v = function (geojson) {
 var fill_left_panel_promise = function (layer_info) {
     return new Promise((resolve, reject) => {
         if (layer_info.name == "il_vul") {
-            fill_left_panel_vul(layer_info.geojson_obj);
+            // fill_left_panel_vul(layer_info.geojson_obj);
         } if (layer_info.name == "il_hospitals") {
-            // fill_left_panel_acc_i(layer_info.geojson_obj);
+            fill_left_panel_acc_i(layer_info.geojson_obj);
         } if (layer_info.name == "chi_hospitals") {
             // fill_left_panel_acc_i(layer_info.geojson_obj);
         }
@@ -1172,7 +1172,9 @@ var add_animation_layer_to_map = function (layer_info) {
     layer_info.name == "us_state_weekly_case" || 
     layer_info.name == "world_weekly_case") {
         _onEachFeatureFunc = onEachFeature_change;
-    } 
+    } else if (layer_info.name == "il_vul") {
+        _onEachFeatureFunc = onEachFeature_vul;
+    }
 
     let layer_obj = L.timeline(layer_info.geojson_obj, {
         style: layer_info.style_func,
@@ -1193,7 +1195,6 @@ var add_animation_layer_to_map = function (layer_info) {
     } else if (layer_obj.name == "il_vul") {
         il_vul_layer_object = layer_obj;
         il_vul_geojson = layer_info.geojson_obj;
-        console.log(il_vul_geojson);
     } else if (layer_obj.name == "il_acc_i") {
         il_acc_i_layer_object = layer_obj;
         il_acc_i_geojson = layer_info.geojson_obj;
@@ -1320,7 +1321,7 @@ loadClassJson(class_json_url).then(
     Promise.allSettled(layer_info_list.map(chain_promise)).then(function() {
         left_tab_button_handler();
         // switch_left_tab_page_handler_old();
-        // left_tab_page_table_click_old();
+        left_tab_page_table_click_old();
     }).then(function() {
         $('#illinois-tab').css("pointer-events","auto");
         $('#county-tab').css("pointer-events","auto");
@@ -1331,7 +1332,8 @@ loadClassJson(class_json_url).then(
         return Promise.allSettled(layer_info_list_2.map(chain_promise));
     }).then(function() {
         // Add default layer
-        map.addLayer(il_vul_layer_object);
+        map.addLayer(il_acc_i_layer_object);
+        add_hospital_markers("il_acc_i");
         // addUrlHash();
         return Promise.resolve(1);
     })
@@ -1499,145 +1501,54 @@ var left_tab_button_handler = function (layer_info) {
 
 var left_tab_page_table_click_old = function () {
 
-    /// illinois Table
+    /// Vul Table
     document.querySelector("#illinois-table tbody").addEventListener("click", function(event) {
         // Clear existing popup
         map.closePopup();
-        if (map.hasLayer(il_county_case_layer_object) != true) {
-            map.eachLayer(function(layer) {
-                if (layer._url == undefined) {
-                    map.removeLayer(layer);
-                }
-            });
-            map.addLayer(il_county_case_layer_object);
-        }
-
-        var tr = event.target;
-        while (tr !== this && !tr.matches("tr")) {
-            tr = tr.parentNode;
-        }
-        if (tr === this) {
-            console.log("No table cell found");
-        } else {
-
-            long = parseFloat(tr.firstElementChild.dataset.x);
-            lat = parseFloat(tr.firstElementChild.dataset.y);
-            bounds = tr.firstElementChild.dataset.bounds.split(',').map(function(item) {
-                return parseFloat(item);
-            });
-            boundCoords = [];
-            for (i=0; i<bounds.length; i++) {
-                if (i%2 == 0) {
-                    boundCoords.push([bounds[i+1],bounds[i]])
-                }
+        if (map.hasLayer(il_vul_layer_object) == true) {
+            var tr = event.target;
+            while (tr !== this && !tr.matches("tr")) {
+                tr = tr.parentNode;
             }
-            objID = parseFloat(tr.firstElementChild.dataset.uid);
-            countyName = tr.firstElementChild.dataset.county;
+            if (tr === this) {
+                console.log("No table cell found");
+            } else {
+                long = parseFloat(tr.firstElementChild.dataset.x);
+                lat = parseFloat(tr.firstElementChild.dataset.y);
+                // bounds = tr.firstElementChild.dataset.bounds.split(',').map(function(item) {
+                //     return parseFloat(item);
+                // });
+                // boundCoords = [];
+                // for (i=0; i<bounds.length; i++) {
+                //     if (i%2 == 0) {
+                //         boundCoords.push([bounds[i+1],bounds[i]])
+                //     }
+                // }
+                geoID = tr.firstElementChild.dataset.geoid;
 
-            il_county_case_layer_object.eachLayer(function(value) {
-                if (value.feature.properties.NAME == countyName) {
-                    il_county_case_layer_object.setStyle(styleFunc1);
-                    value.setStyle(highlight);
-                    //map.setView([lat, long], 9);
-                    map.fitBounds(boundCoords);
-                    updateChart(value.feature);
-                }
-            })
-        }
-    });
-
-    /// US Table
-    document.querySelector("#county-table tbody").addEventListener("click", function(event) {
-        // Clear existing popup
-        map.closePopup();
-        if (map.hasLayer(us_county_case_layer_object) != true) {
-            map.eachLayer(function(layer) {
-                if (layer._url == undefined) {
-                    map.removeLayer(layer);
-                }
-            });
-            map.addLayer(us_county_case_layer_object);
-        }
-
-        var tr = event.target;
-        while (tr !== this && !tr.matches("tr")) {
-            tr = tr.parentNode;
-        }
-        if (tr === this) {
-            console.log("No table cell found");
-        } else {
-
-            long = parseFloat(tr.firstElementChild.dataset.x);
-            lat = parseFloat(tr.firstElementChild.dataset.y);
-            bounds = tr.firstElementChild.dataset.bounds.split(',').map(function(item) {
-                return parseFloat(item);
-            });
-            boundCoords = [];
-            for (i=0; i<bounds.length; i++) {
-                if (i%2 == 0) {
-                    boundCoords.push([bounds[i+1],bounds[i]])
-                }
+                il_vul_layer_object.eachLayer(function(value) {
+                    if (value.feature.properties.GEOID == geoID) {
+                        il_vul_layer_object.setStyle(styleVul);
+                        value.setStyle(highlight);
+                        map.setView([lat, long], 9);
+                        // map.fitBounds(boundCoords);
+                        // updateChart(value.feature);
+                    }
+                })
             }
-            objID = parseFloat(tr.firstElementChild.dataset.uid);
-            countyName = tr.firstElementChild.dataset.county;
-            stateName = tr.firstElementChild.dataset.state;
-
-            us_county_case_layer_object.eachLayer(function(value) {
-                if (value.feature.properties.NAME == countyName && value.feature.properties.state_name == stateName) {
-                    us_county_case_layer_object.setStyle(styleFunc1);
-                    value.setStyle(highlight);
-                    //map.setView([lat, long], 9);
-                    map.fitBounds(boundCoords);
-                    updateChart(value.feature);
-                }
-            })
-        }
-    });
-
-    /// World Table
-    document.querySelector("#world-table tbody").addEventListener("click", function(event) {
-        // Clear existing popup
-        map.closePopup();
-        if (map.hasLayer(world_case_layer_object) != true) {
-            map.eachLayer(function(layer) {
-                if (layer._url == undefined) {
-                    map.removeLayer(layer);
-                }
-            });
-            map.addLayer(world_case_layer_object);
-        }
-
-        var tr = event.target;
-        while (tr !== this && !tr.matches("tr")) {
-            tr = tr.parentNode;
-        }
-        if (tr === this) {
-            console.log("No table cell found");
-        } else {
-
-            long = parseFloat(tr.firstElementChild.dataset.x);
-            lat = parseFloat(tr.firstElementChild.dataset.y);
-            bounds = tr.firstElementChild.dataset.bounds.split(',').map(function(item) {
-                return parseFloat(item);
-            });
-            boundCoords = [];
-            for (i=0; i<bounds.length; i++) {
-                if (i%2 == 0) {
-                    boundCoords.push([bounds[i+1],bounds[i]])
-                }
+        } else if (map.hasLayer(il_acc_i_layer_object) == true || map.hasLayer(il_acc_v_layer_object) == true ||
+        map.hasLayer(il_chicago_acc_i_layer_object) == true || map.hasLayer(il_chicago_acc_v_layer_object) == true) {
+            var tr = event.target;
+            while (tr !== this && !tr.matches("tr")) {
+                tr = tr.parentNode;
             }
-            objID = parseFloat(tr.firstElementChild.dataset.uid);
-            countryName = tr.firstElementChild.dataset.country;
-
-            world_case_layer_object.eachLayer(function(value) {
-                if (value.feature.properties.NAME == countryName) {
-                    world_case_layer_object.setStyle(styleFunc1);
-                    value.setStyle(highlight);
-                    //map.setView([lat, long], 4);
-                    map.fitBounds(boundCoords);
-                    updateChart(value.feature);
-                }
-            })
+            if (tr === this) {
+                console.log("No table cell found");
+            } else {
+                long = parseFloat(tr.firstElementChild.dataset.x);
+                lat = parseFloat(tr.firstElementChild.dataset.y);
+                map.setView([lat, long], 20);
+            }
         }
     });
 
@@ -1800,6 +1711,18 @@ var onEachFeature_change = function(feature, layer) {
             us_state_weekly_case_layer_object.setStyle(styleChange);
             world_weekly_case_layer_object.setStyle(styleChange);
             onMapClick(e);
+        });
+    }
+}
+
+var onEachFeature_vul = function(feature, layer) {
+    if (feature.properties) {
+        createVulPopup(feature, layer);
+        layer.on('mouseover', function(event){
+            this.openPopup();
+        });
+        layer.on('mouseout', function(event){
+            this.closePopup();
         });
     }
 }
@@ -2139,4 +2062,25 @@ var createChangePopup = function (_feature, _layer) {
             </tr>\
         </table>\
         </form>')
+}
+
+var createVulPopup = function (_feature, _layer) {
+
+    _layer.bindPopup('<form id="popup-form">\
+        <h5 id="name" style="font-weight:bold;">' + _feature.properties.GEOID + '</h5>\
+        <table class="popup-table" style="background-color:white;">\
+        <tr class="popup-table-row">\
+        <th class="popup-table-header" style="min-width:120px;">County:</th>\
+        <td id="county" class="popup-table-data">' + _feature.properties.NAME + '</td>\
+        </tr>\
+        <tr class="popup-table-row">\
+        <th class="popup-table-header">Population:</th>\
+        <td id="population" class="popup-table-data">' + _feature.properties.population + '</td>\
+        </tr>\
+        <tr class="popup-table-row">\
+        <th class="popup-table-header">Vulnerability:</th>\
+        <td id="vulnerability" class="popup-table-data">' +  Math.round(10000*_feature.properties.today_vul)/100 +'%' + '</td>\
+        </tr>\
+    </table>\
+    </form>')
 }
