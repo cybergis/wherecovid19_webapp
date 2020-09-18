@@ -157,15 +157,15 @@ var addMarker = function () {
     marker.addTo(map);
 }
 
-getPosition(geolocation_options)
-    .then((position) => {
-        console.log(position);
-        userLat = position.coords.latitude;
-        userLng = position.coords.longitude;
-    })
-    .catch((err) => {
-        console.error(err.message);
-    })
+// getPosition(geolocation_options)
+//     .then((position) => {
+//         console.log(position);
+//         userLat = position.coords.latitude;
+//         userLng = position.coords.longitude;
+//     })
+//     .catch((err) => {
+//         console.error(err.message);
+//     })
 
 var zoomToUserLocation = function () {
     // Only locate user when detailed URL information is not given
