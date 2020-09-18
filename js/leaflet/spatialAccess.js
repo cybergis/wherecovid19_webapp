@@ -44,8 +44,8 @@ var locIcon = L.icon({
 
 var hospitalIcon = L.icon({
     iconUrl: 'img/Red-Cross.png',
-    iconSize: [24, 24],
-    iconAnchor: [12, 12],
+    iconSize: [10, 10],
+    iconAnchor: [5, 5],
 });
 
 ///////////////////////////////////// Set up Basemaps /////////////////////////////////////
@@ -1257,36 +1257,59 @@ var add_animation_layer_to_map = function (layer_info) {
     //popup
 }
 
-var add_markers = function(layer_info) {
+var add_hospital_markers = function(layer_name) {
     var hospitalMarker;
+    var featureCol;
 
-    if (layer_info.name == "il_acc_i" || layer_info.name == "il_acc_v") {
-        var featureCol = il_hospital_geojson.features;
-        for (i = 0; i < featureCol.length; i++) {
-            hospitalMarker = new L.marker({ lat: featureCol[i].properties.Y, 
-                lng: featureCol[i].properties.X }, 
-                { icon: hospitalIcon });
-            hospitalMarker.addTo(map);
-        }
-    } else if (layer_info.name == "il_chicago_acc_i" || layer_info.name == "il_chicago_acc_v") {
-        var featureCol = il_chicago_hospital_geojson.features;
-        for (i = 0; i < featureCol.length; i++) {
-            hospitalMarker = new L.marker({ lat: featureCol[i].properties.Y, 
-                lng: featureCol[i].properties.X }, 
-                { icon: hospitalIcon });
-            hospitalMarker.addTo(map);
-        }
+    if (layer_name == "il_acc_i" || layer_name == "il_acc_v") {
+        featureCol = il_hospital_geojson.features;        
+    } else if (layer_name == "il_chicago_acc_i" || layer_name == "il_chicago_acc_v") {
+        featureCol = il_chicago_hospital_geojson.features;
+    }
+    
+    for (i = 0; i < featureCol.length; i++) {
+        hospitalMarker = new L.marker({ lat: featureCol[i].properties.Y, 
+            lng: featureCol[i].properties.X }, 
+            { icon: hospitalIcon });
+        hospitalMarker.bindPopup('<form id="popup-form">\
+            <h5 id="name" style="font-weight:bold;">' + featureCol[i].properties.Hospital + '</h5>\
+            <table class="popup-table" style="background-color:white;">\
+            <tr class="popup-table-row">\
+            <th class="popup-table-header" style="min-width:120px;">City:</th>\
+            <td id="city" class="popup-table-data">' + featureCol[i].properties.City + '</td>\
+            </tr>\
+            <tr class="popup-table-row">\
+            <th class="popup-table-header">Address:</th>\
+            <td id="address" class="popup-table-data">' + featureCol[i].properties.StreetAddress + '</td>\
+            </tr>\
+            <tr class="popup-table-row">\
+            <th class="popup-table-header">ICU Beds:</th>\
+            <td id="icu" class="popup-table-data">' + featureCol[i].properties.Total_Bed + '</td>\
+            </tr>\
+            <tr class="popup-table-row">\
+            <th class="popup-table-header">Ventilators:</th>\
+            <td id="vent" class="popup-table-data">' + featureCol[i].properties.Total_Vent + '</td>\
+            </tr>\
+            </table>\
+        </form>');
+        hospitalMarker.addTo(map);
+        hospitalMarker.on('mouseover', function(event){
+            this.openPopup();
+        });
+        hospitalMarker.on('mouseout', function(event){
+            this.closePopup();
+        });
     }
 }
 
-var addUrlHash = function() {
-    // console.log(allMapLayers);
-    var hash = new L.Hash(map, allMapLayers);
-}
+// var addUrlHash = function() {
+//     // console.log(allMapLayers);
+//     var hash = new L.Hash(map, allMapLayers);
+// }
 
 var chain_promise = function (layer_info) {
     return loadGeoJson(layer_info).then(function(result) {
-        p1 = add_animation_layer_to_map_promise(result);//.then(add_markers(result));
+        p1 = add_animation_layer_to_map_promise(result);
         p2 = fill_left_panel_promise(result);
         return Promise.allSettled([p1, p2]);
     })
@@ -1309,7 +1332,7 @@ loadClassJson(class_json_url).then(
     }).then(function() {
         // Add default layer
         map.addLayer(il_vul_layer_object);
-        addUrlHash();
+        // addUrlHash();
         return Promise.resolve(1);
     })
 );
@@ -1420,6 +1443,7 @@ var left_tab_button_handler = function (layer_info) {
             });
             // show_loader();
             map.addLayer(il_chicago_acc_v_layer_object);
+            add_hospital_markers("il_chicago_acc_v");
             map.setView([41.87, -87.62], 10);
         }
     });
@@ -1434,6 +1458,7 @@ var left_tab_button_handler = function (layer_info) {
             });
             // show_loader();
             map.addLayer(il_chicago_acc_i_layer_object);
+            add_hospital_markers("il_chicago_acc_i");
             map.setView([41.87, -87.62], 10);
         }
     });
@@ -1448,6 +1473,7 @@ var left_tab_button_handler = function (layer_info) {
             });
             // show_loader();
             map.addLayer(il_acc_v_layer_object);
+            add_hospital_markers("il_acc_v");
             map.setView([40, -89], 7);
         }
     });
@@ -1462,6 +1488,7 @@ var left_tab_button_handler = function (layer_info) {
             });
             // show_loader();
             map.addLayer(il_acc_i_layer_object);
+            add_hospital_markers("il_acc_i");
             map.setView([40, -89], 7);
         }
     });
