@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <div id="loadOverlay" style="background-color:#333; position:absolute; top:0px; left:0px; width:100%; height:100%; z-index:2000;">
+    </div>
+    <!-- COMMON TAGS -->
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>WhereCOVID-19 by CyberGIS Center for Advanced Digital and Spatial Studies</title>
+    <!-- Search Engine -->
+    <meta name="description" content="WhereCOVID-19 platform produced by CyberGIS Center provides users with interactive ways to study the coronavirus pandemic">
+    <meta name="image" content="https://cybergis.illinois.edu/wp-content/uploads/2020/06/whereCOVID_19.jpg">
+
+    <!-- Schema.org for Google -->
+    <meta itemprop="name" content="WhereCOVID-19 by CyberGIS Center for Advanced Digital and Spatial Studies">
+    <meta itemprop="description" content="WhereCOVID-19 platform produced by CyberGIS Center provides users with interactive ways to study the coronavirus pandemic">
+    <meta itemprop="image" content="https://cybergis.illinois.edu/wp-content/uploads/2020/06/whereCOVID_19.jpg">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="WhereCOVID-19 by CyberGIS Center for Advanced Digital and Spatial Studies">
+    <meta name="twitter:description" content="WhereCOVID-19 platform produced by CyberGIS Center provides users with interactive ways to study the coronavirus pandemic">
+    <meta name="twitter:site" content="@CyberGISCenter">
+    <meta name="twitter:creator" content="@CyberGISCenter">
+    <meta name="twitter:image:src" content="https://cybergis.illinois.edu/wp-content/uploads/2020/06/whereCOVID_19.jpg">
+    <meta name="twitter:player" content="https://www.youtube.com/watch?v=yKP3wYEF2Ng">
+
+    <!-- Open Graph general (Facebook, Pinterest & Google+) -->
+    <meta name="og:title" content="WhereCOVID-19 by CyberGIS Center for Advanced Digital and Spatial Studies">
+    <meta name="og:description" content="WhereCOVID-19 platform produced by CyberGIS Center provides users with interactive ways to study the coronavirus pandemic">
+    <meta name="og:image" content="https://cybergis.illinois.edu/wp-content/uploads/2020/06/whereCOVID_19.jpg">
+    <meta name="og:url" content="https://wherecovid19.cigi.illinois.edu/">
+    <meta name="og:site_name" content="WhereCOVID-19 by CyberGIS Center for Advanced Digital and Spatial Studies">
+    <meta name="og:video" content="https://www.youtube.com/watch?v=yKP3wYEF2Ng">
+    <meta name="fb:admins" content="432265370567383">
+    <meta name="fb:app_id" content="213507516430016">
+    <meta name="og:type" content="website">
+
+</head>
+
+<body>
+
+    <div class="container-fluid outter-wrap">
+
+        <nav class="navbar navbar-dark  flex-nowrap p-2 px-3 d-flex justify-content-between">
+            <div class="navbar-brand">
+                <img class="topic-logo" style="display: inline-block;width: 30px;" src="img/favicon.ico">
+                <h1 class="header-title d-inline"><b>WhereCOVID-19</b>
+                    <span style="font-size:12px;" class="d-xl-inline d-none">
+                        by
+                        <a style="color: #00a4e4;;" href="https://cybergis.illinois.edu/"
+                            title="CyberGIS center website" target="_blank">
+                            CyberGIS Center for Advanced Digital and Spatial Studies
+                        </a> at
+                        <a style="color: #00a4e4;;" href="https://www.illinois.edu/"
+                            title="University of Illinois at Urbana-Champaign website" target="_blank">
+                            University of Illinois at Urbana-Champaign
+                        </a>
+                    </span>
+                </h1>
+            </div>
+            <div style="display: flex;flex-direction: row;">
+
+                <h3 id="current-datetime" style="padding-right: 15px;margin-top: 1px;"></h3>
+
+                <a href="http://illinois.edu/" target="_blank"><img style="width: 20px; margin-left: 15px;" class="uoi-header m-1" src="https://cybergis.illinois.edu/wp-content/themes/cybergis-new/images/uoi.png" alt="U of I logo"></a>
+            </div>
+        </nav>
+
+        <div class="content-section" style="flex-grow: 1; display: flex; flex-direction: row;">
+
+            <nav class="sidebar col-12 col-sm-12 col-md-6 col-lg-3 col-xl-3 open">
+
+                <!-- <div id="champaign-data" class="data-pane p-3 d-flex">
+                    <h1 class="location-name">Champaign, IL</h1>
+
+                    <div class="data-wrap confirmed">
+                        <h3 class="data-header">Confirmed Cases</h3>
+                        <h2 class="data-number"></h2>
+                        <div class="change"></div>
+                    </div>
+
+                    <div class="data-wrap death">
+                        <h3 class="data-header">Deaths</h3>
+                        <h2 class="data-number"></h2>
+                        <div class="change"></div>
+                    </div>
+
+                    <div class="data-wrap tested">
+                        <h3 class="data-header">Tested</h3>
+                        <h2 class="data-number"></h2>
+                        <div class="change"></div>
+                    </div>
+                </div>
+                End of Champaign data pane -->
+
+                <div id="illinois-data" class="data-pane d-none">
+                    <h1 class="location-name">ILLINOIS</h1>
+
+                    <div class="data-wrap confirmed">
+                        <h3 class="data-header">Confirmed Cases</h3>
+                        <h2 class="data-number"></h2>
+                        <div class="change"></div>
+                    </div>
+
+                    <div class="data-wrap death">
+                        <h3 class="data-header">Deaths</h3>
+                        <h2 class="data-number"></h2>
+                        <div class="change"></div>
+                    </div>
+
+                    <div class="data-wrap tested">
+                        <h3 class="data-header">Tested</h3>
+                        <h2 class="data-number"></h2>
+                        <div class="change"></div>
+                    </div>
+                </div>
+                <!-- End of Illinois data pane -->
+
+                <div id="us-data" class="data-pane d-none">
+                    <h1 class="location-name">UNITED STATES</h1>
+
+                    <div class="data-wrap confirmed">
+                        <h3 class="data-header">Confirmed Cases</h3>
+                        <h2 class="data-number"></h2>
+                        <div class="change"></div>
+                    </div>
+
+                    <div class="data-wrap death">
+                        <h3 class="data-header">Deaths</h3>
+                        <h2 class="data-number"></h2>
+                        <div class="change"></div>
+                    </div>
+                </div>
+                <!-- End of US data pane -->
+
+                <div id="world-data" class="data-pane d-none">
+                    <h1 class="location-name">WORLD</h1>
+
+                    <div class="data-wrap confirmed">
+                        <h3 class="data-header">Confirmed Cases</h3>
+                        <h2 class="data-number confirmed"></h2>
+                        <div class="change"></div>
+                    </div>
+
+                    <div class="data-wrap death">
+                        <h3 class="data-header">Deaths</h3>
+                        <h2 class="data-number death"></h2>
+                        <div class="change"></div>
+                    </div>
+                </div>
+                <!-- End of World data pane -->
+
+                <div class="credit">
+                    <h4>Powered by CyberGISX platform</h4>
+                    <p>Learn more about us</p>
+
+                    <div class="qrs-wrap">
+                        <div class="qr">
+                            <img src="./img/wherecovid19_white.png" alt="WhereCOVID-19 app">
+                            <p>WhereCOVID-19 <br>Webapp</p>
+                        </div>
+                        <div class="qr">
+                            <img src="./img/cybergisx_white.png" alt="CyebrGISX">
+                            <p>CyberGISX Platform</p>
+                        </div>
+                        <div class="qr">
+                            <img src="./img/cybergis-center_white.png" alt="CyberGIS Center">
+                            <p>CyberGIS Center</p>
+                        </div>
+                    </div>
+                </div>
+
+            </nav>
+
+            <main role="main" class="col-12 col-sm-12 col-md-7 col-lg-9 col-xl-9" style="background-color: azure;">
+                <div class="row" id="app-wrap">
+                    <div id="applicationDiv">
+
+                        <div id="map"></div>
+
+                        <div class="chart-wrap">
+                            <!-- <div id="close_chart"><i class="fas fa-times"></i></div> -->
+                            <canvas id="myChart">
+
+                            </canvas>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+
+        </div>
+
+    </div>
+
+    <!-- JQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Exo:wght@800&family=Open+Sans:wght@300;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/app_responsive.css">
+    <link rel="stylesheet" href="css/map_responsive.css">
+    <link rel="stylesheet" href="css/bigscreen.css">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="https://kit.fontawesome.com/83341c3e60.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo " crossorigin="anonymous "></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js " integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6 " crossorigin="anonymous "></script>
+
+    <!-- UI JS -->
+    <script src="js/responsive.js" crossorigin="anonymous"></script>
+    <script src="js/app.js "></script>
+    <script src="js/app_drawer.js" crossorigin="anonymous"></script>
+
+
+    <!-- Load Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/esri-leaflet@2.4.1/dist/esri-leaflet.js" integrity="sha512-xY2smLIHKirD03vHKDJ2u4pqeHA7OQZZ27EjtqmuhDguxiUvdsOuXMwkg16PQrm9cgTmXtoxA6kwr8KBy3cdcw==" crossorigin=""></script>
+    <script src='https://unpkg.com/@turf/turf/turf.min.js'></script>
+    <script src="js/leaflet/leaflet.timeline.js"></script>
+    <script src="js/leaflet/leaflet.ajax.min.js"></script>
+    <script src="js/leaflet/leaflet.groupedlayercontrol.js"></script>
+    <script src="js/leaflet/bigScreen.js" type="text/javascript"></script>
+
+    <!-- include chart script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js "></script>
+
+</body>
+
+</html>
