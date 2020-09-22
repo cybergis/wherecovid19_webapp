@@ -517,7 +517,7 @@ var add_animation_layer_to_map_promise = function (layer_info) {
                 add_animation_layer_to_map(layer_info);
             }
         }
-        
+        // hide_loader();
         resolve();
     })
 }
@@ -800,7 +800,7 @@ var fill_left_panel_promise = function (layer_info) {
         } if (layer_info.name == "chi_hospitals") {
             // fill_left_panel_acc_i(layer_info.geojson_obj);
         }
-        hide_loader();
+        // hide_loader();
         resolve();
     })
 }
@@ -1329,7 +1329,7 @@ loadClassJson(class_json_url).then(
     }).then(function() {
         // return zoomToUserLocationPromise();
     }).then(function() {
-        return Promise.allSettled(layer_info_list_2.map(chain_promise));
+        return Promise.allSettled(layer_info_list_2.map(chain_promise)).then(function(){hide_loader()});
     }).then(function() {
         // Add default layer
         map.addLayer(il_acc_i_layer_object);
