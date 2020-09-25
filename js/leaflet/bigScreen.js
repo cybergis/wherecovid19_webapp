@@ -551,7 +551,7 @@ var update_layer_and_table_promise = function(layer_info) {
     if (layer_info.geojson_updated == true) {
         let p1 = add_animation_layer_to_map_promise(layer_info);
         let p2 = fill_left_panel_promise(layer_info);
-        return Promise.allSettled([p1, p2]);
+        return Promise.all([p1, p2].map(p => p.catch(e => e)));
     } else {
         return Promise.resolve(1);
     }
@@ -560,7 +560,7 @@ var update_layer_and_table_promise = function(layer_info) {
 // hide_loader();
 
 var init_layer_and_table_promise = function() {
-    return Promise.allSettled(layer_info_list.map(chain_load_update_promise));
+    return Promise.all(layer_info_list.map(chain_load_update_promise).map(p => p.catch(e => e)));
 }
 
 init_layer_and_table_promise().then(function() {
