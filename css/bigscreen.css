@@ -3,6 +3,10 @@
     color: #ffffff;
 }
 
+.sidebar {
+    font-size: 1rem;
+}
+
 .data-pane {
     display: flex;
     flex: 1;
@@ -16,7 +20,7 @@
 
 .location-name {
     display: inline-block;
-    font-size: 30pt;
+    font-size: 1.7em;
     padding: 20px 20px 0;
     font-weight: 700;
     margin-bottom: 10px;
@@ -30,17 +34,17 @@
 
 .data-wrap .data-header {
     /* padding-bottom: 5px; */
-    font-size: 15pt;
+    font-size: 0.7rem;
     font-weight: bold;
 }
 
 .data-wrap .data-number {
-    font-size: 22pt;
+    font-size: 1.3rem;
     font-weight: 800;
 }
 
 .data-wrap .change {
-    font-size: 16pt;
+    font-size: 0.7rem;
     font-weight: 400;
 }
 
@@ -61,15 +65,14 @@
     color: white;
     text-align: center;
     flex-direction: column;
-    font-size: 11pt;
     font-weight: 300;
     font-family: 'Open Sans', sans-serif;
-    /* background-color: lightslategray; */
+    height: 115px;
 }
 
 .credit h4 {
-    font-size: 15px;
-    padding-bottom: 5px;
+    font-size: 10px;
+    padding-bottom: 0px;
 }
 
 .credit .qrs-wrap {
@@ -82,13 +85,13 @@
 
 .credit .qrs-wrap .qr img {
     display: inline-block;
-    width: 90px;
-    height: 90px;
-    margin-bottom: 10px;
+    width: 40px;
+    height: 40px;
+    margin-bottom: 5px;
 }
 
 .credit .qrs-wrap .qr p {
-    font-size: 9pt;
+    font-size: 7px;
     font-weight: 300;
     font-family: 'Open Sans', sans-serif;
     margin: 0;
@@ -105,34 +108,46 @@
     left: 15px;
     top: 500px;
     width: 100% !important;
-    height: 250px !important;
+    height: 200px !important;
     background: #242424;
+}
+
+.leaflet-container .leaflet-control-attribution,
+.leaflet-container .leaflet-control-scale {
+    font-size: 7px !important;
 }
 
 .leaflet-control-layers.leaflet-control-layers-expanded.leaflet-timeline-control.leaflet-control {
     display: none;
 }
 
+.legend strong {
+    padding-bottom: 0px;
+    display: block;
+}
+
 .info {
-    padding: 6px 8px;
+    padding: 3px 3px;
     font: 17px Arial, Helvetica, sans-serif;
     background: rgba(0, 0, 0, 0.5);
     border-radius: 5px;
-    max-width: 190px;
+    max-width: 150px;
     padding: 15px;
     margin: 20px;
 }
 
 .legend {
-    font-size: 13px;
+    font-size: 7px;
+    line-height: 15px;
+    width: 120px;
 }
 
 .legend i {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
     float: left;
-    margin-right: 8px;
-    margin-bottom: 5px;
+    /* margin-right: 8px;*/
+    /* margin-top: 3px; */
     opacity: 0.5;
 }
 
@@ -142,8 +157,8 @@
 
 .map-date {
     display: block;
-    font-size: 30px;
-    margin: 15px;
+    font-size: 1rem;
+    margin: 0px;
     text-align: left;
     font-weight: bold;
     opacity: 0.5;

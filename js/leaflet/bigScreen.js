@@ -99,8 +99,9 @@ var layer_info_list = [{
         "animation": true,
         "highlightArea": "Champaign",
         "tabpage_id": "#illinois-tab",
-        "zoom_center": [39, -89],
-        "zoom_level": 6.5,
+        // "zoom_center": [39, -89],
+        // // "zoom_level": 6.5,
+        // "zoom_level": 10,
         "panel_id": "#illinois-data",
         "chartTitle": "Champaign County, IL",
     },
@@ -114,8 +115,8 @@ var layer_info_list = [{
         "animation": true,
         "highlightArea": "Illinois",
         "tabpage_id": "#county-tab",
-        "zoom_center": [35, -96],
-        "zoom_level": 4,
+        // "zoom_center": [35, -96],
+        // "zoom_level": 4,
         "panel_id": "#us-data",
         "chartTitle": "Illinois State",
     },
@@ -129,8 +130,8 @@ var layer_info_list = [{
         "animation": true,
         "highlightArea": "United States",
         "tabpage_id": "#world-tab",
-        "zoom_center": [0, 0],
-        "zoom_level": 2,
+        // "zoom_center": [0, 0],
+        // "zoom_level": 2,
         "panel_id": "#world-data",
         "chartTitle": "United States",
     },
@@ -362,6 +363,7 @@ var map = L.map('map', {
     layers: [CartoDB_DarkMatter],
     center: new L.LatLng(40, -89),
     zoom: 7,
+    // zoom: 10,
     //Remove Zoom Control from the map
     zoomControl: false,
     //Disable snap to zoom level
@@ -526,7 +528,7 @@ var add_animation_layer_to_map = function(layer_info) {
             }
         })
         var sliderDate = new Date(slider.time);
-        var options = { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC'};
+        var options = { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
         date_time = '<h2 class="map-date" style="padding:15px">' + sliderDate.toLocaleDateString('en-US', options) + "</h2>";
         // $('#current-datetime').text(sliderDate.toLocaleDateString('en-US', { timeZone: 'UTC' }));
         $('.leaflet-control-container .leaflet-top.leaflet-left').html(date_time);
@@ -534,8 +536,7 @@ var add_animation_layer_to_map = function(layer_info) {
         console.log(slider.time);
         console.log(slider);
 
-        if(slider.time == slider.end)
-        {
+        if (slider.time == slider.end) {
             scene_playing = false;
         }
     });
@@ -595,12 +596,21 @@ var cycle_scenes = function() {
         $(layer_info.panel_id).addClass('d-flex');
 
         // map.setView(layer_info.zoom_center, layer_info.zoom_level);
+        // if (layer_info.name == "il_weekly_case") {
+        //     map.fitBounds(illinois_bounds, { paddingTopLeft: [200, 50], paddingBottomRight: [200, 400] });
+        // } else if (layer_info.name == "us_state_weekly_case") {
+        //     map.fitBounds(us_bounds, { paddingTopLeft: [100, 50], paddingBottomRight: [100, 400] });
+        // } else {
+        //     map.fitWorld({ paddingTopLeft: [100, -50], paddingBottomRight: [100, 200] });
+        // }
+
+        // map.setView(layer_info.zoom_center, layer_info.zoom_level);
         if (layer_info.name == "il_weekly_case") {
-            map.fitBounds(illinois_bounds, { paddingTopLeft: [200, 50], paddingBottomRight: [200, 400] });
+            map.fitBounds(illinois_bounds, { paddingTopLeft: [0, 20], paddingBottomRight: [0, 220] });
         } else if (layer_info.name == "us_state_weekly_case") {
-            map.fitBounds(us_bounds, { paddingTopLeft: [100, 50], paddingBottomRight: [100, 400] });
+            map.fitBounds(us_bounds, { paddingTopLeft: [100, 20], paddingBottomRight: [100, 220] });
         } else {
-            map.fitWorld({ paddingTopLeft: [100, -50], paddingBottomRight: [100, 200] });
+            map.fitWorld({ paddingTopLeft: [10, -20], paddingBottomRight: [10, 120] });
         }
 
         // add new layer to map
@@ -886,14 +896,26 @@ var updateChart = function(graphic) {
                 fontSize: 15
             },
             legend: {
-                display: ($(window).width() > 1000),
+                display: true, //($(window).width() > 1000),
                 position: 'top',
                 fullWidth: true,
                 labels: {
-                    fontSize: 12
+                    fontSize: 8
                 }
             },
-            fontSize: 12,
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        fontSize: 8
+                    }
+                }],
+                xAxes: [{
+                    ticks: {
+                        fontSize: 8
+                    }
+                }]
+            },
+            fontSize: 8,
             responsive: true,
             maintainAspectRatio: false
         },
