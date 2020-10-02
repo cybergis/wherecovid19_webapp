@@ -104,6 +104,7 @@ var highlight = {
 ////////////////////////////////////// Create Legend //////////////////////////////////////
 
 var legend = null;
+var isShareableURL = document.location.href.includes("#");
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -139,7 +140,7 @@ getPosition(geolocation_options)
 var zoomToUserLocation = function () {
     console.log(document.location.href.includes("#"));
     // Only locate user when detailed URL information is not given
-    if (document.location.href.includes("#") == false) {
+    if (!isShareableURL) {
 
         console.log("Trying to center view to user location ....");
         if (!userCentered || userGeolocationTriedCounter > 60) {
@@ -161,8 +162,7 @@ var zoomToUserLocation = function () {
 
 var zoomToUserLocationPromise = function () {
     return new Promise((resolve, reject) => {
-        //userGeolocationTimer = setInterval(zoomToUserLocation, 1000);
-        zoomToUserLocation();
+        userGeolocationTimer = setInterval(zoomToUserLocation, 1000);
         resolve();
     });
 }
