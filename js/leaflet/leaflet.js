@@ -89,8 +89,8 @@ var illinois_counties_ts, us_counties_ts, us_states_ts, world_ts;
 /////////////////////////////// Define Color Schema And Bins //////////////////////////////
 
 var bins = null;
-var index = 0;
-const DayInMilSec = 60 * 60 * 24 * 1000;
+// var index = 0;
+// const DayInMilSec = 60 * 60 * 24 * 1000;
 
 ///////////////////////////// Handle Left Panel Table Clicking ////////////////////////////
 
@@ -1083,6 +1083,8 @@ var add_animation_layer_to_map = function (layer_info) {
         let li = getLayerInfo(e.target.name);
         index = Math.floor((this.time - this.start) / DayInMilSec);
         this.setStyle(li.style_func);
+        // Only for the listening of the URL hash change 
+        map.fire("mousedown");
     });
 
     if (layer_info.show) {
