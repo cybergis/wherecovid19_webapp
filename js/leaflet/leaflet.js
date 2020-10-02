@@ -137,6 +137,7 @@ getPosition(geolocation_options)
     })
 
 var zoomToUserLocation = function () {
+    console.log(document.location.href.includes("#"));
     // Only locate user when detailed URL information is not given
     if (document.location.href.includes("#") == false) {
 
@@ -160,7 +161,8 @@ var zoomToUserLocation = function () {
 
 var zoomToUserLocationPromise = function () {
     return new Promise((resolve, reject) => {
-        userGeolocationTimer = setInterval(zoomToUserLocation, 1000);
+        //userGeolocationTimer = setInterval(zoomToUserLocation, 1000);
+        zoomToUserLocation();
         resolve();
     });
 }
