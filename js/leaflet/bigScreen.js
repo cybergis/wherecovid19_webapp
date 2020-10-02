@@ -157,7 +157,7 @@ var loadClassJson = function(url) {
             type: 'GET',
             dataType: 'json',
             success: function(data) {
-                console.log(url);
+                // console.log(url);
                 class_json_obj = data;
                 resolve();
             },
@@ -179,7 +179,7 @@ var load_geojson_promise = function(layer_info) {
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                    console.log("Downloading " + layer_info.geojson_url);
+                    // console.log("Downloading " + layer_info.geojson_url);
                     // Compare newly loaded geojson obj
                     // Update layer_info.geojson_obj if it changed
                     // Update a flag in layer_info to indicare whether geojson_obj has changed
@@ -261,8 +261,6 @@ var fill_left_panel_us = function(geojson) {
     let result_list = geojson.features.map(function(value, index) {
         if (value.properties.NAME == "Illinois") {
             let bounds = value.geometry.coordinates;
-            // console.log(bounds.length);
-            // console.log(bounds[0].length);
             for (i = 0; i < bounds[0].length; i++) {
                 illinois_bounds.push([bounds[0][i][1], bounds[0][i][0]]);
             }
@@ -303,15 +301,11 @@ var fill_left_panel_world = function(geojson) {
     let result_list = geojson.features.map(function(value, index) {
         if (value.properties.NAME == "United States") {
             let bounds = value.geometry.coordinates;
-            // console.log(bounds.length);
-            // console.log(bounds[0].length);
-            // console.log(bounds[0][0].length);
             for (j = 0; j < bounds.length; j++) {
                 for (i = 0; i < bounds[0][0].length; i++) {
                     us_bounds.push([bounds[0][0][i][1], bounds[0][0][i][0]]);
                 }
             }
-            // console.log(us_bounds);
         }
         return {
             centroid_x: turf.centroid(value.geometry).geometry.coordinates[0],
@@ -469,7 +463,7 @@ var getChangeColor = function(d) {
 
 var add_animation_layer_to_map = function(layer_info) {
     if (layer_info.geojson_obj == null || layer_info.geojson_obj == undefined) {
-        console.log("Geojson for " + layer_info.display_name + " is not loaded")
+        // console.log("Geojson for " + layer_info.display_name + " is not loaded")
         return;
     }
 
@@ -511,10 +505,8 @@ var add_animation_layer_to_map = function(layer_info) {
     });
 
     layer_obj.on('change', function(e) {
-        // console.log(slider.time);
         let li = getLayerInfo(e.target.name);
         index = Math.floor((this.time - this.start) / DayInMilSec);
-        // console.log(index);
         this.setStyle(li.style_func);
         layer_obj.eachLayer(function(value) {
             if (value.feature.properties.NAME == layer_info.highlightArea) {
@@ -530,9 +522,6 @@ var add_animation_layer_to_map = function(layer_info) {
         date_time = '<h2 class="map-date" style="padding:15px">' + sliderDate.toLocaleDateString('en-US', options) + "</h2>";
         // $('#current-datetime').text(sliderDate.toLocaleDateString('en-US', { timeZone: 'UTC' }));
         $('.leaflet-control-container .leaflet-top.leaflet-left').html(date_time);
-        console.log("11111111111111111111111111");
-        console.log(slider.time);
-        console.log(slider);
 
         if(slider.time == slider.end)
         {
@@ -584,7 +573,7 @@ var cycle_scenes = function() {
     }
 
     if (layer_obj != null && layer_obj != undefined) {
-        console.log("Playing " + layer_info.display_name);
+        // console.log("Playing " + layer_info.display_name);
 
         // hide all data panes
         $('.data-pane').removeClass('d-flex');
@@ -766,7 +755,6 @@ var updateChart = function(graphic) {
     }
 
     SlicedLabelDates = LabelDates.slice(firstCaseIndex);
-    // console.log(firstCaseIndex);
 
     const verticalLinePlugin = {
         getLinePosition: function(chart, pointIndex) {
