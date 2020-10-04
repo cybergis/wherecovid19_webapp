@@ -121,7 +121,7 @@ var illinois_counties_ts, chicago_acc_i_ts, chicago_acc_v_ts,
 
 var bins = null;
 var index = 0;
-const DayInMilSec = 60 * 60 * 24 * 1000;
+// const DayInMilSec = 60 * 60 * 24 * 1000;
 
 ///////////////////////////// Handle Left Panel Table Clicking ////////////////////////////
 
