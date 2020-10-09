@@ -1239,6 +1239,8 @@ var add_animation_layer_to_map = function (layer_info) {
         let li = getLayerInfo(e.target.name);
         index = Math.floor((this.time - this.start) / DayInMilSec);
         this.setStyle(li.style_func);
+        // Only for the listening of the URL hash change 
+        map.fire("mousedown");
     });
 
     if (layer_info.show) {
@@ -1303,10 +1305,10 @@ var add_hospital_markers = function(layer_name) {
     }
 }
 
-// var addUrlHash = function() {
-//     // console.log(allMapLayers);
-//     var hash = new L.Hash(map, allMapLayers);
-// }
+var addUrlHash = function() {
+    // console.log(allMapLayers);
+    var hash = new L.Hash(map, allMapLayers);
+}
 
 var chain_promise = function (layer_info) {
     return loadGeoJson(layer_info).then(function(result) {
@@ -1333,8 +1335,8 @@ loadClassJson(class_json_url).then(
     }).then(function() {
         // Add default layer
         map.addLayer(il_acc_i_layer_object);
+        addUrlHash();
         add_hospital_markers("il_acc_i");
-        // addUrlHash();
         return Promise.resolve(1);
     })
 );
@@ -1444,9 +1446,9 @@ var left_tab_button_handler = function (layer_info) {
                 }
             });
             // show_loader();
-            map.addLayer(il_chicago_acc_v_layer_object);
-            add_hospital_markers("il_chicago_acc_v");
+            map.addLayer(il_chicago_acc_v_layer_object);            
             map.setView([41.87, -87.62], 10);
+            add_hospital_markers("il_chicago_acc_v");
         }
     });
 
@@ -1460,8 +1462,8 @@ var left_tab_button_handler = function (layer_info) {
             });
             // show_loader();
             map.addLayer(il_chicago_acc_i_layer_object);
-            add_hospital_markers("il_chicago_acc_i");
             map.setView([41.87, -87.62], 10);
+            add_hospital_markers("il_chicago_acc_i");
         }
     });
 
@@ -1475,8 +1477,8 @@ var left_tab_button_handler = function (layer_info) {
             });
             // show_loader();
             map.addLayer(il_acc_v_layer_object);
-            add_hospital_markers("il_acc_v");
             map.setView([40, -89], 7);
+            add_hospital_markers("il_acc_v");
         }
     });
 
@@ -1490,8 +1492,8 @@ var left_tab_button_handler = function (layer_info) {
             });
             // show_loader();
             map.addLayer(il_acc_i_layer_object);
-            add_hospital_markers("il_acc_i");
             map.setView([40, -89], 7);
+            add_hospital_markers("il_acc_i");
         }
     });
 
