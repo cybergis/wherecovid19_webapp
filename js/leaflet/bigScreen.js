@@ -526,7 +526,10 @@ var add_animation_layer_to_map = function(layer_info) {
         $('.leaflet-control-container .leaflet-top.leaflet-left').html(date_time);
 
         if (slider.time == slider.end) {
-            scene_playing = false;
+            scene_playing = false;            
+            if (layer_obj.name == "world_weekly_case" ) {
+                console.log("This cycle has ended");
+            }
         }
     });
 }
@@ -583,15 +586,6 @@ var cycle_scenes = function() {
         // then to show specific pane
         $(layer_info.panel_id).removeClass('d-none');
         $(layer_info.panel_id).addClass('d-flex');
-
-        // map.setView(layer_info.zoom_center, layer_info.zoom_level);
-        // if (layer_info.name == "il_weekly_case") {
-        //     map.fitBounds(illinois_bounds, { paddingTopLeft: [200, 50], paddingBottomRight: [200, 400] });
-        // } else if (layer_info.name == "us_state_weekly_case") {
-        //     map.fitBounds(us_bounds, { paddingTopLeft: [100, 50], paddingBottomRight: [100, 400] });
-        // } else {
-        //     map.fitWorld({ paddingTopLeft: [100, -50], paddingBottomRight: [100, 200] });
-        // }
 
         // map.setView(layer_info.zoom_center, layer_info.zoom_level);
         if (layer_info.name == "il_weekly_case") {
