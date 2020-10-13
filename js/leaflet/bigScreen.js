@@ -529,6 +529,14 @@ var add_animation_layer_to_map = function(layer_info) {
             scene_playing = false;            
             if (layer_obj.name == "world_weekly_case" ) {
                 console.log("This cycle has ended");
+                var currentDate = new Date(); 
+                var currentDateTime = "This cycle ended at: " + (currentDate.getMonth()+1)  + "/" 
+                                + currentDate.getDate() + "/"
+                                + currentDate.getFullYear() + " @ "  
+                                + currentDate.getHours() + ":"  
+                                + currentDate.getMinutes() + ":" 
+                                + currentDate.getSeconds();                
+                console.log(currentDateTime);
             }
         }
     });
