@@ -1334,9 +1334,42 @@ loadClassJson(class_json_url).then(
         return Promise.allSettled(layer_info_list_2.map(chain_promise)).then(function(){hide_loader()});
     }).then(function() {
         // Add default layer
-        map.addLayer(il_acc_i_layer_object);
-        addUrlHash();
-        add_hospital_markers("il_acc_i");
+        if (document.location.href.indexOf('#') == -1) {
+            map.addLayer(il_acc_i_layer_object);
+            addUrlHash();
+            add_hospital_markers("il_acc_i");
+        } else{
+            hashLayerName = document.location.href.split('#')[1].split("/")[3].split("-")[1];
+            if (hashLayerName == "il_acc_i") {
+                document.getElementById("acc_i_il_button").checked = true;
+                addUrlHash();
+                add_hospital_markers("il_acc_i");
+            }
+            else if (hashLayerName == "il_acc_v") {
+                document.getElementById("acc_v_il_button").checked = true;
+                addUrlHash();
+                add_hospital_markers("il_acc_v");
+            }
+            else if (hashLayerName == "il_chicago_acc_i") {
+                document.getElementById("acc_i_chi_button").checked = true;
+                addUrlHash();
+                add_hospital_markers("il_chicago_acc_i");
+            }
+            else if (hashLayerName == "il_chicago_acc_v") {
+                document.getElementById("acc_v_chi_button").checked = true;
+                addUrlHash();
+                add_hospital_markers("il_chicago_acc_v");
+            }
+            else if (hashLayerName == "il_vul") {
+                document.getElementById("vul_button").checked = true;
+                addUrlHash();
+            }
+            else if (hashLayerName == "il_svi") {
+                document.getElementById("svi_button").checked = true;
+                addUrlHash();
+            }
+        }
+        
         return Promise.resolve(1);
     })
 );
