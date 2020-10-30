@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
 
-WhereCOVID-19 is an online platform that provides a collection of static and dynamic maps for estimating the spread and exposure risk of COVID-19 at various spatial and temporal scales.
+WhereCOVID-19 is an online platform that provides a collection of static and dynamic maps for estimating the spread and exposure risk of COVID-19 at various spatial and temporal scales. Production deploy is at https://wherecovid19.cigi.illinois.edu.
 
   - Space-Time Explorer
   - Vulnerability Explorer
