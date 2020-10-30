@@ -66,7 +66,7 @@ Please raise an issue if you find any bug or contact Dr. Zhiyu Li (zhiyul@illino
 
 ### License
 
-MIT License.
+[Creative Commons Attribution-NonCommercial 4.0 International License] [License]
 
 **WhereCovid-19 is an open-source platform.**
 
@@ -82,4 +82,4 @@ MIT License.
    [Jupyter]: <https://jupyter.org>
    [wherecovid19_webapp]: <https://github.com/cybergis/wherecovid19_webapp>
    [cronjob]: <https://github.com/cybergis/wherecovid19_webapp/blob/refactor/preprocessing/cronjob/preprocess_cron.sh>
-   
+   [License]: <https://creativecommons.org/licenses/by-nc/4.0/>
