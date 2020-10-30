@@ -1,6 +1,11 @@
 // Make the tag of initialization global variable 
 // so that it can be used in leaflet.js
 var initializedTag = false;
+var index = 0;
+// var slider = null;
+const DayInMilSec = 60 * 60 * 24 * 1000;
+
+//---------------End of Global Variables---------------
 
 (function(window) {
 	// var initializedTag = false;
@@ -24,18 +29,21 @@ var initializedTag = false;
 			hash = hash.substr(1);
 		}
 		var args = hash.split("/");
-		if (args.length == 4) {
+		if (args.length == 5) {
 			var zoom = parseInt(args[0], 10),
 			lat = parseFloat(args[1]),
 			lon = parseFloat(args[2]),
-			layers = (args[3]).split("-");
+			layers = (args[3]).split("-"),
+			dateIndex = parseInt(args[4], 10);
+
 			if (isNaN(zoom) || isNaN(lat) || isNaN(lon)) {
 				return false;
 			} else {
 				return {
 					center: new L.LatLng(lat, lon),
 					zoom: zoom,
-					layers: layers
+					layers: layers,
+					dateIndex: dateIndex
 				};
 			}
 		} else {
@@ -47,7 +55,8 @@ var initializedTag = false;
 		var center = map.getCenter(),
 		    zoom = map.getZoom(),
 		    precision = Math.max(0, Math.ceil(Math.log(zoom) / Math.LN2)),
-		    layers = [];
+			layers = [],
+			dateIndex = index;
 
 		var options = this.options;
 		//Check active layers
@@ -62,7 +71,8 @@ var initializedTag = false;
 		return "#" + [zoom,
 			center.lat.toFixed(precision),
 			center.lng.toFixed(precision),
-			layers.join("-")
+			layers.join("-"),
+			dateIndex
 		].join("/");
 	},
 
@@ -131,6 +141,7 @@ var initializedTag = false;
 				}
 			}
 			var parsed = this.parseHash(hash);
+			console.log(parsed);
 			if (parsed) {
 				this.movingMap = true;
 
@@ -138,6 +149,7 @@ var initializedTag = false;
 				var layers = parsed.layers,
 					options = this.options,
 					that = this;
+					dateIndex = parsed.dateIndex;
 
 				//Add/remove layers
 				this.map.eachLayer(function(layer) {
@@ -146,7 +158,10 @@ var initializedTag = false;
 
 				layers.forEach(function(element, index, array) {
 					that.map.addLayer(options[element]);
-				});			
+				});
+
+				// Set up time slider
+				slider.setTime(slider.start + dateIndex*DayInMilSec); 
 
 				this.movingMap = false;
 			} else {
@@ -172,7 +187,7 @@ var initializedTag = false;
 		isListening: false,
 		hashChangeInterval: null,
 		startListening: function() {
-			this.map.on("moveend layeradd layerremove", this.onMapMove, this);
+			this.map.on("moveend layeradd layerremove mousedown", this.onMapMove, this);
 
 			if (HAS_HASHCHANGE) {
 				L.DomEvent.addListener(window, "hashchange", this.onHashChange);
@@ -184,7 +199,7 @@ var initializedTag = false;
 		},
 
 		stopListening: function() {
-			this.map.off("moveend layeradd layerremove", this.onMapMove, this);
+			this.map.off("moveend layeradd layerremove mousedown", this.onMapMove, this);
 
 			if (HAS_HASHCHANGE) {
 				L.DomEvent.removeListener(window, "hashchange", this.onHashChange);

@@ -99,8 +99,9 @@ var layer_info_list = [{
         "animation": true,
         "highlightArea": "Champaign",
         "tabpage_id": "#illinois-tab",
-        "zoom_center": [39, -89],
-        "zoom_level": 6.5,
+        // "zoom_center": [39, -89],
+        // // "zoom_level": 6.5,
+        // "zoom_level": 10,
         "panel_id": "#illinois-data",
         "chartTitle": "Champaign County, IL",
     },
@@ -114,8 +115,8 @@ var layer_info_list = [{
         "animation": true,
         "highlightArea": "Illinois",
         "tabpage_id": "#county-tab",
-        "zoom_center": [35, -96],
-        "zoom_level": 4,
+        // "zoom_center": [35, -96],
+        // "zoom_level": 4,
         "panel_id": "#us-data",
         "chartTitle": "Illinois State",
     },
@@ -129,8 +130,8 @@ var layer_info_list = [{
         "animation": true,
         "highlightArea": "United States",
         "tabpage_id": "#world-tab",
-        "zoom_center": [0, 0],
-        "zoom_level": 2,
+        // "zoom_center": [0, 0],
+        // "zoom_level": 2,
         "panel_id": "#world-data",
         "chartTitle": "United States",
     },
@@ -157,7 +158,7 @@ var loadClassJson = function(url) {
             type: 'GET',
             dataType: 'json',
             success: function(data) {
-                console.log(url);
+                // console.log(url);
                 class_json_obj = data;
                 resolve();
             },
@@ -179,7 +180,7 @@ var load_geojson_promise = function(layer_info) {
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                    console.log("Downloading " + layer_info.geojson_url);
+                    // console.log("Downloading " + layer_info.geojson_url);
                     // Compare newly loaded geojson obj
                     // Update layer_info.geojson_obj if it changed
                     // Update a flag in layer_info to indicare whether geojson_obj has changed
@@ -261,8 +262,6 @@ var fill_left_panel_us = function(geojson) {
     let result_list = geojson.features.map(function(value, index) {
         if (value.properties.NAME == "Illinois") {
             let bounds = value.geometry.coordinates;
-            // console.log(bounds.length);
-            // console.log(bounds[0].length);
             for (i = 0; i < bounds[0].length; i++) {
                 illinois_bounds.push([bounds[0][i][1], bounds[0][i][0]]);
             }
@@ -303,15 +302,11 @@ var fill_left_panel_world = function(geojson) {
     let result_list = geojson.features.map(function(value, index) {
         if (value.properties.NAME == "United States") {
             let bounds = value.geometry.coordinates;
-            // console.log(bounds.length);
-            // console.log(bounds[0].length);
-            // console.log(bounds[0][0].length);
             for (j = 0; j < bounds.length; j++) {
                 for (i = 0; i < bounds[0][0].length; i++) {
                     us_bounds.push([bounds[0][0][i][1], bounds[0][0][i][0]]);
                 }
             }
-            // console.log(us_bounds);
         }
         return {
             centroid_x: turf.centroid(value.geometry).geometry.coordinates[0],
@@ -362,6 +357,7 @@ var map = L.map('map', {
     layers: [CartoDB_DarkMatter],
     center: new L.LatLng(40, -89),
     zoom: 7,
+    // zoom: 10,
     //Remove Zoom Control from the map
     zoomControl: false,
     //Disable snap to zoom level
@@ -469,7 +465,7 @@ var getChangeColor = function(d) {
 
 var add_animation_layer_to_map = function(layer_info) {
     if (layer_info.geojson_obj == null || layer_info.geojson_obj == undefined) {
-        console.log("Geojson for " + layer_info.display_name + " is not loaded")
+        // console.log("Geojson for " + layer_info.display_name + " is not loaded")
         return;
     }
 
@@ -511,10 +507,8 @@ var add_animation_layer_to_map = function(layer_info) {
     });
 
     layer_obj.on('change', function(e) {
-        // console.log(slider.time);
         let li = getLayerInfo(e.target.name);
         index = Math.floor((this.time - this.start) / DayInMilSec);
-        // console.log(index);
         this.setStyle(li.style_func);
         layer_obj.eachLayer(function(value) {
             if (value.feature.properties.NAME == layer_info.highlightArea) {
@@ -526,17 +520,24 @@ var add_animation_layer_to_map = function(layer_info) {
             }
         })
         var sliderDate = new Date(slider.time);
-        var options = { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC'};
+        var options = { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
         date_time = '<h2 class="map-date" style="padding:15px">' + sliderDate.toLocaleDateString('en-US', options) + "</h2>";
         // $('#current-datetime').text(sliderDate.toLocaleDateString('en-US', { timeZone: 'UTC' }));
         $('.leaflet-control-container .leaflet-top.leaflet-left').html(date_time);
-        console.log("11111111111111111111111111");
-        console.log(slider.time);
-        console.log(slider);
 
-        if(slider.time == slider.end)
-        {
-            scene_playing = false;
+        if (slider.time == slider.end) {
+            scene_playing = false;            
+            if (layer_obj.name == "world_weekly_case" ) {
+                console.log("This cycle has ended");
+                var currentDate = new Date(); 
+                var currentDateTime = "This cycle ended at: " + (currentDate.getMonth()+1)  + "/" 
+                                + currentDate.getDate() + "/"
+                                + currentDate.getFullYear() + " @ "  
+                                + currentDate.getHours() + ":"  
+                                + currentDate.getMinutes() + ":" 
+                                + currentDate.getSeconds();                
+                console.log(currentDateTime);
+            }
         }
     });
 }
@@ -551,7 +552,7 @@ var update_layer_and_table_promise = function(layer_info) {
     if (layer_info.geojson_updated == true) {
         let p1 = add_animation_layer_to_map_promise(layer_info);
         let p2 = fill_left_panel_promise(layer_info);
-        return Promise.allSettled([p1, p2]);
+        return Promise.all([p1, p2].map(p => p.catch(e => e)));
     } else {
         return Promise.resolve(1);
     }
@@ -560,7 +561,7 @@ var update_layer_and_table_promise = function(layer_info) {
 // hide_loader();
 
 var init_layer_and_table_promise = function() {
-    return Promise.allSettled(layer_info_list.map(chain_load_update_promise));
+    return Promise.all(layer_info_list.map(chain_load_update_promise).map(p => p.catch(e => e)));
 }
 
 init_layer_and_table_promise().then(function() {
@@ -584,7 +585,7 @@ var cycle_scenes = function() {
     }
 
     if (layer_obj != null && layer_obj != undefined) {
-        console.log("Playing " + layer_info.display_name);
+        // console.log("Playing " + layer_info.display_name);
 
         // hide all data panes
         $('.data-pane').removeClass('d-flex');
@@ -596,11 +597,11 @@ var cycle_scenes = function() {
 
         // map.setView(layer_info.zoom_center, layer_info.zoom_level);
         if (layer_info.name == "il_weekly_case") {
-            map.fitBounds(illinois_bounds, { paddingTopLeft: [200, 50], paddingBottomRight: [200, 400] });
+            map.fitBounds(illinois_bounds, { paddingTopLeft: [0, 20], paddingBottomRight: [0, 220] });
         } else if (layer_info.name == "us_state_weekly_case") {
-            map.fitBounds(us_bounds, { paddingTopLeft: [100, 50], paddingBottomRight: [100, 400] });
+            map.fitBounds(us_bounds, { paddingTopLeft: [100, 20], paddingBottomRight: [100, 220] });
         } else {
-            map.fitWorld({ paddingTopLeft: [100, -50], paddingBottomRight: [100, 200] });
+            map.fitWorld({ paddingTopLeft: [10, -20], paddingBottomRight: [10, 120] });
         }
 
         // add new layer to map
@@ -755,9 +756,9 @@ var updateChart = function(graphic) {
     else if (graphic.properties.start == "2020-01-21") {
         var LabelDate = new Date(2020, 0, 13);
     }
-    // WHO data started from 2020-01-04
-    else if (graphic.properties.start == "2020-01-04") {
-        var LabelDate = new Date(2019, 11, 27);
+    // WHO data started from 2020-01-03
+    else if (graphic.properties.start == "2020-01-03") {
+        var LabelDate = new Date(2019, 11, 26);
     }
 
     for (i = 0; i < ExtendedCasesArray.length; i++) {
@@ -766,7 +767,6 @@ var updateChart = function(graphic) {
     }
 
     SlicedLabelDates = LabelDates.slice(firstCaseIndex);
-    // console.log(firstCaseIndex);
 
     const verticalLinePlugin = {
         getLinePosition: function(chart, pointIndex) {
@@ -886,14 +886,26 @@ var updateChart = function(graphic) {
                 fontSize: 15
             },
             legend: {
-                display: ($(window).width() > 1000),
+                display: true, //($(window).width() > 1000),
                 position: 'top',
                 fullWidth: true,
                 labels: {
-                    fontSize: 12
+                    fontSize: 8
                 }
             },
-            fontSize: 12,
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        fontSize: 8
+                    }
+                }],
+                xAxes: [{
+                    ticks: {
+                        fontSize: 8
+                    }
+                }]
+            },
+            fontSize: 8,
             responsive: true,
             maintainAspectRatio: false
         },

@@ -121,7 +121,7 @@ var illinois_counties_ts, chicago_acc_i_ts, chicago_acc_v_ts,
 
 var bins = null;
 var index = 0;
-const DayInMilSec = 60 * 60 * 24 * 1000;
+// const DayInMilSec = 60 * 60 * 24 * 1000;
 
 ///////////////////////////// Handle Left Panel Table Clicking ////////////////////////////
 
@@ -517,7 +517,7 @@ var add_animation_layer_to_map_promise = function (layer_info) {
                 add_animation_layer_to_map(layer_info);
             }
         }
-        
+        // hide_loader();
         resolve();
     })
 }
@@ -800,7 +800,7 @@ var fill_left_panel_promise = function (layer_info) {
         } if (layer_info.name == "chi_hospitals") {
             // fill_left_panel_acc_i(layer_info.geojson_obj);
         }
-        hide_loader();
+        // hide_loader();
         resolve();
     })
 }
@@ -1239,6 +1239,8 @@ var add_animation_layer_to_map = function (layer_info) {
         let li = getLayerInfo(e.target.name);
         index = Math.floor((this.time - this.start) / DayInMilSec);
         this.setStyle(li.style_func);
+        // Only for the listening of the URL hash change 
+        map.fire("mousedown");
     });
 
     if (layer_info.show) {
@@ -1303,10 +1305,10 @@ var add_hospital_markers = function(layer_name) {
     }
 }
 
-// var addUrlHash = function() {
-//     // console.log(allMapLayers);
-//     var hash = new L.Hash(map, allMapLayers);
-// }
+var addUrlHash = function() {
+    // console.log(allMapLayers);
+    var hash = new L.Hash(map, allMapLayers);
+}
 
 var chain_promise = function (layer_info) {
     return loadGeoJson(layer_info).then(function(result) {
@@ -1329,12 +1331,45 @@ loadClassJson(class_json_url).then(
     }).then(function() {
         // return zoomToUserLocationPromise();
     }).then(function() {
-        return Promise.allSettled(layer_info_list_2.map(chain_promise));
+        return Promise.allSettled(layer_info_list_2.map(chain_promise)).then(function(){hide_loader()});
     }).then(function() {
         // Add default layer
-        map.addLayer(il_acc_i_layer_object);
-        add_hospital_markers("il_acc_i");
-        // addUrlHash();
+        if (document.location.href.indexOf('#') == -1) {
+            map.addLayer(il_acc_i_layer_object);
+            addUrlHash();
+            add_hospital_markers("il_acc_i");
+        } else{
+            hashLayerName = document.location.href.split('#')[1].split("/")[3].split("-")[1];
+            if (hashLayerName == "il_acc_i") {
+                document.getElementById("acc_i_il_button").checked = true;
+                addUrlHash();
+                add_hospital_markers("il_acc_i");
+            }
+            else if (hashLayerName == "il_acc_v") {
+                document.getElementById("acc_v_il_button").checked = true;
+                addUrlHash();
+                add_hospital_markers("il_acc_v");
+            }
+            else if (hashLayerName == "il_chicago_acc_i") {
+                document.getElementById("acc_i_chi_button").checked = true;
+                addUrlHash();
+                add_hospital_markers("il_chicago_acc_i");
+            }
+            else if (hashLayerName == "il_chicago_acc_v") {
+                document.getElementById("acc_v_chi_button").checked = true;
+                addUrlHash();
+                add_hospital_markers("il_chicago_acc_v");
+            }
+            else if (hashLayerName == "il_vul") {
+                document.getElementById("vul_button").checked = true;
+                addUrlHash();
+            }
+            else if (hashLayerName == "il_svi") {
+                document.getElementById("svi_button").checked = true;
+                addUrlHash();
+            }
+        }
+        
         return Promise.resolve(1);
     })
 );
@@ -1444,9 +1479,9 @@ var left_tab_button_handler = function (layer_info) {
                 }
             });
             // show_loader();
-            map.addLayer(il_chicago_acc_v_layer_object);
-            add_hospital_markers("il_chicago_acc_v");
+            map.addLayer(il_chicago_acc_v_layer_object);            
             map.setView([41.87, -87.62], 10);
+            add_hospital_markers("il_chicago_acc_v");
         }
     });
 
@@ -1460,8 +1495,8 @@ var left_tab_button_handler = function (layer_info) {
             });
             // show_loader();
             map.addLayer(il_chicago_acc_i_layer_object);
-            add_hospital_markers("il_chicago_acc_i");
             map.setView([41.87, -87.62], 10);
+            add_hospital_markers("il_chicago_acc_i");
         }
     });
 
@@ -1475,8 +1510,8 @@ var left_tab_button_handler = function (layer_info) {
             });
             // show_loader();
             map.addLayer(il_acc_v_layer_object);
-            add_hospital_markers("il_acc_v");
             map.setView([40, -89], 7);
+            add_hospital_markers("il_acc_v");
         }
     });
 
@@ -1490,8 +1525,8 @@ var left_tab_button_handler = function (layer_info) {
             });
             // show_loader();
             map.addLayer(il_acc_i_layer_object);
-            add_hospital_markers("il_acc_i");
             map.setView([40, -89], 7);
+            add_hospital_markers("il_acc_i");
         }
     });
 

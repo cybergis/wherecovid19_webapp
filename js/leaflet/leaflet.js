@@ -89,8 +89,8 @@ var illinois_counties_ts, us_counties_ts, us_states_ts, world_ts;
 /////////////////////////////// Define Color Schema And Bins //////////////////////////////
 
 var bins = null;
-var index = 0;
-const DayInMilSec = 60 * 60 * 24 * 1000;
+// var index = 0;
+// const DayInMilSec = 60 * 60 * 24 * 1000;
 
 ///////////////////////////// Handle Left Panel Table Clicking ////////////////////////////
 
@@ -104,6 +104,7 @@ var highlight = {
 ////////////////////////////////////// Create Legend //////////////////////////////////////
 
 var legend = null;
+var isShareableURL = document.location.href.includes("#");
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -128,7 +129,6 @@ var addMarker = function () {
 
 getPosition(geolocation_options)
     .then((position) => {
-        console.log(position);
         userLat = position.coords.latitude;
         userLng = position.coords.longitude;
     })
@@ -137,8 +137,9 @@ getPosition(geolocation_options)
     })
 
 var zoomToUserLocation = function () {
+    // console.log(document.location.href.includes("#"));
     // Only locate user when detailed URL information is not given
-    if (document.location.href.includes("#") == false) {
+    if (!isShareableURL) {
 
         console.log("Trying to center view to user location ....");
         if (!userCentered || userGeolocationTriedCounter > 60) {
@@ -375,7 +376,7 @@ var loadClassJson = function (url) {
             type: 'GET',
             dataType: 'json',
             success: function(data) {
-                console.log(url);
+                //console.log(url);
                 class_json_obj = data;
                 resolve();
             },
@@ -402,7 +403,7 @@ var loadGeoJson = function (layer_info) {
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                    console.log(layer_info.geojson_url);
+                    //console.log(layer_info.geojson_url);
                     layer_info.geojson_obj = data;
                     resolve(layer_info);
                 },
@@ -448,8 +449,6 @@ var fill_left_panel_il = function (geojson) {
             new_tested: value.properties.today_new_tested
         }
     });
-
-    //console.log(result_list);
 
     result_list.forEach(function(value) {
 
@@ -508,13 +507,11 @@ var fill_left_panel_il = function (geojson) {
     });
 
     $('#il-search-input').on('input', function() {
-        console.log($('#il-search-input').val());
         il_table.column(0).search($('#il-search-input').val()).draw();
         il_table.$('tr.selected').removeClass('selected');
     });
 
     $('#il-search-input').on('textchange', function() {
-        console.log($('#il-search-input').val());
         // If using regex in strict search, the context can only be searched in targetTable.column(i) instead of targetTable
         il_table.column(0).search('^'+$('#il-search-input').val()+'$', true, false).draw();
     });
@@ -523,10 +520,7 @@ var fill_left_panel_il = function (geojson) {
 
 // Use county data to fill the list
 var fill_left_panel_us_county = function (geojson) {
-    // var sum_us_counties_today_case = 0;
-    // var sum_us_counties_today_death = 0;
-    // var sum_us_counties_today_new_case = 0;
-    // var sum_us_counties_today_new_death = 0;
+
     let counties_table = document.getElementById('county-table').querySelector('tbody');
     let template = document.querySelectorAll('template')[1]
 
@@ -545,8 +539,6 @@ var fill_left_panel_us_county = function (geojson) {
         }
     });
 
-    //console.log(result_list);
-
     result_list.forEach(function(value) {
         let instance = template.content.cloneNode(true);
 
@@ -563,20 +555,7 @@ var fill_left_panel_us_county = function (geojson) {
         instance.querySelector('.death').setAttribute('data-order', value.death);
         counties_table.appendChild(instance);
 
-        // sum_us_counties_today_case += value.case;
-        // sum_us_counties_today_death += value.death;
-        // sum_us_counties_today_new_case += value.new_case;
-        // sum_us_counties_today_new_death += value.new_death;
     })
-
-    // let tab = document.getElementById('county-tab');
-    // tab.querySelectorAll('span')[0].innerHTML = numberWithCommas(sum_us_counties_today_case)
-    // let case_div = document.getElementById('counties_total_case_number')
-    // let death_div = document.getElementById('counties_total_death_number')
-    // case_div.querySelector('.case-number').innerHTML = numberWithCommas(sum_us_counties_today_case)
-    // case_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(sum_us_counties_today_new_case)
-    // death_div.querySelector('.case-number').innerHTML = numberWithCommas(sum_us_counties_today_death)
-    // death_div.querySelector('.change').innerHTML = "<i class='fas fa-caret-up'></i> " + numberWithCommas(sum_us_counties_today_new_death)
 
     county_table = $('#county-table').DataTable({
         paging: true,
@@ -602,13 +581,11 @@ var fill_left_panel_us_county = function (geojson) {
     });
 
     $('#w-search-input').on('input', function() {
-        console.log($('#w-search-input').val());
         county_table.column(0).search($('#w-search-input').val()).draw();
         county_table.$('tr.selected').removeClass('selected');
     });
 
     $('#w-search-input').on('textchange', function() {
-        console.log($('#w-search-input').val());
         // If using regex in strict search, the context can only be searched in targetTable.column(i) instead of targetTable
         county_table.column(0).search('^'+$('#w-search-input').val()+'$', true, false).draw();
     });
@@ -635,8 +612,6 @@ var fill_left_panel_us_state = function (geojson) {
             new_death: value.properties.today_new_death,
         }
     });
-
-    //console.log(result_list);
 
     result_list.forEach(function(value) {
         sum_us_counties_today_case += value.case;
@@ -676,8 +651,6 @@ var fill_left_panel_world = function (geojson) {
             new_death: value.properties.today_new_death,
         }
     });
-
-    //console.log(result_list);
 
     result_list.forEach(function(value) {
         let instance = template.content.cloneNode(true);
@@ -732,13 +705,11 @@ var fill_left_panel_world = function (geojson) {
     });
 
     $('#world-search-input').on('input', function() {
-        console.log($('#world-search-input').val());
         world_table.column(0).search($('#world-search-input').val()).draw();
         world_table.$('tr.selected').removeClass('selected');
     });
 
     $('#world-search-input').on('textchange', function() {
-        console.log($('#world-search-input').val());
         // If using regex in strict search, the context can only be searched in targetTable.column(i) instead of targetTable
         world_table.column(0).search('^'+$('#world-search-input').val()+'$', true, false).draw();
     });
@@ -1081,6 +1052,8 @@ var add_animation_layer_to_map = function (layer_info) {
         let li = getLayerInfo(e.target.name);
         index = Math.floor((this.time - this.start) / DayInMilSec);
         this.setStyle(li.style_func);
+        // Only for the listening of the URL hash change 
+        map.fire("mousedown");
     });
 
     if (layer_info.show) {
@@ -1151,7 +1124,7 @@ var _switch_to_layer = function (layer_object) {
 }
 
 var switch_left_tab_page_handler = function (layer_info) {
-    console.log(layer_info["tab_page_id"]);
+    // console.log(layer_info["tab_page_id"]);
     if (layer_info["tab_page_id"] != null && layer_info["tab_page_id"] != undefined) {
         document.getElementById(layer_info["tab_page_id"]).addEventListener("click", function(event) {
             let li = getLayerInfo(event.target.id, "tab_page_id");
@@ -1585,9 +1558,9 @@ var updateChart = function (graphic) {
     else if (graphic.properties.start == "2020-01-21") {
         var LabelDate = new Date(2020, 0, 13);
     }
-    // WHO data started from 2020-01-04
-    else if (graphic.properties.start == "2020-01-04") {
-        var LabelDate = new Date(2019, 11, 27);
+    // WHO data started from 2020-01-03
+    else if (graphic.properties.start == "2020-01-03") {
+        var LabelDate = new Date(2019, 11, 26);
     }
 
     for (i = 0; i < ExtendedCasesArray.length; i++) {
