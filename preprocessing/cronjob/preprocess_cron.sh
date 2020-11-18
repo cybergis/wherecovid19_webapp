@@ -118,8 +118,8 @@ download_files(){
 	wget https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv -O  ./us-states.csv
 	wget https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv -O ./us-counties.csv
 	#IDPH
-	wget -O ./illinois/idph_CountyDemos.json http://www.dph.illinois.gov/sitefiles/CountyDemos.json?nocache=1
-	wget -O ./illinois/idph_COVIDZip.json http://www.dph.illinois.gov/sitefiles/COVIDZip.json?nocache=1
+	wget -O ./illinois/idph_CountyDemos.json https://idph.illinois.gov/DPHPublicInformation/api/COVID/GetCountyDemographics
+	wget -O ./illinois/idph_COVIDZip.json https://idph.illinois.gov/DPHPublicInformation/api/COVID/GetZip
 	wget -O ./illinois/idph_COVIDHistoricalTestResults.json http://www.dph.illinois.gov/sitefiles/COVIDHistoricalTestResults.json?nocache=1
 	#WHO
         wget -O ./global-covid19-who-gis.json https://covid19.who.int/page-data/index/page-data.json
@@ -267,6 +267,29 @@ copy_back_results_webfolder(){
   cp ./illinois/vulnerability.geojson ../illinois/
 }
 
+copy_to_shared_folder(){
+  base_dir=/data/cigi/cybergis-jupyter/production_data/notebook_shared_data/data/wherecovid19_data/app
+  raw_idph=$base_dir/raw/idph
+  raw_nyt=$base_dir/raw/nyt
+  raw_who=$base_dir/raw/who
+  cp us-states.csv us-counties.csv $raw_nyt
+  cp ./illinois/idph_COVIDZip.json  ./illinois/idph_COVIDHistoricalTestResults.json $raw_idph
+  cp ./worldwide/global-covid19-who-gis.json $raw_who
+
+  pro_cases=$base_dir/processed/cases
+  pro_other=$base_dir/processed/other
+  pro_static=$base_dir/processed/static
+  cp ./illinois/dph_county_data.geojson $pro_cases
+  cp nyt_counties_data.geojson nyt_states_data.geojson $pro_cases
+  cp ./worldwide/who_world_data.geojson $pro_cases
+  cp ./illinois/dph_zipcode_data.geojson $pro_static
+  cp ../illinois/illinois_hospitals.geojson $pro_static
+  cp ./illinois/Chicago_ACC_?.geojson $pro_other
+  cp ./illinois/Illinois_ACC_?.geojson $pro_other
+  cp ./illinois/vulnerability.geojson $pro_other
+}
+
+
 setup_env
 make_copy_data
 download_files
@@ -282,6 +305,7 @@ then
 	run_illinois_vulnerability #7
 	run_defineintervels
 	copy_back_results_webfolder
+        copy_to_shared_folder
 fi
 destroy_env
 exit 0
