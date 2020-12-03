@@ -158,9 +158,12 @@ screen-btn:first {
 
 .navbar .app-drawer {
     color: white;
-    border-radius: 5px;
-    margin-right: 10px;
+    border-radius: 4px;
+    font-size: 16px;
+    padding: 6px 12px;
+    line-height: 16px;
     position: relative;
+    cursor: pointer;
 }
 
 .navbar .app-drawer:hover,
@@ -170,8 +173,9 @@ screen-btn:first {
 
 .navbar .app-drawer i {
     font-size: 18px;
-    line-height: 1;
-    padding: 8px;
+    line-height: 16px;
+    margin-top: 4px;
+    margin-right: 5px;
     cursor: pointer;
 }
 
@@ -249,6 +253,7 @@ screen-btn:first {
 
 .navbar .app-drawer .drawer-panel .app-icon h3 {
     font-size: 18px;
+    margin-bottom: 5px !important;
     font-weight: bold;
     margin-bottom: 0;
 }
