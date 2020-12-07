@@ -224,7 +224,7 @@ var styleFunc1 = function(_data) {
         stroke: true,
         weight: 1,
         color: "gray",
-        fillColor: getColorFor(100000 * splitStrInt(_data.properties.cases_ts, index) / _data.properties.population, bins),
+        fillColor: getColorFor(100000 * splitStrInt(_data.properties.deaths_ts, index) / _data.properties.population, bins),
         fillOpacity: 0.5
     }
 };
@@ -269,7 +269,7 @@ var layer_info_list = [{
     "category": "US",
     "show": false,
     "style_func": styleFunc1,
-    "color_class": ["county", "case_per_100k_capita", "nolog", "NaturalBreaks", "int"],
+    "color_class": ["county", "death_per_100k_capita", "nolog", "NaturalBreaks", "int"],
     "tab_page_id": "county-tab",
     "animation": true,
 },
@@ -972,8 +972,9 @@ var getColorFor = function (_num, _bins) {
         _num > _bins[2] ? '#FC4E2A' :
         _num > _bins[1] ? '#FD8D3C' :
         _num > _bins[0] ? '#FEB24C' :
-        _num > 0 ? '#FFEDA0' :
-        'transparent';
+            '#FFEDA0';
+        // _num > 0 ? '#FFEDA0' :
+        // 'transparent';
 }
 
 var getChangeColor = function (d) {
@@ -1338,7 +1339,7 @@ var refreshLegend = function (_layer) {
 
         var div = L.DomUtil.create('div', 'info legend');
 
-        label1 = ['<strong> Confirmed cases per 100k people </strong>'];
+        label1 = ['<strong> Confirmed deaths per 100k people </strong>'];
         label6 = ['<strong> Weekly Change Rate of New Cases </strong>']
         label7 = ['<strong> Cases </strong>'];
 
@@ -1349,10 +1350,12 @@ var refreshLegend = function (_layer) {
         // loop through our density intervals and generate a label with a colored square for each interval
         if (_layer == il_county_case_layer_object || _layer == us_county_case_layer_object || _layer == us_state_case_layer_object || _layer == world_case_layer_object) {
             grades = bins;
+            legendContent +=
+                    '<i style="background: #FFEDA0"></i><' + grades[0]+ '<br>';
             for (var i = 0; i < grades.length; i++) {
                 legendContent +=
                     '<i style="background:' + getColorFor((grades[i] + 0.000001), bins) + '"></i> ' +
-                    grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+') + '<br>';
+                     (grades[i + 1] ? grades[i] + '&ndash;' + grades[i + 1] + '<br>' : '>' + grades[i]) + '<br>';
             }
             label1.push(legendContent);
             div.innerHTML = label1.join('<br><br><br>');
