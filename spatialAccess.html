@@ -78,11 +78,22 @@
             </div>
             <div style="display: flex;flex-direction: row;">
 
-                <a class="btn btn-dark d-none d-md-block mx-1" style="color: white;" data-toggle="modal" data-target="#aboutModal" href="#aboutModal">
-                    <i class="fas fa-info-circle"></i></a>
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-dark mx-1" style="color: white;" data-toggle="modal" data-target="#contactForm">
+                    <span class="d-none d-md-block" style="white-space: nowrap;"><i class="fas fa-envelope-open-text"></i> Contact Us</span>
+                    <span class="d-block d-md-none d-lg-none d-xl-none" style="white-space: nowrap;"><i class="fas fa-envelope-open-text"></i></span>
+                    <span class="sr-only">Contact Form</span>
+                </button>
 
-                <div class="app-drawer btn-dark">
-                    <span><i class="fas fa-th"></i><span class="sr-only">Applications</span></span>
+                <a class="btn btn-dark d-none d-md-block mx-1" style="color: white;" data-toggle="modal" data-target="#aboutModal" href="#aboutModal">
+                    <span><i class="fas fa-info-circle"></i> About Us</span>
+                    <span class="sr-only">About SpatialAccess</span>
+                </a>
+
+                <div class="app-drawer btn-dark mx-1 mr-3">
+                    <span class="d-none d-md-block" style="white-space: nowrap;"><i class="fas fa-th"></i> Applications</span>
+                    <span class="d-block d-md-none d-lg-none d-xl-none" style="white-space: nowrap;"><i class="fas fa-th"></i></span>
+                    <span class="sr-only">Applications</span>
                     <div class="drawer-panel align-items-center">
                         <div class="app-icon-wrap p-2">
                             <a id="wherecovid_app" class="app-icon align-self-center" href="#" style="background-image: url('https://www.hklaw.com/-/media/images/case-studies/covid19-response-team/case_coronavirus_hero.jpg');">
@@ -268,6 +279,53 @@
         </div>
     </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="contactForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="color: black !important;">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">We want to hear from you!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+                </div>
+                <div class="modal-body">
+                    <form class="gform pure-form pure-form-stacked" method="POST" data-email="lab.cigi@gmail.com" action="https://script.google.com/macros/s/AKfycbwDp84BcT58A5uDxUxE3ilvC_zkpCXmxbZ0-2dYdg/exec">
+                        <div class="form-elements">
+                            <div class="form-group">
+                                <label for="exampleInputPassword1">Your Name</label>
+                                <input type="text" name="name" class="form-control" id="exampleInputPassword1">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Email address</label>
+                                <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleFormControlTextarea1">Anything you want to tell us?</label>
+                                <textarea class="form-control" name="message" id="exampleFormControlTextarea1" rows="3"></textarea>
+                            </div>
+                            <div class="pure-group honeypot-field" style="position:absolute; left:-9999px; top: -9999px;">
+                                <label for="honeypot">To help avoid spam, utilize a Honeypot technique with a hidden text field; must be empty to submit the form! Otherwise, we assume the user is a spam bot.</label>
+                                <input id="honeypot" type="text" name="honeypot" value="" />
+                            </div>
+                            <div class="col-md-12 text-center">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </div>
+
+                        <!-- Customise the Thankyou Message People See when they submit the form: -->
+                        <div class="thankyou_message" style="display:none;">
+                            <br>
+                            <h2 style="text-align:center;"><em>Thank you!</em></h2><br>
+                            <h3 style="text-align:center;">Your feedback and suggestions are appreciated! </h3>
+                            <br>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 
     <div class="modal fade" id="aboutModal" tabindex="-1 " role="dialog " aria-labelledby="exampleModalLabel " aria-hidden="true ">
@@ -297,8 +355,8 @@
                         capabilities based on scientific understanding of how spatiotemporal patterns and trends of COVID-19 relate to population characteristics and health care resources. The WhereCOVID-19 platform is made available to the general public,
                         a broad range of stakeholders, and research and education communities.</p>
                     <p>Currently, WhereCOVID-19 provides a collection of static and dynamic maps for estimating the spread and exposure risk of COVID-19 at various spatial and temporal scales. For example, a set of vulnerability maps synthesize information
-                        of confirmed COVID-19 cases, tested cases, population density, social vulnerability index based on CDC data, people living with HIV, and SpatialAccessibility to hospital resources based on a linear model. Another example is a
-                        suite of maps representing SpatialAccessibility to healthcare resources based on the outcome of a recent study: <a href=" https://medrxiv.org/cgi/content/short/2020.05.06.20093534v1 " target="_blank ">
+                        of confirmed COVID-19 cases, tested cases, population density, social vulnerability index based on CDC data, people living with HIV, and SpatialAccessibility to hospital resources based on a linear model. Another example is a suite
+                        of maps representing SpatialAccessibility to healthcare resources based on the outcome of a recent study: <a href=" https://medrxiv.org/cgi/content/short/2020.05.06.20093534v1 " target="_blank ">
                             https://medrxiv.org/cgi/content/short/2020.05.06.20093534v1</a>. </p>
 
                     <p style="text-align: center; "><a href="data-info.html " target="_blank ">WhereCOVID-19
@@ -355,6 +413,7 @@
     <!-- <script src="js/leaflet/L.Control.HtmlLegend.js"></script> -->
     <script src="js/leaflet/leaflet-fullHash.js" type="text/javascript"></script>
     <script src="js/leaflet/spatialAccess.js" type="text/javascript"></script>
+    <script data-cfasync="false" type="text/javascript" src="js/form-submission-handler.js"></script>
 
     <!-- include chart script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js "></script>
