@@ -1,0 +1,12 @@
+name: wherecovid19
+channels:
+  - conda-forge
+dependencies:
+  - python=3.7
+  - notebook
+  - mapclassify
+  - fiona
+  - geopandas
+  - nbconvert
+  - shapely
+  - matplotlib
