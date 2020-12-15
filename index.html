@@ -345,9 +345,8 @@
 
                         <div class="chart-wrap">
                             <div id="close_chart"><i class="fas fa-times"></i></div>
-                            <canvas id="myChart">
-
-                            </canvas>
+                            <div id="parallelCoords"></div>
+                            <canvas id="myChart"></canvas>
                         </div>
                         <div>
                             <select name="select" id="animation_dropdown" style="display: none">
@@ -549,6 +548,10 @@
     <link rel="stylesheet " type="text/css " href="https://cdn.datatables.net/v/bs4/dt-1.10.20/fh-3.1.6/sc-2.0.1/sp-1.0.1/datatables.min.css " />
     <script type="text/javascript " src="https://cdn.datatables.net/v/bs4/dt-1.10.20/fh-3.1.6/sc-2.0.1/sp-1.0.1/datatables.min.js "></script>
 
+    <!-- include chart script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js "></script>
+    <script src="https://d3js.org/d3.v4.js"></script>
+    
     <!-- Load Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
@@ -561,9 +564,6 @@
     <script src="js/leaflet/leaflet-fullHash.js" type="text/javascript"></script>
     <script src="js/leaflet/leaflet.js" type="text/javascript"></script>
     <script data-cfasync="false" type="text/javascript" src="js/form-submission-handler.js"></script>
-
-    <!-- include chart script -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.js "></script>
 
     <div class="loading-overlay"></div>
     <div class="loading-overlay-image-container">
