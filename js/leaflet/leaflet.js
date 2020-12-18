@@ -1342,13 +1342,19 @@ var refreshLegend = function (_layer) {
         label6 = ['<strong> Weekly Change Rate of New Cases </strong>']
         label7 = ['<strong> Cases </strong>'];
 
-        // Changing the grades using unshift somehow also changes bins?
-        //grades.unshift(0);
         var legendContent = "";
 
         // loop through our density intervals and generate a label with a colored square for each interval
         if (_layer == il_county_case_layer_object || _layer == us_county_case_layer_object || _layer == us_state_case_layer_object || _layer == world_case_layer_object) {
             grades = bins;
+            // grades start from 0
+            legendContent +=
+                    '<i style="background:' + getColorFor(0, bins) + '"></i> ' + 0 + '<br>';
+
+            legendContent +=
+                    '<i style="background:' + getColorFor(0.000001, bins) + '"></i> ' +
+                    0 + '&ndash;' + grades[0] + '<br>' + '<br>';
+                    
             for (var i = 0; i < grades.length; i++) {
                 legendContent +=
                     '<i style="background:' + getColorFor((grades[i] + 0.000001), bins) + '"></i> ' +
@@ -1356,7 +1362,8 @@ var refreshLegend = function (_layer) {
             }
             label1.push(legendContent);
             div.innerHTML = label1.join('<br><br><br>');
-        } else if (_layer == il_weekly_case_layer_object || _layer == us_county_weekly_case_layer_object ||
+        } 
+        else if (_layer == il_weekly_case_layer_object || _layer == us_county_weekly_case_layer_object ||
             _layer == us_state_weekly_case_layer_object || _layer == world_weekly_case_layer_object) {
             grades = binsChange;
             var binsChangeValue = [-1, -0.4, 0, 0.4, 1];

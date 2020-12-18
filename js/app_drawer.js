@@ -9,6 +9,12 @@ $(function() {
         "http://" + window.location.host + "/spatialAccess.html"
     );
 
+    $("#testing_app").attr(
+        "href",
+        "http://" + window.location.host + "/wheretesting/"
+    );
+
+
     $(".app-drawer").on("click", function() {
         console.log($(".app-drawer").hasClass("opened"));
 
