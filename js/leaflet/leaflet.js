@@ -1353,12 +1353,12 @@ var refreshLegend = function (_layer) {
 
             legendContent +=
                     '<i style="background:' + getColorFor(0.000001, bins) + '"></i> ' +
-                    1 + '&ndash;' + (parseInt(grades[0])-1).toString() + '<br>' + '<br>';
+                    0 + '&ndash;' + grades[0] + '<br>' + '<br>';
                     
             for (var i = 0; i < grades.length; i++) {
                 legendContent +=
                     '<i style="background:' + getColorFor((grades[i] + 0.000001), bins) + '"></i> ' +
-                    grades[i] + (grades[i + 1] ? '&ndash;' + (parseInt(grades[i + 1])-1).toString() + '<br>' : '+') + '<br>';
+                    grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+') + '<br>';
             }
             label1.push(legendContent);
             div.innerHTML = label1.join('<br><br><br>');
