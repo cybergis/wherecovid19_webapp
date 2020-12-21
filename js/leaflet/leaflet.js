@@ -57,6 +57,7 @@ var CartoDB_DarkMatter = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all
 });
 
 var il_county_case_layer_object = null;
+var il_county_death_layer_object = null;
 var us_county_case_layer_object = null;
 var us_county_death_layer_object = null;
 var world_case_layer_object = null;
@@ -274,6 +275,17 @@ var layer_info_list = [{
     "show": true,
     "style_func": styleFunc1,
     "color_class": ["dph_illinois", "case_per_100k_capita", "nolog", "NaturalBreaks", "int"],
+    "tab_page_id": "illinois-tab",
+    "animation": true,
+},
+{
+    "name": "il_county_death",
+    "display_name": "IDPH County-level Death",
+    "geojson_url": "preprocessing/illinois/dph_county_data.geojson",
+    "category": "Illinois",
+    "show": false,
+    "style_func": styleFunc1_death,
+    "color_class": ["dph_illinois", "death_per_100k_capita", "nolog", "NaturalBreaks", "int"],
     "tab_page_id": "illinois-tab",
     "animation": true,
 },
@@ -1038,7 +1050,9 @@ var add_animation_layer_to_map = function (layer_info) {
     let _onEachFeatureFunc;
     if (layer_info.name == "il_county_case") {
         _onEachFeatureFunc = onEachFeature_il_county_case;
-    } else if (layer_info.name == "us_county_case") {
+    } else if (layer_info.name == "il_county_death") {
+        _onEachFeatureFunc = onEachFeature_il_county_death;
+    }else if (layer_info.name == "us_county_case") {
         _onEachFeatureFunc = onEachFeature_us_county_case;
     } else if (layer_info.name == "us_county_death") {
         _onEachFeatureFunc = onEachFeature_us_county_death;
@@ -1067,6 +1081,8 @@ var add_animation_layer_to_map = function (layer_info) {
 
     if (layer_obj.name == "il_county_case") {
         il_county_case_layer_object = layer_obj;
+    } else if (layer_obj.name == "il_county_death") {
+        il_county_death_layer_object = layer_obj;
     } else if (layer_obj.name == "us_county_case") {
         us_county_case_layer_object = layer_obj;
     } else if (layer_obj.name == "us_county_death") {
@@ -1407,7 +1423,7 @@ var refreshLegend = function (_layer) {
         var legendContent = "";
 
         // loop through our density intervals and generate a label with a colored square for each interval
-        if (_layer == il_county_case_layer_object || _layer == us_county_case_layer_object || _layer == us_state_case_layer_object || _layer == world_case_layer_object || _layer == us_county_death_layer_object || us_state_death_layer_object || _layer == world_death_layer_object) {
+        if (_layer == il_county_case_layer_object || _layer == us_county_case_layer_object || _layer == us_state_case_layer_object || _layer == world_case_layer_object || _layer == us_county_death_layer_object || us_state_death_layer_object || _layer == world_death_layer_object || _layer == il_county_death_layer_object) {
             grades = bins;
             // grades start from 0
             legendContent +=
@@ -1422,7 +1438,7 @@ var refreshLegend = function (_layer) {
                     '<i style="background:' + getColorFor((grades[i] + 0.000001), bins) + '"></i> ' +
                     grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+') + '<br>';
             }
-            if (_layer == us_county_death_layer_object || _layer == us_state_death_layer_object || _layer == world_death_layer_object){
+            if (_layer == us_county_death_layer_object || _layer == us_state_death_layer_object || _layer == world_death_layer_object || _layer == il_county_death_layer_object){
                 label_death.push(legendContent);
                 div.innerHTML = label_death.join('<br><br><br>');
             }
@@ -1458,6 +1474,16 @@ var onEachFeature_il_county_case = function(feature, layer) {
         layer.on("click", function(e, layer) {
             //index = Math.floor((layer.time - layer.start) / DayInMilSec);
             il_county_case_layer_object.setStyle(styleFunc1);
+            onMapClick(e);
+        });
+    }
+}
+var onEachFeature_il_county_death = function(feature, layer) {
+    if (feature.properties) {
+        createPopup(feature, layer);
+        layer.on("click", function(e, layer) {
+            //index = Math.floor((layer.time - layer.start) / DayInMilSec);
+            il_county_case_layer_object.setStyle(styleFunc1_death);
             onMapClick(e);
         });
     }
