@@ -60,6 +60,7 @@ var il_county_case_layer_object = null;
 var us_county_case_layer_object = null;
 var us_county_death_layer_object = null;
 var world_case_layer_object = null;
+var world_death_layer_object = null;
 var us_state_case_layer_object = null;
 var us_state_death_layer_object = null;
 var il_weekly_case_layer_object = null;
@@ -306,6 +307,17 @@ var layer_info_list = [{
     "show": false,
     "style_func": styleFunc1,
     "color_class": ["who_world", "case_per_100k_capita", "nolog", "NaturalBreaks", "int"],
+    "tab_page_id": "world-tab",
+    "animation": true,
+},
+{
+    "name": "world_death",
+    "display_name": "World death",
+    "geojson_url": "preprocessing/worldwide/who_world_data.geojson",
+    "category": "World",
+    "show": false,
+    "style_func": styleFunc1_death,
+    "color_class": ["who_world", "death_per_100k_capita", "nolog", "NaturalBreaks", "int"],
     "tab_page_id": "world-tab",
     "animation": true,
 },
@@ -1032,6 +1044,8 @@ var add_animation_layer_to_map = function (layer_info) {
         _onEachFeatureFunc = onEachFeature_us_county_death;
     }else if (layer_info.name == "world_case") {
         _onEachFeatureFunc = onEachFeature_world_case;
+    } else if (layer_info.name == "world_death") {
+        _onEachFeatureFunc = onEachFeature_world_death;
     } else if (layer_info.name == "us_state_case") {
         _onEachFeatureFunc = onEachFeature_us_state_case;
     } else if (layer_info.name == "us_state_death") {
@@ -1059,6 +1073,8 @@ var add_animation_layer_to_map = function (layer_info) {
         us_county_death_layer_object = layer_obj;
     } else if (layer_obj.name == "world_case") {
         world_case_layer_object = layer_obj;
+    } else if (layer_obj.name == "world_death") {
+        world_death_layer_object = layer_obj;
     } else if (layer_obj.name == "us_state_case") {
         us_state_case_layer_object = layer_obj;
     } else if (layer_obj.name == "us_state_death") {
@@ -1391,7 +1407,7 @@ var refreshLegend = function (_layer) {
         var legendContent = "";
 
         // loop through our density intervals and generate a label with a colored square for each interval
-        if (_layer == il_county_case_layer_object || _layer == us_county_case_layer_object || _layer == us_state_case_layer_object || _layer == world_case_layer_object || _layer == us_county_death_layer_object || us_state_death_layer_object) {
+        if (_layer == il_county_case_layer_object || _layer == us_county_case_layer_object || _layer == us_state_case_layer_object || _layer == world_case_layer_object || _layer == us_county_death_layer_object || us_state_death_layer_object || _layer == world_death_layer_object) {
             grades = bins;
             // grades start from 0
             legendContent +=
@@ -1406,7 +1422,7 @@ var refreshLegend = function (_layer) {
                     '<i style="background:' + getColorFor((grades[i] + 0.000001), bins) + '"></i> ' +
                     grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+') + '<br>';
             }
-            if (_layer == us_county_death_layer_object || _layer == us_state_death_layer_object){
+            if (_layer == us_county_death_layer_object || _layer == us_state_death_layer_object || _layer == world_death_layer_object){
                 label_death.push(legendContent);
                 div.innerHTML = label_death.join('<br><br><br>');
             }
@@ -1476,7 +1492,16 @@ var onEachFeature_world_case = function(feature, layer) {
         });
     }
 }
-
+var onEachFeature_world_death = function(feature, layer) {
+    if (feature.properties) {
+        createPopup(feature, layer);
+        layer.on("click", function(e, layer) {
+            //index = Math.floor((layer.time - layer.start) / DayInMilSec);
+            world_death_layer_object.setStyle(styleFunc1_death);
+            onMapClick(e);
+        });
+    }
+}
 var onEachFeature_us_state_case = function(feature, layer) {
     if (feature.properties) {
         createPopup(feature, layer);
