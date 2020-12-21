@@ -1017,7 +1017,9 @@ var add_animation_layer_to_map = function (layer_info) {
         _onEachFeatureFunc = onEachFeature_il_county_case;
     } else if (layer_info.name == "us_county_case") {
         _onEachFeatureFunc = onEachFeature_us_county_case;
-    } else if (layer_info.name == "world_case") {
+    } else if (layer_info.name == "us_county_death") {
+        _onEachFeatureFunc = onEachFeature_us_county_death;
+    }else if (layer_info.name == "world_case") {
         _onEachFeatureFunc = onEachFeature_world_case;
     } else if (layer_info.name == "us_state_case") {
         _onEachFeatureFunc = onEachFeature_us_state_case;
@@ -1186,17 +1188,7 @@ var switch_left_tab_page_handler_old = function (layer_info) {
         }
     });
 
-    document.getElementById("county-tab").addEventListener("click", function(event) {
-        if (map.hasLayer(us_county_death_layer_object) != true) {
-            map.eachLayer(function(layer) {
-                if (layer._url == undefined) {
-                    map.removeLayer(layer);
-                }
-            });
-            // show_loader();
-            map.addLayer(us_county_death_layer_object);
-        }
-    });
+
 
     document.getElementById("world-tab").addEventListener("click", function(event) {
         if (map.hasLayer(world_case_layer_object) != true) {
@@ -1275,14 +1267,7 @@ var left_tab_page_table_click_old = function () {
             });
             map.addLayer(us_county_case_layer_object);
         }
-        if (map.hasLayer(us_county_death_layer_object) != true) {
-            map.eachLayer(function(layer) {
-                if (layer._url == undefined) {
-                    map.removeLayer(layer);
-                }
-            });
-            map.addLayer(us_county_death_layer_object);
-        }
+
         var tr = event.target;
         while (tr !== this && !tr.matches("tr")) {
             tr = tr.parentNode;
@@ -1384,13 +1369,14 @@ var refreshLegend = function (_layer) {
         var div = L.DomUtil.create('div', 'info legend');
 
         label1 = ['<strong> Confirmed cases per 100k people </strong>'];
+        label_death = ['<strong> Confirmed death per 100k people </strong>'];
         label6 = ['<strong> Weekly Change Rate of New Cases </strong>']
         label7 = ['<strong> Cases </strong>'];
 
         var legendContent = "";
 
         // loop through our density intervals and generate a label with a colored square for each interval
-        if (_layer == il_county_case_layer_object || _layer == us_county_case_layer_object || _layer == us_state_case_layer_object || _layer == world_case_layer_object) {
+        if (_layer == il_county_case_layer_object || _layer == us_county_case_layer_object || _layer == us_state_case_layer_object || _layer == world_case_layer_object || _layer == us_county_death_layer_object) {
             grades = bins;
             // grades start from 0
             legendContent +=
@@ -1405,8 +1391,14 @@ var refreshLegend = function (_layer) {
                     '<i style="background:' + getColorFor((grades[i] + 0.000001), bins) + '"></i> ' +
                     grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+') + '<br>';
             }
-            label1.push(legendContent);
-            div.innerHTML = label1.join('<br><br><br>');
+            if (_layer == us_county_death_layer_object){
+                label_death.push(legendContent);
+                div.innerHTML = label_death.join('<br><br><br>');
+            }
+            else{
+                label1.push(legendContent);
+                div.innerHTML = label1.join('<br><br><br>');
+            }
         } 
         else if (_layer == il_weekly_case_layer_object || _layer == us_county_weekly_case_layer_object ||
             _layer == us_state_weekly_case_layer_object || _layer == world_weekly_case_layer_object) {
@@ -1445,6 +1437,16 @@ var onEachFeature_us_county_case = function(feature, layer) {
         layer.on("click", function(e, layer) {
             //index = Math.floor((layer.time - layer.start) / DayInMilSec);
             us_county_case_layer_object.setStyle(styleFunc1);
+            onMapClick(e);
+        });
+    }
+}
+var onEachFeature_us_county_death = function(feature, layer) {
+    if (feature.properties) {
+        createPopup(feature, layer);
+        layer.on("click", function(e, layer) {
+            //index = Math.floor((layer.time - layer.start) / DayInMilSec);
+            us_county_death_layer_object.setStyle(styleFunc1_death);
             onMapClick(e);
         });
     }
