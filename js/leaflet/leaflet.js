@@ -58,12 +58,14 @@ var CartoDB_DarkMatter = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all
 
 var il_county_case_layer_object = null;
 var us_county_case_layer_object = null;
+var us_county_death_layer_object = null;
 var world_case_layer_object = null;
 var us_state_case_layer_object = null;
 var il_weekly_case_layer_object = null;
 var us_county_weekly_case_layer_object = null;
 var us_state_weekly_case_layer_object = null;
 var world_weekly_case_layer_object = null;
+
 
 //////////////////////////////////// Load GeoJSON File ////////////////////////////////////
 
@@ -229,6 +231,17 @@ var styleFunc1 = function(_data) {
     }
 };
 
+var styleFunc1_death = function(_data) {
+    return {
+        stroke: true,
+        weight: 1,
+        color: "gray",
+        fillColor: getColorFor(100000 * splitStrInt(_data.properties.deaths_ts, index) / _data.properties.population, bins),
+        fillOpacity: 0.5
+    }
+};
+
+
 var styleFunc2 = function(_data) {
     return {
         stroke: true,
@@ -270,6 +283,17 @@ var layer_info_list = [{
     "show": false,
     "style_func": styleFunc1,
     "color_class": ["county", "case_per_100k_capita", "nolog", "NaturalBreaks", "int"],
+    "tab_page_id": "county-tab",
+    "animation": true,
+},
+{
+    "name": "us_county_death",
+    "display_name": "US Counties death",
+    "geojson_url": "preprocessing/nyt_counties_data.geojson",
+    "category": "US",
+    "show": false,
+    "style_func": styleFunc1_death,
+    "color_class": ["county", "death_per_100k_capita", "nolog", "NaturalBreaks", "int"],
     "tab_page_id": "county-tab",
     "animation": true,
 },
@@ -1016,6 +1040,8 @@ var add_animation_layer_to_map = function (layer_info) {
         il_county_case_layer_object = layer_obj;
     } else if (layer_obj.name == "us_county_case") {
         us_county_case_layer_object = layer_obj;
+    } else if (layer_obj.name == "us_county_death") {
+        us_county_death_layer_object = layer_obj;
     } else if (layer_obj.name == "world_case") {
         world_case_layer_object = layer_obj;
     } else if (layer_obj.name == "us_state_case") {
@@ -1160,6 +1186,18 @@ var switch_left_tab_page_handler_old = function (layer_info) {
         }
     });
 
+    document.getElementById("county-tab").addEventListener("click", function(event) {
+        if (map.hasLayer(us_county_death_layer_object) != true) {
+            map.eachLayer(function(layer) {
+                if (layer._url == undefined) {
+                    map.removeLayer(layer);
+                }
+            });
+            // show_loader();
+            map.addLayer(us_county_death_layer_object);
+        }
+    });
+
     document.getElementById("world-tab").addEventListener("click", function(event) {
         if (map.hasLayer(world_case_layer_object) != true) {
             map.eachLayer(function(layer) {
@@ -1237,7 +1275,14 @@ var left_tab_page_table_click_old = function () {
             });
             map.addLayer(us_county_case_layer_object);
         }
-
+        if (map.hasLayer(us_county_death_layer_object) != true) {
+            map.eachLayer(function(layer) {
+                if (layer._url == undefined) {
+                    map.removeLayer(layer);
+                }
+            });
+            map.addLayer(us_county_death_layer_object);
+        }
         var tr = event.target;
         while (tr !== this && !tr.matches("tr")) {
             tr = tr.parentNode;
