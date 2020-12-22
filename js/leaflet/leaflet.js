@@ -1483,7 +1483,7 @@ var onEachFeature_il_county_death = function(feature, layer) {
         createPopup(feature, layer);
         layer.on("click", function(e, layer) {
             //index = Math.floor((layer.time - layer.start) / DayInMilSec);
-            il_county_case_layer_object.setStyle(styleFunc1_death);
+            il_county_death_layer_object.setStyle(styleFunc1_death);
             onMapClick(e);
         });
     }
