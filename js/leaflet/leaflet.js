@@ -57,13 +57,18 @@ var CartoDB_DarkMatter = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all
 });
 
 var il_county_case_layer_object = null;
+var il_county_death_layer_object = null;
 var us_county_case_layer_object = null;
+var us_county_death_layer_object = null;
 var world_case_layer_object = null;
+var world_death_layer_object = null;
 var us_state_case_layer_object = null;
+var us_state_death_layer_object = null;
 var il_weekly_case_layer_object = null;
 var us_county_weekly_case_layer_object = null;
 var us_state_weekly_case_layer_object = null;
 var world_weekly_case_layer_object = null;
+
 
 //////////////////////////////////// Load GeoJSON File ////////////////////////////////////
 
@@ -229,6 +234,17 @@ var styleFunc1 = function(_data) {
     }
 };
 
+var styleFunc1_death = function(_data) {
+    return {
+        stroke: true,
+        weight: 1,
+        color: "gray",
+        fillColor: getColorFor(100000 * splitStrInt(_data.properties.deaths_ts, index) / _data.properties.population, bins),
+        fillOpacity: 0.5
+    }
+};
+
+
 var styleFunc2 = function(_data) {
     return {
         stroke: true,
@@ -263,6 +279,17 @@ var layer_info_list = [{
     "animation": true,
 },
 {
+    "name": "il_county_death",
+    "display_name": "IDPH County-level Death",
+    "geojson_url": "preprocessing/illinois/dph_county_data.geojson",
+    "category": "Illinois",
+    "show": false,
+    "style_func": styleFunc1_death,
+    "color_class": ["dph_illinois", "death_per_100k_capita", "nolog", "NaturalBreaks", "int"],
+    "tab_page_id": "illinois-tab",
+    "animation": true,
+},
+{
     "name": "us_county_case",
     "display_name": "US Counties",
     "geojson_url": "preprocessing/nyt_counties_data.geojson",
@@ -270,6 +297,17 @@ var layer_info_list = [{
     "show": false,
     "style_func": styleFunc1,
     "color_class": ["county", "case_per_100k_capita", "nolog", "NaturalBreaks", "int"],
+    "tab_page_id": "county-tab",
+    "animation": true,
+},
+{
+    "name": "us_county_death",
+    "display_name": "US Counties death",
+    "geojson_url": "preprocessing/nyt_counties_data.geojson",
+    "category": "US",
+    "show": false,
+    "style_func": styleFunc1_death,
+    "color_class": ["county", "death_per_100k_capita", "nolog", "NaturalBreaks", "int"],
     "tab_page_id": "county-tab",
     "animation": true,
 },
@@ -285,6 +323,17 @@ var layer_info_list = [{
     "animation": true,
 },
 {
+    "name": "world_death",
+    "display_name": "World death",
+    "geojson_url": "preprocessing/worldwide/who_world_data.geojson",
+    "category": "World",
+    "show": false,
+    "style_func": styleFunc1_death,
+    "color_class": ["who_world", "death_per_100k_capita", "nolog", "NaturalBreaks", "int"],
+    "tab_page_id": "world-tab",
+    "animation": true,
+},
+{
     "name": "us_state_case",
     "display_name": "US States",
     "geojson_url": "preprocessing/nyt_states_data.geojson",
@@ -294,7 +343,17 @@ var layer_info_list = [{
     "color_class": ["state", "case_per_100k_capita", "nolog", "NaturalBreaks", "int"],
     //"tab_page_id": "world-tab",
     "animation": true,
-
+},
+{
+    "name": "us_state_death",
+    "display_name": "US States death",
+    "geojson_url": "preprocessing/nyt_states_data.geojson",
+    "category": "US",
+    "show": false,
+    "style_func": styleFunc1_death,
+    "color_class": ["state", "death_per_100k_capita", "nolog", "NaturalBreaks", "int"],
+    //"tab_page_id": "world-tab",
+    "animation": true,
 },
 ];
 
@@ -991,13 +1050,21 @@ var add_animation_layer_to_map = function (layer_info) {
     let _onEachFeatureFunc;
     if (layer_info.name == "il_county_case") {
         _onEachFeatureFunc = onEachFeature_il_county_case;
-    } else if (layer_info.name == "us_county_case") {
+    } else if (layer_info.name == "il_county_death") {
+        _onEachFeatureFunc = onEachFeature_il_county_death;
+    }else if (layer_info.name == "us_county_case") {
         _onEachFeatureFunc = onEachFeature_us_county_case;
-    } else if (layer_info.name == "world_case") {
+    } else if (layer_info.name == "us_county_death") {
+        _onEachFeatureFunc = onEachFeature_us_county_death;
+    }else if (layer_info.name == "world_case") {
         _onEachFeatureFunc = onEachFeature_world_case;
+    } else if (layer_info.name == "world_death") {
+        _onEachFeatureFunc = onEachFeature_world_death;
     } else if (layer_info.name == "us_state_case") {
         _onEachFeatureFunc = onEachFeature_us_state_case;
-    } else if (layer_info.name == "il_weekly_case" || 
+    } else if (layer_info.name == "us_state_death") {
+        _onEachFeatureFunc = onEachFeature_us_state_death;
+    }else if (layer_info.name == "il_weekly_case" || 
     layer_info.name == "us_county_weekly_case" || 
     layer_info.name == "us_state_weekly_case" || 
     layer_info.name == "world_weekly_case") {
@@ -1014,12 +1081,20 @@ var add_animation_layer_to_map = function (layer_info) {
 
     if (layer_obj.name == "il_county_case") {
         il_county_case_layer_object = layer_obj;
+    } else if (layer_obj.name == "il_county_death") {
+        il_county_death_layer_object = layer_obj;
     } else if (layer_obj.name == "us_county_case") {
         us_county_case_layer_object = layer_obj;
+    } else if (layer_obj.name == "us_county_death") {
+        us_county_death_layer_object = layer_obj;
     } else if (layer_obj.name == "world_case") {
         world_case_layer_object = layer_obj;
+    } else if (layer_obj.name == "world_death") {
+        world_death_layer_object = layer_obj;
     } else if (layer_obj.name == "us_state_case") {
         us_state_case_layer_object = layer_obj;
+    } else if (layer_obj.name == "us_state_death") {
+        us_state_death_layer_object = layer_obj;
     } else if (layer_obj.name == "il_weekly_case") {
         il_weekly_case_layer_object = layer_obj;
     } else if (layer_obj.name == "us_state_weekly_case") {
@@ -1159,6 +1234,8 @@ var switch_left_tab_page_handler_old = function (layer_info) {
             map.addLayer(us_county_case_layer_object);
         }
     });
+
+
 
     document.getElementById("world-tab").addEventListener("click", function(event) {
         if (map.hasLayer(world_case_layer_object) != true) {
@@ -1339,13 +1416,14 @@ var refreshLegend = function (_layer) {
         var div = L.DomUtil.create('div', 'info legend');
 
         label1 = ['<strong> Confirmed cases per 100k people </strong>'];
+        label_death = ['<strong> Confirmed death per 100k people </strong>'];
         label6 = ['<strong> Weekly Change Rate of New Cases </strong>']
         label7 = ['<strong> Cases </strong>'];
 
         var legendContent = "";
 
         // loop through our density intervals and generate a label with a colored square for each interval
-        if (_layer == il_county_case_layer_object || _layer == us_county_case_layer_object || _layer == us_state_case_layer_object || _layer == world_case_layer_object) {
+        if (_layer == il_county_case_layer_object || _layer == us_county_case_layer_object || _layer == us_state_case_layer_object || _layer == world_case_layer_object || _layer == us_county_death_layer_object || us_state_death_layer_object || _layer == world_death_layer_object || _layer == il_county_death_layer_object) {
             grades = bins;
             // grades start from 0
             legendContent +=
@@ -1360,8 +1438,14 @@ var refreshLegend = function (_layer) {
                     '<i style="background:' + getColorFor((grades[i] + 0.000001), bins) + '"></i> ' +
                     grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+') + '<br>';
             }
-            label1.push(legendContent);
-            div.innerHTML = label1.join('<br><br><br>');
+            if (_layer == us_county_death_layer_object || _layer == us_state_death_layer_object || _layer == world_death_layer_object || _layer == il_county_death_layer_object){
+                label_death.push(legendContent);
+                div.innerHTML = label_death.join('<br><br><br>');
+            }
+            else{
+                label1.push(legendContent);
+                div.innerHTML = label1.join('<br><br><br>');
+            }
         } 
         else if (_layer == il_weekly_case_layer_object || _layer == us_county_weekly_case_layer_object ||
             _layer == us_state_weekly_case_layer_object || _layer == world_weekly_case_layer_object) {
@@ -1394,12 +1478,32 @@ var onEachFeature_il_county_case = function(feature, layer) {
         });
     }
 }
+var onEachFeature_il_county_death = function(feature, layer) {
+    if (feature.properties) {
+        createPopup(feature, layer);
+        layer.on("click", function(e, layer) {
+            //index = Math.floor((layer.time - layer.start) / DayInMilSec);
+            il_county_death_layer_object.setStyle(styleFunc1_death);
+            onMapClick(e);
+        });
+    }
+}
 var onEachFeature_us_county_case = function(feature, layer) {
     if (feature.properties) {
         createPopup(feature, layer);
         layer.on("click", function(e, layer) {
             //index = Math.floor((layer.time - layer.start) / DayInMilSec);
             us_county_case_layer_object.setStyle(styleFunc1);
+            onMapClick(e);
+        });
+    }
+}
+var onEachFeature_us_county_death = function(feature, layer) {
+    if (feature.properties) {
+        createPopup(feature, layer);
+        layer.on("click", function(e, layer) {
+            //index = Math.floor((layer.time - layer.start) / DayInMilSec);
+            us_county_death_layer_object.setStyle(styleFunc1_death);
             onMapClick(e);
         });
     }
@@ -1414,13 +1518,33 @@ var onEachFeature_world_case = function(feature, layer) {
         });
     }
 }
-
+var onEachFeature_world_death = function(feature, layer) {
+    if (feature.properties) {
+        createPopup(feature, layer);
+        layer.on("click", function(e, layer) {
+            //index = Math.floor((layer.time - layer.start) / DayInMilSec);
+            world_death_layer_object.setStyle(styleFunc1_death);
+            onMapClick(e);
+        });
+    }
+}
 var onEachFeature_us_state_case = function(feature, layer) {
     if (feature.properties) {
         createPopup(feature, layer);
         layer.on("click", function(e, layer) {
             //index = Math.floor((layer.time - layer.start) / DayInMilSec);
             us_state_case_layer_object.setStyle(styleFunc1);
+            onMapClick(e);
+        });
+    }
+}
+
+var onEachFeature_us_state_death = function(feature, layer) {
+    if (feature.properties) {
+        createPopup(feature, layer);
+        layer.on("click", function(e, layer) {
+            //index = Math.floor((layer.time - layer.start) / DayInMilSec);
+            us_state_death_layer_object.setStyle(styleFunc1_death);
             onMapClick(e);
         });
     }
