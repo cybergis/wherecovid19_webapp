@@ -1841,7 +1841,7 @@ var updateChart = function (graphic) {
 ///////////////////////////////// Plot Parallel Coordinates ///////////////////////////////
 
 // set the dimensions and margins of the graph
-var margin = {top: 30, right: 10, bottom: 10, left: 10},
+var margin = {top: 30, right: 30, bottom: 10, left: 10},
   width = 1000 - margin.left - margin.right,
   height = 200 - margin.top - margin.bottom;
 
@@ -1853,6 +1853,42 @@ var svg = d3.select("#parallelCoords")
 .append("g")
   .attr("transform",
         "translate(" + margin.left + "," + margin.top + ")");
+
+// Append the legend:
+svg.append("circle")
+    .attr("class", "legend")
+    .attr("cx",900)
+    .attr("cy",80)
+    .attr("r", 6)
+    .style("fill", "red")
+svg.append("circle")
+    .attr("class", "legend")
+    .attr("cx",900)
+    .attr("cy",100)
+    .attr("r", 6)
+    .style("fill", "white")
+svg.append("text")
+    .attr("class", "legend_name")
+    .attr("x", 910)
+    .attr("y", 80)
+    .style("font-size", "10px")
+    .style("fill", "white")
+    .attr("alignment-baseline","middle")
+svg.append("text")
+    .attr("class", "legend_other_first_line")
+    .attr("x", 910)
+    .attr("y", 100)
+    .style("font-size", "10px")
+    .style("fill", "white")
+    .attr("alignment-baseline","middle")
+svg.append("text")
+    .attr("class", "legend_other_second_line")
+    .attr("x", 910)
+    .attr("y", 120)
+    .style("font-size", "10px")
+    .style("fill", "white")
+    .attr("alignment-baseline","middle")
+
 var plot_para_coords = function (county_name, state_name) {
     // Parse the Data
     d3.csv("preprocessing/county_parallel_coordinates.csv", function(data) {
@@ -1925,7 +1961,8 @@ var plot_para_coords = function (county_name, state_name) {
         // .on("mouseleave", doNotHighlight)
     
         // Draw the axis:
-        svg.selectAll("myAxis")
+        svg
+        .selectAll("myAxis")
         // For each dimension of the dataset I add a 'g' element:
         .data(dimensions).enter()
         .append("g")
@@ -1941,20 +1978,27 @@ var plot_para_coords = function (county_name, state_name) {
             .text(function(d) { return keyDict[d]; })
             .style("fill", "white")
 
-        // First each line turns grey
+        // First each line turns transparent
         d3.selectAll(".line")
             .style("stroke", "lightgrey")
-            .style("opacity", "0.2")
+            .style("opacity", "0")
         // Second the selected group takes its color
         d3.selectAll("." + state_name)
-            .style("stroke", "#ff0000")
-            .style("opacity", "1")
+            .style("stroke", "lightgrey")
+            .style("opacity", "0.2")
         d3.selectAll("." + county_name + "." + state_name)
-            .style("stroke", "#0000ff")
+            .style("stroke", "red")
             .style("opacity", "1")
-    
+        
+        // Change the legend:
+        d3.selectAll(".legend_name")
+            .text(county_name + ' County')
+        d3.selectAll(".legend_other_first_line")
+            .text("Other Counties ")
+        d3.selectAll(".legend_other_second_line")
+            .text("in " + state_name)
+
     })
-  
 }
 
 /////////////////////////////////////// Create Popup //////////////////////////////////////
