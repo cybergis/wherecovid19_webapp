@@ -2001,6 +2001,15 @@ var plot_para_coords = function (county_name, state_name) {
     })
 }
 
+// Define onclick event of the button
+function showParallelCoords() {
+    var parallelCoords = document.getElementById("parallelCoords");
+    var showParallelCoords = document.getElementById("showParallelCoords");
+    parallelCoords.style.display = (parallelCoords.style.display == "block") ? "none" : "block";
+    showParallelCoords.innerText = (showParallelCoords.innerText == "Show Parallel Coordinates Chart") ? 
+    "Close Parallel Coordinates Chart" : "Show Parallel Coordinates Chart";
+}
+
 /////////////////////////////////////// Create Popup //////////////////////////////////////
 
 var createPopup = function (_feature, _layer) {
