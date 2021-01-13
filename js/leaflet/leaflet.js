@@ -1577,6 +1577,8 @@ var onMapClick = function (e) {
         document.getElementById("world-search-input").value = e.target.feature.properties.NAME;
         $("#world-search-input").trigger("textchange");
         targetTable.$('tr').addClass('selected');
+        // World layer donesn't have parallel coordinates chart
+        document.getElementById("showTimeSeries").checked = true;
     } 
     else if (e.target.feature.properties.state_name != undefined) {
         targetTable = county_table;
@@ -1585,6 +1587,8 @@ var onMapClick = function (e) {
         $("#w-search-input").trigger("textchange");
         targetTable.$('tr').addClass('selected');
         plot_para_coords(e.target.feature.properties.NAME, e.target.feature.properties.state_name);
+        // Display radio buttons
+        document.getElementById("radioButtons").style.display = "block";
     }
     else if (e.target.feature.properties.fips == undefined) {
         targetTable = il_table;
@@ -1593,15 +1597,25 @@ var onMapClick = function (e) {
         $("#il-search-input").trigger("textchange");
         targetTable.$('tr').addClass('selected');
         plot_para_coords(e.target.feature.properties.NAME, "Illinois");
+        // Display radio buttons
+        document.getElementById("radioButtons").style.display = "block";
     }
 
     // Add d-block class and remove d-none to display the chart
     if (window.bar != undefined) {
         window.bar.destroy();
     }
-    document.getElementById('myChart').classList.add("d-block");
-    document.getElementById('myChart').classList.remove("d-none");
+
+    // Update time series chart
     updateChart(e.target.feature);
+
+    // Refresh chart based on checked radio button
+    if (document.getElementById("showTimeSeries").checked == true) {
+        showTimeSeries();
+    }
+    else if (document.getElementById("showParallelCoords").checked == true) {
+        showParallelCoords();
+    }
 }
 
 
@@ -2001,13 +2015,24 @@ var plot_para_coords = function (county_name, state_name) {
     })
 }
 
-// Define onclick event of the button
+//////////////////////////////////// Radio Button Setup ///////////////////////////////////
+
+// Define onclick events of the radio buttons
 function showParallelCoords() {
-    var parallelCoords = document.getElementById("parallelCoords");
-    var showParallelCoords = document.getElementById("showParallelCoords");
-    parallelCoords.style.display = (parallelCoords.style.display == "block") ? "none" : "block";
-    showParallelCoords.innerText = (showParallelCoords.innerText == "Show Parallel Coordinates Chart") ? 
-    "Close Parallel Coordinates Chart" : "Show Parallel Coordinates Chart";
+    document.getElementById("parallelCoords").style.display = "block";
+    document.getElementById('myChart').classList.add("d-none");
+    document.getElementById('myChart').classList.remove("d-block");
+}
+
+function showTimeSeries() {
+    document.getElementById("parallelCoords").style.display = "none";
+    document.getElementById('myChart').classList.add("d-block");
+    document.getElementById('myChart').classList.remove("d-none");
+}
+
+function closeChart() {
+    document.getElementById("radioButtons").style.display = "none";
+    document.getElementById("parallelCoords").style.display = "none";
 }
 
 /////////////////////////////////////// Create Popup //////////////////////////////////////

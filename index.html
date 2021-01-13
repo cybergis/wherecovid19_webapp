@@ -353,10 +353,17 @@
 
                         <div id="map"></div>
 
-                        <div class="chart-wrap">
-                            <div id="close_chart"><i class="fas fa-times"></i></div>
+                        <div class="chart-wrap" id="chart-wrap">
+                            <div id="close_chart" onclick="closeChart()"><i class="fas fa-times"></i></div>
+                            <div id="radioButtons" style="display:none">
+                                &nbsp;&nbsp;
+                                <input type="radio" id="showTimeSeries" name="showChart" value="showTimeSeries" onclick="showTimeSeries()" checked="checked"> 
+                                <label for="showTimeSeries">Show Time Series Chart</label>
+                                &nbsp;&nbsp;
+                                <input type="radio" id="showParallelCoords" name="showChart" value="showParallelCoords" onclick="showParallelCoords()"> 
+                                <label for="showParallelCoords">Show Parallel Coordinates Chart</label>
+                            </div>
                             <div id="parallelCoords" style="display:none"></div>
-                            <button id="showParallelCoords" onclick="showParallelCoords()">Show Parallel Coordinates Chart</button>
                             <canvas id="myChart"></canvas>
                         </div>
                         <div>
