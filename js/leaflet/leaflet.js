@@ -142,7 +142,6 @@ getPosition(geolocation_options)
     })
 
 var zoomToUserLocation = function () {
-    // console.log(document.location.href.includes("#"));
     // Only locate user when detailed URL information is not given
     if (!isShareableURL) {
 
@@ -435,7 +434,6 @@ var loadClassJson = function (url) {
             type: 'GET',
             dataType: 'json',
             success: function(data) {
-                //console.log(url);
                 class_json_obj = data;
                 resolve();
             },
@@ -462,7 +460,6 @@ var loadGeoJson = function (layer_info) {
                 type: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                    //console.log(layer_info.geojson_url);
                     layer_info.geojson_obj = data;
                     resolve(layer_info);
                 },
@@ -953,9 +950,16 @@ L.control.attribution({
 
 var onOverlayAdd = function (e) {
 
+    // Remove the radio buttons if it exists
+    document.getElementById("radioButtons").style.display = "none";
+
+    // Change the default back to time series chart
+    document.getElementById("showTimeSeries").checked = true;
+
     // Remove the chart if it exists
     document.getElementById('myChart').classList.add("d-none");
     document.getElementById('myChart').classList.remove("d-block");
+    document.getElementById("parallelCoords").style.display = "none";
 
     slider.timelines.forEach(function(item) {
         slider.removeTimelines(item)
@@ -1149,7 +1153,6 @@ var add_animation_layer_to_map = function (layer_info) {
 }
 
 var addUrlHash = function() {
-    // console.log(allMapLayers);
     var hash = new L.Hash(map, allMapLayers);
 }
 
@@ -1199,7 +1202,6 @@ var _switch_to_layer = function (layer_object) {
 }
 
 var switch_left_tab_page_handler = function (layer_info) {
-    // console.log(layer_info["tab_page_id"]);
     if (layer_info["tab_page_id"] != null && layer_info["tab_page_id"] != undefined) {
         document.getElementById(layer_info["tab_page_id"]).addEventListener("click", function(event) {
             let li = getLayerInfo(event.target.id, "tab_page_id");
@@ -1577,8 +1579,6 @@ var onMapClick = function (e) {
         document.getElementById("world-search-input").value = e.target.feature.properties.NAME;
         $("#world-search-input").trigger("textchange");
         targetTable.$('tr').addClass('selected');
-        // World layer donesn't have parallel coordinates chart
-        document.getElementById("showTimeSeries").checked = true;
     } 
     else if (e.target.feature.properties.state_name != undefined) {
         targetTable = county_table;
@@ -1977,20 +1977,26 @@ var plot_para_coords = function (county_name, state_name) {
         // Draw the axis:
         svg
         .selectAll("myAxis")
-        // For each dimension of the dataset I add a 'g' element:
+        // Add a 'g' element for each dimension of the dataset
         .data(dimensions).enter()
         .append("g")
         .attr("class", "axis")
-        // I translate this element to its right position on the x axis
+        // Translate this element to its right position on the x axis
         .attr("transform", function(d) { return "translate(" + x(d) + ")"; })
-        // And I build the axis with the call function
+        // Build the axis with the call function
         .each(function(d) { d3.select(this).call(d3.axisLeft().scale(y[d])); })
         // Add axis title
         .append("text")
             .style("text-anchor", "middle")
+            .attr("class", "title")
             .attr("y", -9)
             .text(function(d) { return keyDict[d]; })
-            .style("fill", "white")
+
+        // Change the color of axis label and title
+        d3.selectAll('g.axis text')
+            .style('fill', 'darkgrey')
+        d3.selectAll('g.axis text.title')
+            .style('fill', 'white')
 
         // First each line turns transparent
         d3.selectAll(".line")
