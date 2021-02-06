@@ -10,3 +10,4 @@ dependencies:
   - nbconvert
   - shapely
   - matplotlib
+  - requests
