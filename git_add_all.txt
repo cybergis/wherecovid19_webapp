@@ -1,2 +1,8 @@
-xargs -a data_list.txt -d '\n' git add
-xargs -a data_list.txt -d '\n' git checkout
+xargs -a data_all_list.txt -d '\n' ls -alh
+
+xargs -a data_small_list.txt -d '\n' git add
+xargs -a data_small_list.txt -d '\n' git checkout
+
+
+xargs -a data_zip_list.txt -d '\n' git add
+xargs -a data_zip_list.txt -d '\n' git rm -cached

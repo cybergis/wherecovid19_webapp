@@ -1,0 +1,17 @@
+preprocessing/classes.json
+preprocessing/illinois/Chicago_ACC_i.geojson
+preprocessing/illinois/Chicago_ACC_v.geojson
+preprocessing/illinois/Illinois_ACC_i.geojson
+preprocessing/illinois/Illinois_ACC_v.geojson
+preprocessing/illinois/dph_county_data.geojson
+preprocessing/illinois/dph_zipcode_data.geojson
+preprocessing/illinois/idph_COVIDHistoricalTestResults.json
+preprocessing/illinois/idph_COVIDZip.json
+preprocessing/illinois/idph_CountyDemos.json
+preprocessing/illinois/vulnerability.geojson
+preprocessing/nyt_counties_data.geojson
+preprocessing/nyt_states_data.geojson
+preprocessing/us-counties.csv
+preprocessing/us-states.csv
+preprocessing/worldwide/global-covid19-who-gis.json
+preprocessing/worldwide/who_world_data.geojson
