@@ -1,0 +1,7 @@
+# m h  dom mon dow   command
+#*/10 * * * * /var/covid19_project/wherecovid19_service/wherecovid19_webapp/preprocessing/cronjob/preprocess_cron.sh
+*/15 * * * * /var/covid19_project/COVID_19Accessibility/accessibility_cron.sh
+*/15 * * * * /var/covid19_project/COVID19_Vulnerability/vulnerability_corn.sh
+*/10 * * * * /var/covid19_project/wherecovid19_service/wherecovid19_webapp/preprocessing/cronjob/preprocess_cron_idph.sh
+*/12 * * * * /var/covid19_project/wherecovid19_service/wherecovid19_webapp/preprocessing/cronjob/preprocess_cron_nyt.sh
+*/14 * * * * /var/covid19_project/wherecovid19_service/wherecovid19_webapp/preprocessing/cronjob/preprocess_cron_who.sh
