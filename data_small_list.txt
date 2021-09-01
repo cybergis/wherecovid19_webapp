@@ -13,3 +13,4 @@ preprocessing/us-counties.csv
 preprocessing/us-states.csv
 preprocessing/worldwide/global-covid19-who-gis.json
 preprocessing/worldwide/who_world_data.geojson
+preprocessing/worldwide/WHO-COVID-19-global-data.csv
