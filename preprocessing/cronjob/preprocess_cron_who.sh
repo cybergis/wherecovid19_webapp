@@ -24,6 +24,7 @@ should_preprocessing_be_done(){
     #chksum_who_tmp=`md5sum ./worldwide/global-covid19-who-gis-tmp.json | awk -F' '  '{print $1}'`
     chksum_who=`md5sum ./worldwide/WHO-COVID-19-global-data.csv | awk -F' '  '{print $1}'`
     chksum_who_tmp=`md5sum ./worldwide/WHO-COVID-19-global-data-tmp.csv | awk -F' '  '{print $1}'`
+    echo "$chksum_who; $chksum_who_tmp"
     if [ $chksum_who != $chksum_who_tmp ]
     then
             echo "$chksum_who; $chksum_who_tmp"
