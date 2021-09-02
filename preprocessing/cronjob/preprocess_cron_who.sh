@@ -8,7 +8,8 @@ make_copy_data(){
 	mkdir -p worldwide
 	cp ../worldwide/World_Countries_Boundaries_new.geojson ./worldwide/World_Countries_Boundaries_new.geojson
 	cp ./worldwide/who_world_data.geojson ./worldwide/who_world_data-tmp.geojson
-	cp ./worldwide/global-covid19-who-gis.json ./worldwide/global-covid19-who-gis-tmp.json
+	#cp ./worldwide/global-covid19-who-gis.json ./worldwide/global-covid19-who-gis-tmp.json
+	cp ./worldwide/WHO-COVID-19-global-data.csv ./worldwide/WHO-COVID-19-global-data-tmp.csv
     cp ../worldwide/world_population.csv ./worldwide/
 }
 setup_env(){
@@ -19,12 +20,16 @@ should_preprocessing_be_done(){
 	echo "Checking checksum"
 	#calculate checksum
 
-    chksum_who=`md5sum ./worldwide/global-covid19-who-gis.json | awk -F' '  '{print $1}'`
-    chksum_who_tmp=`md5sum ./worldwide/global-covid19-who-gis-tmp.json | awk -F' '  '{print $1}'`
+    #chksum_who=`md5sum ./worldwide/global-covid19-who-gis.json | awk -F' '  '{print $1}'`
+    #chksum_who_tmp=`md5sum ./worldwide/global-covid19-who-gis-tmp.json | awk -F' '  '{print $1}'`
+    chksum_who=`md5sum ./worldwide/WHO-COVID-19-global-data.csv | awk -F' '  '{print $1}'`
+    chksum_who_tmp=`md5sum ./worldwide/WHO-COVID-19-global-data-tmp.csv | awk -F' '  '{print $1}'`
+    echo "$chksum_who; $chksum_who_tmp"
     if [ $chksum_who != $chksum_who_tmp ]
     then
             echo "$chksum_who; $chksum_who_tmp"
-            echo "global-covid19-who-gis.json updated"
+            #echo "global-covid19-who-gis.json updated"
+            echo "WHO-COVID-19-global-data.csv"
             return 1
     fi
 
@@ -34,8 +39,11 @@ download_files(){
 	#Download new WHO data
 	echo "Downloading WHO data" 
 	
-    wget -O ./global-covid19-who-gis.json https://covid19.who.int/page-data/index/page-data.json
-    mv -f ./global-covid19-who-gis.json ./worldwide/
+    #wget -O ./global-covid19-who-gis.json https://covid19.who.int/page-data/index/page-data.json
+    #mv -f ./global-covid19-who-gis.json ./worldwide/
+
+    wget -O ./WHO-COVID-19-global-data.csv https://covid19.who.int/WHO-COVID-19-global-data.csv
+    mv -f ./WHO-COVID-19-global-data.csv ./worldwide/
 }
 convert_notebooks(){
         echo "Converting notebooks"
@@ -64,7 +72,8 @@ restore_data(){
 	echo "restoring data"
 
 	cp ./worldwide/who_world_data-tmp.geojson ./worldwide/who_world_data.geojson
-	cp ./worldwide/global-covid19-who-gis-tmp.json ./worldwide/global-covid19-who-gis.json
+	#cp ./worldwide/global-covid19-who-gis-tmp.json ./worldwide/global-covid19-who-gis.json
+	cp ./worldwide/WHO-COVID-19-global-data-tmp.csv ./worldwide/WHO-COVID-19-global-data.csv
   
         destroy_env
 }
@@ -76,7 +85,8 @@ copy_back_results_webfolder(){
   cp classes.json ../
 
   cp ./worldwide/who_world_data.geojson ../worldwide/
-  cp ./worldwide/global-covid19-who-gis.json ../worldwide/
+  #cp ./worldwide/global-covid19-who-gis.json ../worldwide/
+  cp ./worldwide/WHO-COVID-19-global-data.csv ../worldwide/
 }
 
 copy_to_shared_folder(){
@@ -84,7 +94,8 @@ copy_to_shared_folder(){
   raw_idph=$base_dir/raw/idph
   raw_nyt=$base_dir/raw/nyt
   raw_who=$base_dir/raw/who
-  cp ./worldwide/global-covid19-who-gis.json $raw_who
+  #cp ./worldwide/global-covid19-who-gis.json $raw_who
+  cp ./worldwide/WHO-COVID-19-global-data.csv $raw_who
 
   pro_cases=$base_dir/processed/cases
   pro_other=$base_dir/processed/other
