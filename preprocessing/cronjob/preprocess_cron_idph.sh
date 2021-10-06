@@ -173,9 +173,9 @@ copy_back_results_webfolder(){
   cp ./illinois/idph_COVIDZip.json ../illinois/
   cp ./illinois/idph_COVIDHistoricalTestResults.json ../illinois/
 
-  cp ./illinois/Chicago_ACC_?.geojson ../illinois/
-  cp ./illinois/Illinois_ACC_?.geojson ../illinois/
-  cp ./illinois/vulnerability.geojson ../illinois/
+  #cp ./illinois/Chicago_ACC_?.geojson ../illinois/
+  #cp ./illinois/Illinois_ACC_?.geojson ../illinois/
+  #cp ./illinois/vulnerability.geojson ../illinois/
 }
 copy_to_shared_folder(){
   base_dir=/data/cigi/cybergis-jupyter/production_data/notebook_shared_data/data/wherecovid19_data/app
