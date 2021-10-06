@@ -1,0 +1,8 @@
+
+ufw allow 8000
+
+cd /var/covid19_project/wherecovid19_service/wherecovid19_webapp/preprocessing/cronjob
+
+source /opt/anaconda3/bin/activate covid19
+
+jupyter notebook --allow-root --port 8000 --ip 0.0.0.0
