@@ -84,11 +84,11 @@ download_files(){
 	
     # IL Accessibility
     mkdir -p ./illinois/Accessibility_Dissolve_Animation
-    cp -v ../illinois/Accessibility_Dissolve_Animation/* ./illinois/Accessibility_Dissolve_Animation/
+    rsync -va ../illinois/Accessibility_Dissolve_Animation/* ./illinois/Accessibility_Dissolve_Animation/
     
     # IL Vulnerability
     mkdir -p ./illinois/Vulnerability_Animation
-    cp -v ../illinois/Vulnerability_Animation/* ./illinois/Vulnerability_Animation/ #2
+    rsync -va ../illinois/Vulnerability_Animation/* ./illinois/Vulnerability_Animation/ #2
         
 }
 convert_notebooks(){
