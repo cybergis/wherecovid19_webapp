@@ -204,8 +204,8 @@ if [ $? -ne 0 ]
 then
 	convert_notebooks
 	run_extract_zipcode
-	run_illinois_accessibility
-	run_illinois_vulnerability #7
+	#run_illinois_accessibility
+	#run_illinois_vulnerability #7
 	run_defineintervels
 	copy_back_results_webfolder
         copy_to_shared_folder
