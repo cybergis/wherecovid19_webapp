@@ -173,9 +173,9 @@ copy_back_results_webfolder(){
   cp ./illinois/idph_COVIDZip.json ../illinois/
   cp ./illinois/idph_COVIDHistoricalTestResults.json ../illinois/
 
-  #cp ./illinois/Chicago_ACC_?.geojson ../illinois/
-  #cp ./illinois/Illinois_ACC_?.geojson ../illinois/
-  #cp ./illinois/vulnerability.geojson ../illinois/
+  cp ./illinois/Chicago_ACC_?.geojson ../illinois/
+  cp ./illinois/Illinois_ACC_?.geojson ../illinois/
+  cp ./illinois/vulnerability.geojson ../illinois/
 }
 copy_to_shared_folder(){
   base_dir=/data/cigi/cybergis-jupyter/production_data/notebook_shared_data/data/wherecovid19_data/app
@@ -204,8 +204,8 @@ if [ $? -ne 0 ]
 then
 	convert_notebooks
 	run_extract_zipcode
-	#run_illinois_accessibility
-	#run_illinois_vulnerability #7
+	run_illinois_accessibility
+	run_illinois_vulnerability #7
 	run_defineintervels
 	copy_back_results_webfolder
         copy_to_shared_folder
