@@ -1,7 +1,7 @@
 
 ufw allow 8000
 
-cd /var/covid19_project/wherecovid19_service/wherecovid19_webapp/preprocessing/cronjob
+cd /var/covid19_project/wherecovid19_service/wherecovid19_webapp
 
 source /opt/anaconda3/bin/activate covid19
 

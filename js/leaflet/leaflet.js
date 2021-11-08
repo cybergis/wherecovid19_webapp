@@ -1423,7 +1423,7 @@ var refreshLegend = function (_layer) {
         var legendContent = "";
 
         // loop through our density intervals and generate a label with a colored square for each interval
-        if (_layer == il_county_case_layer_object || _layer == us_county_case_layer_object || _layer == us_state_case_layer_object || _layer == world_case_layer_object || _layer == us_county_death_layer_object || us_state_death_layer_object || _layer == world_death_layer_object || _layer == il_county_death_layer_object) {
+        if (_layer == il_county_case_layer_object || _layer == us_county_case_layer_object || _layer == us_state_case_layer_object || _layer == world_case_layer_object || _layer == us_county_death_layer_object || _layer == us_state_death_layer_object || _layer == world_death_layer_object || _layer == il_county_death_layer_object) {
             grades = bins;
             // grades start from 0
             legendContent +=
