@@ -3,8 +3,6 @@ preprocessing/worldwide/classes_who.json
 preprocessing/illinois/classes_idph.json
 preprocessing/illinois/classes_accessibility.json
 preprocessing/illinois/classes_vulnerability.json
-preprocessing/illinois/Chicago_ACC_i.geojson
-preprocessing/illinois/Chicago_ACC_v.geojson
 preprocessing/illinois/dph_county_data.geojson
 preprocessing/illinois/vulnerability.geojson
 preprocessing/illinois/idph_county_historical.csv

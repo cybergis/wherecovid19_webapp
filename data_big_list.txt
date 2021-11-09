@@ -1,2 +1,4 @@
 preprocessing/illinois/Illinois_ACC_i.geojson
 preprocessing/illinois/Illinois_ACC_v.geojson
+preprocessing/illinois/Chicago_ACC_i.geojson
+preprocessing/illinois/Chicago_ACC_v.geojson
