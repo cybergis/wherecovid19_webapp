@@ -72,7 +72,7 @@ run_idph_county(){
 restore_data(){
 	echo "restoring data"
     
-    cp classes_idph-tmp.json classes_idph.json
+    cp ./illinois/classes_idph-tmp.json ./illinois/classes_idph.json
     cp ./illinois/idph_county_historical-tmp.csv ./illinois/idph_county_historical.csv
     cp ./illinois/dph_county_data-tmp.geojson ./illinois/dph_county_data.geojson
   

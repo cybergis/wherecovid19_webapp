@@ -82,7 +82,7 @@ run_defineintervels(){
 }
 restore_data(){
 	echo "restoring data"
-    cp classes-tmp.json classes.json
+    cp classes_nyt-tmp.json classes_nyt.json
 	cp nyt_states_data-tmp.geojson nyt_states_data.geojson
 	cp nyt_counties_data-tmp.geojson nyt_counties_data.geojson
 	cp us-counties-tmp.csv us-counties.csv
