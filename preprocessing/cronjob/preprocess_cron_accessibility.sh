@@ -45,7 +45,7 @@ convert_notebooks(){
 	jupyter nbconvert --to python --output-dir='./illinois/' ../illinois/accessibility_time_series.ipynb
 	}
 run_defineintervels(){
-
+echo "skipping run_defineintervels"
 }
 
 run_illinois_accessibility(){
