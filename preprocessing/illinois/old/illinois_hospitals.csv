@@ -1,0 +1,212 @@
+﻿FID,Hospital,StreetAddress,City,ZIP_Code,X,Y,Total_Bed,AvailableBed,Bed in Use,Adult ICU Bed,Total Vent,Available Vent,Vent in Use,CovidConfirmedPatient,CovidPatient in ICU,CovidPatientVent
+46,Northwest Community Hospital,800 West Central Road,Arlington Heights,60005,-87.991039,42.066594,509,229,280,127,41,24,17,239,13,9
+65,Alexian Brothers Medical Center,800 Biesterfield Rd,Elk Grove Village,60007,-88.016693,42.003433,401,180,221,100,33,19,13,188,11,7
+95,Advocate Good Shepherd Hospital,450 West Highway #22,Barrington,60010,0,0,176,79,97,44,14,8,6,83,5,3
+194,Chicago Behavioral Hospital,555 Wilson Lane,Des Plaines,60016,-87.879254,42.043888,138,62,76,35,11,7,5,65,4,3
+203,Presence Holy Family Medical Center,100 North River Road,Des Plaines,60016,-87.869807,42.05575,178,80,98,45,14,9,6,84,5,3
+96,Glenbrook Hospital,2100 Pfingsten Road,Glenview,60026,-87.849217,42.092016,173,78,95,43,14,8,6,81,5,3
+124,"Mercy Harvard Hospital, Inc.",1001 Grant Street,Harvard,60033,-88.607689,42.426817,50,23,27,13,4,2,2,23,1,1
+131,Highland Park Hospital,777 Park Ave W,Highland Park,60035,-87.80813,42.188837,139,63,76,35,11,7,5,65,4,3
+169,Northwestern Lake Forest Hospital,1000 North Westmoreland Road,Lake Forest,60045,-87.862862,42.255779,114,51,63,29,9,5,4,54,3,2
+163,Advocate Condell Medical Center,801 S. Milwaukee Avenue,Libertyville,60048,0,0,273,123,150,68,22,13,9,128,7,5
+99,Northwestern Medicine McHenry Hospital,4201 Medical Center Drive,McHenry,60050,-88.279354,42.318878,157,71,86,39,13,8,5,74,4,3
+118,Advocate Lutheran General Hospital,1775 Dempster Street,Park Ridge,60068,-87.848538,42.039738,638,287,351,160,52,31,21,300,17,12
+164,Skokie Hospital,9600 Gross Point Road,Skokie,60076,-87.739954,42.055357,123,55,68,31,10,6,4,58,3,2
+151,Vista Medical Center East,1324 N Sheridan Road,Waukegan,60085,-87.830943,42.378132,228,103,125,57,19,11,8,107,6,4
+210,Lake Behavioral Hospital,2615 Washington Street,Waukegan,60085,-87.86627,42.359384,46,21,25,12,4,2,2,22,1,1
+110,Northwestern Medicine Woodstock Hospital,3701 Doty Road,Woodstock,60098,-88.398939,42.274451,56,25,31,14,5,3,2,26,1,1
+84,Midwestern Regional Medical Center,2520 Elisha Avenue,Zion,60099,-87.826908,42.449391,73,33,40,18,6,4,2,34,2,1
+116,Streamwood Behavioral Healthcare System,1400 E. Irving Park Road,Streamwood,60107,0,0,178,80,98,45,14,9,6,84,5,3
+157,Kishwaukee Community Hospital,One Kish Hospital Drive,DeKalb,60115,-88.722452,41.961642,98,44,54,25,8,5,3,46,3,2
+122,Presence Saint Joseph - Elgin,77 North Airlite Street,Elgin,60123,-88.328875,42.03439,184,83,101,46,15,9,6,86,5,3
+189,Advocate Sherman Hospital,1425 North Randall Road,Elgin,60123,-88.33542,42.06904,255,115,140,64,21,12,9,120,7,5
+177,Elmhurst Memorial Hospital,155 East Brush Hill Road,Elmhurst,60126,-87.935232,41.861661,259,117,142,65,21,12,9,122,7,5
+133,Riveredge Hospital,8311 West Roosevelt Road,Forest Park,60130,-87.827803,41.864595,210,95,115,53,17,10,7,99,6,4
+175,Northwestern Delnor Hospital,300 Randall Road,Geneva,60134,-88.340397,41.88664,159,72,87,40,13,8,5,75,4,3
+98,AMITA Health Adventist Medical Center GlenOaks,701 Winthrop Avenue,Glendale Heights,60139,-88.059074,41.914865,143,64,79,36,12,7,5,67,4,3
+100,Northwestern Medicine Huntley Hospital,10400 Haligus Road,Huntley,60142,-88.403057,42.177314,128,58,70,32,10,6,4,60,3,2
+182,Foster G. McGaw Hospital - Loyola Univ. Medical Center,2160 South First Avenue,Maywood,60153,-87.833383,41.861639,547,246,301,137,45,26,18,257,14,10
+173,Westlake Hospital,1225 W. Lake Street,Melrose Park,60160,-87.848329,41.891656,230,104,126,58,19,11,8,108,6,4
+181,Gottlieb Memorial Hospital,701 West North Avenue,Melrose Park,60160,-87.84253,41.908287,247,111,136,62,20,12,8,116,6,5
+127,Kindred Hospital Chicago Northlake,365 E North Ave,Northlake,60164,-87.890747,41.907136,94,42,52,24,8,5,3,44,2,2
+128,St. Alexius Medical Center,1555 N. Barrington Road,Hoffman Estates,60167,0,0,318,143,175,80,26,15,11,149,8,6
+129,Alexian Brothers Behavioral Health Hospital,1650 Moon Lake Boulevard,Hoffman Estates,60169,-88.136137,42.054347,141,63,78,35,11,7,5,66,4,3
+126,Kindred Hospital Sycamore,225 Edward St,Sycamore,60178,-88.688655,41.982628,69,31,38,17,6,3,2,32,2,1
+88,Marianjoy Rehabilitation Hospital & Clinics,26 West 171 Roosevelt Road,Wheaton,60187,0,0,127,57,70,32,10,6,4,60,3,2
+176,Northwestern Central DuPage Hospital,25 North Winfield Road,Winfield,60190,0,0,392,176,216,98,32,19,13,184,10,7
+13,Evanston Hospital,2650 Ridge Avenue,Evanston,60201,-87.683288,42.065393,354,159,195,89,29,17,12,166,9,6
+200,Presence Saint Francis Hospital,355 Ridge Avenue,Evanston,60202,-87.685153,42.024215,215,97,118,54,17,10,7,101,6,4
+172,West Suburban Medical Center,3 Erie Court,Oak Park,60302,-87.776283,41.891523,234,105,129,59,19,11,8,110,6,4
+48,"Rush Oak Park Hospital, Inc.",520 S. Maple Avenue,Oak Park,60304,-87.803792,41.879298,237,107,130,59,19,11,8,111,6,4
+211,MacNeal Hospital,3249 South Oak Park Avenue,Berwyn,60402,-87.792752,41.832261,374,168,206,94,30,18,12,176,10,7
+185,MetroSouth Medical Center,12935 South Gregory Street,Blue Island,60406,-87.678242,41.658165,314,141,173,79,26,15,10,148,8,6
+71,Franciscan Health - Chicago Heights,1423 Chicago Road,Chicago Heights,60411,-87.640973,41.505766,0,0,0,0,0,0,0,0,0,0
+27,Ingalls Memorial Hospital,ONE INGALLS DRIVE,Harvey,60426,-87.65953,41.606516,485,218,267,121,39,23,16,228,13,9
+115,Advocate South Suburban Hospital,17800 South Kedzie Ave,Hazel Crest,60429,-87.694347,41.56561,233,105,128,58,19,11,8,109,6,4
+120,Presence Saint Joseph Medical Center,333 North Madison Street,Joliet,60435,-88.134663,41.5281,498,224,274,125,41,24,17,234,13,9
+159,AMITA Health Adventist Medical Center Bolingbrook,500 Remington Blvd,Bolingbrook,60440,-88.083214,41.679962,138,62,76,35,11,7,5,65,4,3
+43,Morris Hospital & Healthcare Centers,150 W. High St.,Morris,60450,-88.426122,41.368965,89,40,49,22,7,4,3,42,2,2
+184,Silver Cross Hospital,1900 Silver Cross Boulevard,New Lenox,60451,-87.986126,41.544504,302,136,166,76,25,15,10,142,8,6
+4,Advocate Christ Medical Center,4440 W. 95th Street,Oak Lawn,60453,-87.732483,41.720281,785,353,432,196,64,38,26,369,21,14
+132,Franciscan Health - Olympia Fields,20201 South Crawford,Olympia Fields,60461,0,0,214,96,118,54,17,10,7,101,6,4
+87,Palos Community Hospital,12251 South 80th Avenue,Palos Heights,60463,-87.815882,41.66835,410,185,225,103,33,20,14,193,11,7
+112,Rush Copley Medical Center,2000 Ogden Avenue,Aurora,60504,-88.268535,41.7277,210,95,115,53,17,10,7,99,6,4
+123,Presence Mercy Medical Center,1325 North Highland Avenue,Aurora,60506,-88.328869,41.786649,292,131,161,73,24,14,10,137,8,5
+91,Advocate Good Samaritan Hospital,3815 Highland Avenue,Downers Grove,60515,-88.010222,41.818886,284,128,156,71,23,14,9,133,7,5
+24,AMITA Health Adventist Medical Center Hinsdale,120 North Oak Street,Hinsdale,60521,-87.920116,41.805613,261,117,144,65,21,13,9,123,7,5
+119,RML Specialty Hospital Hinsdale,5601 S. County Line Rd.,Hinsdale,60521,-87.916887,41.78744,115,52,63,29,9,6,4,54,3,2
+197,AMITA Health Adventist Medical Center La Grange,5101 S. Willow Springs Road,La Grange,60525,0,0,196,88,108,49,16,9,7,92,5,4
+102,Edward Hospital,801 South Washington Street,Naperville,60540,-88.149158,41.761346,341,153,188,85,28,16,11,160,9,6
+130,Linden Oaks Hospital,852 South West Street,Naperville,60540,-88.158038,41.75806,108,49,59,27,9,5,4,51,3,2
+114,Valley West Community Hospital,1302 North Main Street,Sandwich,60548,-88.621881,41.657769,25,11,14,6,2,1,1,12,1,0
+45,Mount Sinai Hospital Medical Center,2750 W 15th Street,Chicago,60608,-87.692865,41.86112,288,130,158,72,23,14,10,135,8,5
+62,Schwab Rehabilitation Hospital,1401 South California Avenue,Chicago,60608,-87.695761,41.862511,102,46,56,26,8,5,3,48,3,2
+90,Northwestern Memorial Hospital,251 E Huron St,Chicago,60611,-87.620371,41.894973,894,402,492,224,73,43,30,420,24,16
+186,Ann & Robert H.Lurie Chidren's Hospital of Chicago,225 E. Chicago Avenue,Chicago,60611,-87.621562,41.896763,336,151,185,84,27,16,11,158,9,6
+206,Shirley Ryan AbilityLab,355 East Erie Street,Chicago,60611,-87.618897,41.894197,242,109,133,61,20,12,8,114,6,4
+54,Rush University Medical Center,1653 West Congress Parkway,Chicago,60612,-87.668008,41.875118,729,328,401,182,59,35,24,343,19,13
+144,John H Stroger Hospital,1901 W. Harrison St,Chicago,60612,-87.674139,41.874067,450,203,247,113,37,22,15,211,12,8
+145,University of Illinois Hospital and Health Science,1740 West Taylor Steet,Chicago,60612,-87.670444,41.869209,495,223,272,124,40,24,17,233,13,9
+150,Thorek Memorial Hospital,850 W. Irving Park Road,Chicago,60613,-87.652163,41.954536,156,70,86,39,13,7,5,73,4,3
+108,Provident Hospital of Cook County,500 East 51st Street,Chicago,60615,-87.613991,41.802167,85,38,47,21,7,4,3,40,2,2
+41,Mercy Hospital & Medical Center,2525 South Michigan Avenue,Chicago,60616,-87.623542,41.847044,402,181,221,101,33,19,13,189,11,7
+94,South Shore Hospital Corporation,8012 South Crandon Ave.,Chicago,60617,-87.568691,41.7496,137,62,75,34,11,7,5,64,4,3
+105,Advocate Trinity Hospital,2320 East 93rd Street,Chicago,60617,-87.56738,41.726249,205,92,113,51,17,10,7,96,5,4
+125,Kindred Hospital Chicago North,2544 W. Montrose Ave.,Chicago,60618,-87.692685,41.961317,164,74,90,41,13,8,5,77,4,3
+68,St Bernard Hospital,326 W. 64th Street,Chicago,60621,-87.63325,41.778137,210,95,115,53,17,10,7,99,6,4
+47,Norwegian American Hospital,1044 North Francisco Avenue,Chicago,60622,-87.699301,41.899822,215,97,118,54,17,10,7,101,6,4
+201,Presence Saint Mary of Nazareth,2233 West Division Street,Chicago,60622,-87.683026,41.903038,387,174,213,97,31,19,13,182,10,7
+202,Presence Saint Elizabeth Hospital,1431 North Claremont,Chicago,60622,-87.685883,41.907521,108,49,59,27,9,5,4,51,3,2
+166,Saint Anthony Hospital,2875 W 19th Street,Chicago,60623,-87.698237,41.855486,151,68,83,38,12,7,5,71,4,3
+170,RML Specialty Hospital Chicago,3435 W. Van Buren St.,Chicago,60624,-87.712049,41.875405,86,39,47,22,7,4,3,40,2,2
+192,Garfield Park Hospital,520 North Ridgeway,Chicago,60624,-87.71987,41.890602,88,40,48,22,7,4,3,41,2,2
+79,Swedish Covenant Hospital,5145 N California Ave,Chicago,60625,-87.698875,41.974884,312,140,172,78,25,15,10,147,8,6
+59,Roseland Community Hospital,45 West  111th Street,Chicago,60628,-87.62528,41.692525,134,60,74,34,11,6,4,63,4,2
+25,Holy Cross Hospital,2701 W 68th Street,Chicago,60629,-87.690841,41.770001,264,119,145,66,21,13,9,124,7,5
+204,Resurrection Medical Center,7435 West Talcott Avenue,Chicago,60631,-87.813134,41.988756,337,152,185,84,27,16,11,158,9,6
+196,Community First Medical Center,5645West Addison Street,Chicago,60634,0,0,296,133,163,74,24,14,10,139,8,5
+101,The University of Chicago Medical Center,5841 S. Maryland Avenue,Chicago,60637,-87.60489,41.78881,811,365,446,203,66,39,27,381,21,15
+2,Methodist Hospital of Chicago,5025 North Paulina Street,Chicago,60640,-87.671079,41.9728,145,65,80,36,12,7,5,68,4,3
+138,Chicago Lakeshore Hospital,4840 North Marine Drive,Chicago,60640,-87.64992,41.970362,161,72,89,40,13,8,5,76,4,3
+142,Weiss Memorial Hospital,4646 North Marine Drive,Chicago,60640,-87.648831,41.966373,237,107,130,59,19,11,8,111,6,4
+109,Kindred Chicago Central Hospital,4058 W Melrose St,Chicago,60641,-87.728771,41.940006,95,43,52,24,8,5,3,45,2,2
+33,Loretto Hospital,645 South Central Avenue,Chicago,60644,-87.764555,41.872401,177,80,97,44,14,8,6,83,5,3
+156,Hartgrove Hospital,5730 West Roosevelt Road,Chicago,60644,-87.768162,41.865565,160,72,88,40,13,8,5,75,4,3
+29,Jackson Park Hospital & Medical Center,7531 S. Stony Island Ave.,Chicago,60649,-87.585693,41.75776,256,115,141,64,21,12,9,120,7,5
+85,LaRabida Children's Hospital,6501 S. Promontory Drive,Chicago,60649,0,0,49,22,27,12,4,2,2,23,1,1
+136,Advocate Illinois Masonic Medical Center,836 West Wellington Avenue,Chicago,60657,-87.650443,41.936355,397,179,218,99,32,19,13,187,10,7
+199,Presence Saint Joseph Hospital - Chicago,2900 North Lake Shore Drive,Chicago,60657,-87.636763,41.934868,361,162,199,90,29,17,12,170,9,7
+86,Shriners Hospitals for Children,2211 North Oak Park Avenue,Chicago,60707,-87.795084,41.919692,60,27,33,15,5,3,2,28,2,1
+32,Little Company of Mary Hospital,2800 W 95th St,Evergreen Park,60805,-87.691791,41.720898,298,134,164,75,24,14,10,140,8,5
+56,Riverside Medical Center,350 N. Wall Street,Kankakee,60901,-87.882393,41.123786,318,143,175,80,26,15,11,149,8,6
+121,Presence St. Mary's Hospital,500 West Court Street,Kankakee,60901,0,0,182,82,100,46,15,9,6,86,5,3
+17,Gibson Community Hospital,1120 North Melvin Street,Gibson City,60936,-88.370676,40.477799,41,18,23,10,3,2,1,19,1,1
+106,Hoopeston Community Memorial Hospital,701 East Orange Street,Hoopeston,60942,0,0,24,11,13,6,2,1,1,11,1,0
+28,The Iroquois Memorial Hospital and Resident Home,200 East Fairman Avenue,Watseka,60970,-87.732485,40.765545,25,11,14,6,2,1,1,12,1,0
+160,SwedishAmerican Medical Center - Belvidere,1625 South State Street,Belvidere,61008,-88.839191,42.243104,34,15,19,9,3,2,1,16,1,1
+10,Katherine Shaw Bethea Hospital,403 E First Street,Dixon,61021,-89.480258,41.844256,80,36,44,20,7,4,3,38,2,1
+16,FHN Memorial Hospital,1045 W. Stephenson,Freeport,61032,-89.63843,42.295792,100,45,55,25,8,5,3,47,3,2
+158,Midwest Medical Center,One Medical Center Drive,Galena,61036,-90.456935,42.44659,25,11,14,6,2,1,1,12,1,0
+57,Rochelle Community Hospital,900 North Second Street,Rochelle,61068,-89.062856,41.928565,16,7,9,4,1,1,1,8,0,0
+6,CGH Medical Center,100 East LeFevre,Sterling,61081,-89.697041,41.80158,98,44,54,25,8,5,3,46,3,2
+58,Javon Bea Hospital,2400 N. Rockton Avenue,Rockford,61103,-89.096809,42.298459,288,130,158,72,23,14,10,135,8,5
+66,OSF Saint Anthony Medical Center,5666 E. State St.,Rockford,61108,-89.006825,42.265818,254,114,140,64,21,12,8,119,7,5
+80,SwedishAmerican Hospital,1401 East State Street,Rockford,61108,0,0,343,154,189,86,28,16,11,161,9,6
+139,Van Matre Encompass Health Rehabilitation Hospital,950 S. Mulford Road,Rockford,61108,-88.999648,42.258907,61,27,34,15,5,3,2,29,2,1
+89,UnityPoint Health - Trinity Rock Island,2701 17th Street,Rock Island,61201,-90.572775,41.483398,327,147,180,82,27,16,11,154,9,6
+188,Genesis Medical Center - Aledo Campus,409 NW Ninth Avenue,Aledo,61231,-90.758524,41.205403,22,10,12,6,2,1,1,10,1,0
+20,Hammond-Henry Hospital,600 N. College Ave.,Geneseo,61254,-90.158375,41.46028,61,27,34,15,5,3,2,29,2,1
+135,UnityPoint Health - Trinity Moline,500 john Deere Road,Moline,61265,-90.531328,41.470445,38,17,21,10,3,2,1,18,1,1
+44,Morrison Community Hospital,303 N. Jackson Street,Morrison,61270,-89.956151,41.809766,25,11,14,6,2,1,1,12,1,0
+152,Genesis Medical Center - Silvis Campus,801 Illini Drive,Silvis,61282,-90.41858,41.493085,145,65,80,36,12,7,5,68,4,3
+183,OSF Saint Paul Medical Center,1401 E 12th Street,Mendota,61342,0,0,25,11,14,6,2,1,1,12,1,0
+162,OSF Saint Elizabeth Medical Center,1100 East Norris Drive,Ottawa,61350,-88.82462,41.35631,97,44,53,24,8,5,3,46,3,2
+93,Illinois Valley Community Hospital,925 West Street,Peru,61354,-89.125198,41.328826,64,29,35,16,5,3,2,30,2,1
+53,Perry Memorial Hospital,530 Park Ave. East,Princeton,61356,-89.456011,41.367994,25,11,14,6,2,1,1,12,1,0
+75,St. Margaret's Hospital,600 East First Street,Spring Valley,61362,-89.19409,41.328693,57,26,31,14,5,3,2,27,1,1
+78,OSF St. Mary Medical Center,3333 N. Seminary St,Galesburg,61401,-90.363585,40.987494,81,36,45,20,7,4,3,38,2,1
+147,Galesburg Cottage Hospital,695 North Kellogg Street,Galesburg,61401,-90.366168,40.955747,143,64,79,36,12,7,5,67,4,3
+193,OSF HealthCare Saint Luke Medical Center,1051 W. South St.,Kewanee,61443,-89.947734,41.222143,25,11,14,6,2,1,1,12,1,0
+37,McDonough District Hospital,525 East Grant St,Macomb,61455,-90.663599,40.447903,60,27,33,15,5,3,2,28,2,1
+154,OSF Holy Family Medical Center,1000 West Harlem Avenue,Monmouth,61462,-90.65831,40.921317,23,10,13,6,2,1,1,11,1,0
+18,Graham Hospital,210 West Walnut,Canton,61520,-90.038222,40.55328,87,39,48,22,7,4,3,41,2,2
+168,Advocate Eureka Hospital,101 South Major Street,Eureka,61530,-89.271624,40.72133,25,11,14,6,2,1,1,12,1,0
+52,Pekin Memorial Hospital,600 South 13th Street,Pekin,61554,-89.633057,40.563751,107,48,59,27,9,5,4,50,3,2
+179,Kindred Hospital Peoria,500 West Romeo B Garrett Avenue,Peoria,61605,0,0,50,23,27,13,4,2,2,23,1,1
+55,Proctor Community Hospital,5409 N. Knoxville Ave.,Peoria,61614,-89.593295,40.752305,210,95,115,53,17,10,7,99,6,4
+42,The Methodist Medical Center of Illinois,221 N.E. Glen Oak Avenue,Peoria,61636,0,0,329,148,181,82,27,16,11,155,9,6
+70,OSF Saint Francis Medical Center,530 NE Glen Oak Ave,Peoria,61637,0,0,629,283,346,157,51,30,21,296,17,11
+74,St. Joseph Medical Center,2200 East Washington,Bloomington,61701,-88.954262,40.480055,149,67,82,37,12,7,5,70,4,3
+31,Warner Hospital & Health Services,422 West White Street,Clinton,61727,-88.964731,40.148919,25,11,14,6,2,1,1,12,1,0
+26,Hopedale Hospital,107 Tremont Street,Hopedale,61747,-89.417668,40.417967,25,11,14,6,2,1,1,12,1,0
+167,Advocate BroMenn Medical Center,1304 Franklin Avenue,Normal,61761,-88.991502,40.497315,221,99,122,55,18,11,7,104,6,4
+143,OSF Saint James Medical Center,2500 W. Reynolds,Pontiac,61764,-88.67867,40.873363,42,19,23,11,3,2,1,20,1,1
+97,Carle Foundation Hospital,611 West Park Street,Urbana,61801,-88.213657,40.117403,413,186,227,103,34,20,14,194,11,8
+209,OSF Healthcare Heart of Mary Medical Center,1400 W Park st,Urbana,61801,-88.22725,40.117424,210,95,115,53,17,10,7,99,6,4
+113,The Pavilion Foundation,809 West Church Street,Champaign,61820,-88.256239,40.118234,72,32,40,18,6,3,2,34,2,1
+208,OSF Healthcare Sacred Heart Medical Center,812 N Logan Ave,Danville,61832,-87.644936,40.135801,174,78,96,44,14,8,6,82,5,3
+180,Kirby Medical Center,1000 Medical Center Drive,Monticello,61856,-88.558188,40.059718,16,7,9,4,1,1,1,8,0,0
+92,Sarah Bush Lincoln Health Center,1000 Health Center Drive,Mattoon,61938,-88.275766,39.488052,149,67,82,37,12,7,5,70,4,3
+50,Horizon Health,721 East Court St.,Paris,61944,-87.677673,39.606438,25,11,14,6,2,1,1,12,1,0
+1,Alton Memorial Hospital,One Memorial Drive,Alton,62002,-90.156846,38.900258,209,94,115,52,17,10,7,98,5,4
+195,OSF HealthCare Saint Anthony's Health Center,1 Saint Anthony's Way,Alton,62002,-90.173412,38.908346,140,63,77,35,11,7,5,66,4,3
+81,Thomas H Boyd Memorial Hospital,800 School Street,Carrollton,62016,-90.412407,39.296208,25,11,14,6,2,1,1,12,1,0
+140,Gateway Regional Medical Center,2100 Madison Avenue,Granite City,62040,-90.144805,38.700975,338,152,186,85,27,16,11,159,9,6
+23,Hillsboro Area Hospital,1200 E. Tremont St.,Hillsboro,62049,-89.481121,39.15354,25,11,14,6,2,1,1,12,1,0
+30,Jersey Community Hospital,400 Maple Summit Road,Jerseyville,62052,-90.341657,39.11062,43,19,24,11,3,2,1,20,1,1
+69,St. Francis Hospital,1215 Franciscan Drive,Litchfield,62056,-89.640464,39.179776,25,11,14,6,2,1,1,12,1,0
+104,Anderson Hospital,6800 State Route 162,Maryville,62062,-89.947287,38.738149,154,69,85,39,13,7,5,72,4,3
+7,Community Memorial Hospital,400 Caldwell Street,Staunton,62088,-89.789846,39.01519,25,11,14,6,2,1,1,12,1,0
+171,Carlinville Area Hospital Association,20733 North Broad Street,Carlinville,62088,0,0,25,11,14,6,2,1,1,12,1,0
+107,Touchette Regional Hospital,5900 Bond Avenue,Centreville,62207,-90.108249,38.571755,137,62,75,34,11,7,5,64,4,3
+38,Memorial Hospital Belleville,4500 Memorial Drive,Belleville,62226,-90.020656,38.550494,222,100,122,56,18,11,7,104,6,4
+73,St. Joseph's Hospital,9515 Holy Cross Lane,Breese,62230,-89.524424,38.625182,70,32,38,18,6,3,2,33,2,1
+40,Memorial Hospital,1900 State Street,Chester,62233,-89.81146,37.919434,25,11,14,6,2,1,1,12,1,0
+148,"HSHS Holy Family Hospital, Inc.",200 Healthcare Drive,Greenville,62246,-89.408391,38.903361,42,19,23,11,3,2,1,20,1,1
+190,St. Joseph's Hospital,12866 Troxler Avenue,Highland,62249,-89.667406,38.757062,25,11,14,6,2,1,1,12,1,0
+83,Washington County Hospital,705 S. Grand Avenue,Nashville,62263,-89.390072,38.338411,50,23,27,13,4,2,2,23,1,1
+205,Memorial Hospital East,1404 Cross Street,Shiloh,62269,-89.908654,38.574251,94,42,52,24,8,5,3,44,2,2
+207,St. Elizabeth's Hospital of the Hospital Sisters,One St. Elizabeth's Boulevard,O'Fallon,62269,0,0,144,65,79,36,12,7,5,68,4,3
+198,Pinckneyville Community Hospital,5383 State Route 154 / P.O. Box 437,Pinckneyville,62274,-89.34883,38.083205,17,8,9,4,1,1,1,8,0,0
+137,Red Bud Regional Hospital,325 Spring Street,Red Bud,62278,-89.996445,38.209621,25,11,14,6,2,1,1,12,1,0
+64,Sparta Community Hospital,818 East Broadway,Sparta,62286,-89.692386,38.124405,25,11,14,6,2,1,1,12,1,0
+3,Blessing Hospital,Broadway at 11th Street,Quincy,62301,-91.398331,39.93562,307,138,169,77,25,15,10,144,8,6
+165,Memorial Hospital Association,1454 North County Road 2050,Carthage,62321,0,0,18,8,10,5,1,1,1,8,0,0
+134,Illini Community Hospital,640 West Washington,Pittsfield,62363,-90.814476,39.606817,35,16,19,9,3,2,1,16,1,1
+67,St. Anthony's Memorial Hospital,503 N Maple St,Effingham,62401,-88.549262,39.125844,133,60,73,33,11,6,4,63,3,2
+178,Lawrence County Memorial Hospital,2200 State Street,Lawrenceville,62439,-87.69538,38.73001,25,11,14,6,2,1,1,12,1,0
+117,Richland Memorial Hospital,800 E. Locust,Olney,62450,-88.076937,38.73504,134,60,74,34,11,6,4,63,4,2
+8,Crawford Memorial Hospital,1205 S. Prairie St.,Robinson,62454,-87.745965,38.997598,63,28,35,16,5,3,2,30,2,1
+15,Fayette County Hospital,650 West Taylor Street,Vandalia,62471,-89.098433,38.970617,110,50,60,28,9,5,4,52,3,2
+76,HSHS St. Mary's Hospital,1800 E Lake Shore Drive,Decatur,62521,-88.93186,39.826377,230,104,126,58,19,11,8,108,6,4
+9,Decatur Memorial Hospital,2300 North Edward Street,Decatur,62526,-88.959479,39.866785,300,135,165,75,24,14,10,141,8,5
+49,Pana Community Hospital,101 E. 9th Street,Pana,62557,-89.084124,39.380245,22,10,12,6,2,1,1,10,1,0
+63,"HSHS Good Shepherd Hospital, INC.",200 S. Cedar Street,Shelbyville,62565,-88.807207,39.40771,30,14,16,8,2,1,1,14,1,1
+155,Taylorville Memorial Hospital,201 East Pleasant Street,Taylorville,62568,-89.293624,39.553787,25,11,14,6,2,1,1,12,1,0
+35,Mason District Hospital,615 N. Promenade,Havana,62644,-90.056086,40.305064,25,11,14,6,2,1,1,12,1,0
+51,Passavant Area Hospital,1600 West Walnut Street,Jacksonville,62650,-90.2596,39.745317,131,59,72,33,11,6,4,62,3,2
+174,Abraham Lincoln Memorial Hospital,200 Stahlhut Drive,Lincoln,62656,0,0,25,11,14,6,2,1,1,12,1,0
+61,Sarah D Culbertson Memorial Hospital,238 South Congress,Rushville,62681,-90.56361,40.11851,22,10,12,6,2,1,1,10,1,0
+191,Vibra Hospital of Springfield,701 North Walnut Street,Springfield,62702,-89.663597,39.80895,50,23,27,13,4,2,2,23,1,1
+161,Lincoln Prairie Behavioral Health Center,5230 S. Sixth Street Road,Springfield,62703,0,0,97,44,53,24,8,5,3,46,3,2
+72,HSHS St. John's Hospital,800 E. Carpenter St.,Springfield,62769,0,0,402,181,221,101,33,19,13,189,11,7
+39,Memorial Medical Center,701 North First St,Springfield,62781,0,0,500,225,275,125,41,24,17,235,13,9
+77,SSM Health St. Mary's Hospital,400 North Pleasant Ave.,Centralia,62801,-89.116044,38.52902,125,56,69,31,10,6,4,59,3,2
+141,Franklin Hospital District,201 Bailey Lane,Benton,62812,0,0,16,7,9,4,1,1,1,8,0,0
+34,Marshall Browning Hospital,900 N Washington St,Du Quoin,62832,-89.236784,38.02399,25,11,14,6,2,1,1,12,1,0
+14,Fairfield Memorial Hospital,303 NW 11th Street,Fairfield,62837,-88.374465,38.380867,55,25,30,14,4,3,2,26,1,1
+5,Clay County Hospital,911 Stacy Burk Drive,Flora,62839,-88.472234,38.680785,20,9,11,5,2,1,1,9,1,0
+19,Hamilton Memorial Hospital,"611 S. Marshall Avenue,  P.O. Box 429",McLeansboro,62859,0,0,25,11,14,6,2,1,1,12,1,0
+82,Wabash General Hospital,1418 College Drive,Mount Carmel,62863,-87.768891,38.421696,25,11,14,6,2,1,1,12,1,0
+103,Crossroads Community Hospital,#8 Doctors Park,Mt. Vernon,62864,-88.937174,38.31098,47,21,26,12,4,2,2,22,1,1
+187,SSM Health Good Samaritan Regional Health Center,1 Good Samaritan Way,Mt. Vernon,62864,0,0,134,60,74,34,11,6,4,63,4,2
+60,Salem Township Hospital,1201 Ricker Dr,Salem,62881,-88.947571,38.641441,25,11,14,6,2,1,1,12,1,0
+11,Memorial Hospital of Carbondale,405 West Jackson,Carbondale,62901,-89.218896,37.728011,154,69,85,39,13,7,5,72,4,3
+153,Anna Hospital Corporation,517 North Main Street,Anna,62906,-89.245045,37.46511,47,21,26,12,4,2,2,22,1,1
+149,Ferrell Hospital,1201 Pine Street,Eldorado,62930,-88.441516,37.81528,25,11,14,6,2,1,1,12,1,0
+12,Harrisburg Medical Center,100 Dr. Warren Tuttle Drive,Harrisburg,62946,-88.523818,37.730911,77,35,42,19,6,4,3,36,2,1
+22,Herrin Hospital,201 S 14th Street,Herrin,62948,-89.025574,37.80125,114,51,63,29,9,5,4,54,3,2
+146,Heartland Regional Medical Center,333 N DeYoung St,Marion,62959,-88.930166,37.740917,106,48,58,27,9,5,4,50,3,2
+36,Massac Memorial Hospital,28 Chick Street,Metropolis,62960,-88.73945,37.166738,25,11,14,6,2,1,1,12,1,0
+111,St Joseph Memorial Hospital,2 South Hospital Drive,Murphysboro,62966,-89.325488,37.773177,25,11,14,6,2,1,1,12,1,0
+21,Hardin County General Hospital,6 Ferrell Road,Rosiclare,62982,-88.347571,37.4215,25,11,14,6,2,1,1,12,1,0

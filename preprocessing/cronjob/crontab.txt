@@ -1,7 +1,8 @@
 # m h  dom mon dow   command
-#*/10 * * * * /var/covid19_project/wherecovid19_service/wherecovid19_webapp/preprocessing/cronjob/preprocess_cron.sh
-*/15 * * * * /var/covid19_project/COVID_19Accessibility/accessibility_cron.sh
-*/15 * * * * /var/covid19_project/COVID19_Vulnerability/vulnerability_corn.sh
-*/10 * * * * /var/covid19_project/wherecovid19_service/wherecovid19_webapp/preprocessing/cronjob/preprocess_cron_idph.sh
-*/12 * * * * /var/covid19_project/wherecovid19_service/wherecovid19_webapp/preprocessing/cronjob/preprocess_cron_nyt.sh
-*/14 * * * * /var/covid19_project/wherecovid19_service/wherecovid19_webapp/preprocessing/cronjob/preprocess_cron_who.sh
+5 */6 * * * /var/covid19_project/COVID_19Accessibility/accessibility_cron.sh
+15 */6 * * * /var/covid19_project/COVID19_Vulnerability/vulnerability_corn.sh
+45 */7 * * * /var/covid19_project/wherecovid19_service/wherecovid19_webapp/preprocessing/cronjob/preprocess_cron_accessibility.sh
+55 */7 * * * /var/covid19_project/wherecovid19_service/wherecovid19_webapp/preprocessing/cronjob/preprocess_cron_vulnerability.sh
+50 */5 * * * /var/covid19_project/wherecovid19_service/wherecovid19_webapp/preprocessing/cronjob/preprocess_cron_idph.sh
+30 */4 * * * /var/covid19_project/wherecovid19_service/wherecovid19_webapp/preprocessing/cronjob/preprocess_cron_nyt.sh
+1  */3 * * * /var/covid19_project/wherecovid19_service/wherecovid19_webapp/preprocessing/cronjob/preprocess_cron_who.sh
