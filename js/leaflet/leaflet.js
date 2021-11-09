@@ -1193,6 +1193,8 @@ var addUrlHash = function() {
 
 var chain_promise = function (layer_info) {
     return loadGeoJsonAndClasses(layer_info).then(function(result) {
+        // var "result" has 2 promise results in an array (both are the same returned by loadGeoJsonAndClasses -- layer_info)
+        // get the first one's value
         let layer_info_0 = result[0].value;
         p1 = add_animation_layer_to_map_promise(layer_info_0);
         p2 = fill_left_panel_promise(layer_info_0);
@@ -1201,7 +1203,8 @@ var chain_promise = function (layer_info) {
 }
 
 // Promise Entry Point
-
+// load layers by groups:
+// layer_info_list --> layer_info_list_2 --> layer_info_list_3
 Promise.allSettled(layer_info_list.map(chain_promise)).then(function () {
     switch_left_tab_page_handler_old();
     left_tab_page_table_click_old();
@@ -1211,9 +1214,9 @@ Promise.allSettled(layer_info_list.map(chain_promise)).then(function () {
     $('#world-tab').css("pointer-events", "auto");
 }).then(function () {
     return zoomToUserLocationPromise();
-}).then(function () {
+}).then(function () { // layer_info_list_2
     return Promise.allSettled(layer_info_list_2.map(chain_promise));
-}).then(function () {
+}).then(function () { // layer_info_list_3
     return Promise.allSettled(layer_info_list_3.map(chain_promise));
 }).then(function () {
     addUrlHash();
