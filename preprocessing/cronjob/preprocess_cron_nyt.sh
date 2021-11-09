@@ -7,7 +7,7 @@ make_copy_data(){
 	cp us-counties.csv us-counties-tmp.csv
 	cp ./nyt_counties_data.geojson nyt_counties_data-tmp.geojson
 	cp ./nyt_states_data.geojson nyt_states_data-tmp.geojson
-	cp ./classes.json classes-tmp.json
+	cp ./classes_nyt.json classes_nyt-tmp.json
 	#Copy needed datasets from parent directory
 	cp ../counties_update_new.geojson .
 	cp ../states_update.geojson .
@@ -51,9 +51,10 @@ convert_notebooks(){
         echo "Converting notebooks"
 	jupyter nbconvert --to python --output-dir='.' ../states_new.ipynb
 	jupyter nbconvert --to python --output-dir='.' ../counties_new.ipynb
-	jupyter nbconvert --to python --output-dir='.' ../DefineInterval.ipynb
+	jupyter nbconvert --to python --output-dir='.' ../DefineInterval_nyt.ipynb
 }
 run_state(){
+  echo "run_state"
 	python states_new.py
 	if [ $? -ne 0 ]
 	then
@@ -62,6 +63,7 @@ run_state(){
 	fi
 }
 run_counties(){
+    echo "run_counties"
     python counties_new.py
     if [ $? -ne 0 ]
     then
@@ -70,7 +72,8 @@ run_counties(){
     fi
 }
 run_defineintervels(){
-    python DefineInterval.py
+    echo "run_defineintervels"
+    python DefineInterval_nyt.py
     if [ $? -ne 0 ]
     then
             restore_data
@@ -79,7 +82,7 @@ run_defineintervels(){
 }
 restore_data(){
 	echo "restoring data"
-    cp classes-tmp.json classes.json
+    cp classes_nyt-tmp.json classes_nyt.json
 	cp nyt_states_data-tmp.geojson nyt_states_data.geojson
 	cp nyt_counties_data-tmp.geojson nyt_counties_data.geojson
 	cp us-counties-tmp.csv us-counties.csv
@@ -96,19 +99,15 @@ copy_back_results_webfolder(){
   cp us-counties.csv ../
   cp nyt_counties_data.geojson ../
   cp nyt_states_data.geojson ../
-  cp classes.json ../
+  cp classes_nyt.json ../
 }
 
 copy_to_shared_folder(){
   base_dir=/data/cigi/cybergis-jupyter/production_data/notebook_shared_data/data/wherecovid19_data/app
-  raw_idph=$base_dir/raw/idph
   raw_nyt=$base_dir/raw/nyt
-  raw_who=$base_dir/raw/who
   cp us-states.csv us-counties.csv $raw_nyt
 
   pro_cases=$base_dir/processed/cases
-  pro_other=$base_dir/processed/other
-  pro_static=$base_dir/processed/static
   cp nyt_counties_data.geojson nyt_states_data.geojson $pro_cases
 }
 

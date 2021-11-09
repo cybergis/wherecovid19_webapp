@@ -1,0 +1,101 @@
+﻿ID,age,Sex,Latitude,Longitude,Lab Report Date,Test Result,Race,Ethnicity,Deceased
+1,41,1,41.7068448,-87.65708054,2020/3/24 0:00,Positive,White,Not Hispanic or not Latino,Yes
+2,75,1,41.935298,-87.63922025,2020/3/24 0:00,Negative,Hispanic,Hispanic or Latino,NULL
+3,5,2,41.98555883,-87.69201674,2020/3/24 0:00,Negative,Unknown,NULL,NULL
+4,50,1,NULL,NULL,2020/3/24 0:00,Positive,White,Unknown Not Classified,No
+5,65,2,42.07728149,-88.16177047,2020/3/18 0:00,Negative,Unknown,NULL,NULL
+6,85,1,42.38465575,-87.83514951,2020/3/21 0:00,Negative,White,NULL,NULL
+7,78,2,40.14455574,-89.35722551,2020/3/21 0:00,Negative,Black or African American,Not Hispanic or not Latino,NULL
+8,79,1,42.3452171,-88.22734841,2020/3/22 0:00,Negative,White,Not Hispanic or not Latino,NULL
+9,70,1,42.07730786,-87.94543161,2020/3/15 0:00,Negative,Black or African American,Not Hispanic or not Latino,NULL
+10,5,1,41.66010397,-88.44976143,2020/3/21 0:00,Negative,Black or African American,Unknown Not Classified,NULL
+11,55,1,41.59328135,-87.69810421,2020/3/23 0:00,Positive,Other,Not Hispanic or not Latino,No
+12,34,2,41.6413462,-87.927634,2020/3/23 0:00,Negative,Black or African American,Not Hispanic or not Latino,NULL
+13,3,2,41.86535466,-88.00065505,2020/3/21 0:00,Positive,White,Not Hispanic or not Latino,No
+14,18,1,41.6157526,-87.76352304,2020/3/16 0:00,Positive,Hispanic,Hispanic or Latino,Yes
+15,34,2,42.04565862,-87.74566071,2020/3/20 0:00,Negative,Black or African American,Not Hispanic or not Latino,NULL
+16,3,1,41.812469,-87.65641,2020/3/21 0:00,Positive,Black or African American,Not Hispanic or not Latino,No
+17,23,1,42.03051191,-87.84989567,2020/3/16 0:00,Negative,White,Not Hispanic or not Latino,NULL
+18,50,1,41.86489937,-88.02960301,2020/3/16 0:00,Negative,White,Not Hispanic or not Latino,NULL
+19,49,2,42.34465872,-88.16429334,2020/3/19 0:00,Negative,Asian,Not Hispanic or not Latino,NULL
+20,26,1,42.1388742,-87.84346535,2020/3/16 0:00,Negative,Black or African American,Not Hispanic or not Latino,NULL
+21,5,1,41.62760367,-88.14602336,2020/3/16 0:00,Positive,White,Not Hispanic or not Latino,No
+22,44,1,41.97905265,-87.65786379,2020/3/16 0:00,Positive,Black or African American,Unknown Not Classified,Yes
+23,34,1,42.2021612,-87.81012269,2020/3/17 0:00,Negative,White,Not Hispanic or not Latino,NULL
+24,56,1,40.10603458,-88.50590229,2020/3/20 0:00,Negative,Black or African American,Unknown Not Classified,NULL
+25,72,2,42.3914385,-87.84828365,2020/3/17 0:00,Negative,Hispanic,Hispanic or Latino,NULL
+26,63,1,NULL,NULL,2020/3/16 0:00,Negative,White,Not Hispanic or not Latino,NULL
+27,67,1,41.65991377,-87.68130192,2020/3/26 0:00,Positive,Black or African American,Unknown Not Classified,No
+28,38,1,42.02024668,-87.68352793,2020/3/26 0:00,Negative,Black or African American,Unknown Not Classified,NULL
+29,29,1,NULL,NULL,2020/3/22 0:00,Negative,White,Not Hispanic or not Latino,NULL
+30,51,2,42.20766493,-87.83402913,2020/3/22 0:00,Negative,White,Not Hispanic or not Latino,NULL
+31,62,1,42.09331455,-87.92085202,2020/3/22 0:00,Negative,,,NULL
+32,25,2,41.90445215,-87.73147893,2020/3/22 0:00,Positive,White,Not Hispanic or not Latino,Yes
+33,82,1,NULL,NULL,2020/3/22 0:00,Negative,Hispanic,Hispanic or Latino,NULL
+34,26,1,42.10567881,-87.7298082,2020/3/26 0:00,Negative,Unknown,NULL,NULL
+35,55,1,40.20139884,-87.63427574,2020/3/19 0:00,Negative,White,Unknown Not Classified,NULL
+36,60,1,0,0,2020/3/16 0:00,Positive,Unknown,NULL,No
+37,64,1,41.89105774,-87.6153919,2020/3/22 0:00,Negative,White,NULL,NULL
+38,82,1,41.86004166,-87.94217291,2020/3/25 0:00,Positive,Black or African American,Not Hispanic or not Latino,Yes
+39,89,1,41.86794534,-87.79128816,2020/3/20 0:00,Negative,White,Not Hispanic or not Latino,NULL
+40,70,2,37.97408708,-89.19443959,2020/3/26 0:00,Positive,Black or African American,Not Hispanic or not Latino,No
+41,77,2,41.88387153,-87.80234254,2020/3/19 0:00,Negative,Black or African American,Unknown Not Classified,NULL
+42,35,2,41.83426768,-89.48583734,2020/3/21 0:00,Negative,Other,Not Hispanic or not Latino,NULL
+43,27,2,41.66672647,-87.71678051,2020/3/25 0:00,Negative,Black or African American,Not Hispanic or not Latino,NULL
+44,85,1,41.74968,-87.937286,2020/3/20 0:00,Negative,White,Not Hispanic or not Latino,NULL
+45,39,1,41.81235243,-87.61381383,2020/3/19 0:00,Negative,Hispanic,Hispanic or Latino,NULL
+46,79,2,41.81540318,-87.92167737,2020/3/25 0:00,Negative,Black or African American,Not Hispanic or not Latino,NULL
+47,22,1,41.61644064,-88.23109203,2020/3/24 0:00,Positive,Black or African American,Not Hispanic or not Latino,Yes
+48,54,1,41.891171,-87.634354,2020/3/15 0:00,Negative,White,Not Hispanic or not Latino,NULL
+49,45,1,41.86366587,-87.76905517,2020/3/23 0:00,Positive,White,Not Hispanic or not Latino,No
+50,18,1,42.08397467,-87.71210581,2020/3/15 0:00,Positive,Asian,Not Hispanic or not Latino,Yes
+51,22,2,NULL,NULL,2020/3/23 0:00,Negative,Black or African American,Not Hispanic or not Latino,NULL
+52,21,1,42.16527565,-87.938916,2020/3/15 0:00,Negative,White,Not Hispanic or not Latino,NULL
+53,83,2,41.61616825,-87.58615001,2020/3/26 0:00,Positive,Black or African American,Unknown Not Classified,No
+54,55,2,42.00139813,-88.67857659,2020/3/15 0:00,Negative,White,Not Hispanic or not Latino,NULL
+55,84,2,41.80104199,-87.58598409,2020/3/21 0:00,Negative,Black or African American,Unknown Not Classified,NULL
+56,85,1,42.11253,-87.981171,2020/3/15 0:00,Negative,Hispanic,Hispanic or Latino,NULL
+57,53,2,41.79627734,-87.70600366,2020/3/22 0:00,Negative,White,Not Hispanic or not Latino,NULL
+58,36,1,41.33025461,-88.84841392,2020/3/18 0:00,Negative,Black or African American,Unknown Not Classified,NULL
+59,65,1,41.92765537,-87.64037596,2020/3/6 0:00,Positive,Black or African American,Unknown Not Classified,Yes
+60,47,2,NULL,NULL,2020/3/25 0:00,Positive,White,Not Hispanic or not Latino,No
+61,37,1,41.78680995,-87.95156741,2020/3/23 0:00,Positive,White,Not Hispanic or not Latino,No
+62,86,1,41.77899014,-87.80367046,2020/3/26 0:00,Negative,,,NULL
+63,32,2,42.06573172,-87.69812386,2020/3/27 0:00,Negative,,,NULL
+64,83,2,42.16224656,-87.8856094,2020/3/18 0:00,Positive,White,Not Hispanic or not Latino,No
+65,24,2,41.90647813,-87.78195298,2020/3/25 0:00,Negative,Hispanic,Hispanic or Latino,NULL
+66,87,2,42.00668893,-87.7001482,2020/3/24 0:00,Positive,Unknown,NULL,No
+67,69,2,41.57713176,-88.03235614,2020/3/24 0:00,Negative,White,Unknown Not Classified,NULL
+68,66,1,41.89881482,-88.09621851,2020/3/23 0:00,Negative,Unknown,NULL,NULL
+69,27,2,42.01817735,-87.66410671,2020/3/18 0:00,Negative,White,NULL,NULL
+70,53,2,41.86057376,-88.29561711,2020/3/24 0:00,Negative,Black or African American,Not Hispanic or not Latino,NULL
+71,58,1,41.90810635,-87.63470128,2020/3/16 0:00,Positive,White,Not Hispanic or not Latino,No
+72,68,2,41.753798,-87.99943756,2020/3/19 0:00,Negative,Black or African American,Not Hispanic or not Latino,NULL
+73,71,1,42.08288435,-87.81894643,2020/3/24 0:00,Positive,Black or African American,Unknown Not Classified,No
+74,90,1,42.08288435,-87.81894643,2020/3/26 0:00,Positive,Other,Not Hispanic or not Latino,No
+75,26,1,41.69100446,-87.6835542,2020/3/24 0:00,Negative,Black or African American,Not Hispanic or not Latino,
+76,27,1,41.99237478,-87.65552696,2020/3/20 0:00,Negative,White,Not Hispanic or not Latino,
+77,49,2,41.92552874,-87.71953045,2020/3/24 0:00,Negative,Hispanic,Hispanic or Latino,
+78,4,1,41.85297143,-87.72345917,2020/3/24 0:00,Positive,Black or African American,Not Hispanic or not Latino,No
+79,61,1,41.89344396,-87.76353767,2020/3/24 0:00,Negative,Black or African American,Not Hispanic or not Latino,
+80,69,1,NULL,NULL,2020/3/11 0:00,Negative,White,Not Hispanic or not Latino,NULL
+81,55,2,41.76119322,-87.55767907,2020/3/24 0:00,Positive,White,Not Hispanic or not Latino,Yes
+82,71,1,NULL,NULL,2020/3/25 0:00,Positive,Asian,Not Hispanic or not Latino,No
+83,59,1,42.37065482,-88.35435722,2020/3/24 0:00,Negative,Black or African American,Not Hispanic or not Latino,
+84,40,1,41.98014322,-87.7937779,2020/3/15 0:00,Negative,White,Not Hispanic or not Latino,NULL
+85,2,1,NULL,NULL,2020/3/26 0:00,Negative,Black or African American,Unknown Not Classified,NULL
+86,27,2,41.16131546,-90.04343321,2020/3/22 0:00,Negative,White,Not Hispanic or not Latino,
+87,49,2,41.61439705,-87.70942537,2020/3/23 0:00,Positive,Black or African American,Unknown Not Classified,Yes
+88,4,1,41.9660092,-87.67904649,2020/3/20 0:00,Positive,Hispanic,Hispanic or Latino,No
+89,53,1,42.04849265,-87.78983224,2020/3/26 0:00,Negative,White,Not Hispanic or not Latino,NULL
+90,39,2,42.1205509,-88.05727815,2020/3/20 0:00,Negative,Black or African American,Unknown Not Classified,
+91,39,1,41.76403182,-87.65416059,2020/3/25 0:00,Negative,Black or African American,Unknown Not Classified,
+92,83,2,41.82464438,-88.2972885,2020/3/22 0:00,Negative,White,Not Hispanic or not Latino,
+93,79,1,39.8277077,-89.62479602,2020/3/25 0:00,Negative,White,Not Hispanic or not Latino,NULL
+94,28,1,41.86854022,-87.80336403,2020/3/25 0:00,Negative,NULL,NULL,
+95,21,1,42.05823057,-87.69942882,2020/3/25 0:00,Negative,Unknown,NULL,
+96,33,1,41.73256469,-88.12980505,2020/3/25 0:00,Negative,Unknown,NULL,
+97,2,1,NULL,NULL,2020/3/20 0:00,Negative,Unknown,NULL,
+98,88,1,41.90673518,-87.64080102,2020/3/21 0:00,Positive,Black or African American,Unknown Not Classified,No
+99,64,2,42.39188507,-87.8427902,2020/3/25 0:00,Negative,Unknown,NULL,NULL
+100,37,1,NULL,NULL,2020/3/24 0:00,Negative,Unknown,NULL,NULL

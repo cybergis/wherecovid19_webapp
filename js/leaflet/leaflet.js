@@ -70,10 +70,7 @@ var us_state_weekly_case_layer_object = null;
 var world_weekly_case_layer_object = null;
 
 
-//////////////////////////////////// Load GeoJSON File ////////////////////////////////////
 
-class_json_url = "preprocessing/classes.json";
-var class_json_obj = null;
 
 ////////////////////////////////// Add Data To Left Panel /////////////////////////////////
 
@@ -275,6 +272,7 @@ var layer_info_list = [{
     "show": true,
     "style_func": styleFunc1,
     "color_class": ["dph_illinois", "case_per_100k_capita", "nolog", "NaturalBreaks", "int"],
+    "color_class_url": "preprocessing/illinois/classes_idph.json",
     "tab_page_id": "illinois-tab",
     "animation": true,
 },
@@ -286,6 +284,7 @@ var layer_info_list = [{
     "show": false,
     "style_func": styleFunc1_death,
     "color_class": ["dph_illinois", "death_per_100k_capita", "nolog", "NaturalBreaks", "int"],
+    "color_class_url": "preprocessing/illinois/classes_idph.json",
     "tab_page_id": "illinois-tab",
     "animation": true,
 },
@@ -297,6 +296,7 @@ var layer_info_list = [{
     "show": false,
     "style_func": styleFunc1,
     "color_class": ["county", "case_per_100k_capita", "nolog", "NaturalBreaks", "int"],
+    "color_class_url": "preprocessing/classes_nyt.json",
     "tab_page_id": "county-tab",
     "animation": true,
 },
@@ -308,6 +308,7 @@ var layer_info_list = [{
     "show": false,
     "style_func": styleFunc1_death,
     "color_class": ["county", "death_per_100k_capita", "nolog", "NaturalBreaks", "int"],
+    "color_class_url": "preprocessing/classes_nyt.json",
     "tab_page_id": "county-tab",
     "animation": true,
 },
@@ -319,6 +320,7 @@ var layer_info_list = [{
     "show": false,
     "style_func": styleFunc1,
     "color_class": ["who_world", "case_per_100k_capita", "nolog", "NaturalBreaks", "int"],
+    "color_class_url": "preprocessing/worldwide/classes_who.json",
     "tab_page_id": "world-tab",
     "animation": true,
 },
@@ -330,6 +332,7 @@ var layer_info_list = [{
     "show": false,
     "style_func": styleFunc1_death,
     "color_class": ["who_world", "death_per_100k_capita", "nolog", "NaturalBreaks", "int"],
+    "color_class_url": "preprocessing/worldwide/classes_who.json",
     "tab_page_id": "world-tab",
     "animation": true,
 },
@@ -341,6 +344,7 @@ var layer_info_list = [{
     "show": false,
     "style_func": styleFunc1,
     "color_class": ["state", "case_per_100k_capita", "nolog", "NaturalBreaks", "int"],
+    "color_class_url": "preprocessing/classes_nyt.json",
     //"tab_page_id": "world-tab",
     "animation": true,
 },
@@ -352,6 +356,7 @@ var layer_info_list = [{
     "show": false,
     "style_func": styleFunc1_death,
     "color_class": ["state", "death_per_100k_capita", "nolog", "NaturalBreaks", "int"],
+    "color_class_url": "preprocessing/classes_nyt.json",
     //"tab_page_id": "world-tab",
     "animation": true,
 },
@@ -428,15 +433,18 @@ var getLayerInfo = function (name, field = "name") {
 
 //////////////////////////////////// Load GeoJSON File ////////////////////////////////////
 
-var loadClassJson = function (url) {
+var loadColorClassJson = function (layer_info) {
     return new Promise((resolve, reject) => {
+        if (layer_info["color_class"] == undefined || layer_info["color_class_url"] == undefined) {
+            resolve(layer_info);
+        }
+        console.log("loading color class info for " + layer_info.name);
         $.ajax({
-            url: url,
+            url: layer_info.color_class_url,
             type: 'GET',
             dataType: 'json',
             success: function(data) {
-                //console.log(url);
-                class_json_obj = data;
+                layer_info.color_class_obj = data;
                 resolve();
             },
             error: function(error) {
@@ -446,11 +454,16 @@ var loadClassJson = function (url) {
     })
 }
 
-var loadGeoJson = function (layer_info) {
-    return new Promise((resolve, reject) => {
+
+var loadGeoJsonAndClasses = function (layer_info) {
+
+    // load geojson
+    let geojson_promise = new Promise((resolve, reject) => {
         if (layer_info["esri_url"] != undefined) {
             resolve(layer_info);
         } else {
+
+            console.log("loading geojson for " + layer_info.name);
             if (layer_info["reuse"] != null && layer_info["reuse"] != undefined) {
                 li_reuse = getLayerInfo(layer_info["reuse"]);
                 layer_info.geojson_obj = JSON.parse(JSON.stringify(li_reuse.geojson_obj));
@@ -472,8 +485,31 @@ var loadGeoJson = function (layer_info) {
             })
         }
 
+    });
+
+    // load class
+    let class_promise = new Promise((resolve, reject) => {
+        if (layer_info["color_class"] == undefined || layer_info["color_class_url"] == undefined) {
+            resolve(layer_info);
+        }
+        console.log("loading color class info for " + layer_info.name);
+        $.ajax({
+            url: layer_info.color_class_url,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                layer_info.color_class_obj = data;
+                resolve(layer_info);
+            },
+            error: function(error) {
+                reject(error);
+            },
+        })
     })
+
+    return Promise.allSettled([geojson_promise, class_promise]);
 }
+
 
 var add_animation_layer_to_map_promise = function (layer_info) {
     return new Promise((resolve, reject) => {
@@ -1108,7 +1144,8 @@ var add_animation_layer_to_map = function (layer_info) {
     layer_obj.on('add', function(e) {
         let li = getLayerInfo(e.target.name);
         try {
-            bins = class_json_obj[li.color_class[0]][li.color_class[1]][li.color_class[2]][li.color_class[3]].bins.split(",").map(function(item) {
+            let _class_json_obj = li["color_class_obj"];
+            bins = _class_json_obj[li.color_class[0]][li.color_class[1]][li.color_class[2]][li.color_class[3]].bins.split(",").map(function(item) {
 
                 if (li.color_class[4] == "int") {
                     return parseInt(item, 10);
@@ -1119,7 +1156,7 @@ var add_animation_layer_to_map = function (layer_info) {
             });
             this.setStyle(li.style_func);
         } catch (err) {
-
+            console.log(err);
         }
     });
 
@@ -1153,34 +1190,39 @@ var addUrlHash = function() {
     var hash = new L.Hash(map, allMapLayers);
 }
 
+
 var chain_promise = function (layer_info) {
-    return loadGeoJson(layer_info).then(function(result) {
-        p1 = add_animation_layer_to_map_promise(result);
-        p2 = fill_left_panel_promise(result);
+    return loadGeoJsonAndClasses(layer_info).then(function(result) {
+        // var "result" has 2 promise results in an array (both are the same returned by loadGeoJsonAndClasses -- layer_info)
+        // get the first one's value
+        let layer_info_0 = result[0].value;
+        p1 = add_animation_layer_to_map_promise(layer_info_0);
+        p2 = fill_left_panel_promise(layer_info_0);
         return Promise.allSettled([p1, p2]);
     })
 }
 
 // Promise Entry Point
-loadClassJson(class_json_url).then(
-    Promise.allSettled(layer_info_list.map(chain_promise)).then(function() {
-        switch_left_tab_page_handler_old();
-        left_tab_page_table_click_old();
-    }).then(function() {
-        $('#illinois-tab').css("pointer-events","auto");
-        $('#county-tab').css("pointer-events","auto");
-        $('#world-tab').css("pointer-events","auto");
-    }).then(function() {
-        return zoomToUserLocationPromise();
-    }).then(function() {
-        return Promise.allSettled(layer_info_list_2.map(chain_promise));
-    }).then(function() {
-        return Promise.allSettled(layer_info_list_3.map(chain_promise));
-    }).then(function() {
-        addUrlHash();
-        return Promise.resolve(1);
-    })
-);
+// load layers by groups:
+// layer_info_list --> layer_info_list_2 --> layer_info_list_3
+Promise.allSettled(layer_info_list.map(chain_promise)).then(function () {
+    switch_left_tab_page_handler_old();
+    left_tab_page_table_click_old();
+}).then(function () {
+    $('#illinois-tab').css("pointer-events", "auto");
+    $('#county-tab').css("pointer-events", "auto");
+    $('#world-tab').css("pointer-events", "auto");
+}).then(function () {
+    return zoomToUserLocationPromise();
+}).then(function () { // layer_info_list_2
+    return Promise.allSettled(layer_info_list_2.map(chain_promise));
+}).then(function () { // layer_info_list_3
+    return Promise.allSettled(layer_info_list_3.map(chain_promise));
+}).then(function () {
+    addUrlHash();
+    return Promise.resolve(1);
+})
+
 
 /////////////////////////// Handle Left Panel Tab Page Clicking ///////////////////////////
 
@@ -1423,7 +1465,7 @@ var refreshLegend = function (_layer) {
         var legendContent = "";
 
         // loop through our density intervals and generate a label with a colored square for each interval
-        if (_layer == il_county_case_layer_object || _layer == us_county_case_layer_object || _layer == us_state_case_layer_object || _layer == world_case_layer_object || _layer == us_county_death_layer_object || us_state_death_layer_object || _layer == world_death_layer_object || _layer == il_county_death_layer_object) {
+        if (_layer == il_county_case_layer_object || _layer == us_county_case_layer_object || _layer == us_state_case_layer_object || _layer == world_case_layer_object || _layer == us_county_death_layer_object || _layer == us_state_death_layer_object || _layer == world_death_layer_object || _layer == il_county_death_layer_object) {
             grades = bins;
             // grades start from 0
             legendContent +=

@@ -91,7 +91,7 @@ var il_chicago_hospital_geojson = null;
 
 //////////////////////////////////// Load GeoJSON File ////////////////////////////////////
 
-class_json_url = "preprocessing/classes.json";
+class_json_url = "preprocessing/illinois/classes_vulnerability.json";
 var class_json_obj = null;
 
 ////////////////////////////////// Add Data To Left Panel /////////////////////////////////
