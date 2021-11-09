@@ -454,8 +454,11 @@ var loadColorClassJson = function (layer_info) {
     })
 }
 
-var loadGeoJson = function (layer_info) {
-    return new Promise((resolve, reject) => {
+
+var loadGeoJsonAndClasses = function (layer_info) {
+
+    // load geojson
+    let geojson_promise = new Promise((resolve, reject) => {
         if (layer_info["esri_url"] != undefined) {
             resolve(layer_info);
         } else {
@@ -482,8 +485,31 @@ var loadGeoJson = function (layer_info) {
             })
         }
 
+    });
+
+    // load class
+    let class_promise = new Promise((resolve, reject) => {
+        if (layer_info["color_class"] == undefined || layer_info["color_class_url"] == undefined) {
+            resolve(layer_info);
+        }
+        console.log("loading color class info for " + layer_info.name);
+        $.ajax({
+            url: layer_info.color_class_url,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                layer_info.color_class_obj = data;
+                resolve(layer_info);
+            },
+            error: function(error) {
+                reject(error);
+            },
+        })
     })
+
+    return Promise.allSettled([geojson_promise, class_promise]);
 }
+
 
 var add_animation_layer_to_map_promise = function (layer_info) {
     return new Promise((resolve, reject) => {
@@ -1164,58 +1190,36 @@ var addUrlHash = function() {
     var hash = new L.Hash(map, allMapLayers);
 }
 
+
 var chain_promise = function (layer_info) {
-    return loadGeoJson(layer_info).then(function(result) {
-        p1 = add_animation_layer_to_map_promise(result);
-        p2 = fill_left_panel_promise(result);
+    return loadGeoJsonAndClasses(layer_info).then(function(result) {
+        let layer_info_0 = result[0].value;
+        p1 = add_animation_layer_to_map_promise(layer_info_0);
+        p2 = fill_left_panel_promise(layer_info_0);
         return Promise.allSettled([p1, p2]);
     })
 }
 
 // Promise Entry Point
 
-Promise.allSettled(layer_info_list.map(loadColorClassJson)).then(function () {
+Promise.allSettled(layer_info_list.map(chain_promise)).then(function () {
+    switch_left_tab_page_handler_old();
+    left_tab_page_table_click_old();
+}).then(function () {
+    $('#illinois-tab').css("pointer-events", "auto");
+    $('#county-tab').css("pointer-events", "auto");
+    $('#world-tab').css("pointer-events", "auto");
+}).then(function () {
+    return zoomToUserLocationPromise();
+}).then(function () {
+    return Promise.allSettled(layer_info_list_2.map(chain_promise));
+}).then(function () {
+    return Promise.allSettled(layer_info_list_3.map(chain_promise));
+}).then(function () {
+    addUrlHash();
+    return Promise.resolve(1);
+})
 
-        Promise.allSettled(layer_info_list.map(chain_promise)).then(function () {
-            switch_left_tab_page_handler_old();
-            left_tab_page_table_click_old();
-        }).then(function () {
-            $('#illinois-tab').css("pointer-events", "auto");
-            $('#county-tab').css("pointer-events", "auto");
-            $('#world-tab').css("pointer-events", "auto");
-        }).then(function () {
-            return zoomToUserLocationPromise();
-        }).then(function () {
-            return Promise.allSettled(layer_info_list_2.map(chain_promise));
-        }).then(function () {
-            return Promise.allSettled(layer_info_list_3.map(chain_promise));
-        }).then(function () {
-            addUrlHash();
-            return Promise.resolve(1);
-        })
-    }
-);
-
-
-// loadClassJson(class_json_url).then(
-//     Promise.allSettled(layer_info_list.map(chain_promise)).then(function() {
-//         switch_left_tab_page_handler_old();
-//         left_tab_page_table_click_old();
-//     }).then(function() {
-//         $('#illinois-tab').css("pointer-events","auto");
-//         $('#county-tab').css("pointer-events","auto");
-//         $('#world-tab').css("pointer-events","auto");
-//     }).then(function() {
-//         return zoomToUserLocationPromise();
-//     }).then(function() {
-//         return Promise.allSettled(layer_info_list_2.map(chain_promise));
-//     }).then(function() {
-//         return Promise.allSettled(layer_info_list_3.map(chain_promise));
-//     }).then(function() {
-//         addUrlHash();
-//         return Promise.resolve(1);
-//     })
-// );
 
 /////////////////////////// Handle Left Panel Tab Page Clicking ///////////////////////////
 
