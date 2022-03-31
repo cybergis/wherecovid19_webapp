@@ -1,0 +1,50 @@
+.MapBetween {
+    display: none;
+}
+
+.densityINC {
+    border: 1px solid gray;
+    overflow: hidden;
+}
+header {
+    background: white;
+    color: black;
+    height: 50px;
+    text-align: center;
+}
+
+section{
+    max-width: 1538px;
+    margin: 0 auto;
+    display: flex;
+    flex-flow: row wrap;
+}
+
+#mapContainer {
+    height: auto !important;
+    max-width: 100%;
+    flex-flow: row wrap;
+    display: flex;
+    flex: 1;
+}
+
+.mapArea {
+    margin-top: 18px;
+    align-items: center;
+    margin: 15px auto;
+    /* width: 500px; */
+    height: auto !important;
+    float: none;
+}
+
+.MapBetween {
+    display: none;
+}
+
+#global-message {
+    margin: 0px 170px;
+    width: auto !important; 
+    color: blue;
+    font-size: 12px;
+    clear: both;
+}
